@@ -1,0 +1,54 @@
+title: Manga
+empty: No items found
+nav:
+  reading: Reading
+  search: Search
+  latest: Latest
+login:
+  title: Login
+  password: Password
+  forgot_password: Forgot password
+  sign_up: Sign up
+  username: Username
+  welcome: Hello
+  confirm_password: Confirm Password
+  password_not_match: Passwords do not match
+search:
+  no_results: No search results
+  search: Search Manga
+manga:
+  chapters: Chapters
+  first: First
+  continue: Continue
+  last: Last
+  add: Add
+details:
+  authors: Authors
+  genres: Genres
+  read: Read
+  unread: Unread
+  next_chapter: Next Chapter
+  updated: Updated
+  status: Status
+  ongoing: Ongoing
+  finished: Finished
+  unknown: Unknown
+  alt_titles: Alternative Titles
+error: 'Error: {error}'
+chapter:
+  goto_top: Scroll to top
+  goto_bottom: Scroll to bottom
+  previous: Previous
+  next: Next
+basic:
+  refresh: Refresh
+  confirm: Confirm
+  cancel: Cancel
+settings:
+  title: Settings
+  data_saver: Data Saver
+  logout: Logout
+  language: Language
+reading:
+  delete: Delete Reading
+  delete_content: Are you sure you want to delete "{title}"?

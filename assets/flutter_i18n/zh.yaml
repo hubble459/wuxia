@@ -1,0 +1,54 @@
+title: 漫画
+empty: 未找到任何项目
+nav:
+  latest: 最新的
+  reading: 阅读
+  search: 搜索
+login:
+  title: 登录
+  password: 密码
+  sign_up: 注册
+  forgot_password: 忘记密码
+  username: 用户名
+  welcome: 你好
+  confirm_password: 确认密码
+  password_not_match: 密码不匹配
+search:
+  no_results: 没有搜索结果
+  search: 搜索漫画
+manga:
+  chapters: 章节
+  last: 最后
+  continue: 继续
+  first: 第一
+  add: 添加
+details:
+  authors: 作者
+  read: 看了
+  unread: 不看了
+  next_chapter: 下一章
+  updated: 更新
+  status: 地位
+  finished: 完成的
+  ongoing: 进行中
+  genres: 流派
+  unknown: 未知
+  alt_titles: 替代标题
+error: 错误：{error}
+chapter:
+  goto_top: 跳到顶部
+  goto_bottom: 跳到底部
+  previous: 上一个
+  next: 下一个
+basic:
+  refresh: 刷新
+  confirm: 对
+  cancel: 不对
+settings:
+  title: 设置
+  data_saver: 数据保护程序
+  logout: 登出
+  language: 语
+reading:
+  delete: 删除阅读
+  delete_content: 确定要删除“{title}”吗？

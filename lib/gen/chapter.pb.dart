@@ -1,0 +1,320 @@
+///
+//  Generated code. Do not modify.
+//  source: chapter.proto
+//
+// @dart = 2.12
+// ignore_for_file: annotate_overrides,camel_case_types,constant_identifier_names,directives_ordering,library_prefixes,non_constant_identifier_names,prefer_final_fields,return_of_invalid_type,unnecessary_const,unnecessary_import,unnecessary_this,unused_import,unused_shown_name
+
+import 'dart:core' as $core;
+
+import 'package:fixnum/fixnum.dart' as $fixnum;
+import 'package:protobuf/protobuf.dart' as $pb;
+
+import 'paginate.pb.dart' as $2;
+
+class ChapterReply extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'ChapterReply', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'rumgap'), createEmptyInstance: create)
+    ..a<$core.int>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'id', $pb.PbFieldType.O3)
+    ..a<$core.int>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'mangaId', $pb.PbFieldType.O3)
+    ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'url')
+    ..aOS(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'title')
+    ..a<$core.double>(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'number', $pb.PbFieldType.OF)
+    ..aInt64(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'posted')
+    ..aInt64(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'createdAt')
+    ..aInt64(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'updatedAt')
+    ..hasRequiredFields = false
+  ;
+
+  ChapterReply._() : super();
+  factory ChapterReply({
+    $core.int? id,
+    $core.int? mangaId,
+    $core.String? url,
+    $core.String? title,
+    $core.double? number,
+    $fixnum.Int64? posted,
+    $fixnum.Int64? createdAt,
+    $fixnum.Int64? updatedAt,
+  }) {
+    final _result = create();
+    if (id != null) {
+      _result.id = id;
+    }
+    if (mangaId != null) {
+      _result.mangaId = mangaId;
+    }
+    if (url != null) {
+      _result.url = url;
+    }
+    if (title != null) {
+      _result.title = title;
+    }
+    if (number != null) {
+      _result.number = number;
+    }
+    if (posted != null) {
+      _result.posted = posted;
+    }
+    if (createdAt != null) {
+      _result.createdAt = createdAt;
+    }
+    if (updatedAt != null) {
+      _result.updatedAt = updatedAt;
+    }
+    return _result;
+  }
+  factory ChapterReply.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory ChapterReply.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  ChapterReply clone() => ChapterReply()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  ChapterReply copyWith(void Function(ChapterReply) updates) => super.copyWith((message) => updates(message as ChapterReply)) as ChapterReply; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static ChapterReply create() => ChapterReply._();
+  ChapterReply createEmptyInstance() => create();
+  static $pb.PbList<ChapterReply> createRepeated() => $pb.PbList<ChapterReply>();
+  @$core.pragma('dart2js:noInline')
+  static ChapterReply getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<ChapterReply>(create);
+  static ChapterReply? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.int get id => $_getIZ(0);
+  @$pb.TagNumber(1)
+  set id($core.int v) { $_setSignedInt32(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearId() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.int get mangaId => $_getIZ(1);
+  @$pb.TagNumber(2)
+  set mangaId($core.int v) { $_setSignedInt32(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasMangaId() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearMangaId() => clearField(2);
+
+  @$pb.TagNumber(3)
+  $core.String get url => $_getSZ(2);
+  @$pb.TagNumber(3)
+  set url($core.String v) { $_setString(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasUrl() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearUrl() => clearField(3);
+
+  @$pb.TagNumber(4)
+  $core.String get title => $_getSZ(3);
+  @$pb.TagNumber(4)
+  set title($core.String v) { $_setString(3, v); }
+  @$pb.TagNumber(4)
+  $core.bool hasTitle() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearTitle() => clearField(4);
+
+  @$pb.TagNumber(5)
+  $core.double get number => $_getN(4);
+  @$pb.TagNumber(5)
+  set number($core.double v) { $_setFloat(4, v); }
+  @$pb.TagNumber(5)
+  $core.bool hasNumber() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearNumber() => clearField(5);
+
+  @$pb.TagNumber(6)
+  $fixnum.Int64 get posted => $_getI64(5);
+  @$pb.TagNumber(6)
+  set posted($fixnum.Int64 v) { $_setInt64(5, v); }
+  @$pb.TagNumber(6)
+  $core.bool hasPosted() => $_has(5);
+  @$pb.TagNumber(6)
+  void clearPosted() => clearField(6);
+
+  @$pb.TagNumber(7)
+  $fixnum.Int64 get createdAt => $_getI64(6);
+  @$pb.TagNumber(7)
+  set createdAt($fixnum.Int64 v) { $_setInt64(6, v); }
+  @$pb.TagNumber(7)
+  $core.bool hasCreatedAt() => $_has(6);
+  @$pb.TagNumber(7)
+  void clearCreatedAt() => clearField(7);
+
+  @$pb.TagNumber(8)
+  $fixnum.Int64 get updatedAt => $_getI64(7);
+  @$pb.TagNumber(8)
+  set updatedAt($fixnum.Int64 v) { $_setInt64(7, v); }
+  @$pb.TagNumber(8)
+  $core.bool hasUpdatedAt() => $_has(7);
+  @$pb.TagNumber(8)
+  void clearUpdatedAt() => clearField(8);
+}
+
+class ChaptersReply extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'ChaptersReply', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'rumgap'), createEmptyInstance: create)
+    ..aOM<$2.PaginateReply>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'pagination', subBuilder: $2.PaginateReply.create)
+    ..pc<ChapterReply>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'items', $pb.PbFieldType.PM, subBuilder: ChapterReply.create)
+    ..hasRequiredFields = false
+  ;
+
+  ChaptersReply._() : super();
+  factory ChaptersReply({
+    $2.PaginateReply? pagination,
+    $core.Iterable<ChapterReply>? items,
+  }) {
+    final _result = create();
+    if (pagination != null) {
+      _result.pagination = pagination;
+    }
+    if (items != null) {
+      _result.items.addAll(items);
+    }
+    return _result;
+  }
+  factory ChaptersReply.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory ChaptersReply.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  ChaptersReply clone() => ChaptersReply()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  ChaptersReply copyWith(void Function(ChaptersReply) updates) => super.copyWith((message) => updates(message as ChaptersReply)) as ChaptersReply; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static ChaptersReply create() => ChaptersReply._();
+  ChaptersReply createEmptyInstance() => create();
+  static $pb.PbList<ChaptersReply> createRepeated() => $pb.PbList<ChaptersReply>();
+  @$core.pragma('dart2js:noInline')
+  static ChaptersReply getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<ChaptersReply>(create);
+  static ChaptersReply? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $2.PaginateReply get pagination => $_getN(0);
+  @$pb.TagNumber(1)
+  set pagination($2.PaginateReply v) { setField(1, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasPagination() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearPagination() => clearField(1);
+  @$pb.TagNumber(1)
+  $2.PaginateReply ensurePagination() => $_ensure(0);
+
+  @$pb.TagNumber(2)
+  $core.List<ChapterReply> get items => $_getList(1);
+}
+
+class ImagesReply extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'ImagesReply', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'rumgap'), createEmptyInstance: create)
+    ..pPS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'items')
+    ..hasRequiredFields = false
+  ;
+
+  ImagesReply._() : super();
+  factory ImagesReply({
+    $core.Iterable<$core.String>? items,
+  }) {
+    final _result = create();
+    if (items != null) {
+      _result.items.addAll(items);
+    }
+    return _result;
+  }
+  factory ImagesReply.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory ImagesReply.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  ImagesReply clone() => ImagesReply()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  ImagesReply copyWith(void Function(ImagesReply) updates) => super.copyWith((message) => updates(message as ImagesReply)) as ImagesReply; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static ImagesReply create() => ImagesReply._();
+  ImagesReply createEmptyInstance() => create();
+  static $pb.PbList<ImagesReply> createRepeated() => $pb.PbList<ImagesReply>();
+  @$core.pragma('dart2js:noInline')
+  static ImagesReply getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<ImagesReply>(create);
+  static ImagesReply? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.List<$core.String> get items => $_getList(0);
+}
+
+class PaginateChapterQuery extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'PaginateChapterQuery', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'rumgap'), createEmptyInstance: create)
+    ..a<$core.int>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'id', $pb.PbFieldType.O3)
+    ..aOM<$2.PaginateQuery>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'paginateQuery', subBuilder: $2.PaginateQuery.create)
+    ..hasRequiredFields = false
+  ;
+
+  PaginateChapterQuery._() : super();
+  factory PaginateChapterQuery({
+    $core.int? id,
+    $2.PaginateQuery? paginateQuery,
+  }) {
+    final _result = create();
+    if (id != null) {
+      _result.id = id;
+    }
+    if (paginateQuery != null) {
+      _result.paginateQuery = paginateQuery;
+    }
+    return _result;
+  }
+  factory PaginateChapterQuery.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory PaginateChapterQuery.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  PaginateChapterQuery clone() => PaginateChapterQuery()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  PaginateChapterQuery copyWith(void Function(PaginateChapterQuery) updates) => super.copyWith((message) => updates(message as PaginateChapterQuery)) as PaginateChapterQuery; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static PaginateChapterQuery create() => PaginateChapterQuery._();
+  PaginateChapterQuery createEmptyInstance() => create();
+  static $pb.PbList<PaginateChapterQuery> createRepeated() => $pb.PbList<PaginateChapterQuery>();
+  @$core.pragma('dart2js:noInline')
+  static PaginateChapterQuery getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<PaginateChapterQuery>(create);
+  static PaginateChapterQuery? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.int get id => $_getIZ(0);
+  @$pb.TagNumber(1)
+  set id($core.int v) { $_setSignedInt32(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearId() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $2.PaginateQuery get paginateQuery => $_getN(1);
+  @$pb.TagNumber(2)
+  set paginateQuery($2.PaginateQuery v) { setField(2, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasPaginateQuery() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearPaginateQuery() => clearField(2);
+  @$pb.TagNumber(2)
+  $2.PaginateQuery ensurePaginateQuery() => $_ensure(1);
+}
+

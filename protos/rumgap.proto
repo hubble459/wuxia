@@ -1,0 +1,50 @@
+syntax = "proto3";
+package rumgap;
+
+import "user.proto";
+import "friend.proto";
+import "manga.proto";
+import "chapter.proto";
+import "reading.proto";
+import "paginate.proto";
+
+service User {
+    rpc Register (UserRegisterRequest) returns (UserTokenReply);
+    rpc Login (UserRequest) returns (UserTokenReply);
+    rpc Get (Id) returns (UserFullReply);
+    rpc Index (PaginateQuery) returns (UsersReply);
+}
+
+service Friend {
+    rpc Follow (FriendRequest) returns (UserFullReply);
+    rpc Unfollow (FriendRequest) returns (UserFullReply);
+    rpc Following (PaginateQuery) returns (UsersReply);
+    rpc Followers (PaginateQuery) returns (UsersReply);
+}
+
+service Manga {
+    rpc Create (MangaRequest) returns (MangaReply);
+    rpc CreateMany (MangasRequest) returns (stream MangaReply);
+    rpc Get (Id) returns (MangaReply);
+    rpc Index (PaginateSearchQuery) returns (MangasReply);
+}
+
+service Chapter {
+    rpc Get (Id) returns (ImagesReply);
+    rpc Index (PaginateChapterQuery) returns (ChaptersReply);
+}
+
+service Reading {
+    rpc Get (Id) returns (ReadingReply);
+    rpc Index (PaginateSearchQuery) returns (ReadingsReply);
+    rpc Edit (ReadingPatchRequest) returns (ReadingReply);
+    rpc Create (ReadingPostRequest) returns (ReadingReply);
+    rpc Delete (Id) returns (Empty);
+}
+
+message Id {
+    int32 id = 1;
+}
+
+message Empty {
+}
