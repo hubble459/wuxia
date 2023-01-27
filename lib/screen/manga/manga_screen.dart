@@ -3,19 +3,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 import 'package:wuxia/api.dart';
-import 'package:wuxia/model/manga.dart';
-import 'package:wuxia/model/reading.dart';
-import 'package:wuxia/model/simple_manga.dart';
+import 'package:wuxia/gen/chapter.pb.dart';
+import 'package:wuxia/gen/manga.pb.dart';
+import 'package:wuxia/gen/reading.pb.dart';
+import 'package:wuxia/gen/rumgap.pb.dart';
+import 'package:wuxia/main.dart';
 import 'package:wuxia/partial/manga_details.dart';
 import 'package:wuxia/screen/manga/manga_chapter_screen.dart';
 import 'package:wuxia/screen/manga/manga_chapters_screen.dart';
 
 class MangaScreen extends StatefulWidget {
-  final Reading? reading;
-  final SimpleManga manga;
+  final MangaReply manga;
 
-  const MangaScreen({Key? key, required this.manga, this.reading}) : super(key: key);
+  const MangaScreen({Key? key, required this.manga}) : super(key: key);
 
   @override
   State<MangaScreen> createState() => _MangaScreenState();
@@ -29,34 +31,24 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
     lowerBound: 0,
     value: 0,
   );
-  late Manga _manga;
-  late Reading? _reading;
+  late MangaReply _manga;
 
   @override
   void initState() {
     super.initState();
-    _reading = widget.reading;
-    if (widget.manga is Manga) {
-      _manga = widget.manga as Manga;
-    } else {
-      _manga = widget.manga.toManga();
-      _animationController
-          .repeat(period: const Duration(seconds: 1))
-          .whenComplete(() => _animationController.repeat(period: const Duration(seconds: 1)));
-      setState(() {});
-      (() async {
-        try {
-          final manga = await api.manga(_manga.id);
-          _manga = manga;
-          if (_reading != null) {
-            _reading!.manga.update(manga);
-          }
-        } finally {
-          _animationController.reset();
-          setState(() {});
-        }
-      })();
-    }
+    _manga = widget.manga;
+    _animationController
+        .repeat(period: const Duration(seconds: 1))
+        .whenComplete(() => _animationController.repeat(period: const Duration(seconds: 1)));
+    setState(() {});
+    (() async {
+      try {
+        _manga = await api.manga.get(Id(id: _manga.id));
+      } finally {
+        _animationController.reset();
+        setState(() {});
+      }
+    })();
   }
 
   @override
@@ -84,7 +76,7 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
             actions: [
               IconButton(
                 onPressed: () {
-                  launchUrl(_manga.url, mode: LaunchMode.externalApplication);
+                  launchUrlString(_manga.url, mode: LaunchMode.externalApplication);
                 },
                 icon: const Icon(Icons.open_in_browser),
               ),
@@ -100,11 +92,7 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
                           setState(() {});
 
                           try {
-                            final manga = await api.manga(_manga.id, force: true);
-                            _manga = manga;
-                            if (_reading != null) {
-                              _reading!.manga.update(manga);
-                            }
+                            _manga = await api.manga.update(Id(id: _manga.id));
                           } catch (e) {
                             Fluttertoast.showToast(msg: e.toString());
                           } finally {
@@ -128,7 +116,6 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
                     child: CachedNetworkImage(imageUrl: _manga.cover.toString()),
                   ),
                   MangaDetails(
-                    reading: _reading,
                     manga: _manga,
                   ),
                 ],
@@ -137,21 +124,14 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
           ),
           bottomNavigationBar: SizedBox(
               width: double.infinity,
-              child: _reading != null
+              child: _manga.hasReadingProgress()
                   ? _ChapterSelector(
-                      reading: _reading!,
+                      manga: _manga,
                       refreshParent: () {
                         setState(() {});
                       },
                     )
-                  : _NewMangaOptions(
-                      manga: _manga,
-                      refresh: (reading) {
-                        _reading = reading;
-                        _manga.reading = true;
-                        setState(() {});
-                      },
-                    )),
+                  : _NewMangaOptions(manga: _manga)),
         ),
       ),
     );
@@ -165,10 +145,9 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
 }
 
 class _NewMangaOptions extends StatelessWidget {
-  final Manga manga;
-  final Function(Reading reading) refresh;
+  final MangaReply manga;
 
-  const _NewMangaOptions({Key? key, required this.manga, required this.refresh}) : super(key: key);
+  const _NewMangaOptions({Key? key, required this.manga}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -178,19 +157,26 @@ class _NewMangaOptions extends StatelessWidget {
       color: Theme.of(context).colorScheme.primary,
       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
       onPressed: () async {
-        final reading = await api.addToReading(manga);
-        refresh(reading);
+        final m = await api.reading.create(ReadingPostRequest(mangaId: manga.id));
+        manga.mergeFromMessage(m);
       },
       child: I18nText('manga.add'),
     );
   }
 }
 
+mixin ReadingManga on MangaReply {
+  get progressPercentage {
+    final count = countChapters.toInt();
+    return 100 / count * readingProgress;
+  }
+}
+
 class _ChapterSelector extends StatefulWidget {
-  final Reading reading;
+  final MangaReply manga;
   final Function() refreshParent;
 
-  const _ChapterSelector({Key? key, required this.reading, required this.refreshParent}) : super(key: key);
+  const _ChapterSelector({Key? key, required this.manga, required this.refreshParent}) : super(key: key);
 
   @override
   State<_ChapterSelector> createState() => _ChapterSelectorState();
@@ -210,7 +196,7 @@ class _ChapterSelectorState extends State<_ChapterSelector> {
             Navigator.of(context)
                 .push(
                   MaterialPageRoute(
-                    builder: (context) => MangaChaptersScreen(reading: widget.reading),
+                    builder: (context) => MangaChaptersScreen(manga: widget.manga),
                   ),
                 )
                 .then((value) => refresh());
@@ -219,7 +205,7 @@ class _ChapterSelectorState extends State<_ChapterSelector> {
         ),
         LinearProgressIndicator(
           color: Theme.of(context).colorScheme.tertiary,
-          value: widget.reading.progressPercentage,
+          value: widget.manga.progressPercentage,
         ),
         Row(
           children: [
@@ -231,16 +217,19 @@ class _ChapterSelectorState extends State<_ChapterSelector> {
                 color: Theme.of(context).colorScheme.primary,
                 materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 onPressed: () async {
-                  widget.reading.progress = 1;
-                  await api.updateProgress(widget.reading);
-                  final chapter = await api.chapter(widget.reading);
+                  widget.manga.readingProgress = 1;
+                  await api.reading.edit(ReadingPatchRequest(
+                    mangaId: widget.manga.id,
+                    progress: widget.manga.readingProgress,
+                  ));
+                  final chapter = await api.chapter.index(PaginateChapterQuery(id: widget.manga.id));
                   if (!mounted) return;
                   Navigator.of(context)
                       .push(
                         MaterialPageRoute(
                           builder: (context) => MangaChapterScreen(
-                            reading: widget.reading,
-                            chapter: chapter,
+                            manga: widget.manga,
+                            chapter: chapter.items[0],
                           ),
                         ),
                       )
@@ -258,17 +247,23 @@ class _ChapterSelectorState extends State<_ChapterSelector> {
                 splashColor: Theme.of(context).primaryColorLight,
                 materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 onPressed: () async {
-                  if (widget.reading.progress == 0) {
-                    widget.reading.progress = 1;
-                    await api.updateProgress(widget.reading);
+                  if (widget.manga.readingProgress == 0) {
+                    widget.manga.readingProgress = 1;
+                    await api.reading.edit(ReadingPatchRequest(
+                      mangaId: widget.manga.id,
+                      progress: widget.manga.readingProgress,
+                    ));
                   }
-                  final chapter = await api.chapter(widget.reading);
+                  final chapter = await api.chapter.get(ChapterRequest(
+                    mangaId: widget.manga.id,
+                    index: widget.manga.readingProgress,
+                  ));
                   if (!mounted) return;
                   Navigator.of(context)
                       .push(
                         MaterialPageRoute(
                           builder: (context) => MangaChapterScreen(
-                            reading: widget.reading,
+                            manga: widget.manga,
                             chapter: chapter,
                           ),
                         ),
@@ -286,15 +281,21 @@ class _ChapterSelectorState extends State<_ChapterSelector> {
                 color: Theme.of(context).colorScheme.primary,
                 materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 onPressed: () async {
-                  widget.reading.progress = widget.reading.manga.chapterCount;
-                  await api.updateProgress(widget.reading);
-                  final chapter = await api.chapter(widget.reading);
+                  widget.manga.readingProgress = widget.manga.countChapters.toInt();
+                  await api.reading.edit(ReadingPatchRequest(
+                    mangaId: widget.manga.id,
+                    progress: widget.manga.readingProgress,
+                  ));
+                  final chapter = await api.chapter.get(ChapterRequest(
+                    mangaId: widget.manga.id,
+                    index: widget.manga.readingProgress,
+                  ));
                   if (!mounted) return;
                   Navigator.of(context)
                       .push(
                         MaterialPageRoute(
                           builder: (context) => MangaChapterScreen(
-                            reading: widget.reading,
+                            manga: widget.manga,
                             chapter: chapter,
                           ),
                         ),

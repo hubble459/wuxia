@@ -8,6 +8,17 @@
 import 'dart:core' as $core;
 import 'dart:convert' as $convert;
 import 'dart:typed_data' as $typed_data;
+@$core.Deprecated('Use chapterRequestDescriptor instead')
+const ChapterRequest$json = const {
+  '1': 'ChapterRequest',
+  '2': const [
+    const {'1': 'manga_id', '3': 1, '4': 1, '5': 5, '10': 'mangaId'},
+    const {'1': 'index', '3': 2, '4': 1, '5': 5, '10': 'index'},
+  ],
+};
+
+/// Descriptor for `ChapterRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List chapterRequestDescriptor = $convert.base64Decode('Cg5DaGFwdGVyUmVxdWVzdBIZCghtYW5nYV9pZBgBIAEoBVIHbWFuZ2FJZBIUCgVpbmRleBgCIAEoBVIFaW5kZXg=');
 @$core.Deprecated('Use chapterReplyDescriptor instead')
 const ChapterReply$json = const {
   '1': 'ChapterReply',
@@ -17,9 +28,10 @@ const ChapterReply$json = const {
     const {'1': 'url', '3': 3, '4': 1, '5': 9, '10': 'url'},
     const {'1': 'title', '3': 4, '4': 1, '5': 9, '10': 'title'},
     const {'1': 'number', '3': 5, '4': 1, '5': 2, '10': 'number'},
-    const {'1': 'posted', '3': 6, '4': 1, '5': 3, '9': 0, '10': 'posted', '17': true},
-    const {'1': 'created_at', '3': 7, '4': 1, '5': 3, '10': 'createdAt'},
-    const {'1': 'updated_at', '3': 8, '4': 1, '5': 3, '10': 'updatedAt'},
+    const {'1': 'index', '3': 6, '4': 1, '5': 3, '10': 'index'},
+    const {'1': 'posted', '3': 7, '4': 1, '5': 3, '9': 0, '10': 'posted', '17': true},
+    const {'1': 'created_at', '3': 8, '4': 1, '5': 3, '10': 'createdAt'},
+    const {'1': 'updated_at', '3': 9, '4': 1, '5': 3, '10': 'updatedAt'},
   ],
   '8': const [
     const {'1': '_posted'},
@@ -27,7 +39,7 @@ const ChapterReply$json = const {
 };
 
 /// Descriptor for `ChapterReply`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List chapterReplyDescriptor = $convert.base64Decode('CgxDaGFwdGVyUmVwbHkSDgoCaWQYASABKAVSAmlkEhkKCG1hbmdhX2lkGAIgASgFUgdtYW5nYUlkEhAKA3VybBgDIAEoCVIDdXJsEhQKBXRpdGxlGAQgASgJUgV0aXRsZRIWCgZudW1iZXIYBSABKAJSBm51bWJlchIbCgZwb3N0ZWQYBiABKANIAFIGcG9zdGVkiAEBEh0KCmNyZWF0ZWRfYXQYByABKANSCWNyZWF0ZWRBdBIdCgp1cGRhdGVkX2F0GAggASgDUgl1cGRhdGVkQXRCCQoHX3Bvc3RlZA==');
+final $typed_data.Uint8List chapterReplyDescriptor = $convert.base64Decode('CgxDaGFwdGVyUmVwbHkSDgoCaWQYASABKAVSAmlkEhkKCG1hbmdhX2lkGAIgASgFUgdtYW5nYUlkEhAKA3VybBgDIAEoCVIDdXJsEhQKBXRpdGxlGAQgASgJUgV0aXRsZRIWCgZudW1iZXIYBSABKAJSBm51bWJlchIUCgVpbmRleBgGIAEoA1IFaW5kZXgSGwoGcG9zdGVkGAcgASgDSABSBnBvc3RlZIgBARIdCgpjcmVhdGVkX2F0GAggASgDUgljcmVhdGVkQXQSHQoKdXBkYXRlZF9hdBgJIAEoA1IJdXBkYXRlZEF0QgkKB19wb3N0ZWQ=');
 @$core.Deprecated('Use chaptersReplyDescriptor instead')
 const ChaptersReply$json = const {
   '1': 'ChaptersReply',

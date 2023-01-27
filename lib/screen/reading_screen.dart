@@ -1,11 +1,13 @@
 import 'dart:developer';
 
+import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:wuxia/api.dart';
-import 'package:wuxia/model/reading.dart';
-import 'package:wuxia/partial/list/reading_item.dart';
+import 'package:wuxia/gen/manga.pb.dart';
+import 'package:wuxia/gen/paginate.pb.dart';
+import 'package:wuxia/partial/list/manga_item.dart';
 
 class ReadingScreen extends StatefulWidget {
   const ReadingScreen({Key? key}) : super(key: key);
@@ -15,7 +17,7 @@ class ReadingScreen extends StatefulWidget {
 }
 
 class _ReadingScreenState extends State<ReadingScreen> with AutomaticKeepAliveClientMixin<ReadingScreen> {
-  final _pagingController = PagingController<int, Reading>(firstPageKey: 1);
+  final _pagingController = PagingController<int, MangaReply>(firstPageKey: 1);
   final _searchController = TextEditingController();
   final _pageSize = 20;
   String _keyword = '';
@@ -73,19 +75,13 @@ class _ReadingScreenState extends State<ReadingScreen> with AutomaticKeepAliveCl
             onRefresh: () async {
               _pagingController.refresh();
             },
-            child: PagedListView<int, Reading>(
+            child: PagedListView<int, MangaReply>(
               pagingController: _pagingController,
-              builderDelegate: PagedChildBuilderDelegate<Reading>(
+              builderDelegate: PagedChildBuilderDelegate<MangaReply>(
                 noItemsFoundIndicatorBuilder: (context) => Center(
                   child: I18nText('empty'),
                 ),
-                itemBuilder: (context, reading, index) => ReadingItem(
-                  reading: reading,
-                  removedItem: (reading) {
-                    _pagingController.itemList!.remove(reading);
-                    setState(() {});
-                  },
-                ),
+                itemBuilder: (context, manga, index) => MangaItem(manga: manga),
               ),
             ),
           ),
@@ -111,13 +107,15 @@ class _ReadingScreenState extends State<ReadingScreen> with AutomaticKeepAliveCl
 
   Future<void> _fetchPage(int page) async {
     try {
-      final paginate = await api.allReading(page: page, limit: _pageSize, keyword: _keyword);
-      final isLastPage = paginate.page == paginate.numPages;
+      final result = await api.manga
+          .index(PaginateSearchQuery(page: Int64(page), perPage: Int64(_pageSize), search: 'reading:>=0 $_keyword'));
+      final paginate = result.pagination;
+      final isLastPage = paginate.page == paginate.maxPage;
       if (isLastPage) {
-        _pagingController.appendLastPage(paginate.data);
+        _pagingController.appendLastPage(result.items);
       } else {
         final nextPageKey = paginate.page + 1;
-        _pagingController.appendPage(paginate.data, nextPageKey);
+        _pagingController.appendPage(result.items, nextPageKey.toInt());
       }
     } catch (error) {
       log('reading', error: error);

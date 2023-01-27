@@ -1,19 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
-import 'package:wuxia/model/manga.dart';
-import 'package:wuxia/model/reading.dart';
-import 'package:wuxia/model/simple_manga.dart';
+import 'package:jiffy/jiffy.dart';
+import 'package:wuxia/gen/manga.pb.dart';
 
 class MangaDetails extends StatelessWidget {
-  final SimpleManga manga;
-  final Reading? reading;
+  final MangaReply manga;
 
-  const MangaDetails({Key? key, required this.manga, this.reading}) : super(key: key);
+  const MangaDetails({Key? key, required this.manga}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final Manga manga = this.manga is Manga ? this.manga as Manga : this.manga.toManga();
-
     return Column(children: [
       Table(
           border: TableBorder.symmetric(
@@ -82,7 +78,7 @@ class MangaDetails extends StatelessWidget {
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(4, 4, 0, 4),
-                  child: Text(manga.chapterCount.toString()),
+                  child: Text(manga.countChapters.toString()),
                 ),
               ],
             ),
@@ -98,7 +94,10 @@ class MangaDetails extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(4, 4, 0, 4),
                   child: Text(
-                    (reading != null ? reading!.progress : FlutterI18n.translate(context, 'details.unread')).toString(),
+                    (manga.hasReadingProgress()
+                            ? manga.readingProgress
+                            : FlutterI18n.translate(context, 'details.unread'))
+                        .toString(),
                   ),
                 ),
               ],
@@ -115,7 +114,9 @@ class MangaDetails extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(4, 4, 0, 4),
                   child: Text(
-                    manga.lastChapter == null ? 'Unknown' : manga.lastChapter!.fromNow(),
+                    manga.hasLast()
+                        ? 'Unknown'
+                        : Jiffy(manga.last.toInt()).fromNow(),
                   ),
                 ),
               ],
@@ -132,7 +133,9 @@ class MangaDetails extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(4, 4, 0, 4),
                   child: Text(
-                    manga.nextChapter == null ? 'Unknown' : manga.nextChapter!.fromNow(),
+                    manga.hasNext()
+                        ? 'Unknown'
+                        : Jiffy(manga.next.toInt()).fromNow(),
                   ),
                 ),
               ],
@@ -149,7 +152,7 @@ class MangaDetails extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(4, 4, 0, 4),
                   child: Text(
-                    manga.ongoing
+                    manga.isOngoing
                         ? FlutterI18n.translate(context, 'details.ongoing')
                         : FlutterI18n.translate(context, 'details.finished'),
                   ),

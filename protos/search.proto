@@ -1,0 +1,20 @@
+syntax = "proto3";
+package rumgap;
+
+message SearchRequest {
+    string keyword = 1;
+    repeated string hostnames = 2;
+}
+
+message SearchManga {
+    optional int32 manga_id = 1;
+    string title = 2;
+    string url = 3;
+    optional int64 posted = 4;
+    optional string cover = 5;
+    bool is_reading = 6;
+
+}
+message SearchReply {
+    repeated SearchManga items = 1;
+}

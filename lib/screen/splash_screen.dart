@@ -3,6 +3,8 @@ import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wuxia/api.dart';
+import 'package:wuxia/gen/rumgap.pb.dart';
+import 'package:wuxia/gen/verify.pb.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -19,12 +21,17 @@ class _SplashScreenState extends State<SplashScreen> {
 
       const storage = FlutterSecureStorage();
       final token = await storage.read(key: 'token');
-      final loggedIn = await api.testToken(token);
-      if (!mounted) return;
-      FlutterI18n.refresh(context, Locale(preferences.getString('language') ?? 'zh'));
-      if (loggedIn) {
+
+      try {
+        api.token = token;
+        final loggedIn = await api.verify.token(Empty());
+        if (!mounted) return;
+        FlutterI18n.refresh(context, Locale(preferences.getString('language') ?? 'zh'));
         Navigator.of(context).pushReplacementNamed('root_nav');
-      } else {
+      } catch (e) {
+        api.token = null;
+
+        if (!mounted) return;
         Navigator.of(context).pushReplacementNamed('login');
       }
     });

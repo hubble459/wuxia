@@ -26,6 +26,7 @@ message MangaReply {
     optional int64 last = 12;
     int64 created_at = 13;
     int64 updated_at = 14;
+    optional int32 reading_progress = 15;
 }
 
 message MangasReply {

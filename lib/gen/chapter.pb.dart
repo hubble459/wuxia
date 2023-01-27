@@ -12,6 +12,67 @@ import 'package:protobuf/protobuf.dart' as $pb;
 
 import 'paginate.pb.dart' as $2;
 
+class ChapterRequest extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'ChapterRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'rumgap'), createEmptyInstance: create)
+    ..a<$core.int>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'mangaId', $pb.PbFieldType.O3)
+    ..a<$core.int>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'index', $pb.PbFieldType.O3)
+    ..hasRequiredFields = false
+  ;
+
+  ChapterRequest._() : super();
+  factory ChapterRequest({
+    $core.int? mangaId,
+    $core.int? index,
+  }) {
+    final _result = create();
+    if (mangaId != null) {
+      _result.mangaId = mangaId;
+    }
+    if (index != null) {
+      _result.index = index;
+    }
+    return _result;
+  }
+  factory ChapterRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory ChapterRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  ChapterRequest clone() => ChapterRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  ChapterRequest copyWith(void Function(ChapterRequest) updates) => super.copyWith((message) => updates(message as ChapterRequest)) as ChapterRequest; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static ChapterRequest create() => ChapterRequest._();
+  ChapterRequest createEmptyInstance() => create();
+  static $pb.PbList<ChapterRequest> createRepeated() => $pb.PbList<ChapterRequest>();
+  @$core.pragma('dart2js:noInline')
+  static ChapterRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<ChapterRequest>(create);
+  static ChapterRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.int get mangaId => $_getIZ(0);
+  @$pb.TagNumber(1)
+  set mangaId($core.int v) { $_setSignedInt32(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasMangaId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearMangaId() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.int get index => $_getIZ(1);
+  @$pb.TagNumber(2)
+  set index($core.int v) { $_setSignedInt32(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasIndex() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearIndex() => clearField(2);
+}
+
 class ChapterReply extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'ChapterReply', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'rumgap'), createEmptyInstance: create)
     ..a<$core.int>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'id', $pb.PbFieldType.O3)
@@ -19,9 +80,10 @@ class ChapterReply extends $pb.GeneratedMessage {
     ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'url')
     ..aOS(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'title')
     ..a<$core.double>(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'number', $pb.PbFieldType.OF)
-    ..aInt64(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'posted')
-    ..aInt64(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'createdAt')
-    ..aInt64(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'updatedAt')
+    ..aInt64(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'index')
+    ..aInt64(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'posted')
+    ..aInt64(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'createdAt')
+    ..aInt64(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'updatedAt')
     ..hasRequiredFields = false
   ;
 
@@ -32,6 +94,7 @@ class ChapterReply extends $pb.GeneratedMessage {
     $core.String? url,
     $core.String? title,
     $core.double? number,
+    $fixnum.Int64? index,
     $fixnum.Int64? posted,
     $fixnum.Int64? createdAt,
     $fixnum.Int64? updatedAt,
@@ -51,6 +114,9 @@ class ChapterReply extends $pb.GeneratedMessage {
     }
     if (number != null) {
       _result.number = number;
+    }
+    if (index != null) {
+      _result.index = index;
     }
     if (posted != null) {
       _result.posted = posted;
@@ -130,31 +196,40 @@ class ChapterReply extends $pb.GeneratedMessage {
   void clearNumber() => clearField(5);
 
   @$pb.TagNumber(6)
-  $fixnum.Int64 get posted => $_getI64(5);
+  $fixnum.Int64 get index => $_getI64(5);
   @$pb.TagNumber(6)
-  set posted($fixnum.Int64 v) { $_setInt64(5, v); }
+  set index($fixnum.Int64 v) { $_setInt64(5, v); }
   @$pb.TagNumber(6)
-  $core.bool hasPosted() => $_has(5);
+  $core.bool hasIndex() => $_has(5);
   @$pb.TagNumber(6)
-  void clearPosted() => clearField(6);
+  void clearIndex() => clearField(6);
 
   @$pb.TagNumber(7)
-  $fixnum.Int64 get createdAt => $_getI64(6);
+  $fixnum.Int64 get posted => $_getI64(6);
   @$pb.TagNumber(7)
-  set createdAt($fixnum.Int64 v) { $_setInt64(6, v); }
+  set posted($fixnum.Int64 v) { $_setInt64(6, v); }
   @$pb.TagNumber(7)
-  $core.bool hasCreatedAt() => $_has(6);
+  $core.bool hasPosted() => $_has(6);
   @$pb.TagNumber(7)
-  void clearCreatedAt() => clearField(7);
+  void clearPosted() => clearField(7);
 
   @$pb.TagNumber(8)
-  $fixnum.Int64 get updatedAt => $_getI64(7);
+  $fixnum.Int64 get createdAt => $_getI64(7);
   @$pb.TagNumber(8)
-  set updatedAt($fixnum.Int64 v) { $_setInt64(7, v); }
+  set createdAt($fixnum.Int64 v) { $_setInt64(7, v); }
   @$pb.TagNumber(8)
-  $core.bool hasUpdatedAt() => $_has(7);
+  $core.bool hasCreatedAt() => $_has(7);
   @$pb.TagNumber(8)
-  void clearUpdatedAt() => clearField(8);
+  void clearCreatedAt() => clearField(8);
+
+  @$pb.TagNumber(9)
+  $fixnum.Int64 get updatedAt => $_getI64(8);
+  @$pb.TagNumber(9)
+  set updatedAt($fixnum.Int64 v) { $_setInt64(8, v); }
+  @$pb.TagNumber(9)
+  $core.bool hasUpdatedAt() => $_has(8);
+  @$pb.TagNumber(9)
+  void clearUpdatedAt() => clearField(9);
 }
 
 class ChaptersReply extends $pb.GeneratedMessage {

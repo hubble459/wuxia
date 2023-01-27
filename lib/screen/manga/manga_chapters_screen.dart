@@ -1,16 +1,18 @@
+import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:wuxia/api.dart';
-import 'package:wuxia/model/chapter.dart';
-import 'package:wuxia/model/paginate.dart';
-import 'package:wuxia/model/reading.dart';
+import 'package:wuxia/gen/chapter.pb.dart';
+import 'package:wuxia/gen/manga.pb.dart';
+import 'package:wuxia/gen/paginate.pb.dart';
+import 'package:wuxia/gen/reading.pb.dart';
 import 'package:wuxia/partial/list/chapter_item.dart';
 
 class MangaChaptersScreen extends StatefulWidget {
-  final Reading reading;
+  final MangaReply manga;
 
-  const MangaChaptersScreen({Key? key, required this.reading}) : super(key: key);
+  const MangaChaptersScreen({Key? key, required this.manga}) : super(key: key);
 
   @override
   State<MangaChaptersScreen> createState() => _MangaChaptersScreenState();
@@ -18,8 +20,8 @@ class MangaChaptersScreen extends StatefulWidget {
 
 class _MangaChaptersScreenState extends State<MangaChaptersScreen> {
   final _pageSize = 20;
-  final _pagingController = PagingController<int, Chapter>(firstPageKey: 1);
-  late Paginate<Chapter> _paginate;
+  final _pagingController = PagingController<int, ChapterReply>(firstPageKey: 1);
+  late ChaptersReply _result;
 
   @override
   Widget build(BuildContext context) {
@@ -31,23 +33,26 @@ class _MangaChaptersScreenState extends State<MangaChaptersScreen> {
         onRefresh: () async {
           _pagingController.refresh();
         },
-        child: PagedListView<int, Chapter>(
+        child: PagedListView<int, ChapterReply>(
           pagingController: _pagingController,
-          builderDelegate: PagedChildBuilderDelegate<Chapter>(
+          builderDelegate: PagedChildBuilderDelegate<ChapterReply>(
             noItemsFoundIndicatorBuilder: (context) => Center(
               child: I18nText('empty'),
             ),
             itemBuilder: (context, chapter, index) => ChapterItem(
-              reading: widget.reading,
+              manga: widget.manga,
               refreshParent: (progress) {
-                widget.reading.progress = progress;
-                api.updateProgress(widget.reading);
+                widget.manga.readingProgress = progress;
+                api.reading.edit(ReadingPatchRequest(
+                  mangaId: widget.manga.id,
+                  progress: widget.manga.readingProgress,
+                ));
                 setState(() {});
               },
               chapters: () {
-                _paginate.data.clear();
-                _paginate.data.addAll(_pagingController.itemList!);
-                return _paginate;
+                _result.items.clear();
+                _result.items.addAll(_pagingController.itemList!);
+                return _result;
               }(),
               index: index,
             ),
@@ -73,13 +78,19 @@ class _MangaChaptersScreenState extends State<MangaChaptersScreen> {
 
   Future<void> _fetchPage(int page) async {
     try {
-      _paginate = await api.chapters(widget.reading.manga.id, page: page, limit: _pageSize);
-      final isLastPage = _paginate.page == _paginate.numPages;
+      _result = await api.chapter.index(PaginateChapterQuery(
+          id: widget.manga.id,
+          paginateQuery: PaginateQuery(
+            page: Int64(page),
+            perPage: Int64(_pageSize),
+          )));
+      final paginate = _result.pagination;
+      final isLastPage = paginate.page == paginate.maxPage;
       if (isLastPage) {
-        _pagingController.appendLastPage(_paginate.data);
+        _pagingController.appendLastPage(_result.items);
       } else {
-        final nextPageKey = _paginate.page + 1;
-        _pagingController.appendPage(_paginate.data, nextPageKey);
+        final nextPageKey = paginate.page + 1;
+        _pagingController.appendPage(_result.items, nextPageKey.toInt());
       }
     } catch (error) {
       _pagingController.error = error;

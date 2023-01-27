@@ -2,14 +2,16 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:wuxia/api.dart';
-import 'package:wuxia/model/chapter.dart';
-import 'package:wuxia/model/reading.dart';
+import 'package:wuxia/gen/chapter.pb.dart';
+import 'package:wuxia/gen/manga.pb.dart';
+import 'package:wuxia/gen/rumgap.pb.dart';
+import 'package:wuxia/main.dart';
 
 class MangaChapterScreen extends StatefulWidget {
-  final Reading reading;
-  final Chapter chapter;
+  final MangaReply manga;
+  final ChapterReply chapter;
 
-  const MangaChapterScreen({Key? key, required this.reading, required this.chapter}) : super(key: key);
+  const MangaChapterScreen({Key? key, required this.manga, required this.chapter}) : super(key: key);
 
   @override
   State<MangaChapterScreen> createState() => _MangaChapterScreenState();
@@ -17,7 +19,7 @@ class MangaChapterScreen extends StatefulWidget {
 
 class _MangaChapterScreenState extends State<MangaChapterScreen> {
   late ScrollController _scrollController;
-  late Chapter _chapter;
+  late ChapterReply _chapter;
 
   @override
   void initState() {
@@ -54,12 +56,12 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
             ),
           ],
         ),
-        body: FutureBuilder<List<Uri>>(
-          future: api.images(widget.reading.manga.id, _chapter),
+        body: FutureBuilder<ImagesReply>(
+          future: api.chapter.images(Id(id: _chapter.id)),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
               if (snapshot.hasData) {
-                final links = snapshot.requireData;
+                final links = snapshot.requireData.items;
                 return InteractiveViewer(
                   // panEnabled: false,
                   // boundaryMargin: EdgeInsets.all(80),
@@ -78,7 +80,7 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
                       fit: BoxFit.fitWidth,
                       width: double.infinity,
                       httpHeaders: {
-                        'Referer': widget.reading.manga.url.toString(),
+                        'Referer': widget.manga.url.toString(),
                       },
                       progressIndicatorBuilder: (context, url, downloadProgress) => SizedBox.fromSize(
                         size: const Size.fromHeight(500),
@@ -121,7 +123,7 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             LinearProgressIndicator(
-              value: widget.reading.progressPercentage,
+              value: widget.manga.progressPercentage,
               minHeight: 5,
               color: Theme.of(context).colorScheme.tertiary,
             ),
@@ -135,12 +137,14 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
                     child: MaterialButton(
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       padding: EdgeInsets.zero,
-                      onPressed: widget.reading.progress > 1 ? previous : null,
+                      onPressed: widget.manga.readingProgress > 1 ? previous : null,
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Visibility(visible: widget.reading.progress > 1, child: Text((widget.reading.progress - 1).toString())),
+                          Visibility(
+                              visible: widget.manga.readingProgress > 1,
+                              child: Text((widget.manga.readingProgress - 1).toString())),
                           const Icon(Icons.navigate_before)
                         ],
                       ),
@@ -156,15 +160,15 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
                     child: MaterialButton(
                       padding: EdgeInsets.zero,
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      onPressed: widget.reading.progress < widget.reading.manga.chapterCount ? next : null,
+                      onPressed: widget.manga.readingProgress < widget.manga.countChapters.toInt() ? next : null,
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           const Icon(Icons.navigate_next),
                           Visibility(
-                              visible: widget.reading.progress < widget.reading.manga.chapterCount,
-                              child: Text((widget.reading.progress + 1).toString()))
+                              visible: widget.manga.readingProgress < widget.manga.countChapters.toInt(),
+                              child: Text((widget.manga.readingProgress + 1).toString()))
                         ],
                       ),
                     ),
@@ -177,16 +181,22 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
   }
 
   Future<void> previous() async {
-    --widget.reading.progress;
-    final chapter = await api.chapter(widget.reading);
+    --widget.manga.readingProgress;
+    final chapter = await api.chapter.get(ChapterRequest(
+      mangaId: widget.manga.id,
+      index: widget.manga.readingProgress,
+    ));
     setState(() {
       _chapter = chapter;
     });
   }
 
   Future<void> next() async {
-    ++widget.reading.progress;
-    final chapter = await api.chapter(widget.reading);
+    ++widget.manga.readingProgress;
+    final chapter = await api.chapter.get(ChapterRequest(
+      mangaId: widget.manga.id,
+      index: widget.manga.readingProgress,
+    ));
     setState(() {
       _chapter = chapter;
     });

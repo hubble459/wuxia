@@ -18,7 +18,9 @@
     "i18n-ally.sourceLanguage": "en",
     "cSpell.words": [
         "fixnum",
+        "Fluttertoast",
         "protobuf",
         "wuxia"
-    ]
+    ],
+    "dart.lineLength": 130
 }

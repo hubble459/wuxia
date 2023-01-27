@@ -6,6 +6,7 @@ import "friend.proto";
 import "manga.proto";
 import "chapter.proto";
 import "reading.proto";
+import "search.proto";
 import "paginate.proto";
 
 service User {
@@ -26,20 +27,29 @@ service Manga {
     rpc Create (MangaRequest) returns (MangaReply);
     rpc CreateMany (MangasRequest) returns (stream MangaReply);
     rpc Get (Id) returns (MangaReply);
+    rpc Update (Id) returns (MangaReply);
     rpc Index (PaginateSearchQuery) returns (MangasReply);
+    rpc FindOrCreate (MangaRequest) returns (MangaReply);
 }
 
 service Chapter {
-    rpc Get (Id) returns (ImagesReply);
+    rpc Get (ChapterRequest) returns (ChapterReply);
     rpc Index (PaginateChapterQuery) returns (ChaptersReply);
+    rpc Images (Id) returns (ImagesReply);
 }
 
 service Reading {
-    rpc Get (Id) returns (ReadingReply);
-    rpc Index (PaginateSearchQuery) returns (ReadingsReply);
-    rpc Edit (ReadingPatchRequest) returns (ReadingReply);
-    rpc Create (ReadingPostRequest) returns (ReadingReply);
+    rpc Edit (ReadingPatchRequest) returns (MangaReply);
+    rpc Create (ReadingPostRequest) returns (MangaReply);
     rpc Delete (Id) returns (Empty);
+}
+
+service Search {
+    rpc Manga (SearchRequest) returns (SearchReply);
+}
+
+service Verify {
+    rpc Token (Empty) returns (Empty);
 }
 
 message Id {

@@ -1,17 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:wuxia/model/chapter.dart';
-import 'package:wuxia/model/paginate.dart';
-import 'package:wuxia/model/reading.dart';
+import 'package:jiffy/jiffy.dart';
+import 'package:wuxia/gen/chapter.pb.dart';
+import 'package:wuxia/gen/manga.pb.dart';
+import 'package:wuxia/gen/reading.pb.dart';
 import 'package:wuxia/screen/manga/manga_chapter_screen.dart';
 
 class ChapterItem extends StatelessWidget {
-  final Paginate<Chapter> chapters;
-  final Reading reading;
-  final Chapter chapter;
+  final ChaptersReply chapters;
+  final MangaReply manga;
+  final ChapterReply chapter;
   final void Function(int progress) refreshParent;
 
-  ChapterItem({Key? key, required this.chapters, required this.reading, required int index, required this.refreshParent})
-      : chapter = chapters.data[index],
+  ChapterItem(
+      {Key? key,
+      required this.chapters,
+      required this.manga,
+      required int index,
+      required this.refreshParent})
+      : chapter = chapters.items[index],
         super(key: key);
 
   @override
@@ -23,11 +29,13 @@ class ChapterItem extends StatelessWidget {
         overflow: TextOverflow.ellipsis,
       ),
       subtitle: Visibility(
-        visible: chapter.posted != null,
-        child: Text(chapter.posted?.fromNow() ?? ''),
+        visible: chapter.hasPosted(),
+        child: Text(
+            chapter.hasPosted() ? Jiffy(chapter.posted.toInt()).fromNow() : ''),
       ),
       leading: Visibility(
-        visible: reading.progress >= chapter.index,
+        visible: manga.hasReadingProgress() &&
+            manga.readingProgress >= chapter.index.toInt(),
         child: const ColoredBox(
           color: Colors.green,
           child: SizedBox(
@@ -47,13 +55,13 @@ class ChapterItem extends StatelessWidget {
             .push(
           MaterialPageRoute(
             builder: (context) => MangaChapterScreen(
-              reading: reading,
+              manga: manga,
               chapter: chapter,
             ),
           ),
         )
             .then((data) {
-          refreshParent(chapter.index);
+          refreshParent(chapter.index.toInt());
         });
       },
     );

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:wuxia/api.dart';
-import 'package:wuxia/model/search_manga.dart';
+import 'package:wuxia/gen/search.pb.dart';
 import 'package:wuxia/partial/list/search_manga_item.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -11,9 +11,10 @@ class SearchScreen extends StatefulWidget {
   State<SearchScreen> createState() => _SearchScreenState();
 }
 
-class _SearchScreenState extends State<SearchScreen> with AutomaticKeepAliveClientMixin<SearchScreen> {
+class _SearchScreenState extends State<SearchScreen>
+    with AutomaticKeepAliveClientMixin<SearchScreen> {
   final TextEditingController controller = TextEditingController();
-  Future<List<SearchManga>> _searchResults = Future.value([]);
+  Future<SearchReply> _searchResults = Future.value(SearchReply.create());
 
   @override
   Widget build(BuildContext context) {
@@ -36,17 +37,20 @@ class _SearchScreenState extends State<SearchScreen> with AutomaticKeepAliveClie
           onSubmitted: (query) {
             if (controller.text.isNotEmpty) {
               setState(() {
-                _searchResults = api.search(controller.text, hostnames: ['mangadex.org']);
+                _searchResults = api.search.manga(SearchRequest(
+                  keyword: controller.text,
+                  hostnames: ['mangadex.org'],
+                ));
               });
             }
           },
         ),
-        FutureBuilder<List<SearchManga>>(
+        FutureBuilder<SearchReply>(
           future: _searchResults,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
               if (snapshot.hasData) {
-                final results = snapshot.requireData;
+                final results = snapshot.requireData.items;
                 if (results.isEmpty) {
                   return Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -56,12 +60,14 @@ class _SearchScreenState extends State<SearchScreen> with AutomaticKeepAliveClie
                 return Expanded(
                   child: ListView.builder(
                     itemCount: results.length,
-                    itemBuilder: (context, index) => SearchMangaItem(searchManga: results[index]),
+                    itemBuilder: (context, index) =>
+                        SearchMangaItem(searchManga: results[index]),
                   ),
                 );
               } else {
                 return Center(
-                  child: Text(snapshot.hasError ? snapshot.error.toString() : 'Error'),
+                  child: Text(
+                      snapshot.hasError ? snapshot.error.toString() : 'Error'),
                 );
               }
             } else {

@@ -17,7 +17,6 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final uController = TextEditingController();
   final pController = TextEditingController();
-  final userClient = UserClient(channel);
 
   String? uError;
   String? pError;
@@ -44,7 +43,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final String password = pController.text;
     instance.setString('username', username);
     try {
-      await userClient.login(UserRequest(
+      await api.user.login(UserRequest(
         username: username,
         password: password,
       ));
@@ -70,8 +69,7 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Column(
           children: [
             Container(
-              padding: EdgeInsets.only(
-                  top: MediaQuery.of(context).size.height * 0.15),
+              padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.15),
               child: Text(
                 FlutterI18n.translate(context, 'login.welcome'),
                 style: const TextStyle(
@@ -81,8 +79,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
             Container(
-              padding: EdgeInsets.only(
-                  top: MediaQuery.of(context).size.height * 0.10),
+              padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -98,8 +95,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               errorText: uError,
                               fillColor: Colors.grey.shade100,
                               filled: true,
-                              hintText: FlutterI18n.translate(
-                                  context, 'login.username'),
+                              hintText: FlutterI18n.translate(context, 'login.username'),
                               hintStyle: TextStyle(color: Colors.grey.shade600),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
@@ -159,8 +155,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         Center(
                           child: TextButton(
                             onPressed: () {
-                              Navigator.pushReplacementNamed(
-                                  context, 'register');
+                              Navigator.pushReplacementNamed(context, 'register');
                             },
                             style: const ButtonStyle(),
                             child: Text(

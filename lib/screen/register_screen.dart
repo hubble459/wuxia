@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:wuxia/api.dart';
+import 'package:wuxia/gen/user.pb.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({Key? key}) : super(key: key);
@@ -38,7 +39,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
 
     try {
-      await api.register(username: username, password: password);
+      await api.user.register(UserRegisterRequest(username: username, password: password));
       if (!mounted) {
         return;
       }

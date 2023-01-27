@@ -46,16 +46,18 @@ const MangaReply$json = const {
     const {'1': 'last', '3': 12, '4': 1, '5': 3, '9': 2, '10': 'last', '17': true},
     const {'1': 'created_at', '3': 13, '4': 1, '5': 3, '10': 'createdAt'},
     const {'1': 'updated_at', '3': 14, '4': 1, '5': 3, '10': 'updatedAt'},
+    const {'1': 'reading_progress', '3': 15, '4': 1, '5': 5, '9': 3, '10': 'readingProgress', '17': true},
   ],
   '8': const [
     const {'1': '_cover'},
     const {'1': '_next'},
     const {'1': '_last'},
+    const {'1': '_reading_progress'},
   ],
 };
 
 /// Descriptor for `MangaReply`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List mangaReplyDescriptor = $convert.base64Decode('CgpNYW5nYVJlcGx5Eg4KAmlkGAEgASgFUgJpZBIQCgN1cmwYAiABKAlSA3VybBIUCgV0aXRsZRgDIAEoCVIFdGl0bGUSIAoLZGVzY3JpcHRpb24YBCABKAlSC2Rlc2NyaXB0aW9uEhkKBWNvdmVyGAUgASgJSABSBWNvdmVyiAEBEh0KCmlzX29uZ29pbmcYBiABKAhSCWlzT25nb2luZxIWCgZnZW5yZXMYByADKAlSBmdlbnJlcxIYCgdhdXRob3JzGAggAygJUgdhdXRob3JzEh0KCmFsdF90aXRsZXMYCSADKAlSCWFsdFRpdGxlcxIlCg5jb3VudF9jaGFwdGVycxgKIAEoA1INY291bnRDaGFwdGVycxIXCgRuZXh0GAsgASgDSAFSBG5leHSIAQESFwoEbGFzdBgMIAEoA0gCUgRsYXN0iAEBEh0KCmNyZWF0ZWRfYXQYDSABKANSCWNyZWF0ZWRBdBIdCgp1cGRhdGVkX2F0GA4gASgDUgl1cGRhdGVkQXRCCAoGX2NvdmVyQgcKBV9uZXh0QgcKBV9sYXN0');
+final $typed_data.Uint8List mangaReplyDescriptor = $convert.base64Decode('CgpNYW5nYVJlcGx5Eg4KAmlkGAEgASgFUgJpZBIQCgN1cmwYAiABKAlSA3VybBIUCgV0aXRsZRgDIAEoCVIFdGl0bGUSIAoLZGVzY3JpcHRpb24YBCABKAlSC2Rlc2NyaXB0aW9uEhkKBWNvdmVyGAUgASgJSABSBWNvdmVyiAEBEh0KCmlzX29uZ29pbmcYBiABKAhSCWlzT25nb2luZxIWCgZnZW5yZXMYByADKAlSBmdlbnJlcxIYCgdhdXRob3JzGAggAygJUgdhdXRob3JzEh0KCmFsdF90aXRsZXMYCSADKAlSCWFsdFRpdGxlcxIlCg5jb3VudF9jaGFwdGVycxgKIAEoA1INY291bnRDaGFwdGVycxIXCgRuZXh0GAsgASgDSAFSBG5leHSIAQESFwoEbGFzdBgMIAEoA0gCUgRsYXN0iAEBEh0KCmNyZWF0ZWRfYXQYDSABKANSCWNyZWF0ZWRBdBIdCgp1cGRhdGVkX2F0GA4gASgDUgl1cGRhdGVkQXQSLgoQcmVhZGluZ19wcm9ncmVzcxgPIAEoBUgDUg9yZWFkaW5nUHJvZ3Jlc3OIAQFCCAoGX2NvdmVyQgcKBV9uZXh0QgcKBV9sYXN0QhMKEV9yZWFkaW5nX3Byb2dyZXNz');
 @$core.Deprecated('Use mangasReplyDescriptor instead')
 const MangasReply$json = const {
   '1': 'MangasReply',

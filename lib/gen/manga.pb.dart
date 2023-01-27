@@ -116,6 +116,7 @@ class MangaReply extends $pb.GeneratedMessage {
     ..aInt64(12, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'last')
     ..aInt64(13, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'createdAt')
     ..aInt64(14, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'updatedAt')
+    ..a<$core.int>(15, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'readingProgress', $pb.PbFieldType.O3)
     ..hasRequiredFields = false
   ;
 
@@ -135,6 +136,7 @@ class MangaReply extends $pb.GeneratedMessage {
     $fixnum.Int64? last,
     $fixnum.Int64? createdAt,
     $fixnum.Int64? updatedAt,
+    $core.int? readingProgress,
   }) {
     final _result = create();
     if (id != null) {
@@ -178,6 +180,9 @@ class MangaReply extends $pb.GeneratedMessage {
     }
     if (updatedAt != null) {
       _result.updatedAt = updatedAt;
+    }
+    if (readingProgress != null) {
+      _result.readingProgress = readingProgress;
     }
     return _result;
   }
@@ -309,6 +314,15 @@ class MangaReply extends $pb.GeneratedMessage {
   $core.bool hasUpdatedAt() => $_has(13);
   @$pb.TagNumber(14)
   void clearUpdatedAt() => clearField(14);
+
+  @$pb.TagNumber(15)
+  $core.int get readingProgress => $_getIZ(14);
+  @$pb.TagNumber(15)
+  set readingProgress($core.int v) { $_setSignedInt32(14, v); }
+  @$pb.TagNumber(15)
+  $core.bool hasReadingProgress() => $_has(14);
+  @$pb.TagNumber(15)
+  void clearReadingProgress() => clearField(15);
 }
 
 class MangasReply extends $pb.GeneratedMessage {
