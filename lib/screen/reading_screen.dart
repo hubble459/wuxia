@@ -17,7 +17,7 @@ class ReadingScreen extends StatefulWidget {
 }
 
 class _ReadingScreenState extends State<ReadingScreen> with AutomaticKeepAliveClientMixin<ReadingScreen> {
-  final _pagingController = PagingController<int, MangaReply>(firstPageKey: 1);
+  final _pagingController = PagingController<int, MangaReply>(firstPageKey: 0);
   final _searchController = TextEditingController();
   final _pageSize = 20;
   String _keyword = '';
@@ -107,8 +107,11 @@ class _ReadingScreenState extends State<ReadingScreen> with AutomaticKeepAliveCl
 
   Future<void> _fetchPage(int page) async {
     try {
-      final result = await api.manga
-          .index(PaginateSearchQuery(page: Int64(page), perPage: Int64(_pageSize), search: 'reading:>=0 $_keyword'));
+      final result = await api.manga.index(PaginateSearchQuery(
+        page: Int64(page),
+        perPage: Int64(_pageSize),
+        search: 'reading:>=0 $_keyword',
+      ));
       final paginate = result.pagination;
       final isLastPage = paginate.page == paginate.maxPage;
       if (isLastPage) {

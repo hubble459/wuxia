@@ -20,7 +20,7 @@ class MangaChaptersScreen extends StatefulWidget {
 
 class _MangaChaptersScreenState extends State<MangaChaptersScreen> {
   final _pageSize = 20;
-  final _pagingController = PagingController<int, ChapterReply>(firstPageKey: 1);
+  final _pagingController = PagingController<int, ChapterReply>(firstPageKey: 0);
   late ChaptersReply _result;
 
   @override

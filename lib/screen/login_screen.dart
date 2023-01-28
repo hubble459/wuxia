@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:grpc/grpc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wuxia/api.dart';
@@ -43,10 +44,14 @@ class _LoginScreenState extends State<LoginScreen> {
     final String password = pController.text;
     instance.setString('username', username);
     try {
-      await api.user.login(UserRequest(
+      final user = await api.user.login(UserRequest(
         username: username,
         password: password,
       ));
+      API.token = user.token;
+      await const FlutterSecureStorage().write(key: 'token', value: user.token);
+
+      print(user.token);
       if (!mounted) {
         return;
       }

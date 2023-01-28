@@ -248,21 +248,25 @@ var _channel = ClientChannel(
 );
 
 class API {
-  static final Map<String, String> _metadata = {};
-  final user = UserClient(_channel, options: CallOptions(metadata: _metadata));
-  final manga = MangaClient(_channel, options: CallOptions(metadata: _metadata));
-  final chapter = ChapterClient(_channel, options: CallOptions(metadata: _metadata));
-  final reading = ReadingClient(_channel, options: CallOptions(metadata: _metadata));
-  final friend = FriendClient(_channel, options: CallOptions(metadata: _metadata));
-  final search = SearchClient(_channel, options: CallOptions(metadata: _metadata));
-  final verify = VerifyClient(_channel, options: CallOptions(metadata: _metadata));
-  set token(String? token) {
-    if (token != null) {
-      API._metadata['authorization'] = 'Bearer $token';
-    } else {
-      API._metadata.remove('authorization');
+  static String? _token;
+  static void authProvider(Map<String, String> metadata, uri) {
+    if (_token != null) {
+      metadata['authorization'] = 'Bearer $_token';
     }
   }
+
+  static set token(String? token) {
+    API._token = token;
+  }
+
+  static final Map<String, String> _metadata = {};
+  final user = UserClient(_channel, options: CallOptions(providers: [API.authProvider]));
+  final manga = MangaClient(_channel, options: CallOptions(providers: [API.authProvider]));
+  final chapter = ChapterClient(_channel, options: CallOptions(providers: [API.authProvider]));
+  final reading = ReadingClient(_channel, options: CallOptions(providers: [API.authProvider]));
+  final friend = FriendClient(_channel, options: CallOptions(providers: [API.authProvider]));
+  final search = SearchClient(_channel, options: CallOptions(providers: [API.authProvider]));
+  final verify = VerifyClient(_channel, options: CallOptions(providers: [API.authProvider]));
 }
 
 API api = API();

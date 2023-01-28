@@ -4,6 +4,7 @@ import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:wuxia/api.dart';
 import 'package:wuxia/gen/chapter.pb.dart';
 import 'package:wuxia/gen/manga.pb.dart';
+import 'package:wuxia/gen/reading.pb.dart';
 import 'package:wuxia/gen/rumgap.pb.dart';
 import 'package:wuxia/main.dart';
 
@@ -182,21 +183,28 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
 
   Future<void> previous() async {
     --widget.manga.readingProgress;
-    final chapter = await api.chapter.get(ChapterRequest(
-      mangaId: widget.manga.id,
-      index: widget.manga.readingProgress,
-    ));
-    setState(() {
-      _chapter = chapter;
-    });
+    await reloadChapter();
   }
 
   Future<void> next() async {
     ++widget.manga.readingProgress;
-    final chapter = await api.chapter.get(ChapterRequest(
-      mangaId: widget.manga.id,
-      index: widget.manga.readingProgress,
-    ));
+    await reloadChapter();
+  }
+
+  Future<void> reloadChapter() async {
+    print('reading ${widget.manga.readingProgress}');
+    await api.reading.edit(
+      ReadingPatchRequest(
+        mangaId: widget.manga.id,
+        progress: widget.manga.readingProgress,
+      ),
+    );
+    final chapter = await api.chapter.get(
+      ChapterRequest(
+        mangaId: widget.manga.id,
+        index: widget.manga.readingProgress,
+      ),
+    );
     setState(() {
       _chapter = chapter;
     });

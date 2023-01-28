@@ -10,8 +10,7 @@ import 'package:wuxia/screen/manga/manga_screen.dart';
 class SearchMangaItem extends StatefulWidget {
   final SearchManga searchManga;
 
-  const SearchMangaItem({Key? key, required this.searchManga})
-      : super(key: key);
+  const SearchMangaItem({Key? key, required this.searchManga}) : super(key: key);
 
   @override
   State<SearchMangaItem> createState() => _SearchMangaItemState();
@@ -35,9 +34,7 @@ class _SearchMangaItemState extends State<SearchMangaItem> {
               fit: BoxFit.cover,
             )
           : null,
-      trailing: searchManga.hasPosted()
-          ? Text(Jiffy(searchManga.posted.toInt()).fromNow())
-          : null,
+      trailing: searchManga.hasPosted() ? Text(Jiffy.unixFromMillisecondsSinceEpoch(searchManga.posted.toInt()).fromNow()) : null,
       onTap: () async {
         showDialog(
           context: context,
@@ -49,8 +46,7 @@ class _SearchMangaItemState extends State<SearchMangaItem> {
         );
 
         try {
-          final manga =
-              await api.manga.create(MangaRequest(url: searchManga.url));
+          final manga = await api.manga.create(MangaRequest(url: searchManga.url));
 
           if (!mounted) {
             return;

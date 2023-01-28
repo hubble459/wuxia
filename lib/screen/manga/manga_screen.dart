@@ -1,8 +1,9 @@
+import 'dart:developer';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:wuxia/api.dart';
 import 'package:wuxia/gen/chapter.pb.dart';
@@ -64,10 +65,10 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
             title: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                I18nText('title'),
+                Text(_manga.title),
                 Text(
-                  _manga.title,
-                  style: Theme.of(context).textTheme.subtitle2?.copyWith(color: Colors.white54),
+                  Uri.parse(_manga.url).host,
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(color: Colors.white54),
                   overflow: TextOverflow.ellipsis,
                 )
               ],
@@ -89,11 +90,13 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
                           _animationController
                               .repeat(period: const Duration(seconds: 1))
                               .whenComplete(() => _animationController.repeat(period: const Duration(seconds: 1)));
+
                           setState(() {});
 
                           try {
                             _manga = await api.manga.update(Id(id: _manga.id));
                           } catch (e) {
+                            log('force update manga', error: e);
                             Fluttertoast.showToast(msg: e.toString());
                           } finally {
                             _animationController.reset();
@@ -112,7 +115,7 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
               child: Column(
                 children: [
                   Visibility(
-                    visible: _manga.cover != null,
+                    visible: _manga.hasCover(),
                     child: CachedNetworkImage(imageUrl: _manga.cover.toString()),
                   ),
                   MangaDetails(
@@ -222,14 +225,17 @@ class _ChapterSelectorState extends State<_ChapterSelector> {
                     mangaId: widget.manga.id,
                     progress: widget.manga.readingProgress,
                   ));
-                  final chapter = await api.chapter.index(PaginateChapterQuery(id: widget.manga.id));
+                  final chapter = await api.chapter.get(ChapterRequest(
+                    mangaId: widget.manga.id,
+                    index: widget.manga.readingProgress,
+                  ));
                   if (!mounted) return;
                   Navigator.of(context)
                       .push(
                         MaterialPageRoute(
                           builder: (context) => MangaChapterScreen(
                             manga: widget.manga,
-                            chapter: chapter.items[0],
+                            chapter: chapter,
                           ),
                         ),
                       )

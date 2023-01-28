@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:wuxia/gen/manga.pb.dart';
 import 'package:wuxia/screen/login_screen.dart';
 import 'package:wuxia/screen/register_screen.dart';
@@ -13,7 +14,7 @@ import 'package:wuxia/screen/splash_screen.dart';
 extension ReadingManga on MangaReply {
   get progressPercentage {
     final count = countChapters.toInt();
-    return 100 / count * readingProgress;
+    return 1 / count * readingProgress;
   }
 }
 
@@ -34,7 +35,6 @@ class MyApp extends StatelessWidget {
         FlutterI18nDelegate(
           translationLoader: FileTranslationLoader(
             fallbackFile: 'en',
-            forcedLocale: const Locale('zh'),
             useCountryCode: false,
           ),
           missingTranslationHandler: (key, locale) {

@@ -18,7 +18,7 @@ class LatestScreen extends StatefulWidget {
 
 class _LatestScreenState extends State<LatestScreen> with AutomaticKeepAliveClientMixin<LatestScreen> {
   final _pageSize = 20;
-  final _pagingController = PagingController<int, MangaReply>(firstPageKey: 1);
+  final _pagingController = PagingController<int, MangaReply>(firstPageKey: 0);
 
   @override
   Widget build(BuildContext context) {

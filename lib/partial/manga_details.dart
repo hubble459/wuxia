@@ -28,7 +28,7 @@ class MangaDetails extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(4, 4, 0, 4),
                   child: Text(
-                    manga.altTitles.join(';\n'),
+                    manga.altTitles.isNotEmpty ? manga.altTitles.join(';\n') : 'None',
                   ),
                 ),
               ],
@@ -94,9 +94,7 @@ class MangaDetails extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(4, 4, 0, 4),
                   child: Text(
-                    (manga.hasReadingProgress()
-                            ? manga.readingProgress
-                            : FlutterI18n.translate(context, 'details.unread'))
+                    (manga.hasReadingProgress() ? manga.readingProgress : FlutterI18n.translate(context, 'details.unread'))
                         .toString(),
                   ),
                 ),
@@ -114,9 +112,7 @@ class MangaDetails extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(4, 4, 0, 4),
                   child: Text(
-                    manga.hasLast()
-                        ? 'Unknown'
-                        : Jiffy(manga.last.toInt()).fromNow(),
+                    manga.hasLast() ? Jiffy.unixFromMillisecondsSinceEpoch(manga.last.toInt()).fromNow() : 'Unknown',
                   ),
                 ),
               ],
@@ -133,9 +129,10 @@ class MangaDetails extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(4, 4, 0, 4),
                   child: Text(
-                    manga.hasNext()
-                        ? 'Unknown'
-                        : Jiffy(manga.next.toInt()).fromNow(),
+                    manga.hasNext() ? Jiffy.unixFromMillisecondsSinceEpoch(manga.next.toInt()).fromNow() : 'Unknown',
+                    style: manga.hasNext() && manga.next < DateTime.now().millisecondsSinceEpoch
+                        ? const TextStyle(color: Colors.red)
+                        : null,
                   ),
                 ),
               ],

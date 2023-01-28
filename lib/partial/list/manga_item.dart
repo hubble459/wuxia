@@ -41,9 +41,7 @@ class _MangaItemState extends State<MangaItem> {
           Visibility(
             visible: _manga.hasLast(),
             child: Text(
-              _manga.hasLast()
-                  ? Jiffy(_manga.last.toInt()).fromNow()
-                  : 'Unknown',
+              _manga.hasLast() ? Jiffy.unixFromMillisecondsSinceEpoch(_manga.last.toInt()).fromNow() : 'Unknown',
               style: TextStyle(color: Colors.blueGrey.shade700),
             ),
           ),
@@ -82,15 +80,10 @@ class _MangaItemState extends State<MangaItem> {
             Center(
                 child: _manga.hasReadingProgress()
                     ? CircularProgressIndicator(
-                        value: _manga.countChapters != 0
-                            ? 1 /
-                                _manga.countChapters.toInt() *
-                                _manga.readingProgress
-                            : 0)
+                        value: _manga.countChapters != 0 ? 1 / _manga.countChapters.toInt() * _manga.readingProgress : 0)
                     : Text(_manga.countChapters.toString())),
             Visibility(
-              visible: _manga.hasReadingProgress() &&
-                  _manga.countChapters - _manga.readingProgress > 0,
+              visible: _manga.hasReadingProgress() && _manga.countChapters - _manga.readingProgress > 0,
               child: Center(
                 child: Text(
                   (_manga.countChapters - _manga.readingProgress).toString(),
