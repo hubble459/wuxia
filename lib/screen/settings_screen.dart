@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wuxia/screen/root_nav_screen.dart';
@@ -58,13 +57,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 }
 
-// class Locale {
-//   final String langCode;
-//   final String language;
-
-//   const Locale({required this.langCode, required this.language});
-// }
-
 const languages = [Locale('zh'), Locale('en')];
 
 class _Settings extends StatefulWidget {
@@ -80,8 +72,8 @@ class _SettingsState extends State<_Settings> {
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         SwitchListTile(
           value: widget.preferences.getBool('data_saver') ?? false,
@@ -92,24 +84,25 @@ class _SettingsState extends State<_Settings> {
           title: I18nText('settings.data_saver'),
         ),
         ListTile(
-            title: I18nText('settings.language'),
-            trailing: DropdownButton<Locale>(
-                value: FlutterI18n.currentLocale(context),
-                items: languages
-                    .map(
-                      (locale) => DropdownMenuItem<Locale>(
-                        value: locale,
-                        child: Text(locale.languageCode),
-                      ),
-                    )
-                    .toList(),
-                onChanged: (locale) {
-                  widget.preferences.setString('language', locale!.languageCode);
-                  FlutterI18n.refresh(context, locale);
-                  Navigator.of(context).pop();
-                  context.findRootAncestorStateOfType<State<RootNavScreen>>()?.setState(() {});
-                  setState(() {});
-                })),
+          title: I18nText('settings.language'),
+          trailing: DropdownButton<String>(
+              value: FlutterI18n.currentLocale(context)!.languageCode,
+              items: languages
+                  .map(
+                    (locale) => DropdownMenuItem<String>(
+                      value: locale.languageCode,
+                      child: Text(locale.languageCode),
+                    ),
+                  )
+                  .toList(),
+              onChanged: (locale) {
+                widget.preferences.setString('language', locale!);
+                FlutterI18n.refresh(context, Locale(locale));
+                Navigator.of(context).pop();
+                context.findRootAncestorStateOfType<State<RootNavScreen>>()?.setState(() {});
+                setState(() {});
+              }),
+        ),
       ],
     );
   }

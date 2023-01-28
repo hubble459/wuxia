@@ -23,5 +23,6 @@
         "protobuf",
         "wuxia"
     ],
-    "dart.lineLength": 130
+    "dart.lineLength": 130,
+    "i18n-ally.keystyle": "nested"
 }

@@ -15,7 +15,9 @@ login:
   password_not_match: Passwords do not match
 search:
   no_results: No search results
-  search: Search Manga
+  search_reading: Search Reading
+  search_manga: Search Manga
+  search_manga_online: Search Manga Online
 manga:
   chapters: Chapters
   first: First

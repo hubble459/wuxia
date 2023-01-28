@@ -1,16 +1,24 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
-import 'package:wuxia/api.dart';
 import 'package:wuxia/gen/manga.pb.dart';
-import 'package:wuxia/gen/reading.pb.dart';
-import 'package:wuxia/gen/rumgap.pb.dart';
 import 'package:wuxia/screen/manga/manga_screen.dart';
+
+enum HeroScreenType {
+  reading,
+  latest,
+  search;
+
+  getTag(String url) {
+    return '$url$name';
+  }
+}
 
 class MangaItem extends StatefulWidget {
   final MangaReply manga;
+  final HeroScreenType type;
 
-  const MangaItem({Key? key, required this.manga}) : super(key: key);
+  const MangaItem({Key? key, required this.manga, required this.type}) : super(key: key);
 
   @override
   State<MangaItem> createState() => _MangaItemState();
@@ -47,10 +55,13 @@ class _MangaItemState extends State<MangaItem> {
           ),
         ],
       ),
-      leading: _manga.cover != null
-          ? CachedNetworkImage(
-              imageUrl: _manga.cover.toString(),
-              width: 40,
+      leading: _manga.hasCover()
+          ? Hero(
+              tag: widget.type.getTag(_manga.url),
+              child: CachedNetworkImage(
+                imageUrl: _manga.cover.toString(),
+                width: 40,
+              ),
             )
           : null,
       // trailing: Row(
@@ -102,6 +113,7 @@ class _MangaItemState extends State<MangaItem> {
             MaterialPageRoute(
               builder: (context) => MangaScreen(
                 manga: _manga,
+                type: widget.type,
               ),
             ),
           )

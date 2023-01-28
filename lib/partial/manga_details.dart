@@ -82,24 +82,27 @@ class MangaDetails extends StatelessWidget {
                 ),
               ],
             ),
-            TableRow(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 4, 0, 4),
-                  child: Text(
-                    FlutterI18n.translate(context, 'details.read'),
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(4, 4, 0, 4),
-                  child: Text(
-                    (manga.hasReadingProgress() ? manga.readingProgress : FlutterI18n.translate(context, 'details.unread'))
-                        .toString(),
-                  ),
-                ),
-              ],
-            ),
+            ...(manga.hasReadingProgress()
+                ? [
+                    TableRow(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 4, 0, 4),
+                          child: Text(
+                            FlutterI18n.translate(context, 'details.read'),
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(4, 4, 0, 4),
+                          child: Text(
+                            manga.readingProgress.toString(),
+                          ),
+                        ),
+                      ],
+                    )
+                  ]
+                : []),
             TableRow(
               children: [
                 Padding(
@@ -157,6 +160,10 @@ class MangaDetails extends StatelessWidget {
               ],
             ),
           ]),
+      Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: Text(manga.description),
+      )
     ]);
   }
 }

@@ -15,7 +15,8 @@ login:
   password_not_match: 密码不匹配
 search:
   no_results: 没有搜索结果
-  search: 搜索漫画
+  search_reading: 搜索阅读
+  search_manga_online: 搜索漫画
 manga:
   chapters: 章节
   last: 最后

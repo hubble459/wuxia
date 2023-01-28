@@ -53,7 +53,7 @@ class _ReadingScreenState extends State<ReadingScreen> with AutomaticKeepAliveCl
                       },
                       icon: const Icon(Icons.clear),
                     ),
-                    hintText: FlutterI18n.translate(context, 'search.search'),
+                    hintText: FlutterI18n.translate(context, 'search.search_reading'),
                     hintStyle: TextStyle(color: Colors.grey.shade600),
                     filled: true,
                     fillColor: Colors.transparent,
@@ -81,7 +81,10 @@ class _ReadingScreenState extends State<ReadingScreen> with AutomaticKeepAliveCl
                 noItemsFoundIndicatorBuilder: (context) => Center(
                   child: I18nText('empty'),
                 ),
-                itemBuilder: (context, manga, index) => MangaItem(manga: manga),
+                itemBuilder: (context, manga, index) => MangaItem(
+                  manga: manga,
+                  type: HeroScreenType.reading,
+                ),
               ),
             ),
           ),

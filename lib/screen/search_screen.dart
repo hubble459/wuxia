@@ -11,8 +11,7 @@ class SearchScreen extends StatefulWidget {
   State<SearchScreen> createState() => _SearchScreenState();
 }
 
-class _SearchScreenState extends State<SearchScreen>
-    with AutomaticKeepAliveClientMixin<SearchScreen> {
+class _SearchScreenState extends State<SearchScreen> with AutomaticKeepAliveClientMixin<SearchScreen> {
   final TextEditingController controller = TextEditingController();
   Future<SearchReply> _searchResults = Future.value(SearchReply.create());
 
@@ -29,7 +28,7 @@ class _SearchScreenState extends State<SearchScreen>
           textInputAction: TextInputAction.search,
           decoration: InputDecoration(
             suffixIcon: const Icon(Icons.search),
-            hintText: FlutterI18n.translate(context, 'search.search'),
+            hintText: FlutterI18n.translate(context, 'search.search_manga_online'),
             hintStyle: TextStyle(color: Colors.grey.shade600),
             filled: true,
             fillColor: Colors.transparent,
@@ -60,14 +59,12 @@ class _SearchScreenState extends State<SearchScreen>
                 return Expanded(
                   child: ListView.builder(
                     itemCount: results.length,
-                    itemBuilder: (context, index) =>
-                        SearchMangaItem(searchManga: results[index]),
+                    itemBuilder: (context, index) => SearchMangaItem(searchManga: results[index]),
                   ),
                 );
               } else {
                 return Center(
-                  child: Text(
-                      snapshot.hasError ? snapshot.error.toString() : 'Error'),
+                  child: Text(snapshot.hasError ? snapshot.error.toString() : 'Error'),
                 );
               }
             } else {

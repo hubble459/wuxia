@@ -5,6 +5,7 @@ import 'package:wuxia/gen/manga.pb.dart';
 import 'package:wuxia/gen/reading.pb.dart';
 import 'package:wuxia/gen/rumgap.pb.dart';
 import 'package:wuxia/gen/search.pb.dart';
+import 'package:wuxia/partial/list/manga_item.dart';
 import 'package:wuxia/screen/manga/manga_screen.dart';
 
 class SearchMangaItem extends StatefulWidget {
@@ -27,11 +28,14 @@ class _SearchMangaItemState extends State<SearchMangaItem> {
         overflow: TextOverflow.ellipsis,
       ),
       subtitle: Text(Uri.parse(searchManga.url).host),
-      leading: searchManga.cover != null
-          ? Image.network(
-              searchManga.cover.toString(),
-              filterQuality: FilterQuality.none,
-              fit: BoxFit.cover,
+      leading: searchManga.hasCover()
+          ? Hero(
+              tag: HeroScreenType.search.getTag(searchManga.url),
+              child: Image.network(
+                searchManga.cover.toString(),
+                filterQuality: FilterQuality.none,
+                fit: BoxFit.cover,
+              ),
             )
           : null,
       trailing: searchManga.hasPosted() ? Text(Jiffy.unixFromMillisecondsSinceEpoch(searchManga.posted.toInt()).fromNow()) : null,
@@ -56,6 +60,7 @@ class _SearchMangaItemState extends State<SearchMangaItem> {
             MaterialPageRoute(
               builder: (context) => MangaScreen(
                 manga: manga,
+                type: HeroScreenType.search,
               ),
             ),
           );

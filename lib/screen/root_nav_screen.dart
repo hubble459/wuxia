@@ -39,7 +39,11 @@ class _RootNavScreenState extends State<RootNavScreen> {
           actions: [
             IconButton(
               onPressed: () {
-                Navigator.of(context).pushNamed('settings');
+                Navigator.of(context).pushNamed('settings').then((value) {
+                  if (context.mounted) {
+                    setState(() {});
+                  }
+                });
               },
               tooltip: FlutterI18n.translate(context, 'settings.title'),
               icon: const Icon(Icons.settings),

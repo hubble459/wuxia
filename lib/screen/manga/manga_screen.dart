@@ -11,14 +11,16 @@ import 'package:wuxia/gen/manga.pb.dart';
 import 'package:wuxia/gen/reading.pb.dart';
 import 'package:wuxia/gen/rumgap.pb.dart';
 import 'package:wuxia/main.dart';
+import 'package:wuxia/partial/list/manga_item.dart';
 import 'package:wuxia/partial/manga_details.dart';
 import 'package:wuxia/screen/manga/manga_chapter_screen.dart';
 import 'package:wuxia/screen/manga/manga_chapters_screen.dart';
 
 class MangaScreen extends StatefulWidget {
   final MangaReply manga;
+  final HeroScreenType type;
 
-  const MangaScreen({Key? key, required this.manga}) : super(key: key);
+  const MangaScreen({Key? key, required this.manga, required this.type}) : super(key: key);
 
   @override
   State<MangaScreen> createState() => _MangaScreenState();
@@ -116,7 +118,10 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
                 children: [
                   Visibility(
                     visible: _manga.hasCover(),
-                    child: CachedNetworkImage(imageUrl: _manga.cover.toString()),
+                    child: Hero(
+                      tag: widget.type.getTag(_manga.url),
+                      child: CachedNetworkImage(imageUrl: _manga.cover.toString()),
+                    ),
                   ),
                   MangaDetails(
                     manga: _manga,

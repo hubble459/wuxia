@@ -36,6 +36,7 @@ class MyApp extends StatelessWidget {
           translationLoader: FileTranslationLoader(
             fallbackFile: 'en',
             useCountryCode: false,
+            useScriptCode: false,
           ),
           missingTranslationHandler: (key, locale) {
             log('"$key" not found in ${locale?.languageCode}.yaml');
