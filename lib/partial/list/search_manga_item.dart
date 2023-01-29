@@ -50,7 +50,8 @@ class _SearchMangaItemState extends State<SearchMangaItem> {
         );
 
         try {
-          final manga = await api.manga.create(MangaRequest(url: searchManga.url));
+          final manga = await api.manga.findOrCreate(MangaRequest(url: searchManga.url));
+          searchManga.mangaId = manga.id;
 
           if (!mounted) {
             return;

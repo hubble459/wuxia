@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
@@ -7,6 +8,7 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:wuxia/api.dart';
 import 'package:wuxia/gen/manga.pb.dart';
 import 'package:wuxia/gen/paginate.pb.dart';
+import 'package:wuxia/partial/filter_manga.dart';
 import 'package:wuxia/partial/list/manga_item.dart';
 
 class ReadingScreen extends StatefulWidget {
@@ -64,7 +66,15 @@ class _ReadingScreenState extends State<ReadingScreen> with AutomaticKeepAliveCl
                 flex: 0,
                 child: IconButton(
                   icon: const Icon(Icons.sort),
-                  onPressed: () {},
+                  onPressed: () {
+                    showMaterialModalBottomSheet<void>(
+                      context: context,
+                      builder: (context) => FilterManga(),
+                      animationCurve: Curves.easeIn,
+                      duration: const Duration(milliseconds: 500),
+                      barrierColor: const Color(0x50696969),
+                    );
+                  },
                 ),
               ),
             ],

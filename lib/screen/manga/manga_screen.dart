@@ -139,7 +139,12 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
                         setState(() {});
                       },
                     )
-                  : _NewMangaOptions(manga: _manga)),
+                  : _NewMangaOptions(
+                      manga: _manga,
+                      refreshParent: () {
+                        setState(() {});
+                      },
+                    )),
         ),
       ),
     );
@@ -154,8 +159,9 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
 
 class _NewMangaOptions extends StatelessWidget {
   final MangaReply manga;
+  final Function() refreshParent;
 
-  const _NewMangaOptions({Key? key, required this.manga}) : super(key: key);
+  const _NewMangaOptions({Key? key, required this.manga, required this.refreshParent}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -166,7 +172,9 @@ class _NewMangaOptions extends StatelessWidget {
       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
       onPressed: () async {
         final m = await api.reading.create(ReadingPostRequest(mangaId: manga.id));
+        manga.clear();
         manga.mergeFromMessage(m);
+        refreshParent();
       },
       child: I18nText('manga.add'),
     );
