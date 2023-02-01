@@ -18,6 +18,7 @@ import 'manga.pb.dart' as $4;
 import 'chapter.pb.dart' as $5;
 import 'reading.pb.dart' as $6;
 import 'search.pb.dart' as $7;
+import 'meta.pb.dart' as $8;
 export 'rumgap.pb.dart';
 
 class UserClient extends $grpc.Client {
@@ -649,4 +650,69 @@ abstract class VerifyServiceBase extends $grpc.Service {
   }
 
   $async.Future<$1.Empty> token($grpc.ServiceCall call, $1.Empty request);
+}
+
+class MetaClient extends $grpc.Client {
+  static final _$hostnames =
+      $grpc.ClientMethod<$8.MetaHostNamesRequest, $8.MetaReply>(
+          '/rumgap.Meta/Hostnames',
+          ($8.MetaHostNamesRequest value) => value.writeToBuffer(),
+          ($core.List<$core.int> value) => $8.MetaReply.fromBuffer(value));
+  static final _$genres =
+      $grpc.ClientMethod<$8.MetaGenresRequest, $8.MetaReply>(
+          '/rumgap.Meta/Genres',
+          ($8.MetaGenresRequest value) => value.writeToBuffer(),
+          ($core.List<$core.int> value) => $8.MetaReply.fromBuffer(value));
+
+  MetaClient($grpc.ClientChannel channel,
+      {$grpc.CallOptions? options,
+      $core.Iterable<$grpc.ClientInterceptor>? interceptors})
+      : super(channel, options: options, interceptors: interceptors);
+
+  $grpc.ResponseFuture<$8.MetaReply> hostnames($8.MetaHostNamesRequest request,
+      {$grpc.CallOptions? options}) {
+    return $createUnaryCall(_$hostnames, request, options: options);
+  }
+
+  $grpc.ResponseFuture<$8.MetaReply> genres($8.MetaGenresRequest request,
+      {$grpc.CallOptions? options}) {
+    return $createUnaryCall(_$genres, request, options: options);
+  }
+}
+
+abstract class MetaServiceBase extends $grpc.Service {
+  $core.String get $name => 'rumgap.Meta';
+
+  MetaServiceBase() {
+    $addMethod($grpc.ServiceMethod<$8.MetaHostNamesRequest, $8.MetaReply>(
+        'Hostnames',
+        hostnames_Pre,
+        false,
+        false,
+        ($core.List<$core.int> value) =>
+            $8.MetaHostNamesRequest.fromBuffer(value),
+        ($8.MetaReply value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$8.MetaGenresRequest, $8.MetaReply>(
+        'Genres',
+        genres_Pre,
+        false,
+        false,
+        ($core.List<$core.int> value) => $8.MetaGenresRequest.fromBuffer(value),
+        ($8.MetaReply value) => value.writeToBuffer()));
+  }
+
+  $async.Future<$8.MetaReply> hostnames_Pre($grpc.ServiceCall call,
+      $async.Future<$8.MetaHostNamesRequest> request) async {
+    return hostnames(call, await request);
+  }
+
+  $async.Future<$8.MetaReply> genres_Pre($grpc.ServiceCall call,
+      $async.Future<$8.MetaGenresRequest> request) async {
+    return genres(call, await request);
+  }
+
+  $async.Future<$8.MetaReply> hostnames(
+      $grpc.ServiceCall call, $8.MetaHostNamesRequest request);
+  $async.Future<$8.MetaReply> genres(
+      $grpc.ServiceCall call, $8.MetaGenresRequest request);
 }

@@ -8,6 +8,7 @@ import "chapter.proto";
 import "reading.proto";
 import "search.proto";
 import "paginate.proto";
+import "meta.proto";
 
 service User {
     rpc Register (UserRegisterRequest) returns (UserTokenReply);
@@ -50,6 +51,11 @@ service Search {
 
 service Verify {
     rpc Token (Empty) returns (Empty);
+}
+
+service Meta {
+    rpc Hostnames (MetaHostNamesRequest) returns (MetaReply);
+    rpc Genres (MetaGenresRequest) returns (MetaReply);
 }
 
 message Id {

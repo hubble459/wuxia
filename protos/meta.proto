@@ -1,0 +1,26 @@
+syntax = "proto3";
+package rumgap;
+
+message MetaReply {
+    repeated string items = 1;
+}
+
+message MetaHostNamesRequest {
+    optional MetaHostNamesOption option = 1;
+}
+
+message MetaGenresRequest {
+    optional MetaGenresOption option = 1;
+}
+
+enum MetaHostNamesOption {
+    HostNamesReading = 0;
+    HostNamesManga = 1;
+    HostNamesOnline = 2;
+}
+
+enum MetaGenresOption {
+    GenresReading = 0;
+    GenresManga = 1;
+}
+

@@ -69,7 +69,9 @@ class _ReadingScreenState extends State<ReadingScreen> with AutomaticKeepAliveCl
                   onPressed: () {
                     showMaterialModalBottomSheet<void>(
                       context: context,
-                      builder: (context) => FilterManga(),
+                      builder: (context) => FilterManga(
+                        filterType: FilterType.reading,
+                      ),
                       animationCurve: Curves.easeIn,
                       duration: const Duration(milliseconds: 500),
                       barrierColor: const Color(0x50696969),

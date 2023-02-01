@@ -267,6 +267,7 @@ class API {
   final friend = FriendClient(_channel, options: CallOptions(providers: [API.authProvider]));
   final search = SearchClient(_channel, options: CallOptions(providers: [API.authProvider]));
   final verify = VerifyClient(_channel, options: CallOptions(providers: [API.authProvider]));
+  final meta = MetaClient(_channel, options: CallOptions(providers: [API.authProvider]));
 }
 
 API api = API();
