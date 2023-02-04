@@ -12,7 +12,6 @@ login:
   username: Username
   welcome: Welcome
   confirm_password: Confirm Password
-  password_not_match: Passwords do not match
   email: Email
 search:
   no_results: No search results
@@ -37,7 +36,7 @@ details:
   finished: Finished
   unknown: Unknown
   alt_titles: Alternative Titles
-error: "Error: {error}"
+error: 'Error: {error}'
 chapter:
   goto_top: Scroll to top
   goto_bottom: Scroll to bottom
@@ -55,3 +54,17 @@ settings:
 reading:
   delete: Delete Reading
   delete_content: Are you sure you want to delete "{title}"?
+validator:
+  min_length: '{name} has to be at least {length} characters long'
+  max_length: '{name} can not be longer than {length} characters'
+  regex: '{name} has to match the following: {regex}'
+  required: '{name} is required'
+  email: '{name} should be a valid email address'
+  password_not_match: Passwords do not match
+  is_number: '{name} has to be a number'
+  is_string: '{name} has to contain text'
+  has_number: '{name} has to contain a number'
+  has_special_character: '{name} has to contain a special characters'
+  has_uppercase: '{name} has to contain an uppercased letter'
+  has_lowercase: '{name} has to contain a lowercased letter'
+

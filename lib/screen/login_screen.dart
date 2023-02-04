@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wuxia/api.dart';
 import 'package:wuxia/constant.dart';
 import 'package:wuxia/gen/user.pb.dart';
+import 'package:wuxia/util/validator_builder.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -19,7 +20,6 @@ class _LoginScreenState extends State<LoginScreen> {
   final uController = TextEditingController();
   final eController = TextEditingController();
   final pController = TextEditingController();
-  final cController = TextEditingController();
   bool isLogin = true;
 
   String? error;
@@ -40,28 +40,32 @@ class _LoginScreenState extends State<LoginScreen> {
     uController.dispose();
     eController.dispose();
     pController.dispose();
-    cController.dispose();
     super.dispose();
   }
 
-  void login() async {
+  void submit() async {
+    error = null;
     final invalid = !fkLogin.currentState!.validate();
     if (invalid) {
       return;
     }
 
-    final username = uController.text;
-    final password = pController.text;
-
     try {
-      final user = await api.user.login(UserRequest(
-        username: username,
-        password: password,
-      ));
-      SharedPreferences.getInstance().then((instance) => instance.setString('username', username));
+      UserTokenReply user;
+      if (isLogin) {
+        user = await login();
+      } else {
+        user = await register();
+      }
 
       API.token = user.token;
-      await const FlutterSecureStorage().write(key: 'token', value: user.token);
+
+      // Asynchronously save username and token
+      (() async {
+        const FlutterSecureStorage().write(key: 'token', value: user.token);
+        final instance = await SharedPreferences.getInstance();
+        instance.setString('username', user.user.username);
+      })();
 
       if (!mounted) {
         return;
@@ -71,50 +75,22 @@ class _LoginScreenState extends State<LoginScreen> {
       if (e is GrpcError) {
         error = e.message;
       }
-
-      setState(() {
-        pController.text = '';
-      });
     }
   }
 
-  void register() async {
-    final invalid = !fkLogin.currentState!.validate();
-    if (invalid) {
-      return;
-    }
-
-    final String username = uController.text;
-    final String email = eController.text;
-    final String password = pController.text;
-    final String confirmPassword = cController.text;
-
-    if (password != confirmPassword) {
-      error = FlutterI18n.translate(context, 'login.password_not_match');
-      setState(() {});
-    }
-
-    try {
-      await api.user.register(UserRegisterRequest(
-        username: username,
-        email: email,
-        password: password,
-      ));
-      if (!mounted) {
-        return;
-      }
-      Navigator.of(context).pushReplacementNamed('root_nav');
-    } catch (e) {
-      if (e is GrpcError) {
-        setState(() {
-          error = e.message;
-        });
-      }
-    }
+  ResponseFuture<UserTokenReply> login() {
+    return api.user.login(UserRequest(
+      username: uController.text,
+      password: pController.text,
+    ));
   }
 
-  String? requiredField(String? value) {
-    return value != null && value.isNotEmpty ? null : 'This field is required';
+  ResponseFuture<UserTokenReply> register() {
+    return api.user.register(UserRegisterRequest(
+      username: uController.text,
+      email: eController.text,
+      password: pController.text,
+    ));
   }
 
   @override
@@ -136,12 +112,27 @@ class _LoginScreenState extends State<LoginScreen> {
                       FlutterI18n.translate(context, isLogin ? 'login.welcome' : 'login.sign_up'),
                       style: Theme.of(context).textTheme.headlineMedium,
                     ),
+                    ...(error != null
+                        ? [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                error!,
+                                style: const TextStyle(color: Colors.red),
+                              ),
+                            )
+                          ]
+                        : []),
                     Form(
                       key: fkLogin,
                       child: Column(
                         children: [
                           TextFormField(
-                            validator: requiredField,
+                            validator: ValidatorBuilder.translate(context, 'login.username')
+                                .required()
+                                .minLength(3)
+                                .maxLength(20)
+                                .build(),
                             controller: uController,
                             textInputAction: TextInputAction.next,
                             decoration: InputDecoration(
@@ -155,8 +146,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                     height: Constants.padding,
                                   ),
                                   TextFormField(
-                                    validator: requiredField,
+                                    validator: ValidatorBuilder.translate(context, 'login.email').required().isEmail().build(),
                                     controller: eController,
+                                    keyboardType: TextInputType.emailAddress,
                                     textInputAction: TextInputAction.next,
                                     decoration: InputDecoration(
                                       label: I18nText('login.email'),
@@ -166,9 +158,17 @@ class _LoginScreenState extends State<LoginScreen> {
                           const SizedBox(height: Constants.padding),
                           TextFormField(
                             obscureText: true,
-                            validator: requiredField,
+                            validator: ValidatorBuilder.translate(context, 'login.password')
+                                .required()
+                                .minLength(3)
+                                .maxLength(255)
+                                .hasNumber()
+                                .hasSpecialCharacter()
+                                .hasUppercase()
+                                .hasLowercase()
+                                .build(),
                             textInputAction: isLogin ? TextInputAction.done : TextInputAction.next,
-                            onFieldSubmitted: (password) => login(),
+                            onFieldSubmitted: (password) => submit(),
                             controller: pController,
                             decoration: InputDecoration(
                               label: I18nText('login.password'),
@@ -179,11 +179,15 @@ class _LoginScreenState extends State<LoginScreen> {
                               : [
                                   const SizedBox(height: Constants.padding),
                                   TextFormField(
-                                    validator: requiredField,
+                                    validator: ValidatorBuilder.translate(context, 'login.confirm_password')
+                                        .required()
+                                        .custom((value) => value == pController.text
+                                            ? null
+                                            : FlutterI18n.translate(context, 'validator.password_not_match'))
+                                        .build(),
                                     obscureText: true,
                                     textInputAction: TextInputAction.done,
-                                    onFieldSubmitted: (password) => register(),
-                                    controller: cController,
+                                    onFieldSubmitted: (password) => submit(),
                                     decoration: InputDecoration(
                                       label: I18nText('login.confirm_password'),
                                     ),
@@ -203,7 +207,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   backgroundColor: const Color(0xff4c505b),
                                   child: IconButton(
                                     color: Colors.white,
-                                    onPressed: isLogin ? login : register,
+                                    onPressed: submit,
                                     icon: const Icon(
                                       Icons.arrow_forward,
                                     ),
@@ -217,7 +221,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     Center(
                       child: TextButton(
-                        onPressed: () => setState(() => isLogin = !isLogin),
+                        onPressed: () => setState(() {
+                          error = null;
+                          isLogin = !isLogin;
+                        }),
                         style: const ButtonStyle(),
                         child: Text(
                           FlutterI18n.translate(context, isLogin ? 'login.sign_up' : 'login.title'),

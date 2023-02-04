@@ -23,11 +23,11 @@
         "protobuf",
         "wuxia"
     ],
-    "dart.lineLength": 140,
+    "dart.lineLength": 130,
     "i18n-ally.keystyle": "nested",
     "editor.formatOnSave": true,
     "editor.codeActionsOnSave": {
         "source.fixAll": true
     },
-    "java.configuration.updateBuildConfiguration": "interactive"
+    "java.configuration.updateBuildConfiguration": "interactive",
 }
