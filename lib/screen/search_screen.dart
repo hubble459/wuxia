@@ -29,9 +29,8 @@ class _SearchScreenState extends State<SearchScreen> with AutomaticKeepAliveClie
           decoration: InputDecoration(
             suffixIcon: const Icon(Icons.search),
             hintText: FlutterI18n.translate(context, 'search.search_manga_online'),
-            hintStyle: TextStyle(color: Colors.grey.shade600),
-            filled: true,
-            fillColor: Colors.transparent,
+            isDense: false,
+            border: const UnderlineInputBorder(),
           ),
           onSubmitted: (query) {
             if (controller.text.isNotEmpty) {

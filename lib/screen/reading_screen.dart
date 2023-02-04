@@ -25,21 +25,21 @@ class _ReadingScreenState extends State<ReadingScreen> with AutomaticKeepAliveCl
   final _pageSize = 20;
   String _keyword = '';
   String _orderBy = 'title:ASC';
-  bool _refresh = false;
 
   void _filter({
     String? keyword,
     String? orderBy,
   }) {
+    bool refresh = false;
     if (keyword != null && keyword != _keyword) {
       _keyword = keyword;
-      _refresh = true;
+      refresh = true;
     }
     if (orderBy != null && orderBy != _orderBy) {
       _orderBy = orderBy;
-      _refresh = true;
+      refresh = true;
     }
-    if (_refresh) {
+    if (refresh) {
       _pagingController.refresh();
     }
   }
@@ -49,41 +49,29 @@ class _ReadingScreenState extends State<ReadingScreen> with AutomaticKeepAliveCl
     super.build(context);
     return Column(
       children: [
-        Padding(
-          padding: const EdgeInsets.only(bottom: 8.0),
-          child: Row(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Flexible(
-                flex: 1,
-                child: TextField(
-                  controller: _searchController,
-                  textInputAction: TextInputAction.search,
-                  onEditingComplete: () {
+        TextField(
+          controller: _searchController,
+          textInputAction: TextInputAction.search,
+          onEditingComplete: () {
+            _filter(
+              keyword: _searchController.text,
+            );
+          },
+          decoration: InputDecoration(
+            suffixIcon: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  onPressed: () {
+                    _searchController.clear();
                     _filter(
                       keyword: _searchController.text,
                     );
                   },
-                  decoration: InputDecoration(
-                    suffixIcon: IconButton(
-                      onPressed: () {
-                        _searchController.clear();
-                        _filter(
-                          keyword: _searchController.text,
-                        );
-                      },
-                      icon: const Icon(Icons.clear),
-                    ),
-                    hintText: FlutterI18n.translate(context, 'search.search_reading'),
-                    hintStyle: TextStyle(color: Colors.grey.shade600),
-                    filled: true,
-                    fillColor: Colors.transparent,
-                  ),
+                  icon: const Icon(Icons.clear),
                 ),
-              ),
-              Flexible(
-                flex: 0,
-                child: IconButton(
+                IconButton(
                   icon: const Icon(Icons.sort),
                   onPressed: () async {
                     final order = await showMaterialModalBottomSheet<String>(
@@ -102,10 +90,7 @@ class _ReadingScreenState extends State<ReadingScreen> with AutomaticKeepAliveCl
                     );
                   },
                 ),
-              ),
-              Flexible(
-                flex: 0,
-                child: IconButton(
+                IconButton(
                   icon: const Icon(Icons.filter_alt),
                   onPressed: () {
                     Navigator.of(context).push(
@@ -117,10 +102,14 @@ class _ReadingScreenState extends State<ReadingScreen> with AutomaticKeepAliveCl
                     );
                   },
                 ),
-              ),
-            ],
+              ],
+            ),
+            hintText: FlutterI18n.translate(context, 'search.search_reading'),
+            isDense: false,
+            border: const UnderlineInputBorder(),
           ),
         ),
+        const SizedBox(height: 8.0),
         Expanded(
           child: RefreshIndicator(
             onRefresh: () async {
@@ -133,6 +122,7 @@ class _ReadingScreenState extends State<ReadingScreen> with AutomaticKeepAliveCl
                   child: I18nText('empty'),
                 ),
                 itemBuilder: (context, manga, index) => MangaItem(
+                  key: Key(manga.id.toString()),
                   manga: manga,
                   type: HeroScreenType.reading,
                 ),
@@ -172,10 +162,6 @@ class _ReadingScreenState extends State<ReadingScreen> with AutomaticKeepAliveCl
       } else {
         final nextPageKey = paginate.page + 1;
         _pagingController.appendPage(result.items, nextPageKey.toInt());
-      }
-      if (_refresh) {
-        _refresh = false;
-        setState(() {});
       }
     } catch (error) {
       log('reading', error: error);

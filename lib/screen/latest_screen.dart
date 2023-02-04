@@ -4,10 +4,13 @@ import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:wuxia/api.dart';
 import 'package:wuxia/gen/manga.pb.dart';
 import 'package:wuxia/gen/paginate.pb.dart';
+import 'package:wuxia/partial/filter_manga.dart';
 import 'package:wuxia/partial/list/manga_item.dart';
+import 'package:wuxia/partial/order_manga.dart';
 
 class LatestScreen extends StatefulWidget {
   const LatestScreen({Key? key}) : super(key: key);
@@ -17,14 +20,28 @@ class LatestScreen extends StatefulWidget {
 }
 
 class _LatestScreenState extends State<LatestScreen> with AutomaticKeepAliveClientMixin<LatestScreen> {
-  final _pageSize = 20;
-  final _searchController = TextEditingController();
   final _pagingController = PagingController<int, MangaReply>(firstPageKey: 0);
+  final _searchController = TextEditingController();
+  final _pageSize = 20;
   String _keyword = '';
+  String _orderBy = 'title:ASC';
 
-  _filter(String keyword) {
-    _keyword = keyword;
-    _pagingController.refresh();
+  void _filter({
+    String? keyword,
+    String? orderBy,
+  }) {
+    bool refresh = false;
+    if (keyword != null && keyword != _keyword) {
+      _keyword = keyword;
+      refresh = true;
+    }
+    if (orderBy != null && orderBy != _orderBy) {
+      _orderBy = orderBy;
+      refresh = true;
+    }
+    if (refresh) {
+      _pagingController.refresh();
+    }
   }
 
   @override
@@ -32,44 +49,63 @@ class _LatestScreenState extends State<LatestScreen> with AutomaticKeepAliveClie
     super.build(context);
     return Column(
       children: [
-        Padding(
-          padding: const EdgeInsets.only(bottom: 8.0),
-          child: Row(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Flexible(
-                flex: 1,
-                child: TextField(
-                  controller: _searchController,
-                  textInputAction: TextInputAction.search,
-                  onEditingComplete: () {
-                    _filter(_searchController.text);
+        TextField(
+          controller: _searchController,
+          textInputAction: TextInputAction.search,
+          onEditingComplete: () {
+            _filter(keyword: _searchController.text);
+          },
+          decoration: InputDecoration(
+            suffixIcon: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  onPressed: () {
+                    _searchController.clear();
+                    _filter(
+                      keyword: _searchController.text,
+                    );
                   },
-                  decoration: InputDecoration(
-                    suffixIcon: IconButton(
-                      onPressed: () {
-                        _searchController.clear();
-                        _filter('');
-                      },
-                      icon: const Icon(Icons.clear),
-                    ),
-                    hintText: FlutterI18n.translate(context, 'search.search_manga'),
-                    hintStyle: TextStyle(color: Colors.grey.shade600),
-                    filled: true,
-                    fillColor: Colors.transparent,
-                  ),
+                  icon: const Icon(Icons.clear),
                 ),
-              ),
-              Flexible(
-                flex: 0,
-                child: IconButton(
+                IconButton(
                   icon: const Icon(Icons.sort),
-                  onPressed: () {},
+                  onPressed: () async {
+                    final order = await showMaterialModalBottomSheet<String>(
+                      context: context,
+                      builder: (context) => OrderManga(
+                        filterType: FilterType.manga,
+                        defaultValue: _orderBy,
+                      ),
+                      animationCurve: Curves.easeIn,
+                      duration: const Duration(milliseconds: 500),
+                      barrierColor: const Color(0x50696969),
+                    );
+
+                    _filter(orderBy: order);
+                  },
                 ),
-              ),
-            ],
+                IconButton(
+                  icon: const Icon(Icons.filter_alt),
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const FilterManga(
+                          filterType: FilterType.manga,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
+            hintText: FlutterI18n.translate(context, 'search.search_manga'),
+            isDense: false,
+            border: const UnderlineInputBorder(),
           ),
         ),
+        const SizedBox(height: 8.0),
         Expanded(
           child: RefreshIndicator(
             onRefresh: () async {
@@ -82,6 +118,7 @@ class _LatestScreenState extends State<LatestScreen> with AutomaticKeepAliveClie
                   child: I18nText('empty'),
                 ),
                 itemBuilder: (context, manga, index) => MangaItem(
+                  key: Key(manga.id.toString()),
                   manga: manga,
                   type: HeroScreenType.latest,
                 ),
@@ -95,9 +132,7 @@ class _LatestScreenState extends State<LatestScreen> with AutomaticKeepAliveClie
 
   @override
   void initState() {
-    _pagingController.addPageRequestListener((pageKey) {
-      _fetchPage(pageKey);
-    });
+    _pagingController.addPageRequestListener(_fetchPage);
     super.initState();
   }
 
@@ -114,6 +149,7 @@ class _LatestScreenState extends State<LatestScreen> with AutomaticKeepAliveClie
         page: Int64(page),
         perPage: Int64(_pageSize),
         search: _keyword,
+        order: _orderBy,
       ));
       final paginate = result.pagination;
       final isLastPage = paginate.page == paginate.maxPage;
@@ -124,7 +160,7 @@ class _LatestScreenState extends State<LatestScreen> with AutomaticKeepAliveClie
         _pagingController.appendPage(result.items, nextPageKey.toInt());
       }
     } catch (error) {
-      log('error', error: error);
+      log('latest', error: error);
       _pagingController.error = error;
     }
   }

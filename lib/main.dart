@@ -53,10 +53,13 @@ class MyApp extends StatelessWidget {
       themeMode: ThemeMode.dark,
       theme: ThemeData.light(),
       darkTheme: ThemeData(
+        colorSchemeSeed: Colors.black,
         scaffoldBackgroundColor: Colors.black,
         brightness: Brightness.dark,
         inputDecorationTheme: const InputDecorationTheme(
           isDense: true,
+          filled: true,
+          fillColor: Colors.transparent,
           floatingLabelBehavior: FloatingLabelBehavior.auto,
           floatingLabelStyle: TextStyle(color: Colors.white),
           border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(10.0))),
