@@ -1,15 +1,16 @@
 import 'dart:developer';
 
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:wuxia/api.dart';
 import 'package:wuxia/gen/manga.pb.dart';
 import 'package:wuxia/gen/paginate.pb.dart';
 import 'package:wuxia/partial/filter_manga.dart';
 import 'package:wuxia/partial/list/manga_item.dart';
+import 'package:wuxia/partial/order_manga.dart';
 
 class ReadingScreen extends StatefulWidget {
   const ReadingScreen({Key? key}) : super(key: key);
@@ -23,10 +24,24 @@ class _ReadingScreenState extends State<ReadingScreen> with AutomaticKeepAliveCl
   final _searchController = TextEditingController();
   final _pageSize = 20;
   String _keyword = '';
+  String _orderBy = 'title:ASC';
+  bool _refresh = false;
 
-  _filter(String keyword) {
-    _keyword = keyword;
-    _pagingController.refresh();
+  void _filter({
+    String? keyword,
+    String? orderBy,
+  }) {
+    if (keyword != null && keyword != _keyword) {
+      _keyword = keyword;
+      _refresh = true;
+    }
+    if (orderBy != null && orderBy != _orderBy) {
+      _orderBy = orderBy;
+      _refresh = true;
+    }
+    if (_refresh) {
+      _pagingController.refresh();
+    }
   }
 
   @override
@@ -45,13 +60,17 @@ class _ReadingScreenState extends State<ReadingScreen> with AutomaticKeepAliveCl
                   controller: _searchController,
                   textInputAction: TextInputAction.search,
                   onEditingComplete: () {
-                    _filter(_searchController.text);
+                    _filter(
+                      keyword: _searchController.text,
+                    );
                   },
                   decoration: InputDecoration(
                     suffixIcon: IconButton(
                       onPressed: () {
                         _searchController.clear();
-                        _filter('');
+                        _filter(
+                          keyword: _searchController.text,
+                        );
                       },
                       icon: const Icon(Icons.clear),
                     ),
@@ -66,15 +85,35 @@ class _ReadingScreenState extends State<ReadingScreen> with AutomaticKeepAliveCl
                 flex: 0,
                 child: IconButton(
                   icon: const Icon(Icons.sort),
-                  onPressed: () {
-                    showMaterialModalBottomSheet<void>(
+                  onPressed: () async {
+                    final order = await showMaterialModalBottomSheet<String>(
                       context: context,
-                      builder: (context) => FilterManga(
+                      builder: (context) => OrderManga(
                         filterType: FilterType.reading,
+                        defaultValue: _orderBy,
                       ),
                       animationCurve: Curves.easeIn,
                       duration: const Duration(milliseconds: 500),
                       barrierColor: const Color(0x50696969),
+                    );
+
+                    _filter(
+                      orderBy: order,
+                    );
+                  },
+                ),
+              ),
+              Flexible(
+                flex: 0,
+                child: IconButton(
+                  icon: const Icon(Icons.filter_alt),
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const FilterManga(
+                          filterType: FilterType.reading,
+                        ),
+                      ),
                     );
                   },
                 ),
@@ -107,9 +146,7 @@ class _ReadingScreenState extends State<ReadingScreen> with AutomaticKeepAliveCl
 
   @override
   void initState() {
-    _pagingController.addPageRequestListener((pageKey) {
-      _fetchPage(pageKey);
-    });
+    _pagingController.addPageRequestListener(_fetchPage);
     super.initState();
   }
 
@@ -126,6 +163,7 @@ class _ReadingScreenState extends State<ReadingScreen> with AutomaticKeepAliveCl
         page: Int64(page),
         perPage: Int64(_pageSize),
         search: 'reading:>=0 $_keyword',
+        order: _orderBy,
       ));
       final paginate = result.pagination;
       final isLastPage = paginate.page == paginate.maxPage;
@@ -134,6 +172,10 @@ class _ReadingScreenState extends State<ReadingScreen> with AutomaticKeepAliveCl
       } else {
         final nextPageKey = paginate.page + 1;
         _pagingController.appendPage(result.items, nextPageKey.toInt());
+      }
+      if (_refresh) {
+        _refresh = false;
+        setState(() {});
       }
     } catch (error) {
       log('reading', error: error);

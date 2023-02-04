@@ -4,9 +4,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:grpc/grpc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wuxia/api.dart';
-import 'package:wuxia/gen/rumgap.pbgrpc.dart';
 import 'package:wuxia/gen/user.pb.dart';
-import 'package:wuxia/main.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);

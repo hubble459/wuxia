@@ -23,6 +23,10 @@
         "protobuf",
         "wuxia"
     ],
-    "dart.lineLength": 130,
-    "i18n-ally.keystyle": "nested"
+    "dart.lineLength": 140,
+    "i18n-ally.keystyle": "nested",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+        "source.fixAll": true
+    }
 }

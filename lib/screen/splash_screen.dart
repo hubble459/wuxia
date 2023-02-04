@@ -5,7 +5,6 @@ import 'package:jiffy/jiffy.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wuxia/api.dart';
 import 'package:wuxia/gen/rumgap.pb.dart';
-import 'package:wuxia/gen/verify.pb.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);

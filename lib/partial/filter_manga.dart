@@ -1,9 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:grpc/grpc.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:wuxia/api.dart';
 import 'package:wuxia/gen/meta.pb.dart';
 import 'package:wuxia/util/simple_future_builder.dart';
+
+class FilterOptions {
+  final List<String> included;
+  final List<String> excluded;
+
+  const FilterOptions({this.included = const [], this.excluded = const []});
+
+  String intoString(String type) {
+    return '${included.map((e) => '$type:"${e.replaceAll('"', '')}"').join(' ')} ${excluded.map((e) => '-$type:"${e.replaceAll('"', '')}"').join(' ')}';
+  }
+}
+
+class FilterMap {
+  final FilterOptions genres = const FilterOptions();
+  final FilterOptions hosts = const FilterOptions();
+  String? global;
+  String? title;
+  String? description;
+
+  @override
+  String toString() {
+    return '${genres.intoString('genre')} ${hosts.intoString('url')} title:$title description:$description $global';
+  }
+}
 
 enum FilterType {
   reading,
@@ -21,12 +44,13 @@ class FilterManga extends StatefulWidget {
 }
 
 class _FilterMangaState extends State<FilterManga> {
+  final TextEditingController _globalFieldController = TextEditingController();
+  final TextEditingController _titleFieldController = TextEditingController();
+  final TextEditingController _descriptionFieldController = TextEditingController();
+
   late final ResponseFuture<MetaReply> tags;
   late final ResponseFuture<MetaReply> hosts;
-  final List<String> selectedTags = [];
-  final List<String> excludedTags = [];
-  final List<String> selectedHosts = [];
-  final List<String> excludedHosts = [];
+  final FilterMap filterMap = FilterMap();
 
   @override
   void initState() {
@@ -54,175 +78,163 @@ class _FilterMangaState extends State<FilterManga> {
     final excludeColor = Theme.of(context).colorScheme.errorContainer;
     final unselectedColor = Colors.grey.shade900;
 
-    return SingleChildScrollView(
-      controller: ModalScrollController.of(context),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
-        child: Column(
-          children: [
-            Text(
-              'Search Filter',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            ...(widget.filterType != FilterType.online
-                ? ([
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: Text(
-                        'Genres',
-                        style: Theme.of(context).textTheme.titleMedium,
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Search Filter'),
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
+          child: Column(
+            children: [
+              TextField(
+                controller: _globalFieldController,
+                onChanged: (value) => filterMap.global = value,
+                keyboardType: TextInputType.text,
+                textInputAction: TextInputAction.done,
+                decoration: const InputDecoration(
+                  label: Text('Global Keywords'),
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                controller: _titleFieldController,
+                onChanged: (value) => filterMap.title = value,
+                keyboardType: TextInputType.text,
+                textInputAction: TextInputAction.done,
+                decoration: const InputDecoration(
+                  label: Text('Title Keywords'),
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                controller: _descriptionFieldController,
+                onChanged: (value) => filterMap.description = value,
+                keyboardType: TextInputType.text,
+                textInputAction: TextInputAction.done,
+                decoration: const InputDecoration(
+                  label: Text('Description Keywords'),
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              ...(widget.filterType != FilterType.online
+                  ? ([
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: Text(
+                          'Genres',
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
                       ),
-                    ),
-                    SimpleFutureBuilder<MetaReply>(
-                      future: tags,
-                      onLoadedBuilder: (context, data) => Wrap(
-                        direction: Axis.horizontal,
-                        alignment: WrapAlignment.center,
-                        runSpacing: 5,
-                        spacing: 10,
-                        children: data.items
-                            .map(
-                              (item) => InkWell(
-                                onTap: () => setState(() {
-                                  if (selectedTags.contains(item)) {
-                                    selectedTags.remove(item);
-                                  } else if (excludedTags.contains(item)) {
-                                    excludedTags.remove(item);
-                                  } else {
-                                    selectedTags.add(item);
-                                    excludedTags.remove(item);
-                                  }
-                                }),
-                                onLongPress: () => setState(() {
-                                  if (excludedTags.contains(item)) {
-                                    excludedTags.remove(item);
-                                  } else {
-                                    excludedTags.add(item);
-                                    selectedTags.remove(item);
-                                  }
-                                }),
-                                child: Container(
-                                  padding: const EdgeInsets.all(8.0),
-                                  decoration: BoxDecoration(
-                                    color: selectedTags.contains(item)
-                                        ? selectedColor
-                                        : excludedTags.contains(item)
-                                            ? excludeColor
-                                            : unselectedColor,
-                                    borderRadius: const BorderRadius.all(
-                                      Radius.circular(5.0),
+                      SimpleFutureBuilder<MetaReply>(
+                        future: tags,
+                        onLoadedBuilder: (context, data) => Wrap(
+                          direction: Axis.horizontal,
+                          alignment: WrapAlignment.center,
+                          runSpacing: 5,
+                          spacing: 10,
+                          children: data.items
+                              .map(
+                                (item) => InkWell(
+                                  onTap: () => setState(() {
+                                    if (filterMap.genres.included.contains(item)) {
+                                      filterMap.genres.included.remove(item);
+                                    } else if (filterMap.genres.excluded.contains(item)) {
+                                      filterMap.genres.excluded.remove(item);
+                                    } else {
+                                      filterMap.genres.included.add(item);
+                                      filterMap.genres.excluded.remove(item);
+                                    }
+                                  }),
+                                  onLongPress: () => setState(() {
+                                    if (filterMap.genres.excluded.contains(item)) {
+                                      filterMap.genres.excluded.remove(item);
+                                    } else {
+                                      filterMap.genres.excluded.add(item);
+                                      filterMap.genres.included.remove(item);
+                                    }
+                                  }),
+                                  child: Container(
+                                    padding: const EdgeInsets.all(8.0),
+                                    decoration: BoxDecoration(
+                                      color: filterMap.genres.included.contains(item)
+                                          ? selectedColor
+                                          : filterMap.genres.excluded.contains(item)
+                                              ? excludeColor
+                                              : unselectedColor,
+                                      borderRadius: const BorderRadius.all(
+                                        Radius.circular(5.0),
+                                      ),
                                     ),
+                                    child: Text(item),
                                   ),
-                                  child: Text(item),
                                 ),
+                              )
+                              .toList(),
+                        ),
+                        onLoadingBuilder: (context) => const CircularProgressIndicator(),
+                      ),
+                    ])
+                  : []),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Text(
+                  'Hosts',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+              ),
+              SimpleFutureBuilder<MetaReply>(
+                future: hosts,
+                onLoadedBuilder: (context, data) => Wrap(
+                  direction: Axis.horizontal,
+                  alignment: WrapAlignment.center,
+                  runSpacing: 5,
+                  spacing: 10,
+                  children: data.items
+                      .map(
+                        (item) => InkWell(
+                          onTap: () => setState(() {
+                            if (filterMap.hosts.included.contains(item)) {
+                              filterMap.hosts.included.remove(item);
+                            } else if (filterMap.hosts.excluded.contains(item)) {
+                              filterMap.hosts.excluded.remove(item);
+                            } else {
+                              filterMap.hosts.included.add(item);
+                              filterMap.hosts.excluded.remove(item);
+                            }
+                          }),
+                          onLongPress: () => setState(() {
+                            if (filterMap.hosts.excluded.contains(item)) {
+                              filterMap.hosts.excluded.remove(item);
+                            } else {
+                              filterMap.hosts.included.remove(item);
+                              filterMap.hosts.excluded.add(item);
+                            }
+                          }),
+                          child: Container(
+                            padding: const EdgeInsets.all(8.0),
+                            decoration: BoxDecoration(
+                              color: filterMap.hosts.included.contains(item)
+                                  ? selectedColor
+                                  : filterMap.hosts.excluded.contains(item)
+                                      ? excludeColor
+                                      : unselectedColor,
+                              borderRadius: const BorderRadius.all(
+                                Radius.circular(5.0),
                               ),
-                            )
-                            .toList(),
-                      ),
-                      onLoadingBuilder: (context) => CircularProgressIndicator(),
-                    ),
-                  ])
-                : []),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Text(
-                'Hosts',
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-            ),
-            SimpleFutureBuilder<MetaReply>(
-              future: hosts,
-              onLoadedBuilder: (context, data) => Wrap(
-                direction: Axis.horizontal,
-                alignment: WrapAlignment.center,
-                runSpacing: 5,
-                spacing: 10,
-                children: data.items
-                    .map(
-                      (item) => InkWell(
-                        onTap: () => setState(() {
-                          if (selectedHosts.contains(item)) {
-                            selectedHosts.remove(item);
-                          } else if (excludedHosts.contains(item)) {
-                            excludedHosts.remove(item);
-                          } else {
-                            selectedHosts.add(item);
-                            excludedHosts.remove(item);
-                          }
-                        }),
-                        onLongPress: () => setState(() {
-                          if (excludedHosts.contains(item)) {
-                            excludedHosts.remove(item);
-                          } else {
-                            excludedHosts.add(item);
-                            selectedHosts.remove(item);
-                          }
-                        }),
-                        child: Container(
-                          padding: const EdgeInsets.all(8.0),
-                          decoration: BoxDecoration(
-                            color: selectedHosts.contains(item)
-                                ? selectedColor
-                                : excludedHosts.contains(item)
-                                    ? excludeColor
-                                    : unselectedColor,
-                            borderRadius: const BorderRadius.all(
-                              Radius.circular(5.0),
                             ),
+                            child: Text(item),
                           ),
-                          child: Text(item),
                         ),
-                      ),
-                    )
-                    .toList(),
+                      )
+                      .toList(),
+                ),
+                onLoadingBuilder: (context) => const CircularProgressIndicator(),
               ),
-              onLoadingBuilder: (context) => CircularProgressIndicator(),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Text(
-                'Sort By',
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8),
-              child: Row(
-                children: [
-                  Expanded(
-                    flex: 2,
-                    child: DropdownButton(
-                      isExpanded: true,
-                      onChanged: (value) {},
-                      items: [
-                        DropdownMenuItem(
-                          child: Text('data'),
-                          value: 'uwu',
-                        ),
-                      ],
-                    ),
-                  ),
-                  Expanded(
-                    child: DropdownButton(
-                      isExpanded: true,
-                      onChanged: (value) {},
-                      value: 'ASC',
-                      items: [
-                        DropdownMenuItem(
-                          child: Text('Ascending'),
-                          value: 'ASC',
-                        ),
-                        DropdownMenuItem(
-                          child: Text('Descending'),
-                          value: 'DESC',
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            )
-          ],
+            ],
+          ),
         ),
       ),
     );
