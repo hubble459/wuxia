@@ -5,7 +5,6 @@ import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:wuxia/gen/manga.pb.dart';
 import 'package:wuxia/screen/login_screen.dart';
-import 'package:wuxia/screen/register_screen.dart';
 import 'package:wuxia/screen/root_nav_screen.dart';
 import 'package:wuxia/screen/settings_screen.dart';
 import 'package:wuxia/screen/splash_screen.dart';
@@ -48,29 +47,23 @@ class MyApp extends StatelessWidget {
       home: const SplashScreen(),
       routes: {
         'login': (context) => const LoginScreen(),
-        'register': (context) => const RegisterScreen(),
+        // 'register': (context) => const RegisterScreen(),
         'root_nav': (context) => const RootNavScreen(),
         'settings': (context) => const SettingsScreen(),
       },
       themeMode: ThemeMode.dark,
-      theme: ThemeData.from(
-        colorScheme: ColorScheme.fromSwatch(
-          primarySwatch: Colors.blue,
-          cardColor: Colors.white,
-          accentColor: Colors.tealAccent,
-          backgroundColor: Colors.white,
+      theme: ThemeData.light(),
+      darkTheme: ThemeData(
+        scaffoldBackgroundColor: Colors.black,
+        brightness: Brightness.dark,
+        inputDecorationTheme: const InputDecorationTheme(
+          isDense: true,
+          floatingLabelBehavior: FloatingLabelBehavior.auto,
+          floatingLabelStyle: TextStyle(color: Colors.white),
+          border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(10.0))),
         ),
       ),
-      darkTheme: ThemeData.from(
-        colorScheme: ColorScheme.fromSwatch(
-          primarySwatch: Colors.deepPurple,
-          accentColor: Colors.deepOrange,
-          backgroundColor: Colors.black87,
-          cardColor: Colors.black12,
-          brightness: Brightness.dark,
-          primaryColorDark: Colors.deepOrangeAccent,
-        ),
-      ),
+      themeAnimationCurve: Curves.bounceInOut,
     );
   }
 }

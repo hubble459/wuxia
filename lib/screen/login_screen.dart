@@ -4,6 +4,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:grpc/grpc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wuxia/api.dart';
+import 'package:wuxia/constant.dart';
 import 'package:wuxia/gen/user.pb.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -14,49 +15,61 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final fkLogin = GlobalKey<FormState>();
   final uController = TextEditingController();
+  final eController = TextEditingController();
   final pController = TextEditingController();
+  final cController = TextEditingController();
+  bool isLogin = true;
 
-  String? uError;
-  String? pError;
+  String? error;
 
   @override
   void initState() {
-    SharedPreferences.getInstance().then((instance) async {
-      final uname = instance.getString('username');
-      uController.text = uname ?? '';
-    });
+    if (isLogin) {
+      SharedPreferences.getInstance().then((instance) async {
+        final uname = instance.getString('username');
+        uController.text = uname ?? '';
+      });
+    }
     super.initState();
   }
 
   @override
   void dispose() {
     uController.dispose();
+    eController.dispose();
     pController.dispose();
+    cController.dispose();
     super.dispose();
   }
 
-  void _login() async {
-    final instance = await SharedPreferences.getInstance();
-    final String username = uController.text;
-    final String password = pController.text;
-    instance.setString('username', username);
+  void login() async {
+    final invalid = !fkLogin.currentState!.validate();
+    if (invalid) {
+      return;
+    }
+
+    final username = uController.text;
+    final password = pController.text;
+
     try {
       final user = await api.user.login(UserRequest(
         username: username,
         password: password,
       ));
+      SharedPreferences.getInstance().then((instance) => instance.setString('username', username));
+
       API.token = user.token;
       await const FlutterSecureStorage().write(key: 'token', value: user.token);
 
-      print(user.token);
       if (!mounted) {
         return;
       }
       Navigator.of(context).pushReplacementNamed('root_nav');
     } catch (e) {
       if (e is GrpcError) {
-        pError = e.message;
+        error = e.message;
       }
 
       setState(() {
@@ -65,119 +78,160 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  void register() async {
+    final invalid = !fkLogin.currentState!.validate();
+    if (invalid) {
+      return;
+    }
+
+    final String username = uController.text;
+    final String email = eController.text;
+    final String password = pController.text;
+    final String confirmPassword = cController.text;
+
+    if (password != confirmPassword) {
+      error = FlutterI18n.translate(context, 'login.password_not_match');
+      setState(() {});
+    }
+
+    try {
+      await api.user.register(UserRegisterRequest(
+        username: username,
+        email: email,
+        password: password,
+      ));
+      if (!mounted) {
+        return;
+      }
+      Navigator.of(context).pushReplacementNamed('root_nav');
+    } catch (e) {
+      if (e is GrpcError) {
+        setState(() {
+          error = e.message;
+        });
+      }
+    }
+  }
+
+  String? requiredField(String? value) {
+    return value != null && value.isNotEmpty ? null : 'This field is required';
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-              padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.15),
-              child: Text(
-                FlutterI18n.translate(context, 'login.welcome'),
-                style: const TextStyle(
-                  fontSize: 27,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            Container(
-              padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    margin: const EdgeInsets.only(left: 35, right: 35),
-                    child: Column(
-                      children: [
-                        TextField(
-                          style: const TextStyle(color: Colors.black),
-                          controller: uController,
-                          textInputAction: TextInputAction.next,
-                          decoration: InputDecoration(
-                              errorText: uError,
-                              fillColor: Colors.grey.shade100,
-                              filled: true,
-                              hintText: FlutterI18n.translate(context, 'login.username'),
-                              hintStyle: TextStyle(color: Colors.grey.shade600),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              )),
-                        ),
-                        const SizedBox(
-                          height: 30,
-                        ),
-                        TextField(
-                          style: const TextStyle(color: Colors.black),
-                          obscureText: true,
-                          textInputAction: TextInputAction.done,
-                          onSubmitted: (password) => _login(),
-                          controller: pController,
-                          decoration: InputDecoration(
-                              errorText: pError,
-                              fillColor: Colors.grey.shade100,
-                              filled: true,
-                              hintText: FlutterI18n.translate(
-                                context,
-                                'login.password',
-                              ),
-                              hintStyle: TextStyle(color: Colors.grey.shade600),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              )),
-                        ),
-                        const SizedBox(
-                          height: 40,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              FlutterI18n.translate(context, 'login.title'),
-                              style: const TextStyle(
-                                fontSize: 27,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                            CircleAvatar(
-                              radius: 30,
-                              backgroundColor: const Color(0xff4c505b),
-                              child: IconButton(
-                                color: Colors.white,
-                                onPressed: _login,
-                                icon: const Icon(
-                                  Icons.arrow_forward,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 40,
-                        ),
-                        Center(
-                          child: TextButton(
-                            onPressed: () {
-                              Navigator.pushReplacementNamed(context, 'register');
-                            },
-                            style: const ButtonStyle(),
-                            child: Text(
-                              FlutterI18n.translate(context, 'login.sign_up'),
-                              textAlign: TextAlign.left,
-                              style: const TextStyle(
-                                decoration: TextDecoration.underline,
-                                color: Colors.white,
-                                fontSize: 18,
-                              ),
+    return SafeArea(
+      child: Scaffold(
+        extendBody: true,
+        body: CustomScrollView(
+          slivers: [
+            SliverFillRemaining(
+              hasScrollBody: false,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Text(
+                      FlutterI18n.translate(context, isLogin ? 'login.welcome' : 'login.sign_up'),
+                      style: Theme.of(context).textTheme.headlineMedium,
+                    ),
+                    Form(
+                      key: fkLogin,
+                      child: Column(
+                        children: [
+                          TextFormField(
+                            validator: requiredField,
+                            controller: uController,
+                            textInputAction: TextInputAction.next,
+                            decoration: InputDecoration(
+                              label: I18nText('login.username'),
                             ),
                           ),
-                        )
-                      ],
+                          ...(isLogin
+                              ? []
+                              : [
+                                  const SizedBox(
+                                    height: Constants.padding,
+                                  ),
+                                  TextFormField(
+                                    validator: requiredField,
+                                    controller: eController,
+                                    textInputAction: TextInputAction.next,
+                                    decoration: InputDecoration(
+                                      label: I18nText('login.email'),
+                                    ),
+                                  ),
+                                ]),
+                          const SizedBox(height: Constants.padding),
+                          TextFormField(
+                            obscureText: true,
+                            validator: requiredField,
+                            textInputAction: isLogin ? TextInputAction.done : TextInputAction.next,
+                            onFieldSubmitted: (password) => login(),
+                            controller: pController,
+                            decoration: InputDecoration(
+                              label: I18nText('login.password'),
+                            ),
+                          ),
+                          ...(isLogin
+                              ? []
+                              : [
+                                  const SizedBox(height: Constants.padding),
+                                  TextFormField(
+                                    validator: requiredField,
+                                    obscureText: true,
+                                    textInputAction: TextInputAction.done,
+                                    onFieldSubmitted: (password) => register(),
+                                    controller: cController,
+                                    decoration: InputDecoration(
+                                      label: I18nText('login.confirm_password'),
+                                    ),
+                                  )
+                                ]),
+                          const SizedBox(height: 20),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  FlutterI18n.translate(context, isLogin ? 'login.title' : 'login.sign_up'),
+                                  style: Theme.of(context).textTheme.titleLarge,
+                                ),
+                                CircleAvatar(
+                                  backgroundColor: const Color(0xff4c505b),
+                                  child: IconButton(
+                                    color: Colors.white,
+                                    onPressed: isLogin ? login : register,
+                                    icon: const Icon(
+                                      Icons.arrow_forward,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                    Center(
+                      child: TextButton(
+                        onPressed: () => setState(() => isLogin = !isLogin),
+                        style: const ButtonStyle(),
+                        child: Text(
+                          FlutterI18n.translate(context, isLogin ? 'login.sign_up' : 'login.title'),
+                          textAlign: TextAlign.left,
+                          style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                                decoration: TextDecoration.underline,
+                              ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
+            )
           ],
         ),
       ),

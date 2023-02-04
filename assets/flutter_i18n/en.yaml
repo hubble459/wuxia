@@ -10,9 +10,10 @@ login:
   forgot_password: Forgot password
   sign_up: Sign up
   username: Username
-  welcome: Hello
+  welcome: Welcome
   confirm_password: Confirm Password
   password_not_match: Passwords do not match
+  email: Email
 search:
   no_results: No search results
   search_reading: Search Reading
@@ -36,7 +37,7 @@ details:
   finished: Finished
   unknown: Unknown
   alt_titles: Alternative Titles
-error: 'Error: {error}'
+error: "Error: {error}"
 chapter:
   goto_top: Scroll to top
   goto_bottom: Scroll to bottom
