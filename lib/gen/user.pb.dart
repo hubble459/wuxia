@@ -177,14 +177,98 @@ class UserRequest extends $pb.GeneratedMessage {
   void clearEmail() => clearField(3);
 }
 
+class UserUpdateRequest extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'UserUpdateRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'rumgap'), createEmptyInstance: create)
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'password')
+    ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'username')
+    ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'email')
+    ..pPS(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'preferredHostnames')
+    ..hasRequiredFields = false
+  ;
+
+  UserUpdateRequest._() : super();
+  factory UserUpdateRequest({
+    $core.String? password,
+    $core.String? username,
+    $core.String? email,
+    $core.Iterable<$core.String>? preferredHostnames,
+  }) {
+    final _result = create();
+    if (password != null) {
+      _result.password = password;
+    }
+    if (username != null) {
+      _result.username = username;
+    }
+    if (email != null) {
+      _result.email = email;
+    }
+    if (preferredHostnames != null) {
+      _result.preferredHostnames.addAll(preferredHostnames);
+    }
+    return _result;
+  }
+  factory UserUpdateRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory UserUpdateRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  UserUpdateRequest clone() => UserUpdateRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  UserUpdateRequest copyWith(void Function(UserUpdateRequest) updates) => super.copyWith((message) => updates(message as UserUpdateRequest)) as UserUpdateRequest; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static UserUpdateRequest create() => UserUpdateRequest._();
+  UserUpdateRequest createEmptyInstance() => create();
+  static $pb.PbList<UserUpdateRequest> createRepeated() => $pb.PbList<UserUpdateRequest>();
+  @$core.pragma('dart2js:noInline')
+  static UserUpdateRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<UserUpdateRequest>(create);
+  static UserUpdateRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get password => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set password($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasPassword() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearPassword() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.String get username => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set username($core.String v) { $_setString(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasUsername() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearUsername() => clearField(2);
+
+  @$pb.TagNumber(3)
+  $core.String get email => $_getSZ(2);
+  @$pb.TagNumber(3)
+  set email($core.String v) { $_setString(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasEmail() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearEmail() => clearField(3);
+
+  @$pb.TagNumber(4)
+  $core.List<$core.String> get preferredHostnames => $_getList(3);
+}
+
 class UserReply extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'UserReply', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'rumgap'), createEmptyInstance: create)
     ..a<$core.int>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'id', $pb.PbFieldType.O3)
     ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'username')
     ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'email')
     ..a<$core.int>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'permissions', $pb.PbFieldType.O3)
-    ..aInt64(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'createdAt')
-    ..aInt64(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'updatedAt')
+    ..pPS(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'preferredHostnames')
+    ..aInt64(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'createdAt')
+    ..aInt64(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'updatedAt')
     ..hasRequiredFields = false
   ;
 
@@ -194,6 +278,7 @@ class UserReply extends $pb.GeneratedMessage {
     $core.String? username,
     $core.String? email,
     $core.int? permissions,
+    $core.Iterable<$core.String>? preferredHostnames,
     $fixnum.Int64? createdAt,
     $fixnum.Int64? updatedAt,
   }) {
@@ -209,6 +294,9 @@ class UserReply extends $pb.GeneratedMessage {
     }
     if (permissions != null) {
       _result.permissions = permissions;
+    }
+    if (preferredHostnames != null) {
+      _result.preferredHostnames.addAll(preferredHostnames);
     }
     if (createdAt != null) {
       _result.createdAt = createdAt;
@@ -276,22 +364,25 @@ class UserReply extends $pb.GeneratedMessage {
   void clearPermissions() => clearField(4);
 
   @$pb.TagNumber(5)
-  $fixnum.Int64 get createdAt => $_getI64(4);
-  @$pb.TagNumber(5)
-  set createdAt($fixnum.Int64 v) { $_setInt64(4, v); }
-  @$pb.TagNumber(5)
-  $core.bool hasCreatedAt() => $_has(4);
-  @$pb.TagNumber(5)
-  void clearCreatedAt() => clearField(5);
+  $core.List<$core.String> get preferredHostnames => $_getList(4);
 
   @$pb.TagNumber(6)
-  $fixnum.Int64 get updatedAt => $_getI64(5);
+  $fixnum.Int64 get createdAt => $_getI64(5);
   @$pb.TagNumber(6)
-  set updatedAt($fixnum.Int64 v) { $_setInt64(5, v); }
+  set createdAt($fixnum.Int64 v) { $_setInt64(5, v); }
   @$pb.TagNumber(6)
-  $core.bool hasUpdatedAt() => $_has(5);
+  $core.bool hasCreatedAt() => $_has(5);
   @$pb.TagNumber(6)
-  void clearUpdatedAt() => clearField(6);
+  void clearCreatedAt() => clearField(6);
+
+  @$pb.TagNumber(7)
+  $fixnum.Int64 get updatedAt => $_getI64(6);
+  @$pb.TagNumber(7)
+  set updatedAt($fixnum.Int64 v) { $_setInt64(6, v); }
+  @$pb.TagNumber(7)
+  $core.bool hasUpdatedAt() => $_has(6);
+  @$pb.TagNumber(7)
+  void clearUpdatedAt() => clearField(7);
 }
 
 class UserFullReply extends $pb.GeneratedMessage {
@@ -300,10 +391,11 @@ class UserFullReply extends $pb.GeneratedMessage {
     ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'username')
     ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'email')
     ..a<$core.int>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'permissions', $pb.PbFieldType.O3)
-    ..aInt64(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'countFollowing')
-    ..aInt64(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'countFollowers')
-    ..aInt64(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'createdAt')
-    ..aInt64(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'updatedAt')
+    ..pPS(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'preferredHostnames')
+    ..aInt64(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'countFollowing')
+    ..aInt64(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'countFollowers')
+    ..aInt64(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'createdAt')
+    ..aInt64(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'updatedAt')
     ..hasRequiredFields = false
   ;
 
@@ -313,6 +405,7 @@ class UserFullReply extends $pb.GeneratedMessage {
     $core.String? username,
     $core.String? email,
     $core.int? permissions,
+    $core.Iterable<$core.String>? preferredHostnames,
     $fixnum.Int64? countFollowing,
     $fixnum.Int64? countFollowers,
     $fixnum.Int64? createdAt,
@@ -330,6 +423,9 @@ class UserFullReply extends $pb.GeneratedMessage {
     }
     if (permissions != null) {
       _result.permissions = permissions;
+    }
+    if (preferredHostnames != null) {
+      _result.preferredHostnames.addAll(preferredHostnames);
     }
     if (countFollowing != null) {
       _result.countFollowing = countFollowing;
@@ -403,40 +499,43 @@ class UserFullReply extends $pb.GeneratedMessage {
   void clearPermissions() => clearField(4);
 
   @$pb.TagNumber(5)
-  $fixnum.Int64 get countFollowing => $_getI64(4);
-  @$pb.TagNumber(5)
-  set countFollowing($fixnum.Int64 v) { $_setInt64(4, v); }
-  @$pb.TagNumber(5)
-  $core.bool hasCountFollowing() => $_has(4);
-  @$pb.TagNumber(5)
-  void clearCountFollowing() => clearField(5);
+  $core.List<$core.String> get preferredHostnames => $_getList(4);
 
   @$pb.TagNumber(6)
-  $fixnum.Int64 get countFollowers => $_getI64(5);
+  $fixnum.Int64 get countFollowing => $_getI64(5);
   @$pb.TagNumber(6)
-  set countFollowers($fixnum.Int64 v) { $_setInt64(5, v); }
+  set countFollowing($fixnum.Int64 v) { $_setInt64(5, v); }
   @$pb.TagNumber(6)
-  $core.bool hasCountFollowers() => $_has(5);
+  $core.bool hasCountFollowing() => $_has(5);
   @$pb.TagNumber(6)
-  void clearCountFollowers() => clearField(6);
+  void clearCountFollowing() => clearField(6);
 
   @$pb.TagNumber(7)
-  $fixnum.Int64 get createdAt => $_getI64(6);
+  $fixnum.Int64 get countFollowers => $_getI64(6);
   @$pb.TagNumber(7)
-  set createdAt($fixnum.Int64 v) { $_setInt64(6, v); }
+  set countFollowers($fixnum.Int64 v) { $_setInt64(6, v); }
   @$pb.TagNumber(7)
-  $core.bool hasCreatedAt() => $_has(6);
+  $core.bool hasCountFollowers() => $_has(6);
   @$pb.TagNumber(7)
-  void clearCreatedAt() => clearField(7);
+  void clearCountFollowers() => clearField(7);
 
   @$pb.TagNumber(8)
-  $fixnum.Int64 get updatedAt => $_getI64(7);
+  $fixnum.Int64 get createdAt => $_getI64(7);
   @$pb.TagNumber(8)
-  set updatedAt($fixnum.Int64 v) { $_setInt64(7, v); }
+  set createdAt($fixnum.Int64 v) { $_setInt64(7, v); }
   @$pb.TagNumber(8)
-  $core.bool hasUpdatedAt() => $_has(7);
+  $core.bool hasCreatedAt() => $_has(7);
   @$pb.TagNumber(8)
-  void clearUpdatedAt() => clearField(8);
+  void clearCreatedAt() => clearField(8);
+
+  @$pb.TagNumber(9)
+  $fixnum.Int64 get updatedAt => $_getI64(8);
+  @$pb.TagNumber(9)
+  set updatedAt($fixnum.Int64 v) { $_setInt64(8, v); }
+  @$pb.TagNumber(9)
+  $core.bool hasUpdatedAt() => $_has(8);
+  @$pb.TagNumber(9)
+  void clearUpdatedAt() => clearField(9);
 }
 
 class UserTokenReply extends $pb.GeneratedMessage {

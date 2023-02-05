@@ -59,6 +59,7 @@ class _LoginScreenState extends State<LoginScreen> {
       }
 
       API.token = user.token;
+      API.loggedIn = user.user;
 
       // Asynchronously save username and token
       (() async {
@@ -73,7 +74,9 @@ class _LoginScreenState extends State<LoginScreen> {
       Navigator.of(context).pushReplacementNamed('root_nav');
     } catch (e) {
       if (e is GrpcError) {
-        error = e.message;
+        setState(() {
+          error = e.message;
+        });
       }
     }
   }

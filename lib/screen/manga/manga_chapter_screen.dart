@@ -192,8 +192,7 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
   }
 
   Future<void> reloadChapter() async {
-    print('reading ${widget.manga.readingProgress}');
-    await api.reading.edit(
+    await api.reading.update(
       ReadingPatchRequest(
         mangaId: widget.manga.id,
         progress: widget.manga.readingProgress,

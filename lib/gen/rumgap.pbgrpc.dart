@@ -39,6 +39,15 @@ class UserClient extends $grpc.Client {
       '/rumgap.User/Index',
       ($2.PaginateQuery value) => value.writeToBuffer(),
       ($core.List<$core.int> value) => $0.UsersReply.fromBuffer(value));
+  static final _$me = $grpc.ClientMethod<$1.Empty, $0.UserFullReply>(
+      '/rumgap.User/Me',
+      ($1.Empty value) => value.writeToBuffer(),
+      ($core.List<$core.int> value) => $0.UserFullReply.fromBuffer(value));
+  static final _$update =
+      $grpc.ClientMethod<$0.UserUpdateRequest, $0.UserFullReply>(
+          '/rumgap.User/Update',
+          ($0.UserUpdateRequest value) => value.writeToBuffer(),
+          ($core.List<$core.int> value) => $0.UserFullReply.fromBuffer(value));
 
   UserClient($grpc.ClientChannel channel,
       {$grpc.CallOptions? options,
@@ -64,6 +73,16 @@ class UserClient extends $grpc.Client {
   $grpc.ResponseFuture<$0.UsersReply> index($2.PaginateQuery request,
       {$grpc.CallOptions? options}) {
     return $createUnaryCall(_$index, request, options: options);
+  }
+
+  $grpc.ResponseFuture<$0.UserFullReply> me($1.Empty request,
+      {$grpc.CallOptions? options}) {
+    return $createUnaryCall(_$me, request, options: options);
+  }
+
+  $grpc.ResponseFuture<$0.UserFullReply> update($0.UserUpdateRequest request,
+      {$grpc.CallOptions? options}) {
+    return $createUnaryCall(_$update, request, options: options);
   }
 }
 
@@ -100,6 +119,20 @@ abstract class UserServiceBase extends $grpc.Service {
         false,
         ($core.List<$core.int> value) => $2.PaginateQuery.fromBuffer(value),
         ($0.UsersReply value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$1.Empty, $0.UserFullReply>(
+        'Me',
+        me_Pre,
+        false,
+        false,
+        ($core.List<$core.int> value) => $1.Empty.fromBuffer(value),
+        ($0.UserFullReply value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$0.UserUpdateRequest, $0.UserFullReply>(
+        'Update',
+        update_Pre,
+        false,
+        false,
+        ($core.List<$core.int> value) => $0.UserUpdateRequest.fromBuffer(value),
+        ($0.UserFullReply value) => value.writeToBuffer()));
   }
 
   $async.Future<$0.UserTokenReply> register_Pre($grpc.ServiceCall call,
@@ -122,6 +155,16 @@ abstract class UserServiceBase extends $grpc.Service {
     return index(call, await request);
   }
 
+  $async.Future<$0.UserFullReply> me_Pre(
+      $grpc.ServiceCall call, $async.Future<$1.Empty> request) async {
+    return me(call, await request);
+  }
+
+  $async.Future<$0.UserFullReply> update_Pre($grpc.ServiceCall call,
+      $async.Future<$0.UserUpdateRequest> request) async {
+    return update(call, await request);
+  }
+
   $async.Future<$0.UserTokenReply> register(
       $grpc.ServiceCall call, $0.UserRegisterRequest request);
   $async.Future<$0.UserTokenReply> login(
@@ -129,6 +172,9 @@ abstract class UserServiceBase extends $grpc.Service {
   $async.Future<$0.UserFullReply> get($grpc.ServiceCall call, $1.Id request);
   $async.Future<$0.UsersReply> index(
       $grpc.ServiceCall call, $2.PaginateQuery request);
+  $async.Future<$0.UserFullReply> me($grpc.ServiceCall call, $1.Empty request);
+  $async.Future<$0.UserFullReply> update(
+      $grpc.ServiceCall call, $0.UserUpdateRequest request);
 }
 
 class FriendClient extends $grpc.Client {
@@ -488,9 +534,9 @@ abstract class ChapterServiceBase extends $grpc.Service {
 }
 
 class ReadingClient extends $grpc.Client {
-  static final _$edit =
+  static final _$update =
       $grpc.ClientMethod<$6.ReadingPatchRequest, $4.MangaReply>(
-          '/rumgap.Reading/Edit',
+          '/rumgap.Reading/Update',
           ($6.ReadingPatchRequest value) => value.writeToBuffer(),
           ($core.List<$core.int> value) => $4.MangaReply.fromBuffer(value));
   static final _$create =
@@ -508,9 +554,9 @@ class ReadingClient extends $grpc.Client {
       $core.Iterable<$grpc.ClientInterceptor>? interceptors})
       : super(channel, options: options, interceptors: interceptors);
 
-  $grpc.ResponseFuture<$4.MangaReply> edit($6.ReadingPatchRequest request,
+  $grpc.ResponseFuture<$4.MangaReply> update($6.ReadingPatchRequest request,
       {$grpc.CallOptions? options}) {
-    return $createUnaryCall(_$edit, request, options: options);
+    return $createUnaryCall(_$update, request, options: options);
   }
 
   $grpc.ResponseFuture<$4.MangaReply> create($6.ReadingPostRequest request,
@@ -529,8 +575,8 @@ abstract class ReadingServiceBase extends $grpc.Service {
 
   ReadingServiceBase() {
     $addMethod($grpc.ServiceMethod<$6.ReadingPatchRequest, $4.MangaReply>(
-        'Edit',
-        edit_Pre,
+        'Update',
+        update_Pre,
         false,
         false,
         ($core.List<$core.int> value) =>
@@ -553,9 +599,9 @@ abstract class ReadingServiceBase extends $grpc.Service {
         ($1.Empty value) => value.writeToBuffer()));
   }
 
-  $async.Future<$4.MangaReply> edit_Pre($grpc.ServiceCall call,
+  $async.Future<$4.MangaReply> update_Pre($grpc.ServiceCall call,
       $async.Future<$6.ReadingPatchRequest> request) async {
-    return edit(call, await request);
+    return update(call, await request);
   }
 
   $async.Future<$4.MangaReply> create_Pre($grpc.ServiceCall call,
@@ -568,7 +614,7 @@ abstract class ReadingServiceBase extends $grpc.Service {
     return delete(call, await request);
   }
 
-  $async.Future<$4.MangaReply> edit(
+  $async.Future<$4.MangaReply> update(
       $grpc.ServiceCall call, $6.ReadingPatchRequest request);
   $async.Future<$4.MangaReply> create(
       $grpc.ServiceCall call, $6.ReadingPostRequest request);
@@ -614,49 +660,11 @@ abstract class SearchServiceBase extends $grpc.Service {
       $grpc.ServiceCall call, $7.SearchRequest request);
 }
 
-class VerifyClient extends $grpc.Client {
-  static final _$token = $grpc.ClientMethod<$1.Empty, $1.Empty>(
-      '/rumgap.Verify/Token',
-      ($1.Empty value) => value.writeToBuffer(),
-      ($core.List<$core.int> value) => $1.Empty.fromBuffer(value));
-
-  VerifyClient($grpc.ClientChannel channel,
-      {$grpc.CallOptions? options,
-      $core.Iterable<$grpc.ClientInterceptor>? interceptors})
-      : super(channel, options: options, interceptors: interceptors);
-
-  $grpc.ResponseFuture<$1.Empty> token($1.Empty request,
-      {$grpc.CallOptions? options}) {
-    return $createUnaryCall(_$token, request, options: options);
-  }
-}
-
-abstract class VerifyServiceBase extends $grpc.Service {
-  $core.String get $name => 'rumgap.Verify';
-
-  VerifyServiceBase() {
-    $addMethod($grpc.ServiceMethod<$1.Empty, $1.Empty>(
-        'Token',
-        token_Pre,
-        false,
-        false,
-        ($core.List<$core.int> value) => $1.Empty.fromBuffer(value),
-        ($1.Empty value) => value.writeToBuffer()));
-  }
-
-  $async.Future<$1.Empty> token_Pre(
-      $grpc.ServiceCall call, $async.Future<$1.Empty> request) async {
-    return token(call, await request);
-  }
-
-  $async.Future<$1.Empty> token($grpc.ServiceCall call, $1.Empty request);
-}
-
 class MetaClient extends $grpc.Client {
   static final _$hostnames =
-      $grpc.ClientMethod<$8.MetaHostNamesRequest, $8.MetaReply>(
+      $grpc.ClientMethod<$8.MetaHostnamesRequest, $8.MetaReply>(
           '/rumgap.Meta/Hostnames',
-          ($8.MetaHostNamesRequest value) => value.writeToBuffer(),
+          ($8.MetaHostnamesRequest value) => value.writeToBuffer(),
           ($core.List<$core.int> value) => $8.MetaReply.fromBuffer(value));
   static final _$genres =
       $grpc.ClientMethod<$8.MetaGenresRequest, $8.MetaReply>(
@@ -669,7 +677,7 @@ class MetaClient extends $grpc.Client {
       $core.Iterable<$grpc.ClientInterceptor>? interceptors})
       : super(channel, options: options, interceptors: interceptors);
 
-  $grpc.ResponseFuture<$8.MetaReply> hostnames($8.MetaHostNamesRequest request,
+  $grpc.ResponseFuture<$8.MetaReply> hostnames($8.MetaHostnamesRequest request,
       {$grpc.CallOptions? options}) {
     return $createUnaryCall(_$hostnames, request, options: options);
   }
@@ -684,13 +692,13 @@ abstract class MetaServiceBase extends $grpc.Service {
   $core.String get $name => 'rumgap.Meta';
 
   MetaServiceBase() {
-    $addMethod($grpc.ServiceMethod<$8.MetaHostNamesRequest, $8.MetaReply>(
+    $addMethod($grpc.ServiceMethod<$8.MetaHostnamesRequest, $8.MetaReply>(
         'Hostnames',
         hostnames_Pre,
         false,
         false,
         ($core.List<$core.int> value) =>
-            $8.MetaHostNamesRequest.fromBuffer(value),
+            $8.MetaHostnamesRequest.fromBuffer(value),
         ($8.MetaReply value) => value.writeToBuffer()));
     $addMethod($grpc.ServiceMethod<$8.MetaGenresRequest, $8.MetaReply>(
         'Genres',
@@ -702,7 +710,7 @@ abstract class MetaServiceBase extends $grpc.Service {
   }
 
   $async.Future<$8.MetaReply> hostnames_Pre($grpc.ServiceCall call,
-      $async.Future<$8.MetaHostNamesRequest> request) async {
+      $async.Future<$8.MetaHostnamesRequest> request) async {
     return hostnames(call, await request);
   }
 
@@ -712,7 +720,7 @@ abstract class MetaServiceBase extends $grpc.Service {
   }
 
   $async.Future<$8.MetaReply> hostnames(
-      $grpc.ServiceCall call, $8.MetaHostNamesRequest request);
+      $grpc.ServiceCall call, $8.MetaHostnamesRequest request);
   $async.Future<$8.MetaReply> genres(
       $grpc.ServiceCall call, $8.MetaGenresRequest request);
 }

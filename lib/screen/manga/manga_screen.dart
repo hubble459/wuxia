@@ -234,7 +234,7 @@ class _ChapterSelectorState extends State<_ChapterSelector> {
                 materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 onPressed: () async {
                   widget.manga.readingProgress = 1;
-                  await api.reading.edit(ReadingPatchRequest(
+                  await api.reading.update(ReadingPatchRequest(
                     mangaId: widget.manga.id,
                     progress: widget.manga.readingProgress,
                   ));
@@ -268,7 +268,7 @@ class _ChapterSelectorState extends State<_ChapterSelector> {
                 onPressed: () async {
                   if (widget.manga.readingProgress == 0) {
                     widget.manga.readingProgress = 1;
-                    await api.reading.edit(ReadingPatchRequest(
+                    await api.reading.update(ReadingPatchRequest(
                       mangaId: widget.manga.id,
                       progress: widget.manga.readingProgress,
                     ));
@@ -301,7 +301,7 @@ class _ChapterSelectorState extends State<_ChapterSelector> {
                 materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 onPressed: () async {
                   widget.manga.readingProgress = widget.manga.countChapters.toInt();
-                  await api.reading.edit(ReadingPatchRequest(
+                  await api.reading.update(ReadingPatchRequest(
                     mangaId: widget.manga.id,
                     progress: widget.manga.readingProgress,
                   ));

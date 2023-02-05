@@ -88,14 +88,16 @@ class _LatestScreenState extends State<LatestScreen> with AutomaticKeepAliveClie
                 ),
                 IconButton(
                   icon: const Icon(Icons.filter_alt),
-                  onPressed: () {
-                    Navigator.of(context).push(
+                  onPressed: () async {
+                    final keyword = await Navigator.of(context).push<FilterMap>(
                       MaterialPageRoute(
-                        builder: (context) => const FilterManga(
+                        builder: (context) => FilterManga(
                           filterType: FilterType.manga,
+                          defaultValue: _keyword,
                         ),
                       ),
                     );
+                    _filter(keyword: keyword.toString());
                   },
                 ),
               ],

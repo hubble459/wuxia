@@ -26,7 +26,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
       try {
         API.token = token;
-        final loggedIn = await api.verify.token(Empty());
+        API.loggedIn = await api.user.me(Empty());
         if (!mounted) return;
         FlutterI18n.refresh(context, Locale(preferences.getString('language') ?? 'zh'));
         Navigator.of(context).pushReplacementNamed('root_nav');

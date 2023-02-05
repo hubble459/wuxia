@@ -5,18 +5,18 @@ message MetaReply {
     repeated string items = 1;
 }
 
-message MetaHostNamesRequest {
-    optional MetaHostNamesOption option = 1;
+message MetaHostnamesRequest {
+    optional MetaHostnamesOption option = 1;
 }
 
 message MetaGenresRequest {
     optional MetaGenresOption option = 1;
 }
 
-enum MetaHostNamesOption {
-    HostNamesReading = 0;
-    HostNamesManga = 1;
-    HostNamesOnline = 2;
+enum MetaHostnamesOption {
+    HostnamesReading = 0;
+    HostnamesManga = 1;
+    HostnamesOnline = 2;
 }
 
 enum MetaGenresOption {

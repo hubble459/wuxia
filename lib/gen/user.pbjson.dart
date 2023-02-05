@@ -35,6 +35,24 @@ const UserRequest$json = const {
 
 /// Descriptor for `UserRequest`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List userRequestDescriptor = $convert.base64Decode('CgtVc2VyUmVxdWVzdBIaCghwYXNzd29yZBgBIAEoCVIIcGFzc3dvcmQSHAoIdXNlcm5hbWUYAiABKAlIAFIIdXNlcm5hbWUSFgoFZW1haWwYAyABKAlIAFIFZW1haWxCDAoKaWRlbnRpZmllcg==');
+@$core.Deprecated('Use userUpdateRequestDescriptor instead')
+const UserUpdateRequest$json = const {
+  '1': 'UserUpdateRequest',
+  '2': const [
+    const {'1': 'password', '3': 1, '4': 1, '5': 9, '9': 0, '10': 'password', '17': true},
+    const {'1': 'username', '3': 2, '4': 1, '5': 9, '9': 1, '10': 'username', '17': true},
+    const {'1': 'email', '3': 3, '4': 1, '5': 9, '9': 2, '10': 'email', '17': true},
+    const {'1': 'preferred_hostnames', '3': 4, '4': 3, '5': 9, '10': 'preferredHostnames'},
+  ],
+  '8': const [
+    const {'1': '_password'},
+    const {'1': '_username'},
+    const {'1': '_email'},
+  ],
+};
+
+/// Descriptor for `UserUpdateRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List userUpdateRequestDescriptor = $convert.base64Decode('ChFVc2VyVXBkYXRlUmVxdWVzdBIfCghwYXNzd29yZBgBIAEoCUgAUghwYXNzd29yZIgBARIfCgh1c2VybmFtZRgCIAEoCUgBUgh1c2VybmFtZYgBARIZCgVlbWFpbBgDIAEoCUgCUgVlbWFpbIgBARIvChNwcmVmZXJyZWRfaG9zdG5hbWVzGAQgAygJUhJwcmVmZXJyZWRIb3N0bmFtZXNCCwoJX3Bhc3N3b3JkQgsKCV91c2VybmFtZUIICgZfZW1haWw=');
 @$core.Deprecated('Use userReplyDescriptor instead')
 const UserReply$json = const {
   '1': 'UserReply',
@@ -43,13 +61,14 @@ const UserReply$json = const {
     const {'1': 'username', '3': 2, '4': 1, '5': 9, '10': 'username'},
     const {'1': 'email', '3': 3, '4': 1, '5': 9, '10': 'email'},
     const {'1': 'permissions', '3': 4, '4': 1, '5': 5, '10': 'permissions'},
-    const {'1': 'created_at', '3': 5, '4': 1, '5': 3, '10': 'createdAt'},
-    const {'1': 'updated_at', '3': 6, '4': 1, '5': 3, '10': 'updatedAt'},
+    const {'1': 'preferred_hostnames', '3': 5, '4': 3, '5': 9, '10': 'preferredHostnames'},
+    const {'1': 'created_at', '3': 6, '4': 1, '5': 3, '10': 'createdAt'},
+    const {'1': 'updated_at', '3': 7, '4': 1, '5': 3, '10': 'updatedAt'},
   ],
 };
 
 /// Descriptor for `UserReply`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List userReplyDescriptor = $convert.base64Decode('CglVc2VyUmVwbHkSDgoCaWQYASABKAVSAmlkEhoKCHVzZXJuYW1lGAIgASgJUgh1c2VybmFtZRIUCgVlbWFpbBgDIAEoCVIFZW1haWwSIAoLcGVybWlzc2lvbnMYBCABKAVSC3Blcm1pc3Npb25zEh0KCmNyZWF0ZWRfYXQYBSABKANSCWNyZWF0ZWRBdBIdCgp1cGRhdGVkX2F0GAYgASgDUgl1cGRhdGVkQXQ=');
+final $typed_data.Uint8List userReplyDescriptor = $convert.base64Decode('CglVc2VyUmVwbHkSDgoCaWQYASABKAVSAmlkEhoKCHVzZXJuYW1lGAIgASgJUgh1c2VybmFtZRIUCgVlbWFpbBgDIAEoCVIFZW1haWwSIAoLcGVybWlzc2lvbnMYBCABKAVSC3Blcm1pc3Npb25zEi8KE3ByZWZlcnJlZF9ob3N0bmFtZXMYBSADKAlSEnByZWZlcnJlZEhvc3RuYW1lcxIdCgpjcmVhdGVkX2F0GAYgASgDUgljcmVhdGVkQXQSHQoKdXBkYXRlZF9hdBgHIAEoA1IJdXBkYXRlZEF0');
 @$core.Deprecated('Use userFullReplyDescriptor instead')
 const UserFullReply$json = const {
   '1': 'UserFullReply',
@@ -58,15 +77,16 @@ const UserFullReply$json = const {
     const {'1': 'username', '3': 2, '4': 1, '5': 9, '10': 'username'},
     const {'1': 'email', '3': 3, '4': 1, '5': 9, '10': 'email'},
     const {'1': 'permissions', '3': 4, '4': 1, '5': 5, '10': 'permissions'},
-    const {'1': 'count_following', '3': 5, '4': 1, '5': 3, '10': 'countFollowing'},
-    const {'1': 'count_followers', '3': 6, '4': 1, '5': 3, '10': 'countFollowers'},
-    const {'1': 'created_at', '3': 7, '4': 1, '5': 3, '10': 'createdAt'},
-    const {'1': 'updated_at', '3': 8, '4': 1, '5': 3, '10': 'updatedAt'},
+    const {'1': 'preferred_hostnames', '3': 5, '4': 3, '5': 9, '10': 'preferredHostnames'},
+    const {'1': 'count_following', '3': 6, '4': 1, '5': 3, '10': 'countFollowing'},
+    const {'1': 'count_followers', '3': 7, '4': 1, '5': 3, '10': 'countFollowers'},
+    const {'1': 'created_at', '3': 8, '4': 1, '5': 3, '10': 'createdAt'},
+    const {'1': 'updated_at', '3': 9, '4': 1, '5': 3, '10': 'updatedAt'},
   ],
 };
 
 /// Descriptor for `UserFullReply`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List userFullReplyDescriptor = $convert.base64Decode('Cg1Vc2VyRnVsbFJlcGx5Eg4KAmlkGAEgASgFUgJpZBIaCgh1c2VybmFtZRgCIAEoCVIIdXNlcm5hbWUSFAoFZW1haWwYAyABKAlSBWVtYWlsEiAKC3Blcm1pc3Npb25zGAQgASgFUgtwZXJtaXNzaW9ucxInCg9jb3VudF9mb2xsb3dpbmcYBSABKANSDmNvdW50Rm9sbG93aW5nEicKD2NvdW50X2ZvbGxvd2VycxgGIAEoA1IOY291bnRGb2xsb3dlcnMSHQoKY3JlYXRlZF9hdBgHIAEoA1IJY3JlYXRlZEF0Eh0KCnVwZGF0ZWRfYXQYCCABKANSCXVwZGF0ZWRBdA==');
+final $typed_data.Uint8List userFullReplyDescriptor = $convert.base64Decode('Cg1Vc2VyRnVsbFJlcGx5Eg4KAmlkGAEgASgFUgJpZBIaCgh1c2VybmFtZRgCIAEoCVIIdXNlcm5hbWUSFAoFZW1haWwYAyABKAlSBWVtYWlsEiAKC3Blcm1pc3Npb25zGAQgASgFUgtwZXJtaXNzaW9ucxIvChNwcmVmZXJyZWRfaG9zdG5hbWVzGAUgAygJUhJwcmVmZXJyZWRIb3N0bmFtZXMSJwoPY291bnRfZm9sbG93aW5nGAYgASgDUg5jb3VudEZvbGxvd2luZxInCg9jb3VudF9mb2xsb3dlcnMYByABKANSDmNvdW50Rm9sbG93ZXJzEh0KCmNyZWF0ZWRfYXQYCCABKANSCWNyZWF0ZWRBdBIdCgp1cGRhdGVkX2F0GAkgASgDUgl1cGRhdGVkQXQ=');
 @$core.Deprecated('Use userTokenReplyDescriptor instead')
 const UserTokenReply$json = const {
   '1': 'UserTokenReply',

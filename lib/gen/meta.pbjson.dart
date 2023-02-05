@@ -8,18 +8,18 @@
 import 'dart:core' as $core;
 import 'dart:convert' as $convert;
 import 'dart:typed_data' as $typed_data;
-@$core.Deprecated('Use metaHostNamesOptionDescriptor instead')
-const MetaHostNamesOption$json = const {
-  '1': 'MetaHostNamesOption',
+@$core.Deprecated('Use metaHostnamesOptionDescriptor instead')
+const MetaHostnamesOption$json = const {
+  '1': 'MetaHostnamesOption',
   '2': const [
-    const {'1': 'HostNamesReading', '2': 0},
-    const {'1': 'HostNamesManga', '2': 1},
-    const {'1': 'HostNamesOnline', '2': 2},
+    const {'1': 'HostnamesReading', '2': 0},
+    const {'1': 'HostnamesManga', '2': 1},
+    const {'1': 'HostnamesOnline', '2': 2},
   ],
 };
 
-/// Descriptor for `MetaHostNamesOption`. Decode as a `google.protobuf.EnumDescriptorProto`.
-final $typed_data.Uint8List metaHostNamesOptionDescriptor = $convert.base64Decode('ChNNZXRhSG9zdE5hbWVzT3B0aW9uEhQKEEhvc3ROYW1lc1JlYWRpbmcQABISCg5Ib3N0TmFtZXNNYW5nYRABEhMKD0hvc3ROYW1lc09ubGluZRAC');
+/// Descriptor for `MetaHostnamesOption`. Decode as a `google.protobuf.EnumDescriptorProto`.
+final $typed_data.Uint8List metaHostnamesOptionDescriptor = $convert.base64Decode('ChNNZXRhSG9zdG5hbWVzT3B0aW9uEhQKEEhvc3RuYW1lc1JlYWRpbmcQABISCg5Ib3N0bmFtZXNNYW5nYRABEhMKD0hvc3RuYW1lc09ubGluZRAC');
 @$core.Deprecated('Use metaGenresOptionDescriptor instead')
 const MetaGenresOption$json = const {
   '1': 'MetaGenresOption',
@@ -41,19 +41,19 @@ const MetaReply$json = const {
 
 /// Descriptor for `MetaReply`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List metaReplyDescriptor = $convert.base64Decode('CglNZXRhUmVwbHkSFAoFaXRlbXMYASADKAlSBWl0ZW1z');
-@$core.Deprecated('Use metaHostNamesRequestDescriptor instead')
-const MetaHostNamesRequest$json = const {
-  '1': 'MetaHostNamesRequest',
+@$core.Deprecated('Use metaHostnamesRequestDescriptor instead')
+const MetaHostnamesRequest$json = const {
+  '1': 'MetaHostnamesRequest',
   '2': const [
-    const {'1': 'option', '3': 1, '4': 1, '5': 14, '6': '.rumgap.MetaHostNamesOption', '9': 0, '10': 'option', '17': true},
+    const {'1': 'option', '3': 1, '4': 1, '5': 14, '6': '.rumgap.MetaHostnamesOption', '9': 0, '10': 'option', '17': true},
   ],
   '8': const [
     const {'1': '_option'},
   ],
 };
 
-/// Descriptor for `MetaHostNamesRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List metaHostNamesRequestDescriptor = $convert.base64Decode('ChRNZXRhSG9zdE5hbWVzUmVxdWVzdBI4CgZvcHRpb24YASABKA4yGy5ydW1nYXAuTWV0YUhvc3ROYW1lc09wdGlvbkgAUgZvcHRpb26IAQFCCQoHX29wdGlvbg==');
+/// Descriptor for `MetaHostnamesRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List metaHostnamesRequestDescriptor = $convert.base64Decode('ChRNZXRhSG9zdG5hbWVzUmVxdWVzdBI4CgZvcHRpb24YASABKA4yGy5ydW1nYXAuTWV0YUhvc3RuYW1lc09wdGlvbkgAUgZvcHRpb26IAQFCCQoHX29wdGlvbg==');
 @$core.Deprecated('Use metaGenresRequestDescriptor instead')
 const MetaGenresRequest$json = const {
   '1': 'MetaGenresRequest',

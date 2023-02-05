@@ -54,15 +54,15 @@ class MetaReply extends $pb.GeneratedMessage {
   $core.List<$core.String> get items => $_getList(0);
 }
 
-class MetaHostNamesRequest extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'MetaHostNamesRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'rumgap'), createEmptyInstance: create)
-    ..e<MetaHostNamesOption>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'option', $pb.PbFieldType.OE, defaultOrMaker: MetaHostNamesOption.HostNamesReading, valueOf: MetaHostNamesOption.valueOf, enumValues: MetaHostNamesOption.values)
+class MetaHostnamesRequest extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'MetaHostnamesRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'rumgap'), createEmptyInstance: create)
+    ..e<MetaHostnamesOption>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'option', $pb.PbFieldType.OE, defaultOrMaker: MetaHostnamesOption.HostnamesReading, valueOf: MetaHostnamesOption.valueOf, enumValues: MetaHostnamesOption.values)
     ..hasRequiredFields = false
   ;
 
-  MetaHostNamesRequest._() : super();
-  factory MetaHostNamesRequest({
-    MetaHostNamesOption? option,
+  MetaHostnamesRequest._() : super();
+  factory MetaHostnamesRequest({
+    MetaHostnamesOption? option,
   }) {
     final _result = create();
     if (option != null) {
@@ -70,31 +70,31 @@ class MetaHostNamesRequest extends $pb.GeneratedMessage {
     }
     return _result;
   }
-  factory MetaHostNamesRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory MetaHostNamesRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  factory MetaHostnamesRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory MetaHostnamesRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
   'Will be removed in next major version')
-  MetaHostNamesRequest clone() => MetaHostNamesRequest()..mergeFromMessage(this);
+  MetaHostnamesRequest clone() => MetaHostnamesRequest()..mergeFromMessage(this);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
   'Will be removed in next major version')
-  MetaHostNamesRequest copyWith(void Function(MetaHostNamesRequest) updates) => super.copyWith((message) => updates(message as MetaHostNamesRequest)) as MetaHostNamesRequest; // ignore: deprecated_member_use
+  MetaHostnamesRequest copyWith(void Function(MetaHostnamesRequest) updates) => super.copyWith((message) => updates(message as MetaHostnamesRequest)) as MetaHostnamesRequest; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
   @$core.pragma('dart2js:noInline')
-  static MetaHostNamesRequest create() => MetaHostNamesRequest._();
-  MetaHostNamesRequest createEmptyInstance() => create();
-  static $pb.PbList<MetaHostNamesRequest> createRepeated() => $pb.PbList<MetaHostNamesRequest>();
+  static MetaHostnamesRequest create() => MetaHostnamesRequest._();
+  MetaHostnamesRequest createEmptyInstance() => create();
+  static $pb.PbList<MetaHostnamesRequest> createRepeated() => $pb.PbList<MetaHostnamesRequest>();
   @$core.pragma('dart2js:noInline')
-  static MetaHostNamesRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<MetaHostNamesRequest>(create);
-  static MetaHostNamesRequest? _defaultInstance;
+  static MetaHostnamesRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<MetaHostnamesRequest>(create);
+  static MetaHostnamesRequest? _defaultInstance;
 
   @$pb.TagNumber(1)
-  MetaHostNamesOption get option => $_getN(0);
+  MetaHostnamesOption get option => $_getN(0);
   @$pb.TagNumber(1)
-  set option(MetaHostNamesOption v) { setField(1, v); }
+  set option(MetaHostnamesOption v) { setField(1, v); }
   @$pb.TagNumber(1)
   $core.bool hasOption() => $_has(0);
   @$pb.TagNumber(1)

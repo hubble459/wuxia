@@ -43,7 +43,7 @@ class _MangaChaptersScreenState extends State<MangaChaptersScreen> {
               manga: widget.manga,
               refreshParent: (progress) {
                 widget.manga.readingProgress = progress;
-                api.reading.edit(ReadingPatchRequest(
+                api.reading.update(ReadingPatchRequest(
                   mangaId: widget.manga.id,
                   progress: widget.manga.readingProgress,
                 ));

@@ -15,6 +15,8 @@ service User {
     rpc Login (UserRequest) returns (UserTokenReply);
     rpc Get (Id) returns (UserFullReply);
     rpc Index (PaginateQuery) returns (UsersReply);
+    rpc Me (Empty) returns (UserFullReply);
+    rpc Update (UserUpdateRequest) returns (UserFullReply);
 }
 
 service Friend {
@@ -40,7 +42,7 @@ service Chapter {
 }
 
 service Reading {
-    rpc Edit (ReadingPatchRequest) returns (MangaReply);
+    rpc Update (ReadingPatchRequest) returns (MangaReply);
     rpc Create (ReadingPostRequest) returns (MangaReply);
     rpc Delete (Id) returns (Empty);
 }
@@ -49,12 +51,8 @@ service Search {
     rpc Manga (SearchRequest) returns (SearchReply);
 }
 
-service Verify {
-    rpc Token (Empty) returns (Empty);
-}
-
 service Meta {
-    rpc Hostnames (MetaHostNamesRequest) returns (MetaReply);
+    rpc Hostnames (MetaHostnamesRequest) returns (MetaReply);
     rpc Genres (MetaGenresRequest) returns (MetaReply);
 }
 

@@ -9,21 +9,21 @@
 import 'dart:core' as $core;
 import 'package:protobuf/protobuf.dart' as $pb;
 
-class MetaHostNamesOption extends $pb.ProtobufEnum {
-  static const MetaHostNamesOption HostNamesReading = MetaHostNamesOption._(0, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'HostNamesReading');
-  static const MetaHostNamesOption HostNamesManga = MetaHostNamesOption._(1, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'HostNamesManga');
-  static const MetaHostNamesOption HostNamesOnline = MetaHostNamesOption._(2, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'HostNamesOnline');
+class MetaHostnamesOption extends $pb.ProtobufEnum {
+  static const MetaHostnamesOption HostnamesReading = MetaHostnamesOption._(0, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'HostnamesReading');
+  static const MetaHostnamesOption HostnamesManga = MetaHostnamesOption._(1, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'HostnamesManga');
+  static const MetaHostnamesOption HostnamesOnline = MetaHostnamesOption._(2, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'HostnamesOnline');
 
-  static const $core.List<MetaHostNamesOption> values = <MetaHostNamesOption> [
-    HostNamesReading,
-    HostNamesManga,
-    HostNamesOnline,
+  static const $core.List<MetaHostnamesOption> values = <MetaHostnamesOption> [
+    HostnamesReading,
+    HostnamesManga,
+    HostnamesOnline,
   ];
 
-  static final $core.Map<$core.int, MetaHostNamesOption> _byValue = $pb.ProtobufEnum.initByValue(values);
-  static MetaHostNamesOption? valueOf($core.int value) => _byValue[value];
+  static final $core.Map<$core.int, MetaHostnamesOption> _byValue = $pb.ProtobufEnum.initByValue(values);
+  static MetaHostnamesOption? valueOf($core.int value) => _byValue[value];
 
-  const MetaHostNamesOption._($core.int v, $core.String n) : super(v, n);
+  const MetaHostnamesOption._($core.int v, $core.String n) : super(v, n);
 }
 
 class MetaGenresOption extends $pb.ProtobufEnum {
