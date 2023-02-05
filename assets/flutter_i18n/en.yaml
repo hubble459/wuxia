@@ -51,6 +51,20 @@ settings:
   data_saver: Data Saver
   logout: Logout
   language: Language
+  statistics:
+    title: Statistics
+    completed_manga: Completed Manga
+    chapters_read: Chapters Read
+    minutes: ' minutes'
+    seconds: ' seconds'
+    average_reading_time: Average Reading Time
+  misc: Miscellaneous
+  download: Download
+  download_directory: Download Directory
+  download_clear: Clear Downloads
+  account: Account
+  remove_account: Remove Account
+  edit_account: Edit Account
 reading:
   delete: Delete Reading
   delete_content: Are you sure you want to delete "{title}"?
@@ -67,4 +81,3 @@ validator:
   has_special_character: '{name} has to contain a special characters'
   has_uppercase: '{name} has to contain an uppercased letter'
   has_lowercase: '{name} has to contain a lowercased letter'
-

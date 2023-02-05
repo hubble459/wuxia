@@ -67,3 +67,16 @@ const MetaGenresRequest$json = const {
 
 /// Descriptor for `MetaGenresRequest`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List metaGenresRequestDescriptor = $convert.base64Decode('ChFNZXRhR2VucmVzUmVxdWVzdBI1CgZvcHRpb24YASABKA4yGC5ydW1nYXAuTWV0YUdlbnJlc09wdGlvbkgAUgZvcHRpb26IAQFCCQoHX29wdGlvbg==');
+@$core.Deprecated('Use statsReplyDescriptor instead')
+const StatsReply$json = const {
+  '1': 'StatsReply',
+  '2': const [
+    const {'1': 'count_total_reading', '3': 1, '4': 1, '5': 3, '10': 'countTotalReading'},
+    const {'1': 'count_total_chapters', '3': 2, '4': 1, '5': 3, '10': 'countTotalChapters'},
+    const {'1': 'count_reading', '3': 3, '4': 1, '5': 3, '10': 'countReading'},
+    const {'1': 'count_chapters', '3': 4, '4': 1, '5': 3, '10': 'countChapters'},
+  ],
+};
+
+/// Descriptor for `StatsReply`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List statsReplyDescriptor = $convert.base64Decode('CgpTdGF0c1JlcGx5Ei4KE2NvdW50X3RvdGFsX3JlYWRpbmcYASABKANSEWNvdW50VG90YWxSZWFkaW5nEjAKFGNvdW50X3RvdGFsX2NoYXB0ZXJzGAIgASgDUhJjb3VudFRvdGFsQ2hhcHRlcnMSIwoNY291bnRfcmVhZGluZxgDIAEoA1IMY291bnRSZWFkaW5nEiUKDmNvdW50X2NoYXB0ZXJzGAQgASgDUg1jb3VudENoYXB0ZXJz');

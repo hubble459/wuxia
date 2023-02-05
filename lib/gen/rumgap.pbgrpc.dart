@@ -671,6 +671,10 @@ class MetaClient extends $grpc.Client {
           '/rumgap.Meta/Genres',
           ($8.MetaGenresRequest value) => value.writeToBuffer(),
           ($core.List<$core.int> value) => $8.MetaReply.fromBuffer(value));
+  static final _$stats = $grpc.ClientMethod<$1.Empty, $8.StatsReply>(
+      '/rumgap.Meta/Stats',
+      ($1.Empty value) => value.writeToBuffer(),
+      ($core.List<$core.int> value) => $8.StatsReply.fromBuffer(value));
 
   MetaClient($grpc.ClientChannel channel,
       {$grpc.CallOptions? options,
@@ -685,6 +689,11 @@ class MetaClient extends $grpc.Client {
   $grpc.ResponseFuture<$8.MetaReply> genres($8.MetaGenresRequest request,
       {$grpc.CallOptions? options}) {
     return $createUnaryCall(_$genres, request, options: options);
+  }
+
+  $grpc.ResponseFuture<$8.StatsReply> stats($1.Empty request,
+      {$grpc.CallOptions? options}) {
+    return $createUnaryCall(_$stats, request, options: options);
   }
 }
 
@@ -707,6 +716,13 @@ abstract class MetaServiceBase extends $grpc.Service {
         false,
         ($core.List<$core.int> value) => $8.MetaGenresRequest.fromBuffer(value),
         ($8.MetaReply value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$1.Empty, $8.StatsReply>(
+        'Stats',
+        stats_Pre,
+        false,
+        false,
+        ($core.List<$core.int> value) => $1.Empty.fromBuffer(value),
+        ($8.StatsReply value) => value.writeToBuffer()));
   }
 
   $async.Future<$8.MetaReply> hostnames_Pre($grpc.ServiceCall call,
@@ -719,8 +735,14 @@ abstract class MetaServiceBase extends $grpc.Service {
     return genres(call, await request);
   }
 
+  $async.Future<$8.StatsReply> stats_Pre(
+      $grpc.ServiceCall call, $async.Future<$1.Empty> request) async {
+    return stats(call, await request);
+  }
+
   $async.Future<$8.MetaReply> hostnames(
       $grpc.ServiceCall call, $8.MetaHostnamesRequest request);
   $async.Future<$8.MetaReply> genres(
       $grpc.ServiceCall call, $8.MetaGenresRequest request);
+  $async.Future<$8.StatsReply> stats($grpc.ServiceCall call, $1.Empty request);
 }

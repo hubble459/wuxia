@@ -52,6 +52,7 @@ class _RootNavScreenState extends State<RootNavScreen> {
         ),
         body: SafeArea(
           child: PageView(
+            key: Key(FlutterI18n.currentLocale(context)?.languageCode ?? 'root'),
             controller: _pageController,
             physics: const NeverScrollableScrollPhysics(),
             children: routes.map((e) => e.widget).toList(),

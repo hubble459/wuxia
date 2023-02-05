@@ -6,6 +6,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:wuxia/gen/manga.pb.dart';
 import 'package:wuxia/screen/login_screen.dart';
 import 'package:wuxia/screen/root_nav_screen.dart';
+import 'package:wuxia/screen/setting/statistics_screen.dart';
 import 'package:wuxia/screen/settings_screen.dart';
 import 'package:wuxia/screen/splash_screen.dart';
 
@@ -49,13 +50,17 @@ class MyApp extends StatelessWidget {
         'login': (context) => const LoginScreen(),
         'root_nav': (context) => const RootNavScreen(),
         'settings': (context) => const SettingsScreen(),
+        'statistics': (context) => const StatisticsScreen(),
       },
       themeMode: ThemeMode.dark,
       theme: ThemeData.light(),
       darkTheme: ThemeData(
-        colorSchemeSeed: Colors.black,
+        colorScheme: ColorScheme.fromSwatch(
+          brightness: Brightness.dark,
+          primarySwatch: Colors.deepPurple,
+          accentColor: Colors.pink,
+        ),
         scaffoldBackgroundColor: Colors.black,
-        brightness: Brightness.dark,
         inputDecorationTheme: const InputDecorationTheme(
           isDense: true,
           filled: true,

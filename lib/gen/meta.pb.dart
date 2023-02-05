@@ -7,6 +7,7 @@
 
 import 'dart:core' as $core;
 
+import 'package:fixnum/fixnum.dart' as $fixnum;
 import 'package:protobuf/protobuf.dart' as $pb;
 
 import 'meta.pbenum.dart';
@@ -146,5 +147,94 @@ class MetaGenresRequest extends $pb.GeneratedMessage {
   $core.bool hasOption() => $_has(0);
   @$pb.TagNumber(1)
   void clearOption() => clearField(1);
+}
+
+class StatsReply extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'StatsReply', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'rumgap'), createEmptyInstance: create)
+    ..aInt64(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'countTotalReading')
+    ..aInt64(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'countTotalChapters')
+    ..aInt64(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'countReading')
+    ..aInt64(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'countChapters')
+    ..hasRequiredFields = false
+  ;
+
+  StatsReply._() : super();
+  factory StatsReply({
+    $fixnum.Int64? countTotalReading,
+    $fixnum.Int64? countTotalChapters,
+    $fixnum.Int64? countReading,
+    $fixnum.Int64? countChapters,
+  }) {
+    final _result = create();
+    if (countTotalReading != null) {
+      _result.countTotalReading = countTotalReading;
+    }
+    if (countTotalChapters != null) {
+      _result.countTotalChapters = countTotalChapters;
+    }
+    if (countReading != null) {
+      _result.countReading = countReading;
+    }
+    if (countChapters != null) {
+      _result.countChapters = countChapters;
+    }
+    return _result;
+  }
+  factory StatsReply.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory StatsReply.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  StatsReply clone() => StatsReply()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  StatsReply copyWith(void Function(StatsReply) updates) => super.copyWith((message) => updates(message as StatsReply)) as StatsReply; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static StatsReply create() => StatsReply._();
+  StatsReply createEmptyInstance() => create();
+  static $pb.PbList<StatsReply> createRepeated() => $pb.PbList<StatsReply>();
+  @$core.pragma('dart2js:noInline')
+  static StatsReply getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<StatsReply>(create);
+  static StatsReply? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $fixnum.Int64 get countTotalReading => $_getI64(0);
+  @$pb.TagNumber(1)
+  set countTotalReading($fixnum.Int64 v) { $_setInt64(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasCountTotalReading() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearCountTotalReading() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $fixnum.Int64 get countTotalChapters => $_getI64(1);
+  @$pb.TagNumber(2)
+  set countTotalChapters($fixnum.Int64 v) { $_setInt64(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasCountTotalChapters() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearCountTotalChapters() => clearField(2);
+
+  @$pb.TagNumber(3)
+  $fixnum.Int64 get countReading => $_getI64(2);
+  @$pb.TagNumber(3)
+  set countReading($fixnum.Int64 v) { $_setInt64(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasCountReading() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearCountReading() => clearField(3);
+
+  @$pb.TagNumber(4)
+  $fixnum.Int64 get countChapters => $_getI64(3);
+  @$pb.TagNumber(4)
+  set countChapters($fixnum.Int64 v) { $_setInt64(3, v); }
+  @$pb.TagNumber(4)
+  $core.bool hasCountChapters() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearCountChapters() => clearField(4);
 }
 

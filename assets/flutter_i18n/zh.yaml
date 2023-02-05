@@ -52,6 +52,20 @@ settings:
   data_saver: 数据保护程序
   logout: 登出
   language: 语
+  statistics:
+    title: 统计数据
+    chapters_read: 阅读的章节
+    completed_manga: 完成的漫画
+    minutes: 分
+    seconds: 秒
+    average_reading_time: 平均阅读时间
+  account: 帐户
+  download: 下载
+  download_clear: 清除下载
+  download_directory: 下载目录
+  edit_account: 编辑帐户
+  misc: 各种各样的
+  remove_account: 删除帐户
 reading:
   delete: 删除阅读
   delete_content: 确定要删除“{title}”吗？

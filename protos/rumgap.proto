@@ -54,6 +54,7 @@ service Search {
 service Meta {
     rpc Hostnames (MetaHostnamesRequest) returns (MetaReply);
     rpc Genres (MetaGenresRequest) returns (MetaReply);
+    rpc Stats (Empty) returns (StatsReply);
 }
 
 message Id {
