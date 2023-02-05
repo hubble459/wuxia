@@ -12,7 +12,6 @@ login:
   username: 用户名
   welcome: 你好
   confirm_password: 确认密码
-  password_not_match: 密码不匹配
   email: 电子邮件
 search:
   no_results: 没有搜索结果
