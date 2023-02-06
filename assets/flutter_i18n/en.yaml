@@ -46,6 +46,8 @@ basic:
   refresh: Refresh
   confirm: Confirm
   cancel: Cancel
+  url: URL
+  add: Add
 settings:
   title: Settings
   data_saver: Data Saver
@@ -74,6 +76,7 @@ validator:
   regex: '{name} has to match the following: {regex}'
   required: '{name} is required'
   email: '{name} should be a valid email address'
+  url: '{name} should be a valid url'
   password_not_match: Passwords do not match
   is_number: '{name} has to be a number'
   is_string: '{name} has to contain text'

@@ -30,16 +30,18 @@ const ChapterReply$json = const {
     const {'1': 'number', '3': 5, '4': 1, '5': 2, '10': 'number'},
     const {'1': 'index', '3': 6, '4': 1, '5': 3, '10': 'index'},
     const {'1': 'posted', '3': 7, '4': 1, '5': 3, '9': 0, '10': 'posted', '17': true},
-    const {'1': 'created_at', '3': 8, '4': 1, '5': 3, '10': 'createdAt'},
-    const {'1': 'updated_at', '3': 9, '4': 1, '5': 3, '10': 'updatedAt'},
+    const {'1': 'offset', '3': 8, '4': 1, '5': 5, '9': 1, '10': 'offset', '17': true},
+    const {'1': 'created_at', '3': 9, '4': 1, '5': 3, '10': 'createdAt'},
+    const {'1': 'updated_at', '3': 10, '4': 1, '5': 3, '10': 'updatedAt'},
   ],
   '8': const [
     const {'1': '_posted'},
+    const {'1': '_offset'},
   ],
 };
 
 /// Descriptor for `ChapterReply`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List chapterReplyDescriptor = $convert.base64Decode('CgxDaGFwdGVyUmVwbHkSDgoCaWQYASABKAVSAmlkEhkKCG1hbmdhX2lkGAIgASgFUgdtYW5nYUlkEhAKA3VybBgDIAEoCVIDdXJsEhQKBXRpdGxlGAQgASgJUgV0aXRsZRIWCgZudW1iZXIYBSABKAJSBm51bWJlchIUCgVpbmRleBgGIAEoA1IFaW5kZXgSGwoGcG9zdGVkGAcgASgDSABSBnBvc3RlZIgBARIdCgpjcmVhdGVkX2F0GAggASgDUgljcmVhdGVkQXQSHQoKdXBkYXRlZF9hdBgJIAEoA1IJdXBkYXRlZEF0QgkKB19wb3N0ZWQ=');
+final $typed_data.Uint8List chapterReplyDescriptor = $convert.base64Decode('CgxDaGFwdGVyUmVwbHkSDgoCaWQYASABKAVSAmlkEhkKCG1hbmdhX2lkGAIgASgFUgdtYW5nYUlkEhAKA3VybBgDIAEoCVIDdXJsEhQKBXRpdGxlGAQgASgJUgV0aXRsZRIWCgZudW1iZXIYBSABKAJSBm51bWJlchIUCgVpbmRleBgGIAEoA1IFaW5kZXgSGwoGcG9zdGVkGAcgASgDSABSBnBvc3RlZIgBARIbCgZvZmZzZXQYCCABKAVIAVIGb2Zmc2V0iAEBEh0KCmNyZWF0ZWRfYXQYCSABKANSCWNyZWF0ZWRBdBIdCgp1cGRhdGVkX2F0GAogASgDUgl1cGRhdGVkQXRCCQoHX3Bvc3RlZEIJCgdfb2Zmc2V0');
 @$core.Deprecated('Use chaptersReplyDescriptor instead')
 const ChaptersReply$json = const {
   '1': 'ChaptersReply',

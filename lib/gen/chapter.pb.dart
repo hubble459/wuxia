@@ -82,8 +82,9 @@ class ChapterReply extends $pb.GeneratedMessage {
     ..a<$core.double>(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'number', $pb.PbFieldType.OF)
     ..aInt64(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'index')
     ..aInt64(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'posted')
-    ..aInt64(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'createdAt')
-    ..aInt64(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'updatedAt')
+    ..a<$core.int>(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'offset', $pb.PbFieldType.O3)
+    ..aInt64(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'createdAt')
+    ..aInt64(10, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'updatedAt')
     ..hasRequiredFields = false
   ;
 
@@ -96,6 +97,7 @@ class ChapterReply extends $pb.GeneratedMessage {
     $core.double? number,
     $fixnum.Int64? index,
     $fixnum.Int64? posted,
+    $core.int? offset,
     $fixnum.Int64? createdAt,
     $fixnum.Int64? updatedAt,
   }) {
@@ -120,6 +122,9 @@ class ChapterReply extends $pb.GeneratedMessage {
     }
     if (posted != null) {
       _result.posted = posted;
+    }
+    if (offset != null) {
+      _result.offset = offset;
     }
     if (createdAt != null) {
       _result.createdAt = createdAt;
@@ -214,22 +219,31 @@ class ChapterReply extends $pb.GeneratedMessage {
   void clearPosted() => clearField(7);
 
   @$pb.TagNumber(8)
-  $fixnum.Int64 get createdAt => $_getI64(7);
+  $core.int get offset => $_getIZ(7);
   @$pb.TagNumber(8)
-  set createdAt($fixnum.Int64 v) { $_setInt64(7, v); }
+  set offset($core.int v) { $_setSignedInt32(7, v); }
   @$pb.TagNumber(8)
-  $core.bool hasCreatedAt() => $_has(7);
+  $core.bool hasOffset() => $_has(7);
   @$pb.TagNumber(8)
-  void clearCreatedAt() => clearField(8);
+  void clearOffset() => clearField(8);
 
   @$pb.TagNumber(9)
-  $fixnum.Int64 get updatedAt => $_getI64(8);
+  $fixnum.Int64 get createdAt => $_getI64(8);
   @$pb.TagNumber(9)
-  set updatedAt($fixnum.Int64 v) { $_setInt64(8, v); }
+  set createdAt($fixnum.Int64 v) { $_setInt64(8, v); }
   @$pb.TagNumber(9)
-  $core.bool hasUpdatedAt() => $_has(8);
+  $core.bool hasCreatedAt() => $_has(8);
   @$pb.TagNumber(9)
-  void clearUpdatedAt() => clearField(9);
+  void clearCreatedAt() => clearField(9);
+
+  @$pb.TagNumber(10)
+  $fixnum.Int64 get updatedAt => $_getI64(9);
+  @$pb.TagNumber(10)
+  set updatedAt($fixnum.Int64 v) { $_setInt64(9, v); }
+  @$pb.TagNumber(10)
+  $core.bool hasUpdatedAt() => $_has(9);
+  @$pb.TagNumber(10)
+  void clearUpdatedAt() => clearField(10);
 }
 
 class ChaptersReply extends $pb.GeneratedMessage {

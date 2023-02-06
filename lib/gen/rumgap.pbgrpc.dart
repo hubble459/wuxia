@@ -548,6 +548,11 @@ class ReadingClient extends $grpc.Client {
       '/rumgap.Reading/Delete',
       ($1.Id value) => value.writeToBuffer(),
       ($core.List<$core.int> value) => $1.Empty.fromBuffer(value));
+  static final _$updateChapterOffset =
+      $grpc.ClientMethod<$6.UpdateChapterOffsetRequest, $1.Empty>(
+          '/rumgap.Reading/UpdateChapterOffset',
+          ($6.UpdateChapterOffsetRequest value) => value.writeToBuffer(),
+          ($core.List<$core.int> value) => $1.Empty.fromBuffer(value));
 
   ReadingClient($grpc.ClientChannel channel,
       {$grpc.CallOptions? options,
@@ -567,6 +572,12 @@ class ReadingClient extends $grpc.Client {
   $grpc.ResponseFuture<$1.Empty> delete($1.Id request,
       {$grpc.CallOptions? options}) {
     return $createUnaryCall(_$delete, request, options: options);
+  }
+
+  $grpc.ResponseFuture<$1.Empty> updateChapterOffset(
+      $6.UpdateChapterOffsetRequest request,
+      {$grpc.CallOptions? options}) {
+    return $createUnaryCall(_$updateChapterOffset, request, options: options);
   }
 }
 
@@ -597,6 +608,14 @@ abstract class ReadingServiceBase extends $grpc.Service {
         false,
         ($core.List<$core.int> value) => $1.Id.fromBuffer(value),
         ($1.Empty value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$6.UpdateChapterOffsetRequest, $1.Empty>(
+        'UpdateChapterOffset',
+        updateChapterOffset_Pre,
+        false,
+        false,
+        ($core.List<$core.int> value) =>
+            $6.UpdateChapterOffsetRequest.fromBuffer(value),
+        ($1.Empty value) => value.writeToBuffer()));
   }
 
   $async.Future<$4.MangaReply> update_Pre($grpc.ServiceCall call,
@@ -614,11 +633,18 @@ abstract class ReadingServiceBase extends $grpc.Service {
     return delete(call, await request);
   }
 
+  $async.Future<$1.Empty> updateChapterOffset_Pre($grpc.ServiceCall call,
+      $async.Future<$6.UpdateChapterOffsetRequest> request) async {
+    return updateChapterOffset(call, await request);
+  }
+
   $async.Future<$4.MangaReply> update(
       $grpc.ServiceCall call, $6.ReadingPatchRequest request);
   $async.Future<$4.MangaReply> create(
       $grpc.ServiceCall call, $6.ReadingPostRequest request);
   $async.Future<$1.Empty> delete($grpc.ServiceCall call, $1.Id request);
+  $async.Future<$1.Empty> updateChapterOffset(
+      $grpc.ServiceCall call, $6.UpdateChapterOffsetRequest request);
 }
 
 class SearchClient extends $grpc.Client {

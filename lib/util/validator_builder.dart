@@ -24,6 +24,10 @@ class ValidatorBuilder {
     return required().custom(_isEmail);
   }
 
+  ValidatorBuilder isUrl() {
+    return required().custom(_isUrl);
+  }
+
   ValidatorBuilder isNumber() {
     return required().matches(RegExp(r'^\d+$'), _t('validator.is_number'));
   }
@@ -92,6 +96,11 @@ class ValidatorBuilder {
 
   String? _isEmail(String? value) {
     return emailRegex.hasMatch(value!) ? null : _t('validator.email');
+  }
+
+  String? _isUrl(String? value) {
+    final url = Uri.tryParse(value!);
+    return url != null && url.hasScheme && !url.hasEmptyPath ? null : _t('validator.url');
   }
 
   String _t(String key, [Map<String, String>? params]) {

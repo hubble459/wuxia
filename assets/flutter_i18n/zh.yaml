@@ -46,6 +46,7 @@ basic:
   refresh: 刷新
   confirm: 对
   cancel: 不对
+  add: 添加
 settings:
   title: 设置
   data_saver: 数据保护程序

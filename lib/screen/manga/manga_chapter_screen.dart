@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
@@ -19,18 +21,47 @@ class MangaChapterScreen extends StatefulWidget {
 }
 
 class _MangaChapterScreenState extends State<MangaChapterScreen> {
-  late ScrollController _scrollController;
+  final ScrollController _scrollController = ScrollController();
   late ChapterReply _chapter;
 
   @override
   void initState() {
-    super.initState();
     _chapter = widget.chapter;
+
+    int last = 0;
+    int saved = 0;
+    Timer? timer;
+    _scrollController.addListener(() {
+      if (saved == 0) {
+        saved = _chapter.id;
+      }
+
+      final offset = _scrollController.offset.floor();
+      if (offset != last && saved == _chapter.id) {
+        timer?.cancel();
+        final chapterId = _chapter.id.floor();
+        timer = Timer(const Duration(seconds: 2), () {
+          last = offset;
+          saved = 0;
+          _chapter.offset = offset;
+          api.reading.updateChapterOffset(UpdateChapterOffsetRequest(
+            chapterId: chapterId,
+            offset: offset,
+          ));
+        });
+      }
+    });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    _scrollController = ScrollController();
     return Scaffold(
         appBar: AppBar(
           title: Tooltip(
@@ -63,46 +94,55 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
             if (snapshot.connectionState == ConnectionState.done) {
               if (snapshot.hasData) {
                 final links = snapshot.requireData.items;
-                return InteractiveViewer(
-                  // panEnabled: false,
-                  // boundaryMargin: EdgeInsets.all(80),
-                  minScale: 1,
-                  maxScale: 4,
-                  child: ListView.builder(
-                    controller: _scrollController,
-                    padding: EdgeInsets.zero,
-                    itemCount: links.length,
-                    physics: const BouncingScrollPhysics(),
-                    itemBuilder: (context, index) => CachedNetworkImage(
-                      imageUrl: links[index].toString(),
-                      alignment: Alignment.topCenter,
-                      fadeOutDuration: const Duration(microseconds: 1),
-                      filterQuality: FilterQuality.high,
-                      fit: BoxFit.fitWidth,
-                      width: double.infinity,
-                      httpHeaders: {
-                        'Referer': widget.manga.url.toString(),
-                      },
-                      progressIndicatorBuilder: (context, url, downloadProgress) => SizedBox.fromSize(
-                        size: const Size.fromHeight(500),
-                        child: Center(
-                          child: CircularProgressIndicator(
-                            value: downloadProgress.progress,
+                final host = (links.isNotEmpty ? Uri.tryParse(links.first)?.host : null) ?? '';
+
+                if (_chapter.offset != 0) {
+                  Timer(const Duration(seconds: 1), () {
+                    _scrollController.jumpTo(_chapter.offset.toDouble());
+                  });
+                }
+
+                return Scrollbar(
+                  controller: _scrollController,
+                  radius: const Radius.circular(4.0),
+                  thickness: 6.0,
+                  child: InteractiveViewer(
+                    // panEnabled: false,
+                    // boundaryMargin: EdgeInsets.all(80),
+                    minScale: 1,
+                    maxScale: 4,
+                    child: ListView.builder(
+                      controller: _scrollController,
+                      padding: EdgeInsets.zero,
+                      itemCount: links.length,
+                      physics: const BouncingScrollPhysics(),
+                      itemBuilder: (context, index) => CachedNetworkImage(
+                        imageUrl: links[index],
+                        alignment: Alignment.topCenter,
+                        fadeOutDuration: const Duration(microseconds: 1),
+                        filterQuality: FilterQuality.high,
+                        fit: BoxFit.fitWidth,
+                        width: double.infinity,
+                        httpHeaders: {
+                          'Referer': links[index],
+                          'Host': host,
+                        },
+                        progressIndicatorBuilder: (context, url, downloadProgress) => SizedBox.fromSize(
+                          size: const Size.fromHeight(500),
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              value: downloadProgress.progress,
+                            ),
+                          ),
+                        ),
+                        placeholder: null,
+                        errorWidget: (context, url, error) => SizedBox.fromSize(
+                          size: const Size.fromHeight(500),
+                          child: const Center(
+                            child: Icon(Icons.error),
                           ),
                         ),
                       ),
-                      placeholder: null,
-                      errorWidget: (context, url, error) => SizedBox.fromSize(
-                        size: const Size.fromHeight(500),
-                        child: const Center(
-                          child: Icon(Icons.error),
-                        ),
-                      ),
-                      // imageBuilder: (context, image) => Image(
-                      //   image: image,
-                      //   width: double.infinity,
-                      //   fit: BoxFit.fitWidth,
-                      // ),
                     ),
                   ),
                 );

@@ -59,30 +59,15 @@ class _MangaItemState extends State<MangaItem> {
           ? Hero(
               tag: widget.type.getTag(_manga.url),
               child: CachedNetworkImage(
-                imageUrl: _manga.cover.toString(),
+                imageUrl: _manga.cover,
                 width: 40,
+                httpHeaders: {
+                  'Referer': _manga.cover,
+                  'Host': Uri.parse(_manga.url).host,
+                },
               ),
             )
           : null,
-      // trailing: Row(
-      //   mainAxisSize: MainAxisSize.min,
-      //   children: [
-      //     Text(),
-      //     Padding(
-      //       padding: const EdgeInsets.all(4.0),
-      //       child: Container(
-      //         height: 5,
-      //         width: 5,
-      //         decoration: BoxDecoration(
-      //           color: _manga.hasReadingProgress()
-      //               ? Colors.green
-      //               : Colors.transparent,
-      //           shape: BoxShape.circle,
-      //         ),
-      //       ),
-      //     ),
-      //   ],
-      // ),
       trailing: SizedBox(
         height: 40,
         width: 40,
@@ -107,20 +92,17 @@ class _MangaItemState extends State<MangaItem> {
       ),
       contentPadding: const EdgeInsets.only(left: 16.0),
       onTap: () async {
-        if (mounted) {
-          Navigator.of(context)
-              .push(
-            MaterialPageRoute(
-              builder: (context) => MangaScreen(
-                manga: _manga,
-                type: widget.type,
-              ),
+        final manga = await Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => MangaScreen(
+              manga: _manga,
+              type: widget.type,
             ),
-          )
-              .then((value) async {
-            _manga = value;
-            setState(() {});
-          });
+          ),
+        );
+        if (manga != null && mounted) {
+          _manga = manga;
+          setState(() {});
         }
       },
     );

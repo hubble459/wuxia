@@ -1,6 +1,0 @@
-syntax = "proto3";
-package rumgap;
-
-message VerifyTokenRequest {
-    string token = 1;
-}

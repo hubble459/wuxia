@@ -1,6 +1,0 @@
-syntax = "proto3";
-package rumgap;
-
-message FriendRequest {
-    int32 user_id = 1;
-}

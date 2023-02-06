@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
+import 'package:wuxia/gen/manga.pb.dart';
+import 'package:wuxia/partial/dialog/add_manga_dialog.dart';
+import 'package:wuxia/partial/list/manga_item.dart';
 import 'package:wuxia/screen/latest_screen.dart';
+import 'package:wuxia/screen/manga/manga_screen.dart';
 import 'package:wuxia/screen/reading_screen.dart';
 import 'package:wuxia/screen/search_screen.dart';
 
@@ -21,6 +25,7 @@ class RootNavScreen extends StatefulWidget {
 
 class _RootNavScreenState extends State<RootNavScreen> {
   final PageController _pageController = PageController();
+  int stateChange = 0;
   int _selected = 0;
 
   @override
@@ -35,15 +40,50 @@ class _RootNavScreenState extends State<RootNavScreen> {
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
         appBar: AppBar(
-          title: I18nText('title'),
+          title: Text(routes[_selected].label),
           actions: [
+            ...(_selected == 0
+                ? [
+                    IconButton(
+                      onPressed: () async {
+                        final reading = await showDialog<MangaReply>(
+                          context: context,
+                          builder: (context) => const AddMangaDialog(),
+                        );
+                        if (reading != null && context.mounted) {
+                          setState(() {
+                            stateChange++;
+                          });
+
+                          await Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => MangaScreen(
+                                manga: reading,
+                                type: HeroScreenType.reading,
+                              ),
+                            ),
+                          );
+
+                          if (!mounted) {
+                            setState(() {
+                              stateChange++;
+                            });
+                          }
+                        }
+                      },
+                      tooltip: FlutterI18n.translate(context, 'basic.add'),
+                      icon: const Icon(Icons.add),
+                    ),
+                  ]
+                : []),
             IconButton(
-              onPressed: () {
-                Navigator.of(context).pushNamed('settings').then((value) {
-                  if (context.mounted) {
-                    setState(() {});
-                  }
-                });
+              onPressed: () async {
+                await Navigator.of(context).pushNamed('settings');
+                if (context.mounted) {
+                  setState(() {
+                    stateChange++;
+                  });
+                }
               },
               tooltip: FlutterI18n.translate(context, 'settings.title'),
               icon: const Icon(Icons.settings),
@@ -52,7 +92,7 @@ class _RootNavScreenState extends State<RootNavScreen> {
         ),
         body: SafeArea(
           child: PageView(
-            key: Key(FlutterI18n.currentLocale(context)?.languageCode ?? 'root'),
+            key: Key(stateChange.toString()),
             controller: _pageController,
             physics: const NeverScrollableScrollPhysics(),
             children: routes.map((e) => e.widget).toList(),
@@ -60,7 +100,12 @@ class _RootNavScreenState extends State<RootNavScreen> {
         ),
         bottomNavigationBar: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
-          items: routes.map((route) => BottomNavigationBarItem(icon: Icon(route.icon), label: route.label)).toList(),
+          items: routes
+              .map((route) => BottomNavigationBarItem(
+                    icon: Icon(route.icon),
+                    label: route.label,
+                  ))
+              .toList(),
           currentIndex: _selected,
           onTap: (index) {
             setState(() {

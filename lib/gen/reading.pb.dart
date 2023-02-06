@@ -117,3 +117,64 @@ class ReadingPatchRequest extends $pb.GeneratedMessage {
   void clearProgress() => clearField(2);
 }
 
+class UpdateChapterOffsetRequest extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'UpdateChapterOffsetRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'rumgap'), createEmptyInstance: create)
+    ..a<$core.int>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'chapterId', $pb.PbFieldType.O3)
+    ..a<$core.int>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'offset', $pb.PbFieldType.O3)
+    ..hasRequiredFields = false
+  ;
+
+  UpdateChapterOffsetRequest._() : super();
+  factory UpdateChapterOffsetRequest({
+    $core.int? chapterId,
+    $core.int? offset,
+  }) {
+    final _result = create();
+    if (chapterId != null) {
+      _result.chapterId = chapterId;
+    }
+    if (offset != null) {
+      _result.offset = offset;
+    }
+    return _result;
+  }
+  factory UpdateChapterOffsetRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory UpdateChapterOffsetRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  UpdateChapterOffsetRequest clone() => UpdateChapterOffsetRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  UpdateChapterOffsetRequest copyWith(void Function(UpdateChapterOffsetRequest) updates) => super.copyWith((message) => updates(message as UpdateChapterOffsetRequest)) as UpdateChapterOffsetRequest; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static UpdateChapterOffsetRequest create() => UpdateChapterOffsetRequest._();
+  UpdateChapterOffsetRequest createEmptyInstance() => create();
+  static $pb.PbList<UpdateChapterOffsetRequest> createRepeated() => $pb.PbList<UpdateChapterOffsetRequest>();
+  @$core.pragma('dart2js:noInline')
+  static UpdateChapterOffsetRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<UpdateChapterOffsetRequest>(create);
+  static UpdateChapterOffsetRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.int get chapterId => $_getIZ(0);
+  @$pb.TagNumber(1)
+  set chapterId($core.int v) { $_setSignedInt32(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasChapterId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearChapterId() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.int get offset => $_getIZ(1);
+  @$pb.TagNumber(2)
+  set offset($core.int v) { $_setSignedInt32(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasOffset() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearOffset() => clearField(2);
+}
+

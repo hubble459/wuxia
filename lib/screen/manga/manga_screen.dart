@@ -38,12 +38,11 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
 
   @override
   void initState() {
-    super.initState();
     _manga = widget.manga;
     _animationController
         .repeat(period: const Duration(seconds: 1))
         .whenComplete(() => _animationController.repeat(period: const Duration(seconds: 1)));
-    setState(() {});
+
     (() async {
       try {
         _manga = await api.manga.get(Id(id: _manga.id));
@@ -52,6 +51,8 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
         setState(() {});
       }
     })();
+
+    super.initState();
   }
 
   @override
@@ -120,7 +121,13 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
                     visible: _manga.hasCover(),
                     child: Hero(
                       tag: widget.type.getTag(_manga.url),
-                      child: CachedNetworkImage(imageUrl: _manga.cover.toString()),
+                      child: CachedNetworkImage(
+                        imageUrl: _manga.cover,
+                        httpHeaders: {
+                          'Referer': _manga.cover,
+                          'Host': Uri.parse(_manga.url).host,
+                        },
+                      ),
                     ),
                   ),
                   MangaDetails(
