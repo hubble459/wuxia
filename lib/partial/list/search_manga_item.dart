@@ -36,7 +36,6 @@ class _SearchMangaItemState extends State<SearchMangaItem> {
                 fit: BoxFit.cover,
                 httpHeaders: {
                   'Referer': searchManga.cover,
-                  'Host': Uri.parse(searchManga.url).host,
                 },
                 width: 40,
               ),

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:wuxia/gen/chapter.pb.dart';
 import 'package:wuxia/gen/manga.pb.dart';
-import 'package:wuxia/gen/reading.pb.dart';
 import 'package:wuxia/screen/manga/manga_chapter_screen.dart';
 
 class ChapterItem extends StatelessWidget {

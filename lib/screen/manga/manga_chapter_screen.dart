@@ -97,9 +97,15 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
                 final host = (links.isNotEmpty ? Uri.tryParse(links.first)?.host : null) ?? '';
 
                 if (_chapter.offset != 0) {
-                  Timer(const Duration(seconds: 1), () {
-                    _scrollController.jumpTo(_chapter.offset.toDouble());
-                  });
+                  (() async {
+                    int timeout = 0;
+                    while (_scrollController.positions.isEmpty && timeout++ != 5) {
+                      await Future.delayed(const Duration(seconds: 1));
+                    }
+                    if (_scrollController.positions.isNotEmpty) {
+                      _scrollController.jumpTo(_chapter.offset.toDouble());
+                    }
+                  })();
                 }
 
                 return Scrollbar(
