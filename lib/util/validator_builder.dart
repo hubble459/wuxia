@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 
 final emailRegex = RegExp(r'^[^\s@]+@([^\s@.,]+\.)+[^\s@.,]{2,}$');
+final hostRegex = RegExp(r'^(\d+\.){3}(\d+):\d+$');
 
 typedef Validator = String? Function(String? value);
 
@@ -26,6 +27,10 @@ class ValidatorBuilder {
 
   ValidatorBuilder isUrl() {
     return required().custom(_isUrl);
+  }
+
+  ValidatorBuilder isHostWithPortUrl() {
+    return required().custom(_isHostWithPortUrl);
   }
 
   ValidatorBuilder isNumber() {
@@ -101,6 +106,14 @@ class ValidatorBuilder {
   String? _isUrl(String? value) {
     final url = Uri.tryParse(value!);
     return url != null && url.hasScheme && !url.hasEmptyPath ? null : _t('validator.url');
+  }
+
+  String? _isHostWithPortUrl(String? value) {
+    final url = Uri.tryParse(value!);
+    if (url == null) {
+      return hostRegex.hasMatch(value) ? null : _t('validator.url');
+    }
+    return url.hasPort && !url.hasAbsolutePath && !url.hasScheme ? null : _t('validator.url');
   }
 
   String _t(String key, [Map<String, String>? params]) {

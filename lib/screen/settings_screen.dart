@@ -149,6 +149,7 @@ class _SettingsState extends State<_Settings> {
             ),
             onTap: () async {
               await const FlutterSecureStorage().delete(key: 'token');
+              API.token = null;
               if (!mounted) {
                 return;
               }

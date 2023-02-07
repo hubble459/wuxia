@@ -20,6 +20,13 @@ class _SplashScreenState extends State<SplashScreen> {
       await Jiffy.locale('en');
 
       final preferences = await SharedPreferences.getInstance();
+      final apiURL = preferences.getString('api_host');
+      if (apiURL != null && api.getApiURL() != apiURL) {
+        final apiURLParts = apiURL.split(':');
+        final host = apiURLParts[0];
+        final port = int.parse(apiURLParts[1]);
+        api = API(host, port);
+      }
 
       const storage = FlutterSecureStorage();
       final token = await storage.read(key: 'token');

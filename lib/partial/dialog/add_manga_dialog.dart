@@ -40,8 +40,8 @@ class _AddMangaDialogState extends State<AddMangaDialog> {
   @override
   Widget build(BuildContext context) {
     return SimpleDialog(
-      title: const Text(
-        'Add Manga From URL',
+      title: Text(
+        FlutterI18n.translate(context, 'reading.add_from_url'),
         textAlign: TextAlign.center,
       ),
       titlePadding: const EdgeInsets.symmetric(vertical: 4.0),

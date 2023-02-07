@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wuxia/api.dart';
 import 'package:wuxia/constant.dart';
 import 'package:wuxia/gen/user.pb.dart';
+import 'package:wuxia/partial/dialog/change_host_dialog.dart';
 import 'package:wuxia/util/validator_builder.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -101,6 +102,21 @@ class _LoginScreenState extends State<LoginScreen> {
     return SafeArea(
       child: Scaffold(
         extendBody: true,
+        extendBodyBehindAppBar: true,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.api),
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) => const ChangeAPIDialog(),
+                );
+              },
+            )
+          ],
+        ),
         body: CustomScrollView(
           slivers: [
             SliverFillRemaining(

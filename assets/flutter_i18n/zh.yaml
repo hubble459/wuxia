@@ -13,6 +13,7 @@ login:
   welcome: 你好
   confirm_password: 确认密码
   email: 电子邮件
+  test_connection: 测试连接
 search:
   no_results: 没有搜索结果
   search_reading: 搜索阅读
@@ -47,6 +48,7 @@ basic:
   confirm: 对
   cancel: 不对
   add: 添加
+  save: 节省
 settings:
   title: 设置
   data_saver: 数据保护程序

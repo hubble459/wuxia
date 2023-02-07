@@ -13,6 +13,8 @@ login:
   welcome: Welcome
   confirm_password: Confirm Password
   email: Email
+  change_host: Change API
+  test_connection: Test Connection
 search:
   no_results: No search results
   search_reading: Search Reading
@@ -48,6 +50,7 @@ basic:
   cancel: Cancel
   url: URL
   add: Add
+  save: Save
 settings:
   title: Settings
   data_saver: Data Saver
@@ -70,6 +73,7 @@ settings:
 reading:
   delete: Delete Reading
   delete_content: Are you sure you want to delete "{title}"?
+  add_from_url: Add Manga From URL
 validator:
   min_length: '{name} has to be at least {length} characters long'
   max_length: '{name} can not be longer than {length} characters'
@@ -81,6 +85,6 @@ validator:
   is_number: '{name} has to be a number'
   is_string: '{name} has to contain text'
   has_number: '{name} has to contain a number'
-  has_special_character: '{name} has to contain a special characters'
+  has_special_character: '{name} has to contain a special character'
   has_uppercase: '{name} has to contain an uppercased letter'
   has_lowercase: '{name} has to contain a lowercased letter'

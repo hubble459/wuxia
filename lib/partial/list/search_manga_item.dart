@@ -1,9 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:wuxia/api.dart';
 import 'package:wuxia/gen/manga.pb.dart';
-import 'package:wuxia/gen/reading.pb.dart';
-import 'package:wuxia/gen/rumgap.pb.dart';
 import 'package:wuxia/gen/search.pb.dart';
 import 'package:wuxia/partial/list/manga_item.dart';
 import 'package:wuxia/screen/manga/manga_screen.dart';
@@ -31,10 +30,15 @@ class _SearchMangaItemState extends State<SearchMangaItem> {
       leading: searchManga.hasCover()
           ? Hero(
               tag: HeroScreenType.search.getTag(searchManga.url),
-              child: Image.network(
-                searchManga.cover.toString(),
+              child: CachedNetworkImage(
+                imageUrl: searchManga.cover,
                 filterQuality: FilterQuality.none,
                 fit: BoxFit.cover,
+                httpHeaders: {
+                  'Referer': searchManga.cover,
+                  'Host': Uri.parse(searchManga.url).host,
+                },
+                width: 40,
               ),
             )
           : null,
