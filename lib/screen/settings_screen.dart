@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wuxia/api.dart';
 import 'package:wuxia/screen/root_nav_screen.dart';
@@ -55,8 +56,17 @@ class _Settings extends StatefulWidget {
 }
 
 class _SettingsState extends State<_Settings> {
+  String? _locale;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
+    _locale ??= FlutterI18n.currentLocale(context)?.languageCode;
+
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -77,7 +87,7 @@ class _SettingsState extends State<_Settings> {
           ListTile(
             title: I18nText('settings.language'),
             trailing: DropdownButton<String>(
-                value: FlutterI18n.currentLocale(context)!.languageCode,
+                value: _locale,
                 items: languages
                     .map(
                       (locale) => DropdownMenuItem<String>(
@@ -86,12 +96,14 @@ class _SettingsState extends State<_Settings> {
                       ),
                     )
                     .toList(),
-                onChanged: (locale) {
+                onChanged: (locale) async {
                   if (FlutterI18n.currentLocale(context)?.languageCode != locale) {
+                    setState(() {
+                      _locale = locale;
+                    });
                     widget.preferences.setString('language', locale!);
-                    FlutterI18n.refresh(context, Locale(locale));
-                    Navigator.of(context).pop();
-                    context.findRootAncestorStateOfType<State<RootNavScreen>>()?.setState(() {});
+                    await FlutterI18n.refresh(context, Locale(locale));
+                    await Jiffy.locale(locale);
                   }
                 }),
           ),

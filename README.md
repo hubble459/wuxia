@@ -1,16 +1,45 @@
 # wuxia
 
-A new Flutter project.
+Manga Reader based on [RumGap](https://github.com/hubble459/rumgap).
 
-## Getting Started
+## Features
+- Searching for manga
+- Reading chapters
+    - List view (webtoon)
+- Keeping track of progress
+    - Progress of manga (chapter)
+    - Progress of chapter (how far you scrolled)
+- Filtering on last read, latest update, manga title etc
+- Support for self-hosting the backend (custom API url)
+- Accounts
+    - Easily log in to access all your manga
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Roadmap
+- [ ] Social 
+    - [ ] Friends
+    - [ ] Profile Page
+        - [ ] Recent Activity (like in MAL)
+    - [ ] Custom Avatar
+    - [ ] Ratings
+    - [ ] Comments
+- [ ] Download
+- [ ] Groups
+- [ ] MAL Integration
+- [ ] Optional Email
+    - [ ] Forgot password flow
+- [x] Add from url
+- [ ] Search alternatives
+- [ ] Notifications 
+    - [ ] Background manga updater
+        - [ ] Priority calculator
+- [x] Progress per chapter
+    - [ ] Daily activity chart
+- [ ] Outage report/ handling
+    - [ ] Like when a website is down, make the items red or inactive
+    - [ ] Advise to choose alternatives
+- [ ] Auto update app
+- [ ] Tests
+- [ ] Periodic Backups
+- [ ] Paged Image View
+    - [ ] LTR, RTL, Top-Down
+- [ ] gRPC SSL

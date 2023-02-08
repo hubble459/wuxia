@@ -11,6 +11,7 @@ import 'package:wuxia/gen/manga.pb.dart';
 import 'package:wuxia/gen/reading.pb.dart';
 import 'package:wuxia/gen/rumgap.pb.dart';
 import 'package:wuxia/main.dart';
+import 'package:wuxia/partial/action/open_url_action.dart';
 import 'package:wuxia/partial/list/manga_item.dart';
 import 'package:wuxia/partial/manga_details.dart';
 import 'package:wuxia/screen/manga/manga_chapter_screen.dart';
@@ -78,12 +79,7 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
             ),
             centerTitle: false,
             actions: [
-              IconButton(
-                onPressed: () {
-                  launchUrlString(_manga.url, mode: LaunchMode.externalApplication);
-                },
-                icon: const Icon(Icons.open_in_browser),
-              ),
+              OpenURLAction(url: _manga.url),
               RotationTransition(
                 turns: CurvedAnimation(parent: _animationController, curve: Curves.linear),
                 child: IconButton(

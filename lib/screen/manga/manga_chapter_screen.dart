@@ -9,6 +9,7 @@ import 'package:wuxia/gen/manga.pb.dart';
 import 'package:wuxia/gen/reading.pb.dart';
 import 'package:wuxia/gen/rumgap.pb.dart';
 import 'package:wuxia/main.dart';
+import 'package:wuxia/partial/action/open_url_action.dart';
 
 class MangaChapterScreen extends StatefulWidget {
   final MangaReply manga;
@@ -86,6 +87,7 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
               tooltip: FlutterI18n.translate(context, 'chapter.goto_top'),
               icon: const Icon(Icons.arrow_upward),
             ),
+            OpenURLAction(url: _chapter.url),
           ],
         ),
         body: FutureBuilder<ImagesReply>(
@@ -100,7 +102,7 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
                   (() async {
                     int timeout = 0;
                     while (_scrollController.positions.isEmpty && timeout++ != 5) {
-                      await Future.delayed(const Duration(seconds: 1));
+                      await Future.delayed(const Duration(milliseconds: 100));
                     }
                     if (_scrollController.positions.isNotEmpty) {
                       _scrollController.jumpTo(_chapter.offset.toDouble());

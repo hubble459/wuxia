@@ -88,3 +88,5 @@ validator:
   has_special_character: '{name} has to contain a special character'
   has_uppercase: '{name} has to contain an uppercased letter'
   has_lowercase: '{name} has to contain a lowercased letter'
+dialog:
+  open_url: Open URL

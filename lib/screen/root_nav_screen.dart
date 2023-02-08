@@ -64,7 +64,7 @@ class _RootNavScreenState extends State<RootNavScreen> {
                             ),
                           );
 
-                          if (!mounted) {
+                          if (mounted) {
                             setState(() {
                               stateChange++;
                             });
@@ -79,7 +79,7 @@ class _RootNavScreenState extends State<RootNavScreen> {
             IconButton(
               onPressed: () async {
                 await Navigator.of(context).pushNamed('settings');
-                if (context.mounted) {
+                if (mounted) {
                   setState(() {
                     stateChange++;
                   });

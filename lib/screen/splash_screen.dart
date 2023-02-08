@@ -17,8 +17,6 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     Future.delayed(const Duration(seconds: 1), () async {
-      await Jiffy.locale('en');
-
       final preferences = await SharedPreferences.getInstance();
       final apiURL = preferences.getString('api_host');
       if (apiURL != null && api.getApiURL() != apiURL) {
@@ -35,7 +33,10 @@ class _SplashScreenState extends State<SplashScreen> {
         API.token = token;
         API.loggedIn = await api.user.me(Empty());
         if (!mounted) return;
-        FlutterI18n.refresh(context, Locale(preferences.getString('language') ?? 'zh'));
+        final locale = preferences.getString('language') ?? 'zh';
+        await Jiffy.locale(locale);
+        if (!mounted) return;
+        FlutterI18n.refresh(context, Locale(locale));
         Navigator.of(context).pushReplacementNamed('root_nav');
       } catch (e) {
         await storage.delete(key: 'token');
