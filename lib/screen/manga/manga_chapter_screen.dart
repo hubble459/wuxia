@@ -133,7 +133,6 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
                         width: double.infinity,
                         httpHeaders: {
                           'Referer': links[index],
-                          'Host': host,
                         },
                         progressIndicatorBuilder: (context, url, downloadProgress) => SizedBox.fromSize(
                           size: const Size.fromHeight(500),

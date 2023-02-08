@@ -63,7 +63,6 @@ class _MangaItemState extends State<MangaItem> {
                 width: 40,
                 httpHeaders: {
                   'Referer': _manga.cover,
-                  'Host': Uri.parse(_manga.url).host,
                 },
               ),
             )
