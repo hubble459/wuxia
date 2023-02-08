@@ -13,6 +13,10 @@ Manga Reader based on [RumGap](https://github.com/hubble459/rumgap).
 - Support for self-hosting the backend (custom API url)
 - Accounts
     - Easily log in to access all your manga
+- Languages
+    - I18n is built-in, so any language can be added
+    - Current support for English and (DeepL) Chinese
+- Dark Mode
 
 ## Roadmap
 - [ ] Social 
@@ -28,6 +32,8 @@ Manga Reader based on [RumGap](https://github.com/hubble459/rumgap).
 - [ ] Optional Email
     - [ ] Forgot password flow
 - [x] Add from url
+- [x] Open manga in browser
+- [x] Open chapter in browser
 - [ ] Search alternatives
 - [ ] Notifications 
     - [ ] Background manga updater

@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -25,6 +27,9 @@ class _SplashScreenState extends State<SplashScreen> {
         final port = int.parse(apiURLParts[1]);
         api = API(host, port);
       }
+
+      final abi = Abi.current();
+      abi == Abi
 
       const storage = FlutterSecureStorage();
       final token = await storage.read(key: 'token');
