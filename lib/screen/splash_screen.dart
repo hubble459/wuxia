@@ -29,7 +29,11 @@ class _SplashScreenState extends State<SplashScreen> {
       }
 
       final abi = Abi.current();
-      abi == Abi
+      switch (abi) {
+        case Abi.androidArm:
+          break;
+        default:
+      }
 
       const storage = FlutterSecureStorage();
       final token = await storage.read(key: 'token');
