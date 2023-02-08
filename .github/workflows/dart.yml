@@ -19,13 +19,16 @@ jobs:
       - run: flutter build apk --split-per-abi
 
       - uses: rymndhng/release-on-push-action@master
+        id: push_release
         with:
-          bump_version_scheme: minor
+          bump_version_scheme: patch
           tag_prefix: v
 
       - name: Get release
         id: get_release
-        uses: bruceadams/get-release@v1.3.2
+        uses: cardinalby/git-get-release-action@v1
+        with:
+          tag: ${{ steps.push_release.outputs.tag_name }}
 
       - name: Upload armeabi-v7a Release Asset
         uses: actions/upload-release-asset@v1
