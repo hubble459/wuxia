@@ -13,7 +13,7 @@ class OpenURLDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return SimpleDialog(
       title: Text(
-        FlutterI18n.translate(context, 'dialog.open_url'),
+        FlutterI18n.translate(context, 'dialog.open_url.title'),
         textAlign: TextAlign.center,
       ),
       titlePadding: const EdgeInsets.symmetric(vertical: 4.0),
@@ -34,12 +34,13 @@ class OpenURLDialog extends StatelessWidget {
                 onPressed: () async {
                   try {
                     await Clipboard.setData(ClipboardData(text: url));
-                    Fluttertoast.showToast(msg: 'URL Copied to clipboard!');
+                    // ignore: use_build_context_synchronously
+                    Fluttertoast.showToast(msg: FlutterI18n.translate(context, 'dialog.open_url.copied'));
                   } catch (e) {
                     Fluttertoast.showToast(msg: e.toString());
                   }
                 },
-                child: const Text('Copy'),
+                child: I18nText('dialog.open_url.copy'),
               ),
             ),
             Expanded(
@@ -47,7 +48,7 @@ class OpenURLDialog extends StatelessWidget {
                 onPressed: () {
                   launchUrlString(url, mode: LaunchMode.externalApplication);
                 },
-                child: const Text('Open'),
+                child: I18nText('dialog.open_url.open'),
               ),
             ),
           ],

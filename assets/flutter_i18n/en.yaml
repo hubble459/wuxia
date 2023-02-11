@@ -70,6 +70,7 @@ settings:
   account: Account
   remove_account: Remove Account
   edit_account: Edit Account
+  check_update: Check for updates
 reading:
   delete: Delete Reading
   delete_content: Are you sure you want to delete "{title}"?
@@ -89,4 +90,11 @@ validator:
   has_uppercase: '{name} has to contain an uppercased letter'
   has_lowercase: '{name} has to contain a lowercased letter'
 dialog:
-  open_url: Open URL
+  open_url:
+    title: Open URL
+    copied: URL Copied to clipboard!
+    copy: Copy
+    open: Open
+  update:
+    title: Update App
+    update: Update

@@ -55,6 +55,7 @@ class MyApp extends StatelessWidget {
       themeMode: ThemeMode.dark,
       theme: ThemeData.light(),
       darkTheme: ThemeData(
+        useMaterial3: true,
         colorScheme: ColorScheme.fromSwatch(
           brightness: Brightness.dark,
           primarySwatch: Colors.deepPurple,

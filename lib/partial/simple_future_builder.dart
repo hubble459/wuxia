@@ -47,18 +47,19 @@ class SimpleFutureBuilder<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<T>(
-        future: future,
-        initialData: initialData,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            if (snapshot.hasData) {
-              return onLoadedBuilder(context, snapshot.requireData);
-            } else {
-              return onErrorBuilder(context, snapshot.error);
-            }
+      future: future,
+      initialData: initialData,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.hasData) {
+            return onLoadedBuilder(context, snapshot.requireData);
           } else {
-            return onLoadingBuilder(context);
+            return onErrorBuilder(context, snapshot.error);
           }
-        });
+        } else {
+          return onLoadingBuilder(context);
+        }
+      },
+    );
   }
 }

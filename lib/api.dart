@@ -68,7 +68,6 @@ class API {
   static final options = CallOptions(
     providers: [API.authProvider],
     compression: const GzipCodec(),
-    timeout: const Duration(seconds: 5),
   );
 }
 
