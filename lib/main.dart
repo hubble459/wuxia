@@ -9,6 +9,7 @@ import 'package:wuxia/screen/root_nav_screen.dart';
 import 'package:wuxia/screen/setting/statistics_screen.dart';
 import 'package:wuxia/screen/settings_screen.dart';
 import 'package:wuxia/screen/splash_screen.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 extension ReadingManga on MangaReply {
   get progressPercentage {
@@ -17,8 +18,11 @@ extension ReadingManga on MangaReply {
   }
 }
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await dotenv.load(fileName: '.env');
+
   runApp(const MyApp());
 }
 

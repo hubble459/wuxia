@@ -44,8 +44,8 @@ class _SplashScreenState extends State<SplashScreen> {
         if (!mounted) return;
         final locale = preferences.getString('language') ?? 'zh';
         await Jiffy.locale(locale);
+        await FlutterI18n.refresh(context, Locale(locale));
         if (!mounted) return;
-        FlutterI18n.refresh(context, Locale(locale));
         Navigator.of(context).pushReplacementNamed('root_nav');
       } catch (e) {
         await storage.delete(key: 'token');

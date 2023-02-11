@@ -11,10 +11,7 @@ Widget defaultErrorBuilder(BuildContext context, Object? error) {
           style: TextStyle(color: Theme.of(context).colorScheme.error),
         ),
         ElevatedButton(
-          onPressed: () {
-            SimpleFutureBuilder widget = context.widget as SimpleFutureBuilder;
-            widget.build(context);
-          },
+          onPressed: () {},
           child: const Text('Retry'),
         ),
       ],

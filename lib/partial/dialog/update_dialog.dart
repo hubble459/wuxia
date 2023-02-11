@@ -11,6 +11,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:wuxia/partial/simple_future_builder.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class UpdateDialog extends StatefulWidget {
   final PackageInfo packageInfo;
@@ -33,7 +34,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
 
   @override
   void initState() {
-    releaseFuture = GitHub(auth: Authentication.withToken('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'))
+    releaseFuture = GitHub(auth: Authentication.withToken(dotenv.env['GITHUB_TOKEN']))
         .repositories
         .getLatestRelease(RepositorySlug('hubble459', 'wuxia'));
     super.initState();

@@ -52,6 +52,7 @@ dependencies:
   path_provider: ^2.0.12
   app_installer: ^1.1.0
   permission_handler: ^10.2.0
+  flutter_dotenv: ^5.0.2
 
 dev_dependencies:
   flutter_test:
@@ -83,6 +84,7 @@ flutter:
   assets:
     - assets/flutter_i18n/
     - assets/image/
+    - .env
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
