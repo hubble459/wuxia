@@ -24,7 +24,7 @@ jobs:
           channel: "stable"
           cache: true
       - run: flutter pub get
-      - run: flutter build apk --split-per-abi --build-name=`echo ${{ steps.push_release.outputs.tag_name }} | cut -c 2-` --build-version=`echo ${{ steps.push_release.outputs.tag_name }} | tr -d v.`
+      - run: flutter build apk --split-per-abi --build-name=`echo ${{ steps.push_release.outputs.tag_name }} | cut -c 2-` --build-number=`echo ${{ steps.push_release.outputs.tag_name }} | tr -d v.`
 
       - name: Get release
         id: get_release
