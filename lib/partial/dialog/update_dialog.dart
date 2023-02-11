@@ -145,8 +145,8 @@ class _UpdateDialogState extends State<UpdateDialog> {
     final completer = Completer();
 
     _response.stream.listen((value) {
+      _bytes.addAll(value);
       setState(() {
-        _bytes.addAll(value);
         _received += value.length;
       });
     }).onDone(() async {
