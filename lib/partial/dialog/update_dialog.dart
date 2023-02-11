@@ -119,7 +119,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
                                   isDownloading = false;
                                 });
                                 await AppInstaller.installApk(_apk!.path);
-                                await _apk!.delete();
+                                // await _apk!.delete();
                               } catch (e) {
                                 print(e);
                               }
