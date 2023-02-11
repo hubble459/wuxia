@@ -14,6 +14,7 @@ login:
   confirm_password: 确认密码
   email: 电子邮件
   test_connection: 测试连接
+  change_host: 更改API
 search:
   no_results: 没有搜索结果
   search_reading: 搜索阅读
@@ -49,6 +50,7 @@ basic:
   cancel: 不对
   add: 添加
   save: 节省
+  url: 网址
 settings:
   title: 设置
   data_saver: 数据保护程序
@@ -68,9 +70,11 @@ settings:
   edit_account: 编辑帐户
   misc: 各种各样的
   remove_account: 删除帐户
+  check_update: 检查更新
 reading:
   delete: 删除阅读
   delete_content: 确定要删除“{title}”吗？
+  add_from_url: 从 URL 添加漫画
 validator:
   email: '{name} 应该是一个有效的电子邮件地址'
   has_lowercase: '{name} 必须包含小写字母'
@@ -84,3 +88,13 @@ validator:
   password_not_match: 密码不匹配
   regex: '{name} 必须匹配以下内容：{regex}'
   required: '{name} 是必需的'
+  url: '{name} 应该是一个有效的 url'
+dialog:
+  open_url:
+    copied: URL 已复制到剪贴板！
+    copy: 复制
+    open: 打开
+    title: 打开网址
+  update:
+    title: 更新应用程序
+    update: 更新
