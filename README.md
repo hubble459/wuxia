@@ -43,7 +43,7 @@ Manga Reader based on [RumGap](https://github.com/hubble459/rumgap).
 - [ ] Outage report/ handling
     - [ ] Like when a website is down, make the items red or inactive
     - [ ] Advise to choose alternatives
-- [ ] Auto update app
+- [x] Update app from within settings
 - [ ] Tests
 - [ ] Periodic Backups
 - [ ] Paged Image View
