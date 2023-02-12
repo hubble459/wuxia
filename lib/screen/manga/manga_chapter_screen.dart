@@ -16,6 +16,7 @@ import 'package:wuxia/gen/rumgap.pb.dart';
 import 'package:wuxia/main.dart';
 import 'package:wuxia/partial/action/open_url_action.dart';
 import 'package:wuxia/partial/simple_future_builder.dart';
+import 'package:wuxia/util/tools.dart';
 
 class MangaChapterScreen extends StatefulWidget {
   final MangaReply manga;
@@ -71,7 +72,7 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
           // The amount of pixels scrolled in the page
           final pixels = (lastItem.itemLeadingEdge * 100).floor();
           // If different than what is saved
-          if ((pixels != 0 && page != 0) && (page != lastOffset.page || pixels != lastOffset.pixels)) {
+          if ((pixels != 0 || page != 0) && (page != lastOffset.page || pixels != lastOffset.pixels)) {
             // Set the last to this
             lastOffset = ChapterOffset(
               page: page,
@@ -156,14 +157,13 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
           onLoadedBuilder: (context, data) {
             final links = data.items;
 
-            WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
-              if (_chapter.hasOffset() && _chapter.offset.page != 0 && _chapter.offset.pixels != 0) {
+            (() async {
+              if (_chapter.hasOffset() && (_chapter.offset.page != 0 || _chapter.offset.pixels != 0)) {
                 int timeout = 0;
                 while (!itemScrollController.isAttached && timeout++ != 5) {
                   await Future.delayed(const Duration(milliseconds: 100));
                 }
                 if (itemScrollController.isAttached) {
-                  print({'page': _chapter.offset.page, 'offset': _chapter.offset.pixels / 100});
                   itemScrollController.scrollTo(
                     index: _chapter.offset.page,
                     alignment: _chapter.offset.pixels / 100,
@@ -173,7 +173,7 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
                   );
                 }
               }
-            });
+            })();
 
             return InteractiveViewer(
               minScale: 1,
@@ -196,7 +196,7 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
                     fit: BoxFit.fitWidth,
                     width: double.infinity,
                     httpHeaders: {
-                      'Referer': links[index],
+                      'Referer': getReferer(_chapter, links[index]),
                     },
                     progressIndicatorBuilder: (context, url, downloadProgress) => SizedBox.fromSize(
                       size: const Size.fromHeight(500),

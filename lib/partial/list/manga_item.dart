@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:wuxia/gen/manga.pb.dart';
 import 'package:wuxia/screen/manga/manga_screen.dart';
+import 'package:wuxia/util/tools.dart';
 
 enum HeroScreenType {
   reading,
@@ -62,7 +63,7 @@ class _MangaItemState extends State<MangaItem> {
                 imageUrl: _manga.cover,
                 width: 40,
                 httpHeaders: {
-                  'Referer': _manga.cover,
+                  'Referer': getReferer(_manga),
                 },
               ),
             )

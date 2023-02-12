@@ -6,6 +6,7 @@ import 'package:wuxia/gen/manga.pb.dart';
 import 'package:wuxia/gen/search.pb.dart';
 import 'package:wuxia/partial/list/manga_item.dart';
 import 'package:wuxia/screen/manga/manga_screen.dart';
+import 'package:wuxia/util/tools.dart';
 
 class SearchMangaItem extends StatefulWidget {
   final SearchManga searchManga;
@@ -35,7 +36,7 @@ class _SearchMangaItemState extends State<SearchMangaItem> {
                 filterQuality: FilterQuality.none,
                 fit: BoxFit.cover,
                 httpHeaders: {
-                  'Referer': searchManga.cover,
+                  'Referer': getReferer(searchManga),
                 },
                 width: 40,
               ),

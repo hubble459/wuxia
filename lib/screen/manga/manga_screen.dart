@@ -15,6 +15,7 @@ import 'package:wuxia/partial/list/manga_item.dart';
 import 'package:wuxia/partial/manga_details.dart';
 import 'package:wuxia/screen/manga/manga_chapter_screen.dart';
 import 'package:wuxia/screen/manga/manga_chapters_screen.dart';
+import 'package:wuxia/util/tools.dart';
 
 class MangaScreen extends StatefulWidget {
   final MangaReply manga;
@@ -119,8 +120,7 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
                       child: CachedNetworkImage(
                         imageUrl: _manga.cover,
                         httpHeaders: {
-                          'Referer': _manga.cover,
-                          'Host': Uri.parse(_manga.url).host,
+                          'Referer': getReferer(_manga),
                         },
                       ),
                     ),
