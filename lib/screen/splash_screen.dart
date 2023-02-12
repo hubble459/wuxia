@@ -17,8 +17,11 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   @override
-  Widget build(BuildContext context) {
+  void initState() {
     Future.delayed(const Duration(seconds: 1), () async {
+      await Jiffy.locale('en');
+      await FlutterI18n.refresh(context, Locale('en'));
+
       final preferences = await SharedPreferences.getInstance();
       final apiURL = preferences.getString('api_host');
       if (apiURL != null && api.getApiURL() != apiURL) {
@@ -55,7 +58,11 @@ class _SplashScreenState extends State<SplashScreen> {
         Navigator.of(context).pushReplacementNamed('login');
       }
     });
+    super.initState();
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
         // child: Image.asset('assets/image/icon.png', height: 200),
