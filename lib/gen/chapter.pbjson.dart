@@ -19,6 +19,17 @@ const ChapterRequest$json = const {
 
 /// Descriptor for `ChapterRequest`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List chapterRequestDescriptor = $convert.base64Decode('Cg5DaGFwdGVyUmVxdWVzdBIZCghtYW5nYV9pZBgBIAEoBVIHbWFuZ2FJZBIUCgVpbmRleBgCIAEoBVIFaW5kZXg=');
+@$core.Deprecated('Use chapterOffsetDescriptor instead')
+const ChapterOffset$json = const {
+  '1': 'ChapterOffset',
+  '2': const [
+    const {'1': 'pixels', '3': 1, '4': 1, '5': 5, '10': 'pixels'},
+    const {'1': 'page', '3': 2, '4': 1, '5': 5, '10': 'page'},
+  ],
+};
+
+/// Descriptor for `ChapterOffset`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List chapterOffsetDescriptor = $convert.base64Decode('Cg1DaGFwdGVyT2Zmc2V0EhYKBnBpeGVscxgBIAEoBVIGcGl4ZWxzEhIKBHBhZ2UYAiABKAVSBHBhZ2U=');
 @$core.Deprecated('Use chapterReplyDescriptor instead')
 const ChapterReply$json = const {
   '1': 'ChapterReply',
@@ -30,7 +41,7 @@ const ChapterReply$json = const {
     const {'1': 'number', '3': 5, '4': 1, '5': 2, '10': 'number'},
     const {'1': 'index', '3': 6, '4': 1, '5': 3, '10': 'index'},
     const {'1': 'posted', '3': 7, '4': 1, '5': 3, '9': 0, '10': 'posted', '17': true},
-    const {'1': 'offset', '3': 8, '4': 1, '5': 5, '9': 1, '10': 'offset', '17': true},
+    const {'1': 'offset', '3': 8, '4': 1, '5': 11, '6': '.rumgap.ChapterOffset', '9': 1, '10': 'offset', '17': true},
     const {'1': 'created_at', '3': 9, '4': 1, '5': 3, '10': 'createdAt'},
     const {'1': 'updated_at', '3': 10, '4': 1, '5': 3, '10': 'updatedAt'},
   ],
@@ -41,7 +52,7 @@ const ChapterReply$json = const {
 };
 
 /// Descriptor for `ChapterReply`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List chapterReplyDescriptor = $convert.base64Decode('CgxDaGFwdGVyUmVwbHkSDgoCaWQYASABKAVSAmlkEhkKCG1hbmdhX2lkGAIgASgFUgdtYW5nYUlkEhAKA3VybBgDIAEoCVIDdXJsEhQKBXRpdGxlGAQgASgJUgV0aXRsZRIWCgZudW1iZXIYBSABKAJSBm51bWJlchIUCgVpbmRleBgGIAEoA1IFaW5kZXgSGwoGcG9zdGVkGAcgASgDSABSBnBvc3RlZIgBARIbCgZvZmZzZXQYCCABKAVIAVIGb2Zmc2V0iAEBEh0KCmNyZWF0ZWRfYXQYCSABKANSCWNyZWF0ZWRBdBIdCgp1cGRhdGVkX2F0GAogASgDUgl1cGRhdGVkQXRCCQoHX3Bvc3RlZEIJCgdfb2Zmc2V0');
+final $typed_data.Uint8List chapterReplyDescriptor = $convert.base64Decode('CgxDaGFwdGVyUmVwbHkSDgoCaWQYASABKAVSAmlkEhkKCG1hbmdhX2lkGAIgASgFUgdtYW5nYUlkEhAKA3VybBgDIAEoCVIDdXJsEhQKBXRpdGxlGAQgASgJUgV0aXRsZRIWCgZudW1iZXIYBSABKAJSBm51bWJlchIUCgVpbmRleBgGIAEoA1IFaW5kZXgSGwoGcG9zdGVkGAcgASgDSABSBnBvc3RlZIgBARIyCgZvZmZzZXQYCCABKAsyFS5ydW1nYXAuQ2hhcHRlck9mZnNldEgBUgZvZmZzZXSIAQESHQoKY3JlYXRlZF9hdBgJIAEoA1IJY3JlYXRlZEF0Eh0KCnVwZGF0ZWRfYXQYCiABKANSCXVwZGF0ZWRBdEIJCgdfcG9zdGVkQgkKB19vZmZzZXQ=');
 @$core.Deprecated('Use chaptersReplyDescriptor instead')
 const ChaptersReply$json = const {
   '1': 'ChaptersReply',

@@ -34,9 +34,10 @@ const UpdateChapterOffsetRequest$json = const {
   '1': 'UpdateChapterOffsetRequest',
   '2': const [
     const {'1': 'chapter_id', '3': 1, '4': 1, '5': 5, '10': 'chapterId'},
-    const {'1': 'offset', '3': 2, '4': 1, '5': 5, '10': 'offset'},
+    const {'1': 'pixels', '3': 2, '4': 1, '5': 5, '10': 'pixels'},
+    const {'1': 'page', '3': 3, '4': 1, '5': 5, '10': 'page'},
   ],
 };
 
 /// Descriptor for `UpdateChapterOffsetRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List updateChapterOffsetRequestDescriptor = $convert.base64Decode('ChpVcGRhdGVDaGFwdGVyT2Zmc2V0UmVxdWVzdBIdCgpjaGFwdGVyX2lkGAEgASgFUgljaGFwdGVySWQSFgoGb2Zmc2V0GAIgASgFUgZvZmZzZXQ=');
+final $typed_data.Uint8List updateChapterOffsetRequestDescriptor = $convert.base64Decode('ChpVcGRhdGVDaGFwdGVyT2Zmc2V0UmVxdWVzdBIdCgpjaGFwdGVyX2lkGAEgASgFUgljaGFwdGVySWQSFgoGcGl4ZWxzGAIgASgFUgZwaXhlbHMSEgoEcGFnZRgDIAEoBVIEcGFnZQ==');

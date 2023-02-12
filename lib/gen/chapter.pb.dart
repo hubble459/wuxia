@@ -73,6 +73,67 @@ class ChapterRequest extends $pb.GeneratedMessage {
   void clearIndex() => clearField(2);
 }
 
+class ChapterOffset extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'ChapterOffset', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'rumgap'), createEmptyInstance: create)
+    ..a<$core.int>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'pixels', $pb.PbFieldType.O3)
+    ..a<$core.int>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'page', $pb.PbFieldType.O3)
+    ..hasRequiredFields = false
+  ;
+
+  ChapterOffset._() : super();
+  factory ChapterOffset({
+    $core.int? pixels,
+    $core.int? page,
+  }) {
+    final _result = create();
+    if (pixels != null) {
+      _result.pixels = pixels;
+    }
+    if (page != null) {
+      _result.page = page;
+    }
+    return _result;
+  }
+  factory ChapterOffset.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory ChapterOffset.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  ChapterOffset clone() => ChapterOffset()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  ChapterOffset copyWith(void Function(ChapterOffset) updates) => super.copyWith((message) => updates(message as ChapterOffset)) as ChapterOffset; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static ChapterOffset create() => ChapterOffset._();
+  ChapterOffset createEmptyInstance() => create();
+  static $pb.PbList<ChapterOffset> createRepeated() => $pb.PbList<ChapterOffset>();
+  @$core.pragma('dart2js:noInline')
+  static ChapterOffset getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<ChapterOffset>(create);
+  static ChapterOffset? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.int get pixels => $_getIZ(0);
+  @$pb.TagNumber(1)
+  set pixels($core.int v) { $_setSignedInt32(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasPixels() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearPixels() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.int get page => $_getIZ(1);
+  @$pb.TagNumber(2)
+  set page($core.int v) { $_setSignedInt32(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasPage() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearPage() => clearField(2);
+}
+
 class ChapterReply extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'ChapterReply', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'rumgap'), createEmptyInstance: create)
     ..a<$core.int>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'id', $pb.PbFieldType.O3)
@@ -82,7 +143,7 @@ class ChapterReply extends $pb.GeneratedMessage {
     ..a<$core.double>(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'number', $pb.PbFieldType.OF)
     ..aInt64(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'index')
     ..aInt64(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'posted')
-    ..a<$core.int>(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'offset', $pb.PbFieldType.O3)
+    ..aOM<ChapterOffset>(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'offset', subBuilder: ChapterOffset.create)
     ..aInt64(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'createdAt')
     ..aInt64(10, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'updatedAt')
     ..hasRequiredFields = false
@@ -97,7 +158,7 @@ class ChapterReply extends $pb.GeneratedMessage {
     $core.double? number,
     $fixnum.Int64? index,
     $fixnum.Int64? posted,
-    $core.int? offset,
+    ChapterOffset? offset,
     $fixnum.Int64? createdAt,
     $fixnum.Int64? updatedAt,
   }) {
@@ -219,13 +280,15 @@ class ChapterReply extends $pb.GeneratedMessage {
   void clearPosted() => clearField(7);
 
   @$pb.TagNumber(8)
-  $core.int get offset => $_getIZ(7);
+  ChapterOffset get offset => $_getN(7);
   @$pb.TagNumber(8)
-  set offset($core.int v) { $_setSignedInt32(7, v); }
+  set offset(ChapterOffset v) { setField(8, v); }
   @$pb.TagNumber(8)
   $core.bool hasOffset() => $_has(7);
   @$pb.TagNumber(8)
   void clearOffset() => clearField(8);
+  @$pb.TagNumber(8)
+  ChapterOffset ensureOffset() => $_ensure(7);
 
   @$pb.TagNumber(9)
   $fixnum.Int64 get createdAt => $_getI64(8);
