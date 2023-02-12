@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:wuxia/api.dart';
 import 'package:wuxia/gen/chapter.pb.dart';
 import 'package:wuxia/gen/manga.pb.dart';
@@ -65,10 +66,26 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Tooltip(
-            message: _chapter.title.isEmpty ? 'Chapter ${_chapter.number.toString().replaceFirst('.0', '')}' : _chapter.title,
-            child: Text(_chapter.title.isEmpty ? 'Chapter ${_chapter.number.toString().replaceFirst('.0', '')}' : _chapter.title),
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Tooltip(
+                message: _chapter.title.isEmpty ? 'Chapter ${_chapter.number.toString().replaceFirst('.0', '')}' : _chapter.title,
+                child: Text(
+                    _chapter.title.isEmpty ? 'Chapter ${_chapter.number.toString().replaceFirst('.0', '')}' : _chapter.title),
+              ),
+              ...(_chapter.hasPosted()
+                  ? [
+                      Text(
+                        Jiffy.unixFromMillisecondsSinceEpoch(_chapter.posted.toInt()).fromNow(),
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(color: Colors.white54),
+                        overflow: TextOverflow.ellipsis,
+                      )
+                    ]
+                  : []),
+            ],
           ),
+          centerTitle: false,
           actions: [
             IconButton(
               onPressed: () async {
