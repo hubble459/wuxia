@@ -120,21 +120,26 @@ class ReadingPatchRequest extends $pb.GeneratedMessage {
 class UpdateChapterOffsetRequest extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'UpdateChapterOffsetRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'rumgap'), createEmptyInstance: create)
     ..a<$core.int>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'chapterId', $pb.PbFieldType.O3)
-    ..a<$core.int>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'offset', $pb.PbFieldType.O3)
+    ..a<$core.int>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'pixels', $pb.PbFieldType.O3)
+    ..a<$core.int>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'page', $pb.PbFieldType.O3)
     ..hasRequiredFields = false
   ;
 
   UpdateChapterOffsetRequest._() : super();
   factory UpdateChapterOffsetRequest({
     $core.int? chapterId,
-    $core.int? offset,
+    $core.int? pixels,
+    $core.int? page,
   }) {
     final _result = create();
     if (chapterId != null) {
       _result.chapterId = chapterId;
     }
-    if (offset != null) {
-      _result.offset = offset;
+    if (pixels != null) {
+      _result.pixels = pixels;
+    }
+    if (page != null) {
+      _result.page = page;
     }
     return _result;
   }
@@ -169,12 +174,21 @@ class UpdateChapterOffsetRequest extends $pb.GeneratedMessage {
   void clearChapterId() => clearField(1);
 
   @$pb.TagNumber(2)
-  $core.int get offset => $_getIZ(1);
+  $core.int get pixels => $_getIZ(1);
   @$pb.TagNumber(2)
-  set offset($core.int v) { $_setSignedInt32(1, v); }
+  set pixels($core.int v) { $_setSignedInt32(1, v); }
   @$pb.TagNumber(2)
-  $core.bool hasOffset() => $_has(1);
+  $core.bool hasPixels() => $_has(1);
   @$pb.TagNumber(2)
-  void clearOffset() => clearField(2);
+  void clearPixels() => clearField(2);
+
+  @$pb.TagNumber(3)
+  $core.int get page => $_getIZ(2);
+  @$pb.TagNumber(3)
+  set page($core.int v) { $_setSignedInt32(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasPage() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearPage() => clearField(3);
 }
 
