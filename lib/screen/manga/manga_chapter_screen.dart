@@ -38,7 +38,7 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
   void initState() {
     _chapter = widget.chapter;
 
-    offsetUpdater();
+    WidgetsBinding.instance.addPostFrameCallback((a) => offsetUpdater());
 
     super.initState();
   }

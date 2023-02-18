@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:wuxia/gen/chapter.pb.dart';
 import 'package:wuxia/gen/manga.pb.dart';
-import 'package:wuxia/screen/manga/manga_chapter_screen.dart';
 
 class ChapterItem extends StatelessWidget {
   final ChaptersReply chapters;
@@ -55,20 +54,9 @@ class ChapterItem extends StatelessWidget {
       ),
       minLeadingWidth: 3,
       contentPadding: EdgeInsets.zero,
-      onTap: () {
+      onTap: () async {
         manga.readingProgress = chapter.index.toInt();
-        Navigator.of(context)
-            .push(
-          MaterialPageRoute(
-            builder: (context) => MangaChapterScreen(
-              manga: manga,
-              chapter: chapter,
-            ),
-          ),
-        )
-            .then((data) {
-          refreshParent(chapter.index.toInt());
-        });
+        refreshParent(chapter.index.toInt());
       },
     );
   }
