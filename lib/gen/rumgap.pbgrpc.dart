@@ -48,6 +48,16 @@ class UserClient extends $grpc.Client {
           '/rumgap.User/Update',
           ($0.UserUpdateRequest value) => value.writeToBuffer(),
           ($core.List<$core.int> value) => $0.UserFullReply.fromBuffer(value));
+  static final _$addDeviceToken =
+      $grpc.ClientMethod<$0.DeviceTokenRequest, $1.Empty>(
+          '/rumgap.User/AddDeviceToken',
+          ($0.DeviceTokenRequest value) => value.writeToBuffer(),
+          ($core.List<$core.int> value) => $1.Empty.fromBuffer(value));
+  static final _$removeDeviceToken =
+      $grpc.ClientMethod<$0.DeviceTokenRequest, $1.Empty>(
+          '/rumgap.User/RemoveDeviceToken',
+          ($0.DeviceTokenRequest value) => value.writeToBuffer(),
+          ($core.List<$core.int> value) => $1.Empty.fromBuffer(value));
 
   UserClient($grpc.ClientChannel channel,
       {$grpc.CallOptions? options,
@@ -83,6 +93,17 @@ class UserClient extends $grpc.Client {
   $grpc.ResponseFuture<$0.UserFullReply> update($0.UserUpdateRequest request,
       {$grpc.CallOptions? options}) {
     return $createUnaryCall(_$update, request, options: options);
+  }
+
+  $grpc.ResponseFuture<$1.Empty> addDeviceToken($0.DeviceTokenRequest request,
+      {$grpc.CallOptions? options}) {
+    return $createUnaryCall(_$addDeviceToken, request, options: options);
+  }
+
+  $grpc.ResponseFuture<$1.Empty> removeDeviceToken(
+      $0.DeviceTokenRequest request,
+      {$grpc.CallOptions? options}) {
+    return $createUnaryCall(_$removeDeviceToken, request, options: options);
   }
 }
 
@@ -133,6 +154,22 @@ abstract class UserServiceBase extends $grpc.Service {
         false,
         ($core.List<$core.int> value) => $0.UserUpdateRequest.fromBuffer(value),
         ($0.UserFullReply value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$0.DeviceTokenRequest, $1.Empty>(
+        'AddDeviceToken',
+        addDeviceToken_Pre,
+        false,
+        false,
+        ($core.List<$core.int> value) =>
+            $0.DeviceTokenRequest.fromBuffer(value),
+        ($1.Empty value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$0.DeviceTokenRequest, $1.Empty>(
+        'RemoveDeviceToken',
+        removeDeviceToken_Pre,
+        false,
+        false,
+        ($core.List<$core.int> value) =>
+            $0.DeviceTokenRequest.fromBuffer(value),
+        ($1.Empty value) => value.writeToBuffer()));
   }
 
   $async.Future<$0.UserTokenReply> register_Pre($grpc.ServiceCall call,
@@ -165,6 +202,16 @@ abstract class UserServiceBase extends $grpc.Service {
     return update(call, await request);
   }
 
+  $async.Future<$1.Empty> addDeviceToken_Pre($grpc.ServiceCall call,
+      $async.Future<$0.DeviceTokenRequest> request) async {
+    return addDeviceToken(call, await request);
+  }
+
+  $async.Future<$1.Empty> removeDeviceToken_Pre($grpc.ServiceCall call,
+      $async.Future<$0.DeviceTokenRequest> request) async {
+    return removeDeviceToken(call, await request);
+  }
+
   $async.Future<$0.UserTokenReply> register(
       $grpc.ServiceCall call, $0.UserRegisterRequest request);
   $async.Future<$0.UserTokenReply> login(
@@ -175,6 +222,10 @@ abstract class UserServiceBase extends $grpc.Service {
   $async.Future<$0.UserFullReply> me($grpc.ServiceCall call, $1.Empty request);
   $async.Future<$0.UserFullReply> update(
       $grpc.ServiceCall call, $0.UserUpdateRequest request);
+  $async.Future<$1.Empty> addDeviceToken(
+      $grpc.ServiceCall call, $0.DeviceTokenRequest request);
+  $async.Future<$1.Empty> removeDeviceToken(
+      $grpc.ServiceCall call, $0.DeviceTokenRequest request);
 }
 
 class FriendClient extends $grpc.Client {

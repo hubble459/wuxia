@@ -20,6 +20,16 @@ const UserRegisterRequest$json = const {
 
 /// Descriptor for `UserRegisterRequest`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List userRegisterRequestDescriptor = $convert.base64Decode('ChNVc2VyUmVnaXN0ZXJSZXF1ZXN0EhoKCHVzZXJuYW1lGAEgASgJUgh1c2VybmFtZRIaCghwYXNzd29yZBgCIAEoCVIIcGFzc3dvcmQSFAoFZW1haWwYAyABKAlSBWVtYWls');
+@$core.Deprecated('Use deviceTokenRequestDescriptor instead')
+const DeviceTokenRequest$json = const {
+  '1': 'DeviceTokenRequest',
+  '2': const [
+    const {'1': 'token', '3': 1, '4': 1, '5': 9, '10': 'token'},
+  ],
+};
+
+/// Descriptor for `DeviceTokenRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List deviceTokenRequestDescriptor = $convert.base64Decode('ChJEZXZpY2VUb2tlblJlcXVlc3QSFAoFdG9rZW4YASABKAlSBXRva2Vu');
 @$core.Deprecated('Use userRequestDescriptor instead')
 const UserRequest$json = const {
   '1': 'UserRequest',
@@ -43,6 +53,7 @@ const UserUpdateRequest$json = const {
     const {'1': 'username', '3': 2, '4': 1, '5': 9, '9': 1, '10': 'username', '17': true},
     const {'1': 'email', '3': 3, '4': 1, '5': 9, '9': 2, '10': 'email', '17': true},
     const {'1': 'preferred_hostnames', '3': 4, '4': 3, '5': 9, '10': 'preferredHostnames'},
+    const {'1': 'device_ids', '3': 5, '4': 3, '5': 9, '10': 'deviceIds'},
   ],
   '8': const [
     const {'1': '_password'},
@@ -52,7 +63,7 @@ const UserUpdateRequest$json = const {
 };
 
 /// Descriptor for `UserUpdateRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List userUpdateRequestDescriptor = $convert.base64Decode('ChFVc2VyVXBkYXRlUmVxdWVzdBIfCghwYXNzd29yZBgBIAEoCUgAUghwYXNzd29yZIgBARIfCgh1c2VybmFtZRgCIAEoCUgBUgh1c2VybmFtZYgBARIZCgVlbWFpbBgDIAEoCUgCUgVlbWFpbIgBARIvChNwcmVmZXJyZWRfaG9zdG5hbWVzGAQgAygJUhJwcmVmZXJyZWRIb3N0bmFtZXNCCwoJX3Bhc3N3b3JkQgsKCV91c2VybmFtZUIICgZfZW1haWw=');
+final $typed_data.Uint8List userUpdateRequestDescriptor = $convert.base64Decode('ChFVc2VyVXBkYXRlUmVxdWVzdBIfCghwYXNzd29yZBgBIAEoCUgAUghwYXNzd29yZIgBARIfCgh1c2VybmFtZRgCIAEoCUgBUgh1c2VybmFtZYgBARIZCgVlbWFpbBgDIAEoCUgCUgVlbWFpbIgBARIvChNwcmVmZXJyZWRfaG9zdG5hbWVzGAQgAygJUhJwcmVmZXJyZWRIb3N0bmFtZXMSHQoKZGV2aWNlX2lkcxgFIAMoCVIJZGV2aWNlSWRzQgsKCV9wYXNzd29yZEILCglfdXNlcm5hbWVCCAoGX2VtYWls');
 @$core.Deprecated('Use userReplyDescriptor instead')
 const UserReply$json = const {
   '1': 'UserReply',
@@ -62,13 +73,14 @@ const UserReply$json = const {
     const {'1': 'email', '3': 3, '4': 1, '5': 9, '10': 'email'},
     const {'1': 'permissions', '3': 4, '4': 1, '5': 5, '10': 'permissions'},
     const {'1': 'preferred_hostnames', '3': 5, '4': 3, '5': 9, '10': 'preferredHostnames'},
-    const {'1': 'created_at', '3': 6, '4': 1, '5': 3, '10': 'createdAt'},
-    const {'1': 'updated_at', '3': 7, '4': 1, '5': 3, '10': 'updatedAt'},
+    const {'1': 'device_ids', '3': 6, '4': 3, '5': 9, '10': 'deviceIds'},
+    const {'1': 'created_at', '3': 7, '4': 1, '5': 3, '10': 'createdAt'},
+    const {'1': 'updated_at', '3': 8, '4': 1, '5': 3, '10': 'updatedAt'},
   ],
 };
 
 /// Descriptor for `UserReply`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List userReplyDescriptor = $convert.base64Decode('CglVc2VyUmVwbHkSDgoCaWQYASABKAVSAmlkEhoKCHVzZXJuYW1lGAIgASgJUgh1c2VybmFtZRIUCgVlbWFpbBgDIAEoCVIFZW1haWwSIAoLcGVybWlzc2lvbnMYBCABKAVSC3Blcm1pc3Npb25zEi8KE3ByZWZlcnJlZF9ob3N0bmFtZXMYBSADKAlSEnByZWZlcnJlZEhvc3RuYW1lcxIdCgpjcmVhdGVkX2F0GAYgASgDUgljcmVhdGVkQXQSHQoKdXBkYXRlZF9hdBgHIAEoA1IJdXBkYXRlZEF0');
+final $typed_data.Uint8List userReplyDescriptor = $convert.base64Decode('CglVc2VyUmVwbHkSDgoCaWQYASABKAVSAmlkEhoKCHVzZXJuYW1lGAIgASgJUgh1c2VybmFtZRIUCgVlbWFpbBgDIAEoCVIFZW1haWwSIAoLcGVybWlzc2lvbnMYBCABKAVSC3Blcm1pc3Npb25zEi8KE3ByZWZlcnJlZF9ob3N0bmFtZXMYBSADKAlSEnByZWZlcnJlZEhvc3RuYW1lcxIdCgpkZXZpY2VfaWRzGAYgAygJUglkZXZpY2VJZHMSHQoKY3JlYXRlZF9hdBgHIAEoA1IJY3JlYXRlZEF0Eh0KCnVwZGF0ZWRfYXQYCCABKANSCXVwZGF0ZWRBdA==');
 @$core.Deprecated('Use userFullReplyDescriptor instead')
 const UserFullReply$json = const {
   '1': 'UserFullReply',
@@ -78,15 +90,16 @@ const UserFullReply$json = const {
     const {'1': 'email', '3': 3, '4': 1, '5': 9, '10': 'email'},
     const {'1': 'permissions', '3': 4, '4': 1, '5': 5, '10': 'permissions'},
     const {'1': 'preferred_hostnames', '3': 5, '4': 3, '5': 9, '10': 'preferredHostnames'},
-    const {'1': 'count_following', '3': 6, '4': 1, '5': 3, '10': 'countFollowing'},
-    const {'1': 'count_followers', '3': 7, '4': 1, '5': 3, '10': 'countFollowers'},
-    const {'1': 'created_at', '3': 8, '4': 1, '5': 3, '10': 'createdAt'},
-    const {'1': 'updated_at', '3': 9, '4': 1, '5': 3, '10': 'updatedAt'},
+    const {'1': 'device_ids', '3': 6, '4': 3, '5': 9, '10': 'deviceIds'},
+    const {'1': 'count_following', '3': 7, '4': 1, '5': 3, '10': 'countFollowing'},
+    const {'1': 'count_followers', '3': 8, '4': 1, '5': 3, '10': 'countFollowers'},
+    const {'1': 'created_at', '3': 9, '4': 1, '5': 3, '10': 'createdAt'},
+    const {'1': 'updated_at', '3': 10, '4': 1, '5': 3, '10': 'updatedAt'},
   ],
 };
 
 /// Descriptor for `UserFullReply`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List userFullReplyDescriptor = $convert.base64Decode('Cg1Vc2VyRnVsbFJlcGx5Eg4KAmlkGAEgASgFUgJpZBIaCgh1c2VybmFtZRgCIAEoCVIIdXNlcm5hbWUSFAoFZW1haWwYAyABKAlSBWVtYWlsEiAKC3Blcm1pc3Npb25zGAQgASgFUgtwZXJtaXNzaW9ucxIvChNwcmVmZXJyZWRfaG9zdG5hbWVzGAUgAygJUhJwcmVmZXJyZWRIb3N0bmFtZXMSJwoPY291bnRfZm9sbG93aW5nGAYgASgDUg5jb3VudEZvbGxvd2luZxInCg9jb3VudF9mb2xsb3dlcnMYByABKANSDmNvdW50Rm9sbG93ZXJzEh0KCmNyZWF0ZWRfYXQYCCABKANSCWNyZWF0ZWRBdBIdCgp1cGRhdGVkX2F0GAkgASgDUgl1cGRhdGVkQXQ=');
+final $typed_data.Uint8List userFullReplyDescriptor = $convert.base64Decode('Cg1Vc2VyRnVsbFJlcGx5Eg4KAmlkGAEgASgFUgJpZBIaCgh1c2VybmFtZRgCIAEoCVIIdXNlcm5hbWUSFAoFZW1haWwYAyABKAlSBWVtYWlsEiAKC3Blcm1pc3Npb25zGAQgASgFUgtwZXJtaXNzaW9ucxIvChNwcmVmZXJyZWRfaG9zdG5hbWVzGAUgAygJUhJwcmVmZXJyZWRIb3N0bmFtZXMSHQoKZGV2aWNlX2lkcxgGIAMoCVIJZGV2aWNlSWRzEicKD2NvdW50X2ZvbGxvd2luZxgHIAEoA1IOY291bnRGb2xsb3dpbmcSJwoPY291bnRfZm9sbG93ZXJzGAggASgDUg5jb3VudEZvbGxvd2VycxIdCgpjcmVhdGVkX2F0GAkgASgDUgljcmVhdGVkQXQSHQoKdXBkYXRlZF9hdBgKIAEoA1IJdXBkYXRlZEF0');
 @$core.Deprecated('Use userTokenReplyDescriptor instead')
 const UserTokenReply$json = const {
   '1': 'UserTokenReply',
