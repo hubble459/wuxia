@@ -52,7 +52,21 @@ class FilterMap {
 
   @override
   String toString() {
-    return '${genres.intoString('genre')} ${hosts.intoString('url')} title:$title description:$description $global';
+    String sb = '';
+    sb += genres.intoString('genre');
+    sb += hosts.intoString('url');
+
+    if (title?.isNotEmpty == true) {
+      sb += 'title:$title';
+    }
+    if (description?.isNotEmpty == true) {
+      sb += 'description:$description';
+    }
+    if (global?.isNotEmpty == true) {
+      sb += global!;
+    }
+    sb = sb.trim();
+    return sb;
   }
 
   FilterMap();
