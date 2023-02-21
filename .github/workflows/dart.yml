@@ -23,7 +23,7 @@ jobs:
         with:
           channel: "stable"
           cache: true
-      - run: echo ${{ secrets.KEYSTORE_FILE_BASE64 }} | base64 -d > /tmp/upload-keystore.jks
+      - run: echo "${{ secrets.KEYSTORE_FILE_BASE64 }}" | base64 -d > /tmp/upload-keystore.jks
       - run: echo -e 'storePassword=${{secrets.KEYSTORE_PASSWORD}}\nkeyPassword=${{secrets.KEYSTORE_PASSWORD}}\nkeyAlias=upload\nstoreFile=/tmp/upload-keystore.jks'
       - run: flutter build apk --pub --suppress-analytics --split-per-abi --build-name=`echo ${{ steps.push_release.outputs.tag_name }} | cut -c 2-` --build-number=`echo ${{ steps.push_release.outputs.tag_name }} | tr -d v.`
 
