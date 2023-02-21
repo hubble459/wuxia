@@ -129,6 +129,11 @@ class _LatestScreenState extends State<LatestScreen> with AutomaticKeepAliveClie
                   key: Key(manga.id.toString()),
                   manga: manga,
                   type: HeroScreenType.latest,
+                  reloadParent: (updated, deleted) {
+                    manga.clear();
+                    manga.mergeFromMessage(updated);
+                    setState(() {});
+                  },
                 ),
               ),
             ),
