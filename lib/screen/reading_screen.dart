@@ -135,6 +135,15 @@ class _ReadingScreenState extends State<ReadingScreen> with AutomaticKeepAliveCl
                   key: Key(manga.id.toString()),
                   manga: manga,
                   type: HeroScreenType.reading,
+                  reloadParent: (updated, deleted) {
+                    if (deleted) {
+                      _pagingController.itemList?.removeWhere((m) => m.id == updated.id);
+                    } else {
+                      manga.clear();
+                      manga.mergeFromMessage(updated);
+                    }
+                    setState(() {});
+                  },
                 ),
               ),
             ),

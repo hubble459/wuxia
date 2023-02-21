@@ -98,3 +98,8 @@ dialog:
   update:
     title: Update App
     update: Update
+  confirm:
+    title: Confirm
+    delete: Are you sure you want to delete "{title}"
+    'no': 'No'
+    'yes': 'Yes'
