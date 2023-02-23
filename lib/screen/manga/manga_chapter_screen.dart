@@ -4,7 +4,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:protobuf/protobuf.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -81,7 +80,7 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
             // Cancel any other update
             debounced?.cancel();
             // Send API an update if not scrolled for half a second
-            debounced = Timer(Duration(milliseconds: 2000), () {
+            debounced = Timer(Duration(milliseconds: 5000), () {
               updateOffset(
                 chapterId: lastChapter.id,
                 page: lastOffset.page,
@@ -107,7 +106,6 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
       page: page,
       pixels: pixels,
     ));
-    Fluttertoast.showToast(msg: 'Updating $chapterId: page = $page, pixels = $pixels');
   }
 
   @override
