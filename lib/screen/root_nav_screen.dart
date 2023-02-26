@@ -33,6 +33,21 @@ class _RootNavScreenState extends State<RootNavScreen> {
   int stateChange = 0;
   int _selected = 0;
 
+  _handleNotificationClick(RemoteMessage message) async {
+    final mangaId = message.data['manga_id'] ?? null;
+
+    if (mangaId is String) {
+      final manga = await api.manga.get(Id(id: int.parse(mangaId)));
+
+      Navigator.of(navigatorKey.currentState!.context).push(MaterialPageRoute(
+        builder: (context) => MangaScreen(
+          manga: manga,
+          type: HeroScreenType.reading,
+        ),
+      ));
+    }
+  }
+
   _initNotificationHandler() async {
     final token = await FirebaseMessaging.instance.getToken();
     print('FCM Token: $token');
@@ -53,20 +68,11 @@ class _RootNavScreenState extends State<RootNavScreen> {
       print(err);
     });
 
-    FirebaseMessaging.onMessage.listen((message) async {
-      final mangaId = message.data['manga_id'] ?? null;
-
-      if (mangaId is String) {
-        final manga = await api.manga.get(Id(id: int.parse(mangaId)));
-
-        Navigator.of(navigatorKey.currentState!.context).push(MaterialPageRoute(
-          builder: (context) => MangaScreen(
-            manga: manga,
-            type: HeroScreenType.reading,
-          ),
-        ));
-      }
-    });
+    final message = await FirebaseMessaging.instance.getInitialMessage();
+    if (message != null) {
+      _handleNotificationClick(message);
+    }
+    FirebaseMessaging.onMessageOpenedApp.listen(_handleNotificationClick);
   }
 
   @override
