@@ -1,4 +1,4 @@
-package com.example.wuxia
+package com.hubble.wuxia
 
 import io.flutter.embedding.android.FlutterActivity
 

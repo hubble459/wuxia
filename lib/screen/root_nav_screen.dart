@@ -1,6 +1,11 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
+import 'package:wuxia/api.dart';
 import 'package:wuxia/gen/manga.pb.dart';
+import 'package:wuxia/gen/rumgap.pb.dart';
+import 'package:wuxia/gen/user.pb.dart';
+import 'package:wuxia/main.dart';
 import 'package:wuxia/partial/dialog/add_manga_dialog.dart';
 import 'package:wuxia/partial/list/manga_item.dart';
 import 'package:wuxia/screen/latest_screen.dart';
@@ -27,6 +32,49 @@ class _RootNavScreenState extends State<RootNavScreen> {
   final PageController _pageController = PageController();
   int stateChange = 0;
   int _selected = 0;
+
+  _initNotificationHandler() async {
+    final token = await FirebaseMessaging.instance.getToken();
+    print('FCM Token: $token');
+    if (!API.loggedIn.deviceIds.contains(token)) {
+      await api.user.addDeviceToken(DeviceTokenRequest(token: token));
+    }
+
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+    messaging.onTokenRefresh.listen((fcmToken) async {
+      if (!API.loggedIn.deviceIds.contains(fcmToken)) {
+        print('Updating FCM Device Token');
+        await api.user.removeDeviceToken(DeviceTokenRequest(token: token));
+        await api.user.addDeviceToken(DeviceTokenRequest(token: fcmToken));
+      }
+    }).onError((err) {
+      // UHHHHH
+      print(err);
+    });
+
+    FirebaseMessaging.onMessage.listen((message) async {
+      final mangaId = message.data['manga_id'] ?? null;
+
+      if (mangaId is String) {
+        final manga = await api.manga.get(Id(id: int.parse(mangaId)));
+
+        Navigator.of(navigatorKey.currentState!.context).push(MaterialPageRoute(
+          builder: (context) => MangaScreen(
+            manga: manga,
+            type: HeroScreenType.reading,
+          ),
+        ));
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    _initNotificationHandler();
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

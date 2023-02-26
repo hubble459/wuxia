@@ -8,6 +8,7 @@ import 'package:wuxia/gen/manga.pb.dart';
 import 'package:wuxia/gen/paginate.pb.dart';
 import 'package:wuxia/gen/reading.pb.dart';
 import 'package:wuxia/partial/list/chapter_item.dart';
+import 'package:wuxia/screen/manga/manga_chapter_screen.dart';
 
 class MangaChaptersScreen extends StatefulWidget {
   final MangaReply manga;
@@ -41,12 +42,20 @@ class _MangaChaptersScreenState extends State<MangaChaptersScreen> {
             ),
             itemBuilder: (context, chapter, index) => ChapterItem(
               manga: widget.manga,
-              refreshParent: (progress) {
+              refreshParent: (progress) async {
                 widget.manga.readingProgress = progress;
-                api.reading.update(ReadingPatchRequest(
+                await api.reading.update(ReadingPatchRequest(
                   mangaId: widget.manga.id,
                   progress: widget.manga.readingProgress,
                 ));
+                await Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => MangaChapterScreen(
+                      manga: widget.manga,
+                      chapter: chapter,
+                    ),
+                  ),
+                );
                 setState(() {});
               },
               chapters: () {

@@ -98,3 +98,8 @@ dialog:
   update:
     title: 更新应用程序
     update: 更新
+  confirm:
+    delete: 您确定要删除“{title}”吗
+    'no': 不
+    title: 确认
+    'yes': 是的

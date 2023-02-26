@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:wuxia/constant.dart';
 import 'package:wuxia/partial/filter_manga.dart';
 
 const mangaOrderBy = [
@@ -49,7 +51,11 @@ class _OrderMangaState extends State<OrderManga> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        Navigator.pop(context, '$_selectedOrder:$_selectedOrderType');
+        final orderBy = '$_selectedOrder:$_selectedOrderType';
+        (await SharedPreferences.getInstance())
+            .setString(widget.filterType == FilterType.manga ? Constants.orderMangaKey : Constants.orderReadingKey, orderBy);
+
+        Navigator.pop(context, orderBy);
         return false;
       },
       child: SingleChildScrollView(

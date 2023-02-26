@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wuxia/api.dart';
+import 'package:wuxia/constant.dart';
 import 'package:wuxia/gen/manga.pb.dart';
 import 'package:wuxia/gen/paginate.pb.dart';
 import 'package:wuxia/partial/filter_manga.dart';
@@ -24,7 +26,7 @@ class _ReadingScreenState extends State<ReadingScreen> with AutomaticKeepAliveCl
   final _searchController = TextEditingController();
   final _pageSize = 20;
   String _keyword = '';
-  String _orderBy = 'title:ASC';
+  String? _orderBy;
 
   void _filter({
     String? keyword,
@@ -78,7 +80,7 @@ class _ReadingScreenState extends State<ReadingScreen> with AutomaticKeepAliveCl
                       context: context,
                       builder: (context) => OrderManga(
                         filterType: FilterType.reading,
-                        defaultValue: _orderBy,
+                        defaultValue: _orderBy ?? 'title:ASC',
                       ),
                       animationCurve: Curves.easeIn,
                       duration: const Duration(milliseconds: 500),
@@ -101,10 +103,13 @@ class _ReadingScreenState extends State<ReadingScreen> with AutomaticKeepAliveCl
                         ),
                       ),
                     );
+                    if (keyword != null) {
+                      print(keyword);
 
-                    _filter(
-                      keyword: keyword.toString(),
-                    );
+                      _filter(
+                        keyword: keyword.toString(),
+                      );
+                    }
                   },
                 ),
               ],
@@ -130,6 +135,15 @@ class _ReadingScreenState extends State<ReadingScreen> with AutomaticKeepAliveCl
                   key: Key(manga.id.toString()),
                   manga: manga,
                   type: HeroScreenType.reading,
+                  reloadParent: (updated, deleted) {
+                    if (deleted) {
+                      _pagingController.itemList?.removeWhere((m) => m.id == updated.id);
+                    } else {
+                      manga.clear();
+                      manga.mergeFromMessage(updated);
+                    }
+                    setState(() {});
+                  },
                 ),
               ),
             ),
@@ -153,6 +167,8 @@ class _ReadingScreenState extends State<ReadingScreen> with AutomaticKeepAliveCl
   }
 
   Future<void> _fetchPage(int page) async {
+    _orderBy ??= (await SharedPreferences.getInstance()).getString(Constants.orderReadingKey) ?? 'title:ASC';
+
     try {
       final result = await api.manga.index(PaginateSearchQuery(
         page: Int64(page),
