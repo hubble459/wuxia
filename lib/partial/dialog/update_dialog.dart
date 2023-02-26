@@ -114,7 +114,14 @@ class _UpdateDialogState extends State<UpdateDialog> {
                               });
 
                               try {
-                                await downloadFile(asset.browserDownloadUrl!, 'wuxia.apk');
+                                final fileName = 'wuxia.apk';
+                                final file = File('${(await getDownloadPath())}/$fileName');
+
+                                if (await file.exists()) {
+                                  await file.delete();
+                                }
+
+                                await downloadFile(asset.browserDownloadUrl!, fileName);
                                 setState(() {
                                   isDownloading = false;
                                 });
