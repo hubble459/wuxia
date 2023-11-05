@@ -5,7 +5,7 @@ import 'package:grpc/grpc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wuxia/api.dart';
 import 'package:wuxia/constant.dart';
-import 'package:wuxia/gen/user.pb.dart';
+import 'package:wuxia/gen/rumgap/v1/user.pb.dart';
 import 'package:wuxia/partial/dialog/change_host_dialog.dart';
 import 'package:wuxia/util/validator_builder.dart';
 
@@ -64,7 +64,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
       // Asynchronously save username and token
       (() async {
-        const FlutterSecureStorage().write(key: 'token', value: user.token);
+        const FlutterSecureStorage().write(key: 'token', value: user.token).ignore();
         final instance = await SharedPreferences.getInstance();
         instance.setString('username', user.user.username);
       })();

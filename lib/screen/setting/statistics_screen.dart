@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_picker/flutter_picker.dart';
 import 'package:wuxia/api.dart';
-import 'package:wuxia/gen/meta.pb.dart';
-import 'package:wuxia/gen/rumgap.pb.dart';
+import 'package:wuxia/gen/rumgap/v1/meta.pb.dart';
+import 'package:wuxia/gen/rumgap/v1/v1.pb.dart';
 import 'package:wuxia/partial/simple_future_builder.dart';
 
 class StatisticsScreen extends StatefulWidget {

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:wuxia/api.dart';
-import 'package:wuxia/gen/search.pb.dart';
-import 'package:wuxia/gen/user.pb.dart';
+import 'package:wuxia/gen/rumgap/v1/search.pb.dart';
+import 'package:wuxia/gen/rumgap/v1/user.pb.dart';
 import 'package:wuxia/partial/filter_manga.dart';
 import 'package:wuxia/partial/list/search_manga_item.dart';
 import 'package:collection/collection.dart';

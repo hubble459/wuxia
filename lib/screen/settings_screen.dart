@@ -139,7 +139,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   style: const TextStyle(color: Colors.red),
                 ),
                 onTap: () async {
-                  await const FlutterSecureStorage().delete(key: 'token');
+                  const FlutterSecureStorage().delete(key: 'token').ignore();
                   API.token = null;
                   if (!mounted) {
                     return;

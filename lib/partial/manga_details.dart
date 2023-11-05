@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:jiffy/jiffy.dart';
-import 'package:wuxia/gen/manga.pb.dart';
+import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
 
 class MangaDetails extends StatelessWidget {
   final MangaReply manga;

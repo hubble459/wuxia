@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
-import 'package:wuxia/gen/chapter.pb.dart';
-import 'package:wuxia/gen/manga.pb.dart';
+import 'package:wuxia/gen/rumgap/v1/chapter.pb.dart';
+import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
 
 class ChapterItem extends StatelessWidget {
   final ChaptersReply chapters;
