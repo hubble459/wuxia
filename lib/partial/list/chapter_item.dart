@@ -23,7 +23,7 @@ class ChapterItem extends StatelessWidget {
       ),
       subtitle: Visibility(
         visible: chapter.hasPosted(),
-        child: Text(chapter.hasPosted() ? Jiffy.unixFromMillisecondsSinceEpoch(chapter.posted.toInt()).fromNow() : ''),
+        child: Text(chapter.hasPosted() ? Jiffy.parseFromMillisecondsSinceEpoch(chapter.posted.toInt()).fromNow() : ''),
       ),
       leading: Visibility(
         visible: manga.hasReadingProgress() && manga.readingProgress >= chapter.index.toInt(),

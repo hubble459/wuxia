@@ -65,7 +65,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
                         preferences.setString('language', locale!);
                         await FlutterI18n.refresh(context, Locale(locale));
-                        await Jiffy.locale(locale);
+                        await Jiffy.setLocale(locale);
 
                         if (mounted) {
                           setState(() {});

@@ -123,7 +123,7 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
             ...(_chapter.hasPosted()
                 ? [
                     Text(
-                      Jiffy.unixFromMillisecondsSinceEpoch(_chapter.posted.toInt()).fromNow(),
+                      Jiffy.parseFromMillisecondsSinceEpoch(_chapter.posted.toInt()).fromNow(),
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(color: Colors.white54),
                       overflow: TextOverflow.ellipsis,
                     )

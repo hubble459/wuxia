@@ -19,7 +19,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     Future.delayed(const Duration(seconds: 1), () async {
-      await Jiffy.locale('en');
+      await Jiffy.setLocale('en');
       await FlutterI18n.refresh(context, Locale('en'));
 
       final preferences = await SharedPreferences.getInstance();
@@ -46,7 +46,7 @@ class _SplashScreenState extends State<SplashScreen> {
         API.loggedIn = await api.user.me(Empty());
         if (!mounted) return;
         final locale = preferences.getString('language') ?? 'zh';
-        await Jiffy.locale(locale);
+        await Jiffy.setLocale(locale);
         await FlutterI18n.refresh(context, Locale(locale));
         if (!mounted) return;
         Navigator.of(context).pushReplacementNamed('root_nav');

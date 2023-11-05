@@ -1,5 +1,5 @@
 name: wuxia
-description: A new Flutter project.
+description: Manga reading app based on rumgap.
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -31,27 +31,27 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  flutter_i18n: ^0.32.4
-  flutter_secure_storage: ^5.0.2
-  jiffy: ^5.0.0
+  flutter_i18n: ^0.34.0
+  flutter_secure_storage: ^9.0.0
+  jiffy: ^6.2.1
   json_serializable: ^6.2.0
   json_annotation: ^4.5.0
   shared_preferences: ^2.0.11
-  infinite_scroll_pagination: ^3.2.0
+  infinite_scroll_pagination: ^4.0.0
   cached_network_image: ^3.2.1
   fluttertoast: ^8.0.9
   url_launcher: ^6.1.4
   modal_bottom_sheet: ^3.0.0-pre
-  protobuf: ^2.1.0
+  protobuf: ^3.1.0
   grpc: ^3.1.0
   fixnum: ^1.0.1
   collection: ^1.17.0
   flutter_picker: ^2.1.0
-  package_info_plus: ^3.0.3
+  package_info_plus: ^4.2.0
   github: ^9.9.0
   path_provider: ^2.0.12
   app_installer: ^1.1.0
-  permission_handler: ^10.2.0
+  permission_handler: ^11.0.1
   flutter_dotenv: ^5.0.2
   scrollable_positioned_list: ^0.3.5
   firebase_core: ^2.6.1
@@ -62,14 +62,14 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   build_runner: ^2.0.0
-  flutter_launcher_icons: ^0.9.3
+  flutter_launcher_icons: ^0.13.1
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^2.0.0
+  flutter_lints: ^3.0.1
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

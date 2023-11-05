@@ -6,7 +6,7 @@ import 'package:wuxia/gen/rumgap.pbgrpc.dart';
 import 'gen/user.pb.dart';
 
 // localhost=10.0.2.2:8000
-const _defaultHost = '143.178.215.190';
+const _defaultHost = '31.21.216.97';
 const _defaultPort = 5909;
 
 // gRCP

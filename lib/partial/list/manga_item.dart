@@ -61,7 +61,7 @@ class _MangaItemState extends State<MangaItem> {
           Visibility(
             visible: _manga.hasLast(),
             child: Text(
-              _manga.hasLast() ? Jiffy.unixFromMillisecondsSinceEpoch(_manga.last.toInt()).fromNow() : 'Unknown',
+              _manga.hasLast() ? Jiffy.parseFromMillisecondsSinceEpoch(_manga.last.toInt()).fromNow() : 'Unknown',
               style: TextStyle(color: Colors.blueGrey.shade700),
             ),
           ),

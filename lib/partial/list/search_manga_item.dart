@@ -42,7 +42,8 @@ class _SearchMangaItemState extends State<SearchMangaItem> {
               ),
             )
           : null,
-      trailing: searchManga.hasPosted() ? Text(Jiffy.unixFromMillisecondsSinceEpoch(searchManga.posted.toInt()).fromNow()) : null,
+      trailing:
+          searchManga.hasPosted() ? Text(Jiffy.parseFromMillisecondsSinceEpoch(searchManga.posted.toInt()).fromNow()) : null,
       onTap: () async {
         showDialog(
           context: context,
