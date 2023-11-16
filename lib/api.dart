@@ -4,9 +4,10 @@ import 'package:grpc/grpc.dart';
 import 'package:wuxia/gen/rumgap/v1/v1.pbgrpc.dart';
 import 'package:wuxia/gen/rumgap/v1/user.pb.dart';
 
-const _defaultHost = '10.0.2.2';
-// const _defaultHost = '31.21.216.97';
-const _defaultPort = 8000;
+// const _defaultHost = '10.0.2.2';
+// const _defaultPort = 8000;
+const _defaultHost = '31.21.216.97';
+const _defaultPort = 5909;
 
 // gRCP
 class API {
