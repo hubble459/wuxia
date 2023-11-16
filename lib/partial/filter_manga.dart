@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:grpc/grpc.dart';
 import 'package:wuxia/api.dart';
-import 'package:wuxia/gen/meta.pb.dart';
+import 'package:wuxia/gen/rumgap/v1/meta.pb.dart';
 import 'package:wuxia/partial/simple_future_builder.dart';
 
 final tagRegex = RegExp(r'\w+');

@@ -4,11 +4,13 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:grpc/grpc.dart';
+import 'package:protobuf/protobuf.dart';
 import 'package:wuxia/api.dart';
-import 'package:wuxia/gen/chapter.pb.dart';
-import 'package:wuxia/gen/manga.pb.dart';
-import 'package:wuxia/gen/reading.pb.dart';
-import 'package:wuxia/gen/rumgap.pb.dart';
+import 'package:wuxia/gen/rumgap/v1/chapter.pb.dart';
+import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
+import 'package:wuxia/gen/rumgap/v1/reading.pb.dart';
+import 'package:wuxia/gen/rumgap/v1/v1.pb.dart';
 import 'package:wuxia/main.dart';
 import 'package:wuxia/partial/action/open_url_action.dart';
 import 'package:wuxia/partial/list/manga_item.dart';
@@ -47,6 +49,7 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
     (() async {
       try {
         _manga = await api.manga.get(Id(id: _manga.id));
+        print('uhh');
       } finally {
         _animationController.reset();
         setState(() {});
@@ -60,7 +63,8 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        Navigator.of(context).pop(_manga);
+        print(_manga);
+        Navigator.of(context).pop(_manga.deepCopy());
         return false;
       },
       child: SafeArea(
@@ -95,8 +99,14 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
                           try {
                             _manga = await api.manga.update(Id(id: _manga.id));
                           } catch (e) {
-                            log('force update manga', error: e);
-                            Fluttertoast.showToast(msg: e.toString());
+                            if (e is GrpcError && e.code == StatusCode.unavailable) {
+                              // TODO 16/11/2023: Show dialog telling end user to switch manga provider
+                              Fluttertoast.showToast(
+                                  msg: 'WIP; but you probably have to replace this manga from a different website');
+                            } else {
+                              log('force update manga', error: e);
+                              Fluttertoast.showToast(msg: e.toString());
+                            }
                           } finally {
                             _animationController.reset();
                             setState(() {});
@@ -186,6 +196,9 @@ class _NewMangaOptions extends StatelessWidget {
 mixin ReadingManga on MangaReply {
   get progressPercentage {
     final count = countChapters.toInt();
+    if (count.isNaN || count == 0) {
+      return 0.0;
+    }
     return 100 / count * readingProgress;
   }
 }

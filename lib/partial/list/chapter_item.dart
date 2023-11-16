@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
-import 'package:wuxia/gen/chapter.pb.dart';
-import 'package:wuxia/gen/manga.pb.dart';
+import 'package:wuxia/gen/rumgap/v1/chapter.pb.dart';
+import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
 
 class ChapterItem extends StatelessWidget {
   final ChaptersReply chapters;
@@ -23,7 +23,7 @@ class ChapterItem extends StatelessWidget {
       ),
       subtitle: Visibility(
         visible: chapter.hasPosted(),
-        child: Text(chapter.hasPosted() ? Jiffy.unixFromMillisecondsSinceEpoch(chapter.posted.toInt()).fromNow() : ''),
+        child: Text(chapter.hasPosted() ? Jiffy.parseFromMillisecondsSinceEpoch(chapter.posted.toInt()).fromNow() : ''),
       ),
       leading: Visibility(
         visible: manga.hasReadingProgress() && manga.readingProgress >= chapter.index.toInt(),

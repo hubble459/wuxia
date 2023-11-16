@@ -65,7 +65,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
                         preferences.setString('language', locale!);
                         await FlutterI18n.refresh(context, Locale(locale));
-                        await Jiffy.locale(locale);
+                        await Jiffy.setLocale(locale);
 
                         if (mounted) {
                           setState(() {});
@@ -139,7 +139,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   style: const TextStyle(color: Colors.red),
                 ),
                 onTap: () async {
-                  await const FlutterSecureStorage().delete(key: 'token');
+                  const FlutterSecureStorage().delete(key: 'token').ignore();
                   API.token = null;
                   if (!mounted) {
                     return;

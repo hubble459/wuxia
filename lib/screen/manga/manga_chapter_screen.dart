@@ -8,10 +8,10 @@ import 'package:jiffy/jiffy.dart';
 import 'package:protobuf/protobuf.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:wuxia/api.dart';
-import 'package:wuxia/gen/chapter.pb.dart';
-import 'package:wuxia/gen/manga.pb.dart';
-import 'package:wuxia/gen/reading.pb.dart';
-import 'package:wuxia/gen/rumgap.pb.dart';
+import 'package:wuxia/gen/rumgap/v1/chapter.pb.dart';
+import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
+import 'package:wuxia/gen/rumgap/v1/reading.pb.dart';
+import 'package:wuxia/gen/rumgap/v1/v1.pb.dart';
 import 'package:wuxia/main.dart';
 import 'package:wuxia/partial/action/open_url_action.dart';
 import 'package:wuxia/partial/simple_future_builder.dart';
@@ -123,7 +123,7 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
             ...(_chapter.hasPosted()
                 ? [
                     Text(
-                      Jiffy.unixFromMillisecondsSinceEpoch(_chapter.posted.toInt()).fromNow(),
+                      Jiffy.parseFromMillisecondsSinceEpoch(_chapter.posted.toInt()).fromNow(),
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(color: Colors.white54),
                       overflow: TextOverflow.ellipsis,
                     )

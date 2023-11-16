@@ -21,6 +21,7 @@
         "fluttertoast",
         "Fluttertoast",
         "protobuf",
+        "rumgap",
         "wuxia"
     ],
     "dart.lineLength": 130,
@@ -29,5 +30,5 @@
     "editor.codeActionsOnSave": {
         "source.fixAll": true
     },
-    "java.configuration.updateBuildConfiguration": "interactive",
+    "java.configuration.updateBuildConfiguration": "interactive"
 }

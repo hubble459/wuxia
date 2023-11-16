@@ -3,8 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:grpc/grpc.dart';
 import 'package:wuxia/api.dart';
-import 'package:wuxia/gen/manga.pb.dart';
-import 'package:wuxia/gen/reading.pb.dart';
+import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
+import 'package:wuxia/gen/rumgap/v1/reading.pb.dart';
 import 'package:wuxia/util/validator_builder.dart';
 
 class AddMangaDialog extends StatefulWidget {

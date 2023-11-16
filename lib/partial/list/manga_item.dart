@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:wuxia/api.dart';
-import 'package:wuxia/gen/manga.pb.dart';
-import 'package:wuxia/gen/rumgap.pb.dart';
+import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
+import 'package:wuxia/gen/rumgap/v1/v1.pb.dart';
 import 'package:wuxia/partial/dialog/confirm_dialog.dart';
 import 'package:wuxia/screen/manga/manga_screen.dart';
 import 'package:wuxia/util/tools.dart';
@@ -48,6 +48,7 @@ class _MangaItemState extends State<MangaItem> {
   @override
   Widget build(BuildContext context) {
     return ListTile(
+      dense: true,
       title: Text(
         _manga.title,
         maxLines: 1,
@@ -61,7 +62,7 @@ class _MangaItemState extends State<MangaItem> {
           Visibility(
             visible: _manga.hasLast(),
             child: Text(
-              _manga.hasLast() ? Jiffy.unixFromMillisecondsSinceEpoch(_manga.last.toInt()).fromNow() : 'Unknown',
+              _manga.hasLast() ? Jiffy.parseFromMillisecondsSinceEpoch(_manga.last.toInt()).fromNow() : 'Unknown',
               style: TextStyle(color: Colors.blueGrey.shade700),
             ),
           ),
@@ -71,6 +72,7 @@ class _MangaItemState extends State<MangaItem> {
           ? Hero(
               tag: widget.type.getTag(_manga.url),
               child: CachedNetworkImage(
+                fit: BoxFit.cover,
                 imageUrl: _manga.cover,
                 width: 40,
                 httpHeaders: {

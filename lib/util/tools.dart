@@ -1,7 +1,7 @@
 import 'package:collection/collection.dart';
-import 'package:wuxia/gen/chapter.pb.dart';
-import 'package:wuxia/gen/manga.pb.dart';
-import 'package:wuxia/gen/search.pb.dart';
+import 'package:wuxia/gen/rumgap/v1/chapter.pb.dart';
+import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
+import 'package:wuxia/gen/rumgap/v1/search.pb.dart';
 
 const mangaCoverReferer = ['buhh'];
 

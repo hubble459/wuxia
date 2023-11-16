@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:wuxia/api.dart';
-import 'package:wuxia/gen/chapter.pb.dart';
-import 'package:wuxia/gen/manga.pb.dart';
-import 'package:wuxia/gen/paginate.pb.dart';
-import 'package:wuxia/gen/reading.pb.dart';
+import 'package:wuxia/gen/rumgap/v1/chapter.pb.dart';
+import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
+import 'package:wuxia/gen/rumgap/v1/paginate.pb.dart';
+import 'package:wuxia/gen/rumgap/v1/reading.pb.dart';
 import 'package:wuxia/partial/list/chapter_item.dart';
 import 'package:wuxia/screen/manga/manga_chapter_screen.dart';
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:jiffy/jiffy.dart';
-import 'package:wuxia/gen/manga.pb.dart';
+import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
 
 class MangaDetails extends StatelessWidget {
   final MangaReply manga;
@@ -115,7 +115,7 @@ class MangaDetails extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(4, 4, 0, 4),
                   child: Text(
-                    manga.hasLast() ? Jiffy.unixFromMillisecondsSinceEpoch(manga.last.toInt()).fromNow() : 'Unknown',
+                    manga.hasLast() ? Jiffy.parseFromMillisecondsSinceEpoch(manga.last.toInt()).fromNow() : 'Unknown',
                   ),
                 ),
               ],
@@ -132,7 +132,7 @@ class MangaDetails extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(4, 4, 0, 4),
                   child: Text(
-                    manga.hasNext() ? Jiffy.unixFromMillisecondsSinceEpoch(manga.next.toInt()).fromNow() : 'Unknown',
+                    manga.hasNext() ? Jiffy.parseFromMillisecondsSinceEpoch(manga.next.toInt()).fromNow() : 'Unknown',
                     style: manga.hasNext() && manga.next < DateTime.now().millisecondsSinceEpoch
                         ? const TextStyle(color: Colors.red)
                         : null,

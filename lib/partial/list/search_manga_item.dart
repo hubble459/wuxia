@@ -2,8 +2,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:wuxia/api.dart';
-import 'package:wuxia/gen/manga.pb.dart';
-import 'package:wuxia/gen/search.pb.dart';
+import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
+import 'package:wuxia/gen/rumgap/v1/search.pb.dart';
 import 'package:wuxia/partial/list/manga_item.dart';
 import 'package:wuxia/screen/manga/manga_screen.dart';
 import 'package:wuxia/util/tools.dart';
@@ -42,7 +42,8 @@ class _SearchMangaItemState extends State<SearchMangaItem> {
               ),
             )
           : null,
-      trailing: searchManga.hasPosted() ? Text(Jiffy.unixFromMillisecondsSinceEpoch(searchManga.posted.toInt()).fromNow()) : null,
+      trailing:
+          searchManga.hasPosted() ? Text(Jiffy.parseFromMillisecondsSinceEpoch(searchManga.posted.toInt()).fromNow()) : null,
       onTap: () async {
         showDialog(
           context: context,
