@@ -21,6 +21,7 @@
         "fluttertoast",
         "Fluttertoast",
         "protobuf",
+        "rumgap",
         "wuxia"
     ],
     "dart.lineLength": 130,

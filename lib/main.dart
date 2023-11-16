@@ -19,6 +19,9 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 extension ReadingManga on MangaReply {
   get progressPercentage {
     final count = countChapters.toInt();
+    if (count.isNaN || count == 0) {
+      return 0.0;
+    }
     return 1 / count * readingProgress;
   }
 }
@@ -42,17 +45,7 @@ void main() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
-    // Check if we have permissions to send notifications
-    NotificationSettings settings = await FirebaseMessaging.instance.requestPermission(
-      alert: true,
-      announcement: false,
-      badge: true,
-      carPlay: false,
-      criticalAlert: false,
-      provisional: false,
-      sound: true,
-    );
-    print('User granted permission: ${settings.authorizationStatus}');
+
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   }
   WidgetsFlutterBinding.ensureInitialized();

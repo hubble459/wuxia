@@ -47,6 +47,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void submit() async {
     error = null;
     final invalid = !fkLogin.currentState!.validate();
+
     if (invalid) {
       return;
     }
@@ -75,8 +76,9 @@ class _LoginScreenState extends State<LoginScreen> {
       Navigator.of(context).pushReplacementNamed('root_nav');
     } catch (e) {
       if (e is GrpcError) {
+        print(e);
         setState(() {
-          error = e.message;
+          error = e.message ?? e.codeName;
         });
       }
     }

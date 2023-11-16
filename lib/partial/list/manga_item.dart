@@ -48,6 +48,7 @@ class _MangaItemState extends State<MangaItem> {
   @override
   Widget build(BuildContext context) {
     return ListTile(
+      dense: true,
       title: Text(
         _manga.title,
         maxLines: 1,
@@ -71,6 +72,7 @@ class _MangaItemState extends State<MangaItem> {
           ? Hero(
               tag: widget.type.getTag(_manga.url),
               child: CachedNetworkImage(
+                fit: BoxFit.cover,
                 imageUrl: _manga.cover,
                 width: 40,
                 httpHeaders: {
