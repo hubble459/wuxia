@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -34,13 +32,6 @@ class _SplashScreenState extends State<SplashScreen> {
         final host = apiURLParts[0];
         final port = int.parse(apiURLParts[1]);
         api = API(host, port);
-      }
-
-      final abi = Abi.current();
-      switch (abi) {
-        case Abi.androidArm:
-          break;
-        default:
       }
 
       const storage = FlutterSecureStorage();

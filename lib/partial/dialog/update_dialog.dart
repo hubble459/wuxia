@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:ffi';
 import 'dart:io';
 
 import 'package:app_installer/app_installer.dart';
@@ -72,26 +71,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
                         ? null
                         : () async {
                             if ((await Permission.requestInstallPackages.request()).isGranted) {
-                              final abi = Abi.current();
-
-                              String? apkRelease;
-
-                              switch (abi) {
-                                case Abi.androidArm:
-                                  apkRelease = 'wuxia-armeabi-v7a-release.apk';
-                                  break;
-                                case Abi.androidArm64:
-                                  apkRelease = 'wuxia-arm64-v8a-release.apk';
-                                  break;
-                                case Abi.androidX64:
-                                  apkRelease = 'wuxia-x86_64-release.apk';
-                                  break;
-                              }
-
-                              if (apkRelease == null) {
-                                // TODO show error
-                                return;
-                              }
+                              String apkRelease = 'wuxia-release.apk';
 
                               final asset = release.assets?.firstWhere((element) => element.name == apkRelease);
 
@@ -126,7 +106,6 @@ class _UpdateDialogState extends State<UpdateDialog> {
                                   isDownloading = false;
                                 });
                                 await AppInstaller.installApk(_apk!.path);
-                                // await _apk!.delete();
                               } catch (e) {
                                 print(e);
                               }
