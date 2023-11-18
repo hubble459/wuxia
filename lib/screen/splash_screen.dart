@@ -72,6 +72,7 @@ class _SplashScreenState extends State<SplashScreen> {
       body: Center(
         // child: Image.asset('assets/image/icon.png', height: 200),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
               FlutterI18n.translate(context, 'title'),
