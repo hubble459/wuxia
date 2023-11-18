@@ -25,7 +25,7 @@ jobs:
           cache: true
       - run: echo "${{ secrets.KEYSTORE_FILE_BASE64 }}" | base64 -d > /tmp/upload-keystore.jks
       - run: echo -e 'storePassword=${{secrets.KEYSTORE_PASSWORD}}\nkeyPassword=${{secrets.KEYSTORE_PASSWORD}}\nkeyAlias=upload\nstoreFile=/tmp/upload-keystore.jks' > android/key.properties
-      - run: flutter build apk --pub --suppress-analytics --split-per-abi --build-name=`echo ${{ steps.push_release.outputs.tag_name }} | cut -c 2-` --build-number=`echo ${{ steps.push_release.outputs.tag_name }} | tr -d v.`
+      - run: flutter build apk --pub --suppress-analytics --build-name=`echo ${{ steps.push_release.outputs.tag_name }} | cut -c 2-` --build-number=`echo ${{ steps.push_release.outputs.tag_name }} | tr -d v.`
 
       - name: Get release
         id: get_release
@@ -33,26 +33,10 @@ jobs:
         with:
           tag: ${{ steps.push_release.outputs.tag_name }}
 
-      - name: Upload armeabi-v7a Release Asset
+      - name: Upload Release Asset
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.get_release.outputs.upload_url }}
-          asset_path: ./build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
-          asset_name: wuxia-armeabi-v7a-release.apk
-          asset_content_type: application/octet-stream
-
-      - name: Upload arm64-v8a Release Asset
-        uses: actions/upload-release-asset@v1
-        with:
-          upload_url: ${{ steps.get_release.outputs.upload_url }}
-          asset_path: ./build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
-          asset_name: wuxia-arm64-v8a-release.apk
-          asset_content_type: application/octet-stream
-
-      - name: Upload x86_64 Release Asset
-        uses: actions/upload-release-asset@v1
-        with:
-          upload_url: ${{ steps.get_release.outputs.upload_url }}
-          asset_path: ./build/app/outputs/flutter-apk/app-x86_64-release.apk
-          asset_name: wuxia-x86_64-release.apk
+          asset_path: ./build/app/outputs/flutter-apk/app-release.apk
+          asset_name: wuxia-release.apk
           asset_content_type: application/octet-stream
