@@ -31,5 +31,4 @@
         "source.fixAll": true
     },
     "java.configuration.updateBuildConfiguration": "interactive",
-    "nuxt.isNuxtApp": false
 }
