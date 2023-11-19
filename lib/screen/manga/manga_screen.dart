@@ -39,22 +39,39 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
   );
   late MangaReply _manga;
 
-  @override
-  void initState() {
-    _manga = widget.manga;
+  Future<void> loadManga({bool force = false}) async {
+    // Start loading animation
     _animationController
         .repeat(period: const Duration(seconds: 1))
         .whenComplete(() => _animationController.repeat(period: const Duration(seconds: 1)));
+    setState(() {});
 
-    (() async {
-      try {
+    try {
+      if (force) {
+        _manga = await api.manga.update(Id(id: _manga.id));
+      } else {
         _manga = await api.manga.get(Id(id: _manga.id));
-        print('uhh');
-      } finally {
-        _animationController.reset();
-        setState(() {});
       }
-    })();
+    } catch (e) {
+      if (e is GrpcError && e.code == StatusCode.unavailable) {
+        // TODO 16/11/2023: Show dialog telling end user to switch manga provider
+        Fluttertoast.showToast(msg: 'WIP; but you probably have to replace this manga from a different website');
+      } else {
+        log('load manga error', error: e);
+        Fluttertoast.showToast(msg: e.toString());
+      }
+    } finally {
+      // Stop loading animation
+      _animationController.reset();
+      setState(() {});
+    }
+  }
+
+  @override
+  void initState() {
+    _manga = widget.manga;
+
+    loadManga();
 
     super.initState();
   }
@@ -88,31 +105,7 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
               RotationTransition(
                 turns: CurvedAnimation(parent: _animationController, curve: Curves.linear),
                 child: IconButton(
-                  onPressed: _animationController.isAnimating
-                      ? null
-                      : () async {
-                          _animationController
-                              .repeat(period: const Duration(seconds: 1))
-                              .whenComplete(() => _animationController.repeat(period: const Duration(seconds: 1)));
-
-                          setState(() {});
-
-                          try {
-                            _manga = await api.manga.update(Id(id: _manga.id));
-                          } catch (e) {
-                            if (e is GrpcError && e.code == StatusCode.unavailable) {
-                              // TODO 16/11/2023: Show dialog telling end user to switch manga provider
-                              Fluttertoast.showToast(
-                                  msg: 'WIP; but you probably have to replace this manga from a different website');
-                            } else {
-                              log('force update manga', error: e);
-                              Fluttertoast.showToast(msg: e.toString());
-                            }
-                          } finally {
-                            _animationController.reset();
-                            setState(() {});
-                          }
-                        },
+                  onPressed: _animationController.isAnimating ? null : loadManga,
                   tooltip: FlutterI18n.translate(context, 'basic.refresh'),
                   icon: const Icon(Icons.refresh),
                 ),
