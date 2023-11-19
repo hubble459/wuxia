@@ -7,12 +7,15 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:grpc/grpc.dart';
 import 'package:protobuf/protobuf.dart';
 import 'package:wuxia/api.dart';
+import 'package:wuxia/gen/google/protobuf/any.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/chapter.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/reading.pb.dart';
+import 'package:wuxia/gen/rumgap/v1/scrape_error.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/v1.pb.dart';
 import 'package:wuxia/main.dart';
 import 'package:wuxia/partial/action/open_url_action.dart';
+import 'package:wuxia/partial/dialog/dead_provider_dialog.dart';
 import 'package:wuxia/partial/list/manga_item.dart';
 import 'package:wuxia/partial/manga_details.dart';
 import 'package:wuxia/screen/manga/manga_chapter_screen.dart';
@@ -53,12 +56,33 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
         _manga = await api.manga.get(Id(id: _manga.id));
       }
     } catch (e) {
-      if (e is GrpcError && e.code == StatusCode.unavailable) {
-        // TODO 16/11/2023: Show dialog telling end user to switch manga provider
-        Fluttertoast.showToast(msg: 'WIP; but you probably have to replace this manga from a different website');
-      } else {
-        log('load manga error', error: e);
-        Fluttertoast.showToast(msg: e.toString());
+      log('load manga error', error: e);
+      Fluttertoast.showToast(msg: e.toString()).ignore();
+
+      if (e is GrpcError) {
+        print('details');
+        print(e.details);
+        final error = ScrapeError.fromBuffer((e.details![0] as dynamic).value);
+        switch (error.type) {
+          case ScrapeErrorType.CloudflareIUAM:
+            // Tell user to wait for a couple of minutes and try again
+            Fluttertoast.showToast(msg: 'CloudFlare is in "I\'m Under Attack Mode". Wait a couple of minutes before trying again')
+                .ignore();
+            break;
+          case ScrapeErrorType.WebsiteNotSupported:
+            // User should look for alternatives
+            Fluttertoast.showToast(msg: 'WIP; but you probably have to replace this manga from a different website').ignore();
+
+            // TODO 16/11/2023: Show dialog telling end user to switch manga provider
+            // showDialog(context: context, builder: (context) => const DeadProviderDialog());
+            break;
+          case ScrapeErrorType.WebScrapingError:
+            // Scraper is broken
+            // Either switch from provider or wait till scraper is fixed
+            break;
+          default:
+        }
+        print(error);
       }
     } finally {
       // Stop loading animation
