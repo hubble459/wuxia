@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:wuxia/constant.dart';
 import 'package:wuxia/partial/filter_manga.dart';
+import 'package:wuxia/util/store.dart';
 
 const mangaOrderBy = [
   'title',
@@ -49,14 +48,16 @@ class _OrderMangaState extends State<OrderManga> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        final orderBy = '$_selectedOrder:$_selectedOrderType';
-        (await SharedPreferences.getInstance())
-            .setString(widget.filterType == FilterType.manga ? Constants.orderMangaKey : Constants.orderReadingKey, orderBy);
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) async {
+        if (!didPop) {
+          final orderBy = '$_selectedOrder:$_selectedOrderType';
+          final store = Store.getStoreInstance();
+          await (widget.filterType == FilterType.manga ? store.setOrderManga(orderBy) : store.setOrderReading(orderBy));
 
-        Navigator.pop(context, orderBy);
-        return false;
+          Navigator.pop(context, orderBy);
+        }
       },
       child: SingleChildScrollView(
         controller: ModalScrollController.of(context),

@@ -9,6 +9,8 @@ import 'package:wuxia/gen/rumgap/v1/user.pb.dart';
 const _defaultHost = '31.21.216.97';
 const _defaultPort = 5909;
 
+// extension PooPoo on GrpcError {}
+
 // gRCP
 class API {
   static String? _token;
@@ -71,6 +73,7 @@ class API {
   static final options = CallOptions(
     providers: [API.authProvider],
     compression: const GzipCodec(),
+    timeout: Duration(seconds: 5),
   );
 }
 

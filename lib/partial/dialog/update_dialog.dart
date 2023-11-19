@@ -80,8 +80,6 @@ class _UpdateDialogState extends State<UpdateDialog> {
                                 return;
                               }
 
-                              print(asset.browserDownloadUrl);
-
                               final downloadDir = await getDownloadPath();
 
                               if (downloadDir == null) {

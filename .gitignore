@@ -48,3 +48,4 @@ app.*.map.json
 /android/local.properties
 
 .env
+lib/gen/google

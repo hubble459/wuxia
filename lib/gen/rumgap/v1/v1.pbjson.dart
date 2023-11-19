@@ -34,3 +34,19 @@ const Empty$json = {
 final $typed_data.Uint8List emptyDescriptor = $convert.base64Decode(
     'CgVFbXB0eQ==');
 
+@$core.Deprecated('Use detailedErrorDescriptor instead')
+const DetailedError$json = {
+  '1': 'DetailedError',
+  '2': [
+    {'1': 'status', '3': 1, '4': 1, '5': 5, '10': 'status'},
+    {'1': 'message', '3': 2, '4': 1, '5': 9, '10': 'message'},
+    {'1': 'details', '3': 3, '4': 3, '5': 11, '6': '.google.protobuf.Any', '10': 'details'},
+  ],
+};
+
+/// Descriptor for `DetailedError`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List detailedErrorDescriptor = $convert.base64Decode(
+    'Cg1EZXRhaWxlZEVycm9yEhYKBnN0YXR1cxgBIAEoBVIGc3RhdHVzEhgKB21lc3NhZ2UYAiABKA'
+    'lSB21lc3NhZ2USLgoHZGV0YWlscxgDIAMoCzIULmdvb2dsZS5wcm90b2J1Zi5BbnlSB2RldGFp'
+    'bHM=');
+

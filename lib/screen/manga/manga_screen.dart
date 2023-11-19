@@ -7,12 +7,15 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:grpc/grpc.dart';
 import 'package:protobuf/protobuf.dart';
 import 'package:wuxia/api.dart';
+import 'package:wuxia/gen/google/protobuf/any.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/chapter.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/reading.pb.dart';
+import 'package:wuxia/gen/rumgap/v1/scrape_error.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/v1.pb.dart';
 import 'package:wuxia/main.dart';
 import 'package:wuxia/partial/action/open_url_action.dart';
+import 'package:wuxia/partial/dialog/dead_provider_dialog.dart';
 import 'package:wuxia/partial/list/manga_item.dart';
 import 'package:wuxia/partial/manga_details.dart';
 import 'package:wuxia/screen/manga/manga_chapter_screen.dart';
@@ -39,33 +42,72 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
   );
   late MangaReply _manga;
 
-  @override
-  void initState() {
-    _manga = widget.manga;
+  Future<void> loadManga({bool force = false}) async {
+    // Start loading animation
     _animationController
         .repeat(period: const Duration(seconds: 1))
         .whenComplete(() => _animationController.repeat(period: const Duration(seconds: 1)));
+    setState(() {});
 
-    (() async {
-      try {
+    try {
+      if (force) {
+        _manga = await api.manga.update(Id(id: _manga.id));
+      } else {
         _manga = await api.manga.get(Id(id: _manga.id));
-        print('uhh');
-      } finally {
-        _animationController.reset();
-        setState(() {});
       }
-    })();
+    } catch (e) {
+      log('load manga error', error: e);
+      Fluttertoast.showToast(msg: e.toString()).ignore();
+
+      if (e is GrpcError) {
+        print('details');
+        print(e.details);
+        final error = ScrapeError.fromBuffer((e.details![0] as dynamic).value);
+        switch (error.type) {
+          case ScrapeErrorType.CloudflareIUAM:
+            // Tell user to wait for a couple of minutes and try again
+            Fluttertoast.showToast(msg: 'CloudFlare is in "I\'m Under Attack Mode". Wait a couple of minutes before trying again')
+                .ignore();
+            break;
+          case ScrapeErrorType.WebsiteNotSupported:
+            // User should look for alternatives
+            Fluttertoast.showToast(msg: 'WIP; but you probably have to replace this manga from a different website').ignore();
+
+            // TODO 16/11/2023: Show dialog telling end user to switch manga provider
+            // showDialog(context: context, builder: (context) => const DeadProviderDialog());
+            break;
+          case ScrapeErrorType.WebScrapingError:
+            // Scraper is broken
+            // Either switch from provider or wait till scraper is fixed
+            break;
+          default:
+        }
+        print(error);
+      }
+    } finally {
+      // Stop loading animation
+      _animationController.reset();
+      setState(() {});
+    }
+  }
+
+  @override
+  void initState() {
+    _manga = widget.manga;
+
+    loadManga();
 
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        print(_manga);
-        Navigator.of(context).pop(_manga.deepCopy());
-        return false;
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) async {
+        if (!didPop) {
+          Navigator.of(context).pop(_manga.deepCopy());
+        }
       },
       child: SafeArea(
         child: Scaffold(
@@ -87,31 +129,7 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
               RotationTransition(
                 turns: CurvedAnimation(parent: _animationController, curve: Curves.linear),
                 child: IconButton(
-                  onPressed: _animationController.isAnimating
-                      ? null
-                      : () async {
-                          _animationController
-                              .repeat(period: const Duration(seconds: 1))
-                              .whenComplete(() => _animationController.repeat(period: const Duration(seconds: 1)));
-
-                          setState(() {});
-
-                          try {
-                            _manga = await api.manga.update(Id(id: _manga.id));
-                          } catch (e) {
-                            if (e is GrpcError && e.code == StatusCode.unavailable) {
-                              // TODO 16/11/2023: Show dialog telling end user to switch manga provider
-                              Fluttertoast.showToast(
-                                  msg: 'WIP; but you probably have to replace this manga from a different website');
-                            } else {
-                              log('force update manga', error: e);
-                              Fluttertoast.showToast(msg: e.toString());
-                            }
-                          } finally {
-                            _animationController.reset();
-                            setState(() {});
-                          }
-                        },
+                  onPressed: _animationController.isAnimating ? null : loadManga,
                   tooltip: FlutterI18n.translate(context, 'basic.refresh'),
                   icon: const Icon(Icons.refresh),
                 ),
