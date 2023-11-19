@@ -49,6 +49,7 @@ class _MangaItemState extends State<MangaItem> {
   Widget build(BuildContext context) {
     return ListTile(
       dense: true,
+      minVerticalPadding: 4.0,
       contentPadding: EdgeInsets.only(left: 8),
       title: Text(
         _manga.title.replaceAll('\n', ' '),
@@ -69,7 +70,6 @@ class _MangaItemState extends State<MangaItem> {
           ),
         ],
       ),
-      minVerticalPadding: 0,
       leading: _manga.hasCover()
           ? Hero(
               tag: widget.type.getTag(_manga.url),

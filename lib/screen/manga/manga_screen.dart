@@ -61,11 +61,12 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        print(_manga);
-        Navigator.of(context).pop(_manga.deepCopy());
-        return false;
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) async {
+        if (!didPop) {
+          Navigator.of(context).pop(_manga.deepCopy());
+        }
       },
       child: SafeArea(
         child: Scaffold(

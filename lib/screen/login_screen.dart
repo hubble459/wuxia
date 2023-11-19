@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:grpc/grpc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wuxia/api.dart';
 import 'package:wuxia/constant.dart';
 import 'package:wuxia/gen/rumgap/v1/user.pb.dart';
 import 'package:wuxia/partial/dialog/change_host_dialog.dart';
+import 'package:wuxia/util/store.dart';
 import 'package:wuxia/util/validator_builder.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -28,10 +27,9 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     if (isLogin) {
-      SharedPreferences.getInstance().then((instance) async {
-        final uname = instance.getString('username');
-        uController.text = uname ?? '';
-      });
+      final store = Store.getStoreInstance();
+      final uname = store.getUsername();
+      uController.text = uname ?? '';
     }
     super.initState();
   }
@@ -63,12 +61,10 @@ class _LoginScreenState extends State<LoginScreen> {
       API.token = user.token;
       API.loggedIn = user.user;
 
-      // Asynchronously save username and token
-      (() async {
-        const FlutterSecureStorage().write(key: 'token', value: user.token).ignore();
-        final instance = await SharedPreferences.getInstance();
-        instance.setString('username', user.user.username);
-      })();
+      // Save username and token
+      final store = Store.getStoreInstance();
+      store.setUsername(user.user.username);
+      store.setToken(user.token);
 
       if (!mounted) {
         return;

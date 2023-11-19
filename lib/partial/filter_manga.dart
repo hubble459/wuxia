@@ -209,10 +209,12 @@ class _FilterMangaState extends State<FilterManga> {
     final excludeColor = Theme.of(context).colorScheme.errorContainer;
     final unselectedColor = Colors.grey.shade900;
 
-    return WillPopScope(
-      onWillPop: () async {
-        Navigator.of(context).pop(filterMap);
-        return false;
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) async {
+        if (!didPop) {
+          Navigator.of(context).pop(filterMap);
+        }
       },
       child: Scaffold(
         appBar: AppBar(

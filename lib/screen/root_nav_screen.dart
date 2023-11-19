@@ -1,3 +1,5 @@
+import 'dart:io' show Platform;
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
@@ -49,6 +51,10 @@ class _RootNavScreenState extends State<RootNavScreen> {
   }
 
   _initNotificationHandler() async {
+    if (Platform.isLinux) {
+      return;
+    }
+
     final token = await FirebaseMessaging.instance.getToken();
     print('FCM Token: $token');
     if (!API.loggedIn.deviceIds.contains(token)) {

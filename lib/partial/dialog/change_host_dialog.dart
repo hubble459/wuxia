@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wuxia/api.dart';
+import 'package:wuxia/util/store.dart';
 import 'package:wuxia/util/validator_builder.dart';
 
 class ChangeAPIDialog extends StatefulWidget {
@@ -75,9 +75,8 @@ class _ChangeAPIDialogState extends State<ChangeAPIDialog> {
                 suffixIcon: IconButton(
                   icon: const Icon(Icons.restore),
                   onPressed: () async {
-                    final instance = await SharedPreferences.getInstance();
                     api.reset();
-                    instance.setString('api_host', api.getApiURL());
+                    await Store.getStoreInstance().setApiHost(api.getApiURL());
                     _urlController.text = api.getApiURL();
                   },
                 )),
@@ -111,18 +110,13 @@ class _ChangeAPIDialogState extends State<ChangeAPIDialog> {
             backgroundColor: MaterialStatePropertyAll(Theme.of(context).colorScheme.secondary),
           ),
           onPressed: tested
-              ? () {
+              ? () async {
                   if (fkUrl.currentState?.validate() == true) {
                     final url = _urlController.text.split(':');
                     final host = url[0];
                     final port = int.parse(url[1]);
                     api = API(host, port);
-
-                    (() async {
-                      final instance = await SharedPreferences.getInstance();
-                      instance.setString('api_host', api.getApiURL());
-                    })();
-
+                    await Store.getStoreInstance().setApiHost(api.getApiURL());
                     Navigator.of(context).pop();
                   }
                 }

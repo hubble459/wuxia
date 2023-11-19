@@ -5,14 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wuxia/api.dart';
-import 'package:wuxia/constant.dart';
 import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/paginate.pb.dart';
 import 'package:wuxia/partial/filter_manga.dart';
 import 'package:wuxia/partial/list/manga_item.dart';
 import 'package:wuxia/partial/order_manga.dart';
+import 'package:wuxia/util/store.dart';
 
 class ReadingScreen extends StatefulWidget {
   const ReadingScreen({Key? key}) : super(key: key);
@@ -167,7 +166,7 @@ class _ReadingScreenState extends State<ReadingScreen> with AutomaticKeepAliveCl
   }
 
   Future<void> _fetchPage(int page) async {
-    _orderBy ??= (await SharedPreferences.getInstance()).getString(Constants.orderReadingKey) ?? 'title:ASC';
+    _orderBy ??= Store.getStoreInstance().getReadingOrder() ?? 'title:ASC';
 
     try {
       final result = await api.manga.index(PaginateSearchQuery(
