@@ -221,155 +221,157 @@ class _FilterMangaState extends State<FilterManga> {
         body: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
-            child: Column(
-              children: [
-                ...(widget.filterType != FilterType.online
-                    ? ([
-                        TextField(
-                          controller: _globalFieldController,
-                          onChanged: (value) => filterMap.global = value,
-                          keyboardType: TextInputType.text,
-                          textInputAction: TextInputAction.done,
-                          decoration: const InputDecoration(
-                            label: Text('Global Keywords'),
-                            border: OutlineInputBorder(),
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        TextField(
-                          controller: _titleFieldController,
-                          onChanged: (value) => filterMap.title = value,
-                          keyboardType: TextInputType.text,
-                          textInputAction: TextInputAction.done,
-                          decoration: const InputDecoration(
-                            label: Text('Title Keywords'),
-                            border: OutlineInputBorder(),
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        TextField(
-                          controller: _descriptionFieldController,
-                          onChanged: (value) => filterMap.description = value,
-                          keyboardType: TextInputType.text,
-                          textInputAction: TextInputAction.done,
-                          decoration: const InputDecoration(
-                            label: Text('Description Keywords'),
-                            border: OutlineInputBorder(),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8.0),
-                          child: Text(
-                            'Genres',
-                            style: Theme.of(context).textTheme.titleMedium,
-                          ),
-                        ),
-                        SimpleFutureBuilder<MetaReply>(
-                          future: tags,
-                          onLoadedBuilder: (context, data) => Wrap(
-                            direction: Axis.horizontal,
-                            alignment: WrapAlignment.center,
-                            runSpacing: 5,
-                            spacing: 10,
-                            children: data.items
-                                .map(
-                                  (item) => InkWell(
-                                    onTap: () => setState(() {
-                                      if (filterMap.genres.included.contains(item)) {
-                                        filterMap.genres.included.remove(item);
-                                      } else if (filterMap.genres.excluded.contains(item)) {
-                                        filterMap.genres.excluded.remove(item);
-                                      } else {
-                                        filterMap.genres.included.add(item);
-                                        filterMap.genres.excluded.remove(item);
-                                      }
-                                    }),
-                                    onLongPress: () => setState(() {
-                                      if (filterMap.genres.excluded.contains(item)) {
-                                        filterMap.genres.excluded.remove(item);
-                                      } else {
-                                        filterMap.genres.excluded.add(item);
-                                        filterMap.genres.included.remove(item);
-                                      }
-                                    }),
-                                    child: Container(
-                                      padding: const EdgeInsets.all(8.0),
-                                      decoration: BoxDecoration(
-                                        color: filterMap.genres.included.contains(item)
-                                            ? selectedColor
-                                            : filterMap.genres.excluded.contains(item)
-                                                ? excludeColor
-                                                : unselectedColor,
-                                        borderRadius: const BorderRadius.all(
-                                          Radius.circular(5.0),
-                                        ),
-                                      ),
-                                      child: Text(item),
-                                    ),
-                                  ),
-                                )
-                                .toList(),
-                          ),
-                          onLoadingBuilder: (context) => const CircularProgressIndicator(),
-                        ),
-                      ])
-                    : []),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: Text(
-                    'Hosts',
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                ),
-                SimpleFutureBuilder<MetaReply>(
-                  future: hosts,
-                  onLoadedBuilder: (context, data) => Wrap(
-                    direction: Axis.horizontal,
-                    alignment: WrapAlignment.center,
-                    runSpacing: 5,
-                    spacing: 10,
-                    children: data.items
-                        .map(
-                          (item) => InkWell(
-                            onTap: () => setState(() {
-                              if (filterMap.hosts.included.contains(item)) {
-                                filterMap.hosts.included.remove(item);
-                              } else if (filterMap.hosts.excluded.contains(item)) {
-                                filterMap.hosts.excluded.remove(item);
-                              } else {
-                                filterMap.hosts.included.add(item);
-                                filterMap.hosts.excluded.remove(item);
-                              }
-                            }),
-                            onLongPress: () => setState(() {
-                              if (filterMap.hosts.excluded.contains(item)) {
-                                filterMap.hosts.excluded.remove(item);
-                              } else {
-                                filterMap.hosts.included.remove(item);
-                                filterMap.hosts.excluded.add(item);
-                              }
-                            }),
-                            child: Container(
-                              padding: const EdgeInsets.all(8.0),
-                              decoration: BoxDecoration(
-                                color: filterMap.hosts.included.contains(item)
-                                    ? selectedColor
-                                    : filterMap.hosts.excluded.contains(item)
-                                        ? excludeColor
-                                        : unselectedColor,
-                                borderRadius: const BorderRadius.all(
-                                  Radius.circular(5.0),
-                                ),
-                              ),
-                              child: Text(item),
+            child: Center(
+              child: Column(
+                children: [
+                  ...(widget.filterType != FilterType.online
+                      ? ([
+                          TextField(
+                            controller: _globalFieldController,
+                            onChanged: (value) => filterMap.global = value,
+                            keyboardType: TextInputType.text,
+                            textInputAction: TextInputAction.done,
+                            decoration: const InputDecoration(
+                              label: Text('Global Keywords'),
+                              border: OutlineInputBorder(),
                             ),
                           ),
-                        )
-                        .toList(),
+                          const SizedBox(height: 10),
+                          TextField(
+                            controller: _titleFieldController,
+                            onChanged: (value) => filterMap.title = value,
+                            keyboardType: TextInputType.text,
+                            textInputAction: TextInputAction.done,
+                            decoration: const InputDecoration(
+                              label: Text('Title Keywords'),
+                              border: OutlineInputBorder(),
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          TextField(
+                            controller: _descriptionFieldController,
+                            onChanged: (value) => filterMap.description = value,
+                            keyboardType: TextInputType.text,
+                            textInputAction: TextInputAction.done,
+                            decoration: const InputDecoration(
+                              label: Text('Description Keywords'),
+                              border: OutlineInputBorder(),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8.0),
+                            child: Text(
+                              'Genres',
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
+                          ),
+                          SimpleFutureBuilder<MetaReply>(
+                            future: tags,
+                            onLoadedBuilder: (context, data) => Wrap(
+                              direction: Axis.horizontal,
+                              alignment: WrapAlignment.center,
+                              runSpacing: 5,
+                              spacing: 10,
+                              children: data.items
+                                  .map(
+                                    (item) => InkWell(
+                                      onTap: () => setState(() {
+                                        if (filterMap.genres.included.contains(item)) {
+                                          filterMap.genres.included.remove(item);
+                                        } else if (filterMap.genres.excluded.contains(item)) {
+                                          filterMap.genres.excluded.remove(item);
+                                        } else {
+                                          filterMap.genres.included.add(item);
+                                          filterMap.genres.excluded.remove(item);
+                                        }
+                                      }),
+                                      onLongPress: () => setState(() {
+                                        if (filterMap.genres.excluded.contains(item)) {
+                                          filterMap.genres.excluded.remove(item);
+                                        } else {
+                                          filterMap.genres.excluded.add(item);
+                                          filterMap.genres.included.remove(item);
+                                        }
+                                      }),
+                                      child: Container(
+                                        padding: const EdgeInsets.all(8.0),
+                                        decoration: BoxDecoration(
+                                          color: filterMap.genres.included.contains(item)
+                                              ? selectedColor
+                                              : filterMap.genres.excluded.contains(item)
+                                                  ? excludeColor
+                                                  : unselectedColor,
+                                          borderRadius: const BorderRadius.all(
+                                            Radius.circular(5.0),
+                                          ),
+                                        ),
+                                        child: Text(item),
+                                      ),
+                                    ),
+                                  )
+                                  .toList(),
+                            ),
+                            onLoadingBuilder: (context) => const CircularProgressIndicator(),
+                          ),
+                        ])
+                      : []),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Text(
+                      'Hosts',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
                   ),
-                  onLoadingBuilder: (context) => const CircularProgressIndicator(),
-                ),
-              ],
+                  SimpleFutureBuilder<MetaReply>(
+                    future: hosts,
+                    onLoadedBuilder: (context, data) => Wrap(
+                      direction: Axis.horizontal,
+                      alignment: WrapAlignment.center,
+                      runSpacing: 5,
+                      spacing: 10,
+                      children: data.items
+                          .map(
+                            (item) => InkWell(
+                              onTap: () => setState(() {
+                                if (filterMap.hosts.included.contains(item)) {
+                                  filterMap.hosts.included.remove(item);
+                                } else if (filterMap.hosts.excluded.contains(item)) {
+                                  filterMap.hosts.excluded.remove(item);
+                                } else {
+                                  filterMap.hosts.included.add(item);
+                                  filterMap.hosts.excluded.remove(item);
+                                }
+                              }),
+                              onLongPress: () => setState(() {
+                                if (filterMap.hosts.excluded.contains(item)) {
+                                  filterMap.hosts.excluded.remove(item);
+                                } else {
+                                  filterMap.hosts.included.remove(item);
+                                  filterMap.hosts.excluded.add(item);
+                                }
+                              }),
+                              child: Container(
+                                padding: const EdgeInsets.all(8.0),
+                                decoration: BoxDecoration(
+                                  color: filterMap.hosts.included.contains(item)
+                                      ? selectedColor
+                                      : filterMap.hosts.excluded.contains(item)
+                                          ? excludeColor
+                                          : unselectedColor,
+                                  borderRadius: const BorderRadius.all(
+                                    Radius.circular(5.0),
+                                  ),
+                                ),
+                                child: Text(item),
+                              ),
+                            ),
+                          )
+                          .toList(),
+                    ),
+                    onLoadingBuilder: (context) => const CircularProgressIndicator(),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

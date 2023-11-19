@@ -49,8 +49,9 @@ class _MangaItemState extends State<MangaItem> {
   Widget build(BuildContext context) {
     return ListTile(
       dense: true,
+      contentPadding: EdgeInsets.only(left: 8),
       title: Text(
-        _manga.title,
+        _manga.title.replaceAll('\n', ' '),
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       ),
@@ -68,13 +69,24 @@ class _MangaItemState extends State<MangaItem> {
           ),
         ],
       ),
+      minVerticalPadding: 0,
       leading: _manga.hasCover()
           ? Hero(
               tag: widget.type.getTag(_manga.url),
               child: CachedNetworkImage(
-                fit: BoxFit.cover,
+                fit: BoxFit.fill,
+                errorListener: (value) => {},
                 imageUrl: _manga.cover,
                 width: 40,
+                height: double.infinity,
+                errorWidget: (context, url, error) => ColoredBox(color: Colors.red),
+                useOldImageOnUrlChange: true,
+                progressIndicatorBuilder: (context, url, progress) => Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: CircularProgressIndicator(
+                    value: progress.progress,
+                  ),
+                ),
                 httpHeaders: {
                   'Referer': getReferer(_manga),
                 },
@@ -104,7 +116,6 @@ class _MangaItemState extends State<MangaItem> {
           ],
         ),
       ),
-      contentPadding: const EdgeInsets.only(left: 16.0),
       onTap: () async {
         final manga = await Navigator.of(context).push(
           MaterialPageRoute(

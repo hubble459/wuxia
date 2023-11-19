@@ -45,7 +45,7 @@ class MangaDetails extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(4, 4, 0, 4),
                   child: Text(
-                    manga.authors.join('; '),
+                    manga.authors.isNotEmpty ? manga.authors.join('; ') : 'None',
                   ),
                 ),
               ],
@@ -62,7 +62,7 @@ class MangaDetails extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(4, 4, 0, 4),
                   child: Text(
-                    manga.genres.join('; '),
+                    manga.genres.isNotEmpty ? manga.genres.join('; ') : 'None',
                   ),
                 ),
               ],

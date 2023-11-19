@@ -73,7 +73,7 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
             title: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(_manga.title),
+                Text(_manga.title.replaceAll('\n', ' ')),
                 Text(
                   Uri.parse(_manga.url).host,
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(color: Colors.white54),
