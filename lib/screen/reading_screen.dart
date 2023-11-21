@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
+import 'package:grpc/grpc.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:wuxia/api.dart';
@@ -11,7 +12,9 @@ import 'package:wuxia/gen/rumgap/v1/paginate.pb.dart';
 import 'package:wuxia/partial/filter_manga.dart';
 import 'package:wuxia/partial/list/manga_item.dart';
 import 'package:wuxia/partial/order_manga.dart';
+import 'package:wuxia/util/filter_map.dart';
 import 'package:wuxia/util/store.dart';
+import 'package:infinite_scroll_pagination/src/widgets/helpers/default_status_indicators/first_page_exception_indicator.dart';
 
 class ReadingScreen extends StatefulWidget {
   const ReadingScreen({Key? key}) : super(key: key);
@@ -24,7 +27,6 @@ class _ReadingScreenState extends State<ReadingScreen> with AutomaticKeepAliveCl
   final _pagingController = PagingController<int, MangaReply>(firstPageKey: 0);
   final _searchController = TextEditingController();
   final _pageSize = 20;
-  String _keyword = '';
   String? _orderBy;
 
   void _filter({
@@ -32,8 +34,7 @@ class _ReadingScreenState extends State<ReadingScreen> with AutomaticKeepAliveCl
     String? orderBy,
   }) {
     bool refresh = false;
-    if (keyword != null && keyword != _keyword) {
-      _keyword = keyword;
+    if (keyword != null) {
       refresh = true;
     }
     if (orderBy != null && orderBy != _orderBy) {
@@ -98,15 +99,14 @@ class _ReadingScreenState extends State<ReadingScreen> with AutomaticKeepAliveCl
                       MaterialPageRoute(
                         builder: (context) => FilterManga(
                           filterType: FilterType.reading,
-                          defaultValue: _keyword,
+                          defaultValue: _searchController.text,
                         ),
                       ),
                     );
                     if (keyword != null) {
-                      print(keyword);
-
+                      _searchController.text = keyword.toString();
                       _filter(
-                        keyword: keyword.toString(),
+                        keyword: _searchController.text,
                       );
                     }
                   },
@@ -127,6 +127,11 @@ class _ReadingScreenState extends State<ReadingScreen> with AutomaticKeepAliveCl
             child: PagedListView<int, MangaReply>(
               pagingController: _pagingController,
               builderDelegate: PagedChildBuilderDelegate<MangaReply>(
+                firstPageErrorIndicatorBuilder: (context) => FirstPageExceptionIndicator(
+                  title: 'Something went wrong',
+                  message: _pagingController.error is GrpcError ? (_pagingController.error as GrpcError).message : '',
+                  onTryAgain: _pagingController.retryLastFailedRequest,
+                ),
                 noItemsFoundIndicatorBuilder: (context) => Center(
                   child: I18nText('empty'),
                 ),
@@ -172,7 +177,7 @@ class _ReadingScreenState extends State<ReadingScreen> with AutomaticKeepAliveCl
       final result = await api.manga.index(PaginateSearchQuery(
         page: Int64(page),
         perPage: Int64(_pageSize),
-        search: 'reading:>=0 $_keyword',
+        search: 'reading:>=0 ${_searchController.text}',
         order: _orderBy,
       ));
       final paginate = result.pagination;

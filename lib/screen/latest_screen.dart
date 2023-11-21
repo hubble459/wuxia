@@ -11,6 +11,7 @@ import 'package:wuxia/gen/rumgap/v1/paginate.pb.dart';
 import 'package:wuxia/partial/filter_manga.dart';
 import 'package:wuxia/partial/list/manga_item.dart';
 import 'package:wuxia/partial/order_manga.dart';
+import 'package:wuxia/util/filter_map.dart';
 import 'package:wuxia/util/store.dart';
 
 class LatestScreen extends StatefulWidget {

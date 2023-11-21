@@ -6,6 +6,7 @@ import 'package:wuxia/gen/rumgap/v1/user.pb.dart';
 import 'package:wuxia/partial/filter_manga.dart';
 import 'package:wuxia/partial/list/search_manga_item.dart';
 import 'package:collection/collection.dart';
+import 'package:wuxia/util/filter_map.dart';
 
 Function eq = const ListEquality().equals;
 

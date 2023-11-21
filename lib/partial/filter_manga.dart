@@ -3,158 +3,7 @@ import 'package:grpc/grpc.dart';
 import 'package:wuxia/api.dart';
 import 'package:wuxia/gen/rumgap/v1/meta.pb.dart';
 import 'package:wuxia/partial/simple_future_builder.dart';
-
-final tagRegex = RegExp(r'\w+');
-
-class FilterOptions {
-  final List<String> included;
-  final List<String> excluded;
-
-  FilterOptions({List<String>? included, List<String>? excluded})
-      : included = included ?? [],
-        excluded = included ?? [];
-
-  String intoString(String type) {
-    return '${included.map((e) => '$type:"${e.replaceAll('"', '')}"').join(' ')} ${excluded.map((e) => '-$type:"${e.replaceAll('"', '')}"').join(' ')}';
-  }
-}
-
-class _Field {
-  final bool exclude;
-  final bool exact;
-  final String value;
-  final String? name;
-
-  const _Field({
-    required this.name,
-    required this.value,
-    required this.exact,
-    required this.exclude,
-  });
-
-  @override
-  String toString() {
-    String self = exclude ? '-' : '';
-    if (name != null) {
-      self += '${name!}:';
-    }
-    self += '"$value"';
-    return self;
-  }
-}
-
-class FilterMap {
-  final FilterOptions genres = FilterOptions();
-  final FilterOptions hosts = FilterOptions();
-  String? global;
-  String? title;
-  String? description;
-
-  @override
-  String toString() {
-    String sb = '';
-    sb += genres.intoString('genre');
-    sb += hosts.intoString('url');
-
-    if (title?.isNotEmpty == true) {
-      sb += 'title:$title';
-    }
-    if (description?.isNotEmpty == true) {
-      sb += 'description:$description';
-    }
-    if (global?.isNotEmpty == true) {
-      sb += global!;
-    }
-    sb = sb.trim();
-    return sb;
-  }
-
-  FilterMap();
-
-  factory FilterMap.fromString(String defaultValue) {
-    final map = FilterMap();
-
-    bool inside = false;
-
-    String? name;
-    String value = '';
-    bool exclude = false;
-    bool exact = false;
-
-    List<_Field> fields = [];
-
-    for (final char in defaultValue.characters) {
-      if (char == ' ') {
-        if (!inside) {
-          fields.add(_Field(
-            exclude: exclude,
-            name: name,
-            value: value,
-            exact: exact,
-          ));
-
-          name = null;
-          value = '';
-          exclude = false;
-          exact = false;
-        } else {
-          value += ' ';
-        }
-      } else if (char == ':') {
-        if (!inside) {
-          name = value;
-          value = '';
-        }
-      } else if (char == '-') {
-        if (!inside && value.isEmpty) {
-          exclude = true;
-        } else {
-          value += '-';
-        }
-      } else if (char == '"') {
-        inside = !inside;
-        if (inside) {
-          exact = true;
-        }
-      } else {
-        value += char;
-      }
-    }
-
-    if (value.isNotEmpty) {
-      fields.add(_Field(
-        exclude: exclude,
-        name: name,
-        value: value,
-        exact: exact,
-      ));
-    }
-
-    for (final field in fields) {
-      if (field.name == null) {
-        map.global = '${map.global ?? ''} $field';
-      } else if (field.name?.toLowerCase() == 'title') {
-        map.title = '${map.title ?? ''} $field';
-      } else if (field.name?.toLowerCase().startsWith('desc') == true) {
-        map.description = '${map.description ?? ''} $field';
-      } else if (field.name?.toLowerCase().startsWith('genre') == true) {
-        if (field.exclude) {
-          map.genres.excluded.add(field.value);
-        } else {
-          map.genres.included.add(field.value);
-        }
-      } else if (field.name?.toLowerCase().startsWith('url') == true) {
-        if (field.exclude) {
-          map.hosts.excluded.add(field.value);
-        } else {
-          map.hosts.included.add(field.value);
-        }
-      }
-    }
-
-    return map;
-  }
-}
+import 'package:wuxia/util/filter_map.dart';
 
 enum FilterType {
   reading,
@@ -199,6 +48,9 @@ class _FilterMangaState extends State<FilterManga> {
                 : MetaHostnamesOption.HostnamesOnline,
       ),
     );
+    _globalFieldController.text = filterMap.global ?? '';
+    _titleFieldController.text = filterMap.title ?? '';
+    _descriptionFieldController.text = filterMap.description ?? '';
 
     super.initState();
   }
@@ -278,21 +130,15 @@ class _FilterMangaState extends State<FilterManga> {
                                   .map(
                                     (item) => InkWell(
                                       onTap: () => setState(() {
-                                        if (filterMap.genres.included.contains(item)) {
-                                          filterMap.genres.included.remove(item);
-                                        } else if (filterMap.genres.excluded.contains(item)) {
-                                          filterMap.genres.excluded.remove(item);
-                                        } else {
+                                        filterMap.genres.excluded.remove(item);
+                                        if (!filterMap.genres.included.remove(item)) {
                                           filterMap.genres.included.add(item);
-                                          filterMap.genres.excluded.remove(item);
                                         }
                                       }),
                                       onLongPress: () => setState(() {
-                                        if (filterMap.genres.excluded.contains(item)) {
-                                          filterMap.genres.excluded.remove(item);
-                                        } else {
+                                        filterMap.genres.included.remove(item);
+                                        if (!filterMap.genres.excluded.remove(item)) {
                                           filterMap.genres.excluded.add(item);
-                                          filterMap.genres.included.remove(item);
                                         }
                                       }),
                                       child: Container(
