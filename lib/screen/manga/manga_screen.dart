@@ -55,7 +55,6 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
       }
     } catch (e) {
       log('load manga error', error: e);
-      Fluttertoast.showToast(msg: e.toString()).ignore();
 
       if (e is GrpcError) {
         print('details');
@@ -77,10 +76,13 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
           case ScrapeErrorType.WebScrapingError:
             // Scraper is broken
             // Either switch from provider or wait till scraper is fixed
+            Fluttertoast.showToast(msg: error.message).ignore();
             break;
           default:
+            Fluttertoast.showToast(msg: error.message).ignore();
         }
-        print(error);
+      } else {
+        Fluttertoast.showToast(msg: e.toString()).ignore();
       }
     } finally {
       // Stop loading animation
