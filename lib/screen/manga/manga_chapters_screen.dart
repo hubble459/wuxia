@@ -8,6 +8,7 @@ import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/paginate.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/reading.pb.dart';
 import 'package:wuxia/partial/list/chapter_item.dart';
+import 'package:wuxia/partial/list_error_indicator.dart';
 import 'package:wuxia/screen/manga/manga_chapter_screen.dart';
 
 class MangaChaptersScreen extends StatefulWidget {
@@ -37,6 +38,7 @@ class _MangaChaptersScreenState extends State<MangaChaptersScreen> {
         child: PagedListView<int, ChapterReply>(
           pagingController: _pagingController,
           builderDelegate: PagedChildBuilderDelegate<ChapterReply>(
+            firstPageErrorIndicatorBuilder: (context) => ListErrorIndicator(pagingController: _pagingController),
             noItemsFoundIndicatorBuilder: (context) => Center(
               child: I18nText('empty'),
             ),

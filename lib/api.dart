@@ -61,7 +61,7 @@ class API {
       port: port,
       options: const ChannelOptions(
         credentials: ChannelCredentials.insecure(),
-        connectTimeout: Duration(seconds: 5),
+        connectTimeout: Duration(seconds: 20),
       ),
     );
   }
@@ -73,7 +73,7 @@ class API {
   static final options = CallOptions(
     providers: [API.authProvider],
     compression: const GzipCodec(),
-    timeout: Duration(seconds: 5),
+    timeout: Duration(seconds: 20),
   );
 }
 

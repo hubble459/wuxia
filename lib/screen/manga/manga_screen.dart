@@ -7,7 +7,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:grpc/grpc.dart';
 import 'package:protobuf/protobuf.dart';
 import 'package:wuxia/api.dart';
-import 'package:wuxia/gen/google/protobuf/any.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/chapter.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/reading.pb.dart';
@@ -15,7 +14,6 @@ import 'package:wuxia/gen/rumgap/v1/scrape_error.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/v1.pb.dart';
 import 'package:wuxia/main.dart';
 import 'package:wuxia/partial/action/open_url_action.dart';
-import 'package:wuxia/partial/dialog/dead_provider_dialog.dart';
 import 'package:wuxia/partial/list/manga_item.dart';
 import 'package:wuxia/partial/manga_details.dart';
 import 'package:wuxia/screen/manga/manga_chapter_screen.dart';
@@ -57,7 +55,6 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
       }
     } catch (e) {
       log('load manga error', error: e);
-      Fluttertoast.showToast(msg: e.toString()).ignore();
 
       if (e is GrpcError) {
         print('details');
@@ -79,10 +76,13 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
           case ScrapeErrorType.WebScrapingError:
             // Scraper is broken
             // Either switch from provider or wait till scraper is fixed
+            Fluttertoast.showToast(msg: error.message).ignore();
             break;
           default:
+            Fluttertoast.showToast(msg: error.message).ignore();
         }
-        print(error);
+      } else {
+        Fluttertoast.showToast(msg: e.toString()).ignore();
       }
     } finally {
       // Stop loading animation
@@ -129,7 +129,7 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
               RotationTransition(
                 turns: CurvedAnimation(parent: _animationController, curve: Curves.linear),
                 child: IconButton(
-                  onPressed: _animationController.isAnimating ? null : loadManga,
+                  onPressed: _animationController.isAnimating ? null : () => loadManga(force: true),
                   tooltip: FlutterI18n.translate(context, 'basic.refresh'),
                   icon: const Icon(Icons.refresh),
                 ),
