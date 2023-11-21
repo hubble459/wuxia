@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
-import 'package:grpc/grpc.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:wuxia/api.dart';
@@ -11,10 +10,10 @@ import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/paginate.pb.dart';
 import 'package:wuxia/partial/filter_manga.dart';
 import 'package:wuxia/partial/list/manga_item.dart';
+import 'package:wuxia/partial/list_error_indicator.dart';
 import 'package:wuxia/partial/order_manga.dart';
 import 'package:wuxia/util/filter_map.dart';
 import 'package:wuxia/util/store.dart';
-import 'package:infinite_scroll_pagination/src/widgets/helpers/default_status_indicators/first_page_exception_indicator.dart';
 
 class ReadingScreen extends StatefulWidget {
   const ReadingScreen({Key? key}) : super(key: key);
@@ -127,11 +126,7 @@ class _ReadingScreenState extends State<ReadingScreen> with AutomaticKeepAliveCl
             child: PagedListView<int, MangaReply>(
               pagingController: _pagingController,
               builderDelegate: PagedChildBuilderDelegate<MangaReply>(
-                firstPageErrorIndicatorBuilder: (context) => FirstPageExceptionIndicator(
-                  title: 'Something went wrong',
-                  message: _pagingController.error is GrpcError ? (_pagingController.error as GrpcError).message : '',
-                  onTryAgain: _pagingController.retryLastFailedRequest,
-                ),
+                firstPageErrorIndicatorBuilder: (context) => ListErrorIndicator(pagingController: _pagingController),
                 noItemsFoundIndicatorBuilder: (context) => Center(
                   child: I18nText('empty'),
                 ),

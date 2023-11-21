@@ -10,6 +10,7 @@ import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/paginate.pb.dart';
 import 'package:wuxia/partial/filter_manga.dart';
 import 'package:wuxia/partial/list/manga_item.dart';
+import 'package:wuxia/partial/list_error_indicator.dart';
 import 'package:wuxia/partial/order_manga.dart';
 import 'package:wuxia/util/filter_map.dart';
 import 'package:wuxia/util/store.dart';
@@ -25,7 +26,6 @@ class _LatestScreenState extends State<LatestScreen> with AutomaticKeepAliveClie
   final _pagingController = PagingController<int, MangaReply>(firstPageKey: 0);
   final _searchController = TextEditingController();
   final _pageSize = 20;
-  String _keyword = '';
   String? _orderBy;
 
   void _filter({
@@ -33,8 +33,7 @@ class _LatestScreenState extends State<LatestScreen> with AutomaticKeepAliveClie
     String? orderBy,
   }) {
     bool refresh = false;
-    if (keyword != null && keyword != _keyword) {
-      _keyword = keyword;
+    if (keyword != null) {
       refresh = true;
     }
     if (orderBy != null && orderBy != _orderBy) {
@@ -95,7 +94,7 @@ class _LatestScreenState extends State<LatestScreen> with AutomaticKeepAliveClie
                       MaterialPageRoute(
                         builder: (context) => FilterManga(
                           filterType: FilterType.manga,
-                          defaultValue: _keyword,
+                          defaultValue: _searchController.text,
                         ),
                       ),
                     );
@@ -122,6 +121,7 @@ class _LatestScreenState extends State<LatestScreen> with AutomaticKeepAliveClie
             child: PagedListView<int, MangaReply>(
               pagingController: _pagingController,
               builderDelegate: PagedChildBuilderDelegate<MangaReply>(
+                firstPageErrorIndicatorBuilder: (context) => ListErrorIndicator(pagingController: _pagingController),
                 noItemsFoundIndicatorBuilder: (context) => Center(
                   child: I18nText('empty'),
                 ),
@@ -164,7 +164,7 @@ class _LatestScreenState extends State<LatestScreen> with AutomaticKeepAliveClie
       final result = await api.manga.index(PaginateSearchQuery(
         page: Int64(page),
         perPage: Int64(_pageSize),
-        search: _keyword,
+        search: _searchController.text,
         order: _orderBy,
       ));
       final paginate = result.pagination;
