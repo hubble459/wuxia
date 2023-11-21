@@ -13,8 +13,9 @@ class ListErrorIndicator extends StatelessWidget {
     // TODO 21/11/2023: translations
     String errorMessage = 'The application has encountered an unknown error.\nPlease try again later.';
 
-    if (pagingController.error is GrpcError) {
-      errorMessage = (pagingController.error as GrpcError).message ?? errorMessage;
+    final error = pagingController.error;
+    if (error is GrpcError) {
+      errorMessage = error.message ?? errorMessage;
     }
 
     return FirstPageExceptionIndicator(

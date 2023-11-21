@@ -127,7 +127,7 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
               RotationTransition(
                 turns: CurvedAnimation(parent: _animationController, curve: Curves.linear),
                 child: IconButton(
-                  onPressed: _animationController.isAnimating ? null : loadManga,
+                  onPressed: _animationController.isAnimating ? null : () => loadManga(force: true),
                   tooltip: FlutterI18n.translate(context, 'basic.refresh'),
                   icon: const Icon(Icons.refresh),
                 ),
