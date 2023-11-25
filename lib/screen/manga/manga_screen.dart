@@ -1,22 +1,25 @@
 import 'dart:developer';
+import 'dart:math';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:grpc/grpc.dart';
 import 'package:protobuf/protobuf.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:wuxia/api.dart';
 import 'package:wuxia/gen/rumgap/v1/chapter.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
+import 'package:wuxia/gen/rumgap/v1/paginate.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/reading.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/scrape_error.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/v1.pb.dart';
-import 'package:wuxia/main.dart';
 import 'package:wuxia/partial/action/open_url_action.dart';
 import 'package:wuxia/partial/list/manga_item.dart';
 import 'package:wuxia/partial/manga_details.dart';
-import 'package:wuxia/screen/manga/manga_chapter_screen.dart';
+import 'package:wuxia/partial/simple_future_builder.dart';
 import 'package:wuxia/screen/manga/manga_chapters_screen.dart';
 import 'package:wuxia/util/tools.dart';
 
@@ -54,8 +57,6 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
         _manga = await api.manga.get(Id(id: _manga.id));
       }
     } catch (e) {
-      log('load manga error', error: e);
-
       if (e is GrpcError) {
         print('details');
         print(e.details);
@@ -160,21 +161,24 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
               ),
             ),
           ),
-          bottomNavigationBar: SizedBox(
-              width: double.infinity,
-              child: _manga.hasReadingProgress()
-                  ? _ChapterSelector(
-                      manga: _manga,
-                      refreshParent: () {
-                        setState(() {});
-                      },
-                    )
-                  : _NewMangaOptions(
-                      manga: _manga,
-                      refreshParent: () {
-                        setState(() {});
-                      },
-                    )),
+          bottomNavigationBar: _animationController.isAnimating
+              ? null
+              : SizedBox(
+                  width: double.infinity,
+                  child: _manga.hasReadingProgress()
+                      ? _ChapterSelector(
+                          manga: _manga,
+                          refreshParent: () {
+                            setState(() {});
+                          },
+                        )
+                      : _NewMangaOptions(
+                          manga: _manga,
+                          refreshParent: () {
+                            setState(() {});
+                          },
+                        ),
+                ),
         ),
       ),
     );
@@ -232,132 +236,102 @@ class _ChapterSelector extends StatefulWidget {
 }
 
 class _ChapterSelectorState extends State<_ChapterSelector> {
+  final _scrollController = ItemScrollController();
+  final _itemPositionListener = ItemPositionsListener.create();
+  var _pageSize = 20;
+
+  openChapters() async {
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => MangaChaptersScreen(manga: widget.manga),
+      ),
+    );
+    refresh();
+  }
+
+  PaginateQuery get paginateQuery {
+    final progress = widget.manga.readingProgress;
+    final till = progress;
+    final from = max(till - _pageSize, 0);
+    var page = max((from / _pageSize).floor(), (till / _pageSize).floor());
+    final items = widget.manga.countChapters - (page * _pageSize);
+    if (items < _pageSize) {
+      page -= 1;
+      _pageSize *= 2;
+    }
+
+    return PaginateQuery(
+      page: Int64(page),
+      perPage: Int64(_pageSize),
+    );
+  }
+
+  Future<ChaptersReply> getChapters() async {
+    return api.chapter.index(PaginateChapterQuery(
+      id: widget.manga.id,
+      reversed: true,
+      paginateQuery: paginateQuery,
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
+        // Chapter button
+        IconButton(onPressed: openChapters, icon: Icon(Icons.list_alt)),
+        // Chapters
+        Expanded(
+          child: Container(
+            height: 40,
+            child: Center(
+              child: SimpleFutureBuilder(
+                future: getChapters(),
+                onLoadedBuilder: (context, ChaptersReply chapters) {
+                  chapters.items.insert(0, ChapterReply());
+                  chapters.items.add(ChapterReply());
+                  return ScrollablePositionedList.builder(
+                    initialScrollIndex: widget.manga.readingProgress % _pageSize,
+                    itemScrollController: _scrollController,
+                    itemPositionsListener: _itemPositionListener,
+                    physics: const BouncingScrollPhysics(),
+                    scrollDirection: Axis.horizontal,
+                    shrinkWrap: true,
+                    itemCount: chapters.items.length,
+                    itemBuilder: (context, index) {
+                      final chapter = chapters.items[index];
+                      if (index == 0 || index == chapters.items.length - 1) {
+                        return MaterialButton(
+                          onPressed: openChapters,
+                          minWidth: 1,
+                          child: Icon(index == 0 ? Icons.arrow_left : Icons.arrow_right),
+                        );
+                      }
+                      return MaterialButton(
+                        color: widget.manga.readingProgress >= chapter.index.toInt() ? Colors.grey.withOpacity(0.2) : null,
+                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        minWidth: 0,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+                        onPressed: () {},
+                        child: Text(chapter.number.toStringAsFixed(1).replaceAll('.0', '')),
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+          ),
+        ),
+        // Continue
         MaterialButton(
           materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          minWidth: double.infinity,
-          color: Theme.of(context).colorScheme.primary,
-          onPressed: () {
-            Navigator.of(context)
-                .push(
-                  MaterialPageRoute(
-                    builder: (context) => MangaChaptersScreen(manga: widget.manga),
-                  ),
-                )
-                .then((value) => refresh());
-          },
-          child: I18nText('manga.chapters'),
-        ),
-        LinearProgressIndicator(
-          color: Theme.of(context).colorScheme.tertiary,
-          value: widget.manga.progressPercentage,
-        ),
-        Row(
-          children: [
-            Flexible(
-              flex: 1,
-              child: MaterialButton(
-                minWidth: double.infinity,
-                shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-                color: Theme.of(context).colorScheme.primary,
-                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                onPressed: () async {
-                  widget.manga.readingProgress = 1;
-                  await api.reading.update(ReadingPatchRequest(
-                    mangaId: widget.manga.id,
-                    progress: widget.manga.readingProgress,
-                  ));
-                  final chapter = await api.chapter.get(ChapterRequest(
-                    mangaId: widget.manga.id,
-                    index: widget.manga.readingProgress,
-                  ));
-                  if (!mounted) return;
-                  Navigator.of(context)
-                      .push(
-                        MaterialPageRoute(
-                          builder: (context) => MangaChapterScreen(
-                            manga: widget.manga,
-                            chapter: chapter,
-                          ),
-                        ),
-                      )
-                      .then((value) => refresh());
-                },
-                child: I18nText('manga.first'),
-              ),
-            ),
-            Flexible(
-              flex: 2,
-              child: MaterialButton(
-                minWidth: double.infinity,
-                shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-                color: Theme.of(context).colorScheme.secondary,
-                splashColor: Theme.of(context).primaryColorLight,
-                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                onPressed: () async {
-                  if (widget.manga.readingProgress == 0) {
-                    widget.manga.readingProgress = 1;
-                    await api.reading.update(ReadingPatchRequest(
-                      mangaId: widget.manga.id,
-                      progress: widget.manga.readingProgress,
-                    ));
-                  }
-                  final chapter = await api.chapter.get(ChapterRequest(
-                    mangaId: widget.manga.id,
-                    index: widget.manga.readingProgress,
-                  ));
-                  if (!mounted) return;
-                  Navigator.of(context)
-                      .push(
-                        MaterialPageRoute(
-                          builder: (context) => MangaChapterScreen(
-                            manga: widget.manga,
-                            chapter: chapter,
-                          ),
-                        ),
-                      )
-                      .then((value) => refresh());
-                },
-                child: I18nText('manga.continue'),
-              ),
-            ),
-            Flexible(
-              flex: 1,
-              child: MaterialButton(
-                minWidth: double.infinity,
-                shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-                color: Theme.of(context).colorScheme.primary,
-                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                onPressed: () async {
-                  widget.manga.readingProgress = widget.manga.countChapters.toInt();
-                  await api.reading.update(ReadingPatchRequest(
-                    mangaId: widget.manga.id,
-                    progress: widget.manga.readingProgress,
-                  ));
-                  final chapter = await api.chapter.get(ChapterRequest(
-                    mangaId: widget.manga.id,
-                    index: widget.manga.readingProgress,
-                  ));
-                  if (!mounted) return;
-                  Navigator.of(context)
-                      .push(
-                        MaterialPageRoute(
-                          builder: (context) => MangaChapterScreen(
-                            manga: widget.manga,
-                            chapter: chapter,
-                          ),
-                        ),
-                      )
-                      .then((value) => refresh());
-                },
-                child: I18nText('manga.last'),
-              ),
-            )
-          ],
+          height: 50,
+          color: Theme.of(context).colorScheme.secondary,
+          splashColor: Theme.of(context).primaryColorLight,
+          minWidth: 10,
+          onPressed: () {},
+          child: I18nText('manga.continue'),
         ),
       ],
     );
