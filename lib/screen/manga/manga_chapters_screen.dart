@@ -29,7 +29,7 @@ class _MangaChaptersScreenState extends State<MangaChaptersScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: I18nText('manga.chapters'),
+        title: I18nText('manga.chapters', translationParams: {'amount': widget.manga.countChapters.toString()}),
       ),
       body: RefreshIndicator(
         onRefresh: () async {

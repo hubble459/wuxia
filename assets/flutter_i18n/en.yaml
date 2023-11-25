@@ -21,11 +21,14 @@ search:
   search_manga: Search Manga
   search_manga_online: Search Manga Online
 manga:
-  chapters: Chapters
+  chapters: '{amount} chapters'
   first: First
   continue: Continue
   last: Last
   add: Add
+  similar: Similar
+  expected-update: Expected update {date}
+  will-update: Updates {date}
 details:
   authors: Authors
   genres: Genres
