@@ -1,169 +1,100 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:wuxia/api.dart';
 import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
+import 'package:wuxia/gen/rumgap/v1/v1.pb.dart';
+import 'package:wuxia/partial/list/manga_item.dart';
+import 'package:wuxia/partial/simple_future_builder.dart';
 
 class MangaDetails extends StatelessWidget {
   final MangaReply manga;
 
   const MangaDetails({Key? key, required this.manga}) : super(key: key);
 
+  Jiffy get nextUpdate {
+    return Jiffy.parseFromMillisecondsSinceEpoch(manga.next.toInt());
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
-      Table(
-          border: TableBorder.symmetric(
-            inside: const BorderSide(width: 1),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          manga.genres.join(', '),
+          style: Theme.of(context).textTheme.bodySmall,
+        ),
+        Text(
+          manga.title.replaceAll('\n', ' '),
+          style: Theme.of(context).textTheme.headlineSmall,
+          overflow: TextOverflow.ellipsis,
+        ),
+        Visibility(
+          visible: manga.authors.isNotEmpty,
+          child: Text(
+            'By ${manga.authors.join(', ')}',
+            style: Theme.of(context).textTheme.bodyMedium,
           ),
+        ),
+        Divider(),
+        Wrap(
+          spacing: 5,
+          crossAxisAlignment: WrapCrossAlignment.center,
           children: [
-            TableRow(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 4, 0, 4),
-                  child: Text(
-                    FlutterI18n.translate(context, 'details.alt_titles'),
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+            Icon(manga.isOngoing ? Icons.update : Icons.update_disabled),
+            Text((manga.isOngoing ? 'Ongoing' : manga.status) + ';'),
+            manga.hasNext()
+                ? Text(
+                    FlutterI18n.translate(
+                        context, nextUpdate.isBefore(Jiffy.now()) ? 'manga.expected-update' : 'manga.will-update',
+                        translationParams: {'date': nextUpdate.fromNow()}),
+                    style: nextUpdate.isBefore(Jiffy.now()) ? const TextStyle(color: Colors.red) : null,
+                  )
+                : Container()
+          ],
+        ),
+        Wrap(
+          spacing: 5,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            Icon(Icons.tag),
+            Text(
+              (manga.hasReadingProgress() ? '${manga.readingProgress}/' : '') +
+                  FlutterI18n.translate(context, 'manga.chapters', translationParams: {'amount': manga.countChapters.toString()}),
+            )
+          ],
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: Text(manga.description),
+        ),
+        SimpleFutureBuilder<MangasReply>(
+          future: api.manga.similar(Id(id: manga.id)),
+          onLoadedBuilder: (context, similar) {
+            return Visibility(
+              visible: similar.items.isNotEmpty,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Divider(),
+                  Text(
+                    FlutterI18n.translate(context, 'manga.similar'),
+                    style: Theme.of(context).textTheme.titleLarge,
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(4, 4, 0, 4),
-                  child: Text(
-                    manga.altTitles.isNotEmpty ? manga.altTitles.join(';\n') : 'None',
+                  ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: similar.items.length,
+                    itemBuilder: (context, index) =>
+                        MangaItem(manga: similar.items[index], type: HeroScreenType.latest, reloadParent: (manga, _) {}),
                   ),
-                ),
-              ],
-            ),
-            TableRow(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 4, 0, 4),
-                  child: Text(
-                    FlutterI18n.translate(context, 'details.authors'),
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(4, 4, 0, 4),
-                  child: Text(
-                    manga.authors.isNotEmpty ? manga.authors.join('; ') : 'None',
-                  ),
-                ),
-              ],
-            ),
-            TableRow(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 4, 0, 4),
-                  child: Text(
-                    FlutterI18n.translate(context, 'details.genres'),
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(4, 4, 0, 4),
-                  child: Text(
-                    manga.genres.isNotEmpty ? manga.genres.join('; ') : 'None',
-                  ),
-                ),
-              ],
-            ),
-            TableRow(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 4, 0, 4),
-                  child: Text(
-                    FlutterI18n.translate(context, 'manga.chapters'),
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(4, 4, 0, 4),
-                  child: Text(manga.countChapters.toString()),
-                ),
-              ],
-            ),
-            ...(manga.hasReadingProgress()
-                ? [
-                    TableRow(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 4, 0, 4),
-                          child: Text(
-                            FlutterI18n.translate(context, 'details.read'),
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(4, 4, 0, 4),
-                          child: Text(
-                            manga.readingProgress.toString(),
-                          ),
-                        ),
-                      ],
-                    )
-                  ]
-                : []),
-            TableRow(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 4, 0, 4),
-                  child: Text(
-                    FlutterI18n.translate(context, 'details.updated'),
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(4, 4, 0, 4),
-                  child: Text(
-                    manga.hasLast() ? Jiffy.parseFromMillisecondsSinceEpoch(manga.last.toInt()).fromNow() : 'Unknown',
-                  ),
-                ),
-              ],
-            ),
-            TableRow(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 4, 0, 4),
-                  child: Text(
-                    FlutterI18n.translate(context, 'details.next_chapter'),
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(4, 4, 0, 4),
-                  child: Text(
-                    manga.hasNext() ? Jiffy.parseFromMillisecondsSinceEpoch(manga.next.toInt()).fromNow() : 'Unknown',
-                    style: manga.hasNext() && manga.next < DateTime.now().millisecondsSinceEpoch
-                        ? const TextStyle(color: Colors.red)
-                        : null,
-                  ),
-                ),
-              ],
-            ),
-            TableRow(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 4, 0, 4),
-                  child: Text(
-                    FlutterI18n.translate(context, 'details.status'),
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(4, 4, 0, 4),
-                  child: Text(
-                    manga.isOngoing
-                        ? FlutterI18n.translate(context, 'details.ongoing')
-                        : FlutterI18n.translate(context, 'details.finished'),
-                  ),
-                )
-              ],
-            ),
-          ]),
-      Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
-        child: Text(manga.description),
-      )
-    ]);
+                ],
+              ),
+            );
+          },
+        ),
+      ],
+    );
   }
 }

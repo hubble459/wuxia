@@ -430,6 +430,7 @@ class PaginateChapterQuery extends $pb.GeneratedMessage {
   factory PaginateChapterQuery({
     $core.int? id,
     $2.PaginateQuery? paginateQuery,
+    $core.bool? reversed,
   }) {
     final $result = create();
     if (id != null) {
@@ -437,6 +438,9 @@ class PaginateChapterQuery extends $pb.GeneratedMessage {
     }
     if (paginateQuery != null) {
       $result.paginateQuery = paginateQuery;
+    }
+    if (reversed != null) {
+      $result.reversed = reversed;
     }
     return $result;
   }
@@ -447,6 +451,7 @@ class PaginateChapterQuery extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'PaginateChapterQuery', package: const $pb.PackageName(_omitMessageNames ? '' : 'rumgap.v1'), createEmptyInstance: create)
     ..a<$core.int>(1, _omitFieldNames ? '' : 'id', $pb.PbFieldType.O3)
     ..aOM<$2.PaginateQuery>(2, _omitFieldNames ? '' : 'paginateQuery', subBuilder: $2.PaginateQuery.create)
+    ..aOB(3, _omitFieldNames ? '' : 'reversed')
     ..hasRequiredFields = false
   ;
 
@@ -490,6 +495,15 @@ class PaginateChapterQuery extends $pb.GeneratedMessage {
   void clearPaginateQuery() => clearField(2);
   @$pb.TagNumber(2)
   $2.PaginateQuery ensurePaginateQuery() => $_ensure(1);
+
+  @$pb.TagNumber(3)
+  $core.bool get reversed => $_getBF(2);
+  @$pb.TagNumber(3)
+  set reversed($core.bool v) { $_setBool(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasReversed() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearReversed() => clearField(3);
 }
 
 

@@ -56,6 +56,7 @@ const MangaReply$json = {
     {'1': 'created_at', '3': 13, '4': 1, '5': 3, '10': 'createdAt'},
     {'1': 'updated_at', '3': 14, '4': 1, '5': 3, '10': 'updatedAt'},
     {'1': 'reading_progress', '3': 15, '4': 1, '5': 5, '9': 3, '10': 'readingProgress', '17': true},
+    {'1': 'status', '3': 16, '4': 1, '5': 9, '10': 'status'},
   ],
   '8': [
     {'1': '_cover'},
@@ -74,8 +75,9 @@ final $typed_data.Uint8List mangaReplyDescriptor = $convert.base64Decode(
     'ZXMYCSADKAlSCWFsdFRpdGxlcxIlCg5jb3VudF9jaGFwdGVycxgKIAEoA1INY291bnRDaGFwdG'
     'VycxIXCgRuZXh0GAsgASgDSAFSBG5leHSIAQESFwoEbGFzdBgMIAEoA0gCUgRsYXN0iAEBEh0K'
     'CmNyZWF0ZWRfYXQYDSABKANSCWNyZWF0ZWRBdBIdCgp1cGRhdGVkX2F0GA4gASgDUgl1cGRhdG'
-    'VkQXQSLgoQcmVhZGluZ19wcm9ncmVzcxgPIAEoBUgDUg9yZWFkaW5nUHJvZ3Jlc3OIAQFCCAoG'
-    'X2NvdmVyQgcKBV9uZXh0QgcKBV9sYXN0QhMKEV9yZWFkaW5nX3Byb2dyZXNz');
+    'VkQXQSLgoQcmVhZGluZ19wcm9ncmVzcxgPIAEoBUgDUg9yZWFkaW5nUHJvZ3Jlc3OIAQESFgoG'
+    'c3RhdHVzGBAgASgJUgZzdGF0dXNCCAoGX2NvdmVyQgcKBV9uZXh0QgcKBV9sYXN0QhMKEV9yZW'
+    'FkaW5nX3Byb2dyZXNz');
 
 @$core.Deprecated('Use mangasReplyDescriptor instead')
 const MangasReply$json = {

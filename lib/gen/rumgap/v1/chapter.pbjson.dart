@@ -104,15 +104,18 @@ const PaginateChapterQuery$json = {
   '2': [
     {'1': 'id', '3': 1, '4': 1, '5': 5, '10': 'id'},
     {'1': 'paginate_query', '3': 2, '4': 1, '5': 11, '6': '.rumgap.v1.PaginateQuery', '9': 0, '10': 'paginateQuery', '17': true},
+    {'1': 'reversed', '3': 3, '4': 1, '5': 8, '9': 1, '10': 'reversed', '17': true},
   ],
   '8': [
     {'1': '_paginate_query'},
+    {'1': '_reversed'},
   ],
 };
 
 /// Descriptor for `PaginateChapterQuery`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List paginateChapterQueryDescriptor = $convert.base64Decode(
     'ChRQYWdpbmF0ZUNoYXB0ZXJRdWVyeRIOCgJpZBgBIAEoBVICaWQSRAoOcGFnaW5hdGVfcXVlcn'
-    'kYAiABKAsyGC5ydW1nYXAudjEuUGFnaW5hdGVRdWVyeUgAUg1wYWdpbmF0ZVF1ZXJ5iAEBQhEK'
-    'D19wYWdpbmF0ZV9xdWVyeQ==');
+    'kYAiABKAsyGC5ydW1nYXAudjEuUGFnaW5hdGVRdWVyeUgAUg1wYWdpbmF0ZVF1ZXJ5iAEBEh8K'
+    'CHJldmVyc2VkGAMgASgISAFSCHJldmVyc2VkiAEBQhEKD19wYWdpbmF0ZV9xdWVyeUILCglfcm'
+    'V2ZXJzZWQ=');
 

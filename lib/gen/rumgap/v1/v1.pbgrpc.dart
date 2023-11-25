@@ -329,6 +329,10 @@ class MangaClient extends $grpc.Client {
       '/rumgap.v1.Manga/FindOrCreate',
       ($4.MangaRequest value) => value.writeToBuffer(),
       ($core.List<$core.int> value) => $4.MangaReply.fromBuffer(value));
+  static final _$similar = $grpc.ClientMethod<$1.Id, $4.MangasReply>(
+      '/rumgap.v1.Manga/Similar',
+      ($1.Id value) => value.writeToBuffer(),
+      ($core.List<$core.int> value) => $4.MangasReply.fromBuffer(value));
 
   MangaClient($grpc.ClientChannel channel,
       {$grpc.CallOptions? options,
@@ -358,6 +362,10 @@ class MangaClient extends $grpc.Client {
 
   $grpc.ResponseFuture<$4.MangaReply> findOrCreate($4.MangaRequest request, {$grpc.CallOptions? options}) {
     return $createUnaryCall(_$findOrCreate, request, options: options);
+  }
+
+  $grpc.ResponseFuture<$4.MangasReply> similar($1.Id request, {$grpc.CallOptions? options}) {
+    return $createUnaryCall(_$similar, request, options: options);
   }
 }
 
@@ -408,6 +416,13 @@ abstract class MangaServiceBase extends $grpc.Service {
         false,
         ($core.List<$core.int> value) => $4.MangaRequest.fromBuffer(value),
         ($4.MangaReply value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$1.Id, $4.MangasReply>(
+        'Similar',
+        similar_Pre,
+        false,
+        false,
+        ($core.List<$core.int> value) => $1.Id.fromBuffer(value),
+        ($4.MangasReply value) => value.writeToBuffer()));
   }
 
   $async.Future<$4.MangaReply> create_Pre($grpc.ServiceCall call, $async.Future<$4.MangaRequest> request) async {
@@ -434,12 +449,17 @@ abstract class MangaServiceBase extends $grpc.Service {
     return findOrCreate(call, await request);
   }
 
+  $async.Future<$4.MangasReply> similar_Pre($grpc.ServiceCall call, $async.Future<$1.Id> request) async {
+    return similar(call, await request);
+  }
+
   $async.Future<$4.MangaReply> create($grpc.ServiceCall call, $4.MangaRequest request);
   $async.Stream<$4.MangaReply> createMany($grpc.ServiceCall call, $4.MangasRequest request);
   $async.Future<$4.MangaReply> get($grpc.ServiceCall call, $1.Id request);
   $async.Future<$4.MangaReply> update($grpc.ServiceCall call, $1.Id request);
   $async.Future<$4.MangasReply> index($grpc.ServiceCall call, $2.PaginateSearchQuery request);
   $async.Future<$4.MangaReply> findOrCreate($grpc.ServiceCall call, $4.MangaRequest request);
+  $async.Future<$4.MangasReply> similar($grpc.ServiceCall call, $1.Id request);
 }
 @$pb.GrpcServiceName('rumgap.v1.Chapter')
 class ChapterClient extends $grpc.Client {

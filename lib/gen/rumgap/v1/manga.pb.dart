@@ -127,6 +127,7 @@ class MangaReply extends $pb.GeneratedMessage {
     $fixnum.Int64? createdAt,
     $fixnum.Int64? updatedAt,
     $core.int? readingProgress,
+    $core.String? status,
   }) {
     final $result = create();
     if (id != null) {
@@ -174,6 +175,9 @@ class MangaReply extends $pb.GeneratedMessage {
     if (readingProgress != null) {
       $result.readingProgress = readingProgress;
     }
+    if (status != null) {
+      $result.status = status;
+    }
     return $result;
   }
   MangaReply._() : super();
@@ -196,6 +200,7 @@ class MangaReply extends $pb.GeneratedMessage {
     ..aInt64(13, _omitFieldNames ? '' : 'createdAt')
     ..aInt64(14, _omitFieldNames ? '' : 'updatedAt')
     ..a<$core.int>(15, _omitFieldNames ? '' : 'readingProgress', $pb.PbFieldType.O3)
+    ..aOS(16, _omitFieldNames ? '' : 'status')
     ..hasRequiredFields = false
   ;
 
@@ -336,6 +341,15 @@ class MangaReply extends $pb.GeneratedMessage {
   $core.bool hasReadingProgress() => $_has(14);
   @$pb.TagNumber(15)
   void clearReadingProgress() => clearField(15);
+
+  @$pb.TagNumber(16)
+  $core.String get status => $_getSZ(15);
+  @$pb.TagNumber(16)
+  set status($core.String v) { $_setString(15, v); }
+  @$pb.TagNumber(16)
+  $core.bool hasStatus() => $_has(15);
+  @$pb.TagNumber(16)
+  void clearStatus() => clearField(16);
 }
 
 class MangasReply extends $pb.GeneratedMessage {
