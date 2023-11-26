@@ -29,6 +29,7 @@ manga:
   similar: Similar
   expected-update: Expected update {date}
   will-update: Updates {date}
+  no-chapters: Failed to load chapters...
 details:
   authors: Authors
   genres: Genres
