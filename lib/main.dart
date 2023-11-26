@@ -75,7 +75,7 @@ class _WuxiaAppState extends State<WuxiaApp> {
       debugShowCheckedModeBanner: false,
       navigatorKey: navigatorKey,
       scrollBehavior: const MaterialScrollBehavior().copyWith(
-        dragDevices: {PointerDeviceKind.mouse},
+        dragDevices: {...const MaterialScrollBehavior().dragDevices, PointerDeviceKind.mouse},
       ),
       localizationsDelegates: [
         FlutterI18nDelegate(
