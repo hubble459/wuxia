@@ -27,6 +27,9 @@ manga:
   first: 第一
   add: 添加
   similar: 相似的
+  no-chapters: 无法加载章节...
+  expected-update: 预计更新 {日期}
+  will-update: 更新{日期}
 details:
   authors: 作者
   read: 看了

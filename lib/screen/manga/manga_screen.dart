@@ -19,6 +19,7 @@ import 'package:wuxia/partial/action/open_url_action.dart';
 import 'package:wuxia/partial/list/manga_item.dart';
 import 'package:wuxia/partial/manga_details.dart';
 import 'package:wuxia/partial/simple_future_builder.dart';
+import 'package:wuxia/screen/manga/manga_chapter_screen.dart';
 import 'package:wuxia/screen/manga/manga_chapters_screen.dart';
 import 'package:wuxia/util/tools.dart';
 
@@ -256,6 +257,49 @@ class _ChapterSelectorState extends State<_ChapterSelector> {
     refresh();
   }
 
+  continueReading() async {
+    if (widget.manga.readingProgress == 0) {
+      widget.manga.readingProgress = 1;
+      await api.reading.update(ReadingPatchRequest(
+        mangaId: widget.manga.id,
+        progress: widget.manga.readingProgress,
+      ));
+    }
+    final chapter = await api.chapter.get(ChapterRequest(
+      mangaId: widget.manga.id,
+      index: widget.manga.readingProgress,
+    ));
+    if (!mounted) return;
+    await Navigator.of(context)
+        .push(
+          MaterialPageRoute(
+            builder: (context) => MangaChapterScreen(
+              manga: widget.manga,
+              chapter: chapter,
+            ),
+          ),
+        )
+        .then((value) => refresh());
+  }
+
+  gotoChapter(ChapterReply chapter) async {
+    widget.manga.readingProgress = chapter.index.toInt();
+    await api.reading.update(ReadingPatchRequest(
+      mangaId: widget.manga.id,
+      progress: widget.manga.readingProgress,
+    ));
+    await Navigator.of(context)
+        .push(
+          MaterialPageRoute(
+            builder: (context) => MangaChapterScreen(
+              manga: widget.manga,
+              chapter: chapter,
+            ),
+          ),
+        )
+        .then((value) => refresh());
+  }
+
   PaginateQuery get paginateQuery {
     final progress = widget.manga.readingProgress;
     final till = progress;
@@ -274,6 +318,7 @@ class _ChapterSelectorState extends State<_ChapterSelector> {
   }
 
   Future<ChaptersReply> getChapters() async {
+    // TODO 26/11/2023: Keep this in memory (inside manga object?)
     return api.chapter.index(PaginateChapterQuery(
       id: widget.manga.id,
       reversed: true,
@@ -292,7 +337,7 @@ class _ChapterSelectorState extends State<_ChapterSelector> {
         ...(widget.manga.countChapters == 0
             ? [
                 Text(
-                  'Failed to load chapters...',
+                  FlutterI18n.translate(context, 'manga.no-chapters'),
                   style: TextStyle(color: Colors.red),
                 )
               ]
@@ -313,14 +358,13 @@ class _ChapterSelectorState extends State<_ChapterSelector> {
                             itemPositionsListener: _itemPositionListener,
                             physics: const BouncingScrollPhysics(),
                             scrollDirection: Axis.horizontal,
-                            shrinkWrap: true,
                             itemCount: chapters.items.length,
                             itemBuilder: (context, index) {
                               final chapter = chapters.items[index];
                               if (index == 0 || index == chapters.items.length - 1) {
                                 return MaterialButton(
                                   onPressed: openChapters,
-                                  minWidth: 1,
+                                  minWidth: 0,
                                   child: Icon(index == 0 ? Icons.arrow_left : Icons.arrow_right),
                                 );
                               }
@@ -330,7 +374,7 @@ class _ChapterSelectorState extends State<_ChapterSelector> {
                                 materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                                 minWidth: 0,
                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-                                onPressed: () {},
+                                onPressed: () => gotoChapter(chapter),
                                 child: Text(chapter.number.toStringAsFixed(1).replaceAll('.0', '')),
                               );
                             },
@@ -346,8 +390,8 @@ class _ChapterSelectorState extends State<_ChapterSelector> {
                   height: 50,
                   color: Theme.of(context).colorScheme.secondary,
                   splashColor: Theme.of(context).primaryColorLight,
-                  minWidth: 10,
-                  onPressed: () {},
+                  minWidth: 0,
+                  onPressed: continueReading,
                   child: I18nText('manga.continue'),
                 ),
               ]),
