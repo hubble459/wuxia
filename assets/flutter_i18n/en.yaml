@@ -1,4 +1,4 @@
-title: Manga
+title: 漫画
 empty: No items found
 nav:
   reading: Reading
@@ -107,3 +107,5 @@ dialog:
     delete: Are you sure you want to delete "{title}"
     'no': 'No'
     'yes': 'Yes'
+splash:
+  connecting: Connecting with server...

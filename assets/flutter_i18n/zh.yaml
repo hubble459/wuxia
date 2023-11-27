@@ -21,15 +21,15 @@ search:
   search_manga_online: 搜索漫画
   search_manga: 搜索漫画
 manga:
-  chapters: 章节
+  chapters: {amount}章节
   last: 最后
   continue: 继续
   first: 第一
   add: 添加
   similar: 相似的
   no-chapters: 无法加载章节...
-  expected-update: 预计更新 {日期}
-  will-update: 更新{日期}
+  expected-update: 预计更新 {date}
+  will-update: 更新{date}
 details:
   authors: 作者
   read: 看了
@@ -107,3 +107,5 @@ dialog:
     'no': 不
     title: 确认
     'yes': 是的
+splash:
+  connecting: 正在与服务器连接...

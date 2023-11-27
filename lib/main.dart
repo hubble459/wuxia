@@ -4,6 +4,7 @@ import 'dart:ui';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:wuxia/firebase_options.dart';
 
 import 'package:flutter/material.dart';
@@ -47,11 +48,12 @@ void main() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
-
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   }
   WidgetsFlutterBinding.ensureInitialized();
-  await Store.init();
+  final store = await Store.init();
+  await Jiffy.setLocale(store.getLanguage() ?? 'en');
+
   runApp(const WuxiaApp());
 }
 
@@ -70,6 +72,8 @@ class _WuxiaAppState extends State<WuxiaApp> {
 
   @override
   Widget build(BuildContext context) {
+    final store = Store.getStoreInstance();
+
     return MaterialApp(
       title: '武俠',
       debugShowCheckedModeBanner: false,
@@ -83,6 +87,7 @@ class _WuxiaAppState extends State<WuxiaApp> {
             fallbackFile: 'en',
             useCountryCode: false,
             useScriptCode: false,
+            forcedLocale: Locale(store.getLanguage() ?? 'en'),
           ),
           missingTranslationHandler: (key, locale) {
             log('"$key" not found in ${locale?.languageCode}.yaml');
@@ -91,6 +96,7 @@ class _WuxiaAppState extends State<WuxiaApp> {
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate
       ],
+      locale: Locale(store.getLanguage() ?? 'en'),
       builder: FlutterI18n.rootAppBuilder(),
       home: const SplashScreen(),
       routes: {
