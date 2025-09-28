@@ -57,9 +57,10 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
         _manga = await api.manga.get(Id(id: _manga.id));
       }
     } catch (e) {
-      if (e is GrpcError) {
-        print('details');
-        print(e.details);
+      print('error');
+      print(e);
+
+      if (e is GrpcError && e.details != null) {
         final error = ScrapeError.fromBuffer((e.details![0] as dynamic).value);
         switch (error.type) {
           case ScrapeErrorType.CloudflareIUAM:

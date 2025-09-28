@@ -9,6 +9,7 @@ import 'package:wuxia/partial/dialog/change_host_dialog.dart';
 import 'package:wuxia/partial/dialog/update_dialog.dart';
 import 'package:wuxia/util/store.dart';
 import 'package:wuxia/util/validator_builder.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -108,15 +109,17 @@ class _LoginScreenState extends State<LoginScreen> {
           actions: [
             IconButton(
               icon: const Icon(Icons.update),
-              onPressed: () async {
-                final info = await PackageInfo.fromPlatform();
-                if (mounted) {
-                  showDialog(
-                    context: context,
-                    builder: (context) => UpdateDialog(packageInfo: info),
-                  );
-                }
-              },
+              onPressed: dotenv.env['GITHUB_TOKEN'] != null
+                  ? () async {
+                      final info = await PackageInfo.fromPlatform();
+                      if (mounted) {
+                        showDialog(
+                          context: context,
+                          builder: (context) => UpdateDialog(packageInfo: info),
+                        );
+                      }
+                    }
+                  : null,
             ),
             IconButton(
               icon: const Icon(Icons.api),

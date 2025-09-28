@@ -21,8 +21,14 @@ class MangaChaptersScreen extends StatefulWidget {
 }
 
 class _MangaChaptersScreenState extends State<MangaChaptersScreen> {
+  late final _pagingController = PagingController<int, ChapterReply>(
+    getNextPageKey: (state) {
+      if (state.items != null && state.items!.length < _pageSize) return null;
+      return state.nextIntPageKey;
+    },
+    fetchPage: (pageKey) => _fetchPage(pageKey),
+  );
   final _pageSize = 20;
-  final _pagingController = PagingController<int, ChapterReply>(firstPageKey: 0);
   late ChaptersReply _result;
 
   @override
@@ -35,37 +41,41 @@ class _MangaChaptersScreenState extends State<MangaChaptersScreen> {
         onRefresh: () async {
           _pagingController.refresh();
         },
-        child: PagedListView<int, ChapterReply>(
-          pagingController: _pagingController,
-          builderDelegate: PagedChildBuilderDelegate<ChapterReply>(
-            firstPageErrorIndicatorBuilder: (context) => ListErrorIndicator(pagingController: _pagingController),
-            noItemsFoundIndicatorBuilder: (context) => Center(
-              child: I18nText('empty'),
-            ),
-            itemBuilder: (context, chapter, index) => ChapterItem(
-              manga: widget.manga,
-              refreshParent: (progress) async {
-                widget.manga.readingProgress = progress;
-                await api.reading.update(ReadingPatchRequest(
-                  mangaId: widget.manga.id,
-                  progress: widget.manga.readingProgress,
-                ));
-                await Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => MangaChapterScreen(
-                      manga: widget.manga,
-                      chapter: chapter,
+        child: PagingListener<int, ChapterReply>(
+          controller: _pagingController,
+          builder: (context, state, fetchNextPage) => PagedListView<int, ChapterReply>(
+            state: state,
+            fetchNextPage: fetchNextPage,
+            builderDelegate: PagedChildBuilderDelegate<ChapterReply>(
+              firstPageErrorIndicatorBuilder: (context) => ListErrorIndicator(pagingController: _pagingController),
+              noItemsFoundIndicatorBuilder: (context) => Center(
+                child: I18nText('empty'),
+              ),
+              itemBuilder: (context, chapter, index) => ChapterItem(
+                manga: widget.manga,
+                refreshParent: (progress) async {
+                  widget.manga.readingProgress = progress;
+                  await api.reading.update(ReadingPatchRequest(
+                    mangaId: widget.manga.id,
+                    progress: widget.manga.readingProgress,
+                  ));
+                  await Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => MangaChapterScreen(
+                        manga: widget.manga,
+                        chapter: chapter,
+                      ),
                     ),
-                  ),
-                );
-                setState(() {});
-              },
-              chapters: () {
-                _result.items.clear();
-                _result.items.addAll(_pagingController.itemList!);
-                return _result;
-              }(),
-              index: index,
+                  );
+                  setState(() {});
+                },
+                chapters: () {
+                  _result.items.clear();
+                  _result.items.addAll(_pagingController.items!);
+                  return _result;
+                }(),
+                index: index,
+              ),
             ),
           ),
         ),
@@ -75,10 +85,24 @@ class _MangaChaptersScreenState extends State<MangaChaptersScreen> {
 
   @override
   void initState() {
-    _pagingController.addPageRequestListener((pageKey) {
-      _fetchPage(pageKey);
-    });
     super.initState();
+    _pagingController.addListener(_showError);
+  }
+
+  Future<void> _showError() async {
+    if (_pagingController.value.status == PagingStatus.subsequentPageError) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text(
+            'Something went wrong while fetching a new page.',
+          ),
+          action: SnackBarAction(
+            label: 'Retry',
+            onPressed: () => _pagingController.fetchNextPage(),
+          ),
+        ),
+      );
+    }
   }
 
   @override
@@ -87,24 +111,13 @@ class _MangaChaptersScreenState extends State<MangaChaptersScreen> {
     super.dispose();
   }
 
-  Future<void> _fetchPage(int page) async {
-    try {
-      _result = await api.chapter.index(PaginateChapterQuery(
-          id: widget.manga.id,
-          paginateQuery: PaginateQuery(
-            page: Int64(page),
-            perPage: Int64(_pageSize),
-          )));
-      final paginate = _result.pagination;
-      final isLastPage = paginate.page == paginate.maxPage;
-      if (isLastPage) {
-        _pagingController.appendLastPage(_result.items);
-      } else {
-        final nextPageKey = paginate.page + 1;
-        _pagingController.appendPage(_result.items, nextPageKey.toInt());
-      }
-    } catch (error) {
-      _pagingController.error = error;
-    }
+  Future<List<ChapterReply>> _fetchPage(int page) async {
+    _result = await api.chapter.index(PaginateChapterQuery(
+        id: widget.manga.id,
+        paginateQuery: PaginateQuery(
+          page: Int64(page),
+          perPage: Int64(_pageSize),
+        )));
+    return _result.items;
   }
 }

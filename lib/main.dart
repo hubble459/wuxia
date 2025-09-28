@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 import 'dart:ui';
 
@@ -90,7 +89,7 @@ class _WuxiaAppState extends State<WuxiaApp> {
             forcedLocale: Locale(store.getLanguage() ?? 'en'),
           ),
           missingTranslationHandler: (key, locale) {
-            log('"$key" not found in ${locale?.languageCode}.yaml');
+            print('"$key" not found in ${locale?.languageCode}.yaml');
           },
         ),
         GlobalMaterialLocalizations.delegate,
@@ -106,7 +105,7 @@ class _WuxiaAppState extends State<WuxiaApp> {
         'statistics': (context) => const StatisticsScreen(),
       },
       themeMode: ThemeMode.dark,
-      theme: ThemeData.light(),
+      theme: ThemeData.light(useMaterial3: true),
       darkTheme: ThemeData(
         useMaterial3: true,
         colorScheme: ColorScheme.fromSwatch(
