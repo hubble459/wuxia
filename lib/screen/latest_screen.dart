@@ -23,7 +23,7 @@ class LatestScreen extends StatefulWidget {
 class _LatestScreenState extends State<LatestScreen> with AutomaticKeepAliveClientMixin<LatestScreen> {
   late final _pagingController = PagingController<int, MangaReply>(
     getNextPageKey: (state) {
-      if (state.items != null && state.items!.length < _pageSize) return null;
+      if (state.status != PagingStatus.loadingFirstPage && state.pages!.last.length < _pageSize) return null;
       return state.nextIntPageKey;
     },
     fetchPage: (pageKey) => _fetchPage(pageKey),

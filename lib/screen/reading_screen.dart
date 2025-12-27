@@ -23,7 +23,7 @@ class ReadingScreen extends StatefulWidget {
 class _ReadingScreenState extends State<ReadingScreen> with AutomaticKeepAliveClientMixin<ReadingScreen> {
   late final _pagingController = PagingController<int, MangaReply>(
     getNextPageKey: (state) {
-      if (state.items != null && state.items!.length < _pageSize) return null;
+      if (state.status != PagingStatus.loadingFirstPage && state.pages!.last.length < _pageSize) return null;
       return state.nextIntPageKey;
     },
     fetchPage: (pageKey) => _fetchPage(pageKey),
@@ -198,6 +198,7 @@ class _ReadingScreenState extends State<ReadingScreen> with AutomaticKeepAliveCl
       search: 'reading:>=0 ${_searchController.text}',
       order: _orderBy,
     ));
+
     return result.items;
   }
 

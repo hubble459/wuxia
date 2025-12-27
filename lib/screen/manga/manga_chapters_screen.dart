@@ -23,7 +23,7 @@ class MangaChaptersScreen extends StatefulWidget {
 class _MangaChaptersScreenState extends State<MangaChaptersScreen> {
   late final _pagingController = PagingController<int, ChapterReply>(
     getNextPageKey: (state) {
-      if (state.items != null && state.items!.length < _pageSize) return null;
+      if (state.status != PagingStatus.loadingFirstPage && state.pages!.last.length < _pageSize) return null;
       return state.nextIntPageKey;
     },
     fetchPage: (pageKey) => _fetchPage(pageKey),
