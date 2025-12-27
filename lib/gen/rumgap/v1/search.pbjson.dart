@@ -1,13 +1,15 @@
+// This is a generated file - do not edit.
 //
-//  Generated code. Do not modify.
-//  source: rumgap/v1/search.proto
-//
-// @dart = 2.12
+// Generated from rumgap/v1/search.proto.
+
+// @dart = 3.3
 
 // ignore_for_file: annotate_overrides, camel_case_types, comment_references
-// ignore_for_file: constant_identifier_names, library_prefixes
-// ignore_for_file: non_constant_identifier_names, prefer_final_fields
-// ignore_for_file: unnecessary_import, unnecessary_this, unused_import
+// ignore_for_file: constant_identifier_names
+// ignore_for_file: curly_braces_in_flow_control_structures
+// ignore_for_file: deprecated_member_use_from_same_package, library_prefixes
+// ignore_for_file: non_constant_identifier_names, prefer_relative_imports
+// ignore_for_file: unused_import
 
 import 'dart:convert' as $convert;
 import 'dart:core' as $core;
@@ -31,7 +33,15 @@ final $typed_data.Uint8List searchRequestDescriptor = $convert.base64Decode(
 const SearchManga$json = {
   '1': 'SearchManga',
   '2': [
-    {'1': 'manga_id', '3': 1, '4': 1, '5': 5, '9': 0, '10': 'mangaId', '17': true},
+    {
+      '1': 'manga_id',
+      '3': 1,
+      '4': 1,
+      '5': 5,
+      '9': 0,
+      '10': 'mangaId',
+      '17': true
+    },
     {'1': 'title', '3': 2, '4': 1, '5': 9, '10': 'title'},
     {'1': 'url', '3': 3, '4': 1, '5': 9, '10': 'url'},
     {'1': 'posted', '3': 4, '4': 1, '5': 3, '9': 1, '10': 'posted', '17': true},
@@ -56,7 +66,14 @@ final $typed_data.Uint8List searchMangaDescriptor = $convert.base64Decode(
 const SearchReply$json = {
   '1': 'SearchReply',
   '2': [
-    {'1': 'items', '3': 1, '4': 3, '5': 11, '6': '.rumgap.v1.SearchManga', '10': 'items'},
+    {
+      '1': 'items',
+      '3': 1,
+      '4': 3,
+      '5': 11,
+      '6': '.rumgap.v1.SearchManga',
+      '10': 'items'
+    },
   ],
 };
 
@@ -64,4 +81,3 @@ const SearchReply$json = {
 final $typed_data.Uint8List searchReplyDescriptor = $convert.base64Decode(
     'CgtTZWFyY2hSZXBseRIsCgVpdGVtcxgBIAMoCzIWLnJ1bWdhcC52MS5TZWFyY2hNYW5nYVIFaX'
     'RlbXM=');
-

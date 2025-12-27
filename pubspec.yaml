@@ -31,8 +31,8 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  flutter_i18n: ^0.36.3
-  flutter_secure_storage: ^9.2.4
+  flutter_i18n: ^0.37.1
+  flutter_secure_storage: ^10.0.0
   jiffy: ^6.2.1
   json_serializable: ^6.2.0
   json_annotation: ^4.5.0
@@ -42,9 +42,9 @@ dependencies:
   fluttertoast: ^9.0.0
   url_launcher: ^6.1.4
   modal_bottom_sheet: ^3.0.0-pre
-  protobuf: ^4.2.0
+  protobuf: ^6.0.0
   http: ^1.6.0
-  grpc: ^4.1.0
+  grpc: ^5.1.0
   fixnum: ^1.0.1
   collection: ^1.17.2
   flutter_picker:

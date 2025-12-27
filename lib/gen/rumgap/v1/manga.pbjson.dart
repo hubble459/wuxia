@@ -1,13 +1,15 @@
+// This is a generated file - do not edit.
 //
-//  Generated code. Do not modify.
-//  source: rumgap/v1/manga.proto
-//
-// @dart = 2.12
+// Generated from rumgap/v1/manga.proto.
+
+// @dart = 3.3
 
 // ignore_for_file: annotate_overrides, camel_case_types, comment_references
-// ignore_for_file: constant_identifier_names, library_prefixes
-// ignore_for_file: non_constant_identifier_names, prefer_final_fields
-// ignore_for_file: unnecessary_import, unnecessary_this, unused_import
+// ignore_for_file: constant_identifier_names
+// ignore_for_file: curly_braces_in_flow_control_structures
+// ignore_for_file: deprecated_member_use_from_same_package, library_prefixes
+// ignore_for_file: non_constant_identifier_names, prefer_relative_imports
+// ignore_for_file: unused_import
 
 import 'dart:convert' as $convert;
 import 'dart:core' as $core;
@@ -22,8 +24,8 @@ const MangaRequest$json = {
 };
 
 /// Descriptor for `MangaRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List mangaRequestDescriptor = $convert.base64Decode(
-    'CgxNYW5nYVJlcXVlc3QSEAoDdXJsGAEgASgJUgN1cmw=');
+final $typed_data.Uint8List mangaRequestDescriptor =
+    $convert.base64Decode('CgxNYW5nYVJlcXVlc3QSEAoDdXJsGAEgASgJUgN1cmw=');
 
 @$core.Deprecated('Use mangasRequestDescriptor instead')
 const MangasRequest$json = {
@@ -34,8 +36,8 @@ const MangasRequest$json = {
 };
 
 /// Descriptor for `MangasRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List mangasRequestDescriptor = $convert.base64Decode(
-    'Cg1NYW5nYXNSZXF1ZXN0EhIKBHVybHMYASADKAlSBHVybHM=');
+final $typed_data.Uint8List mangasRequestDescriptor =
+    $convert.base64Decode('Cg1NYW5nYXNSZXF1ZXN0EhIKBHVybHMYASADKAlSBHVybHM=');
 
 @$core.Deprecated('Use mangaReplyDescriptor instead')
 const MangaReply$json = {
@@ -55,7 +57,15 @@ const MangaReply$json = {
     {'1': 'last', '3': 12, '4': 1, '5': 3, '9': 2, '10': 'last', '17': true},
     {'1': 'created_at', '3': 13, '4': 1, '5': 3, '10': 'createdAt'},
     {'1': 'updated_at', '3': 14, '4': 1, '5': 3, '10': 'updatedAt'},
-    {'1': 'reading_progress', '3': 15, '4': 1, '5': 5, '9': 3, '10': 'readingProgress', '17': true},
+    {
+      '1': 'reading_progress',
+      '3': 15,
+      '4': 1,
+      '5': 5,
+      '9': 3,
+      '10': 'readingProgress',
+      '17': true
+    },
     {'1': 'status', '3': 16, '4': 1, '5': 9, '10': 'status'},
   ],
   '8': [
@@ -83,8 +93,22 @@ final $typed_data.Uint8List mangaReplyDescriptor = $convert.base64Decode(
 const MangasReply$json = {
   '1': 'MangasReply',
   '2': [
-    {'1': 'pagination', '3': 1, '4': 1, '5': 11, '6': '.rumgap.v1.PaginateReply', '10': 'pagination'},
-    {'1': 'items', '3': 2, '4': 3, '5': 11, '6': '.rumgap.v1.MangaReply', '10': 'items'},
+    {
+      '1': 'pagination',
+      '3': 1,
+      '4': 1,
+      '5': 11,
+      '6': '.rumgap.v1.PaginateReply',
+      '10': 'pagination'
+    },
+    {
+      '1': 'items',
+      '3': 2,
+      '4': 3,
+      '5': 11,
+      '6': '.rumgap.v1.MangaReply',
+      '10': 'items'
+    },
   ],
 };
 
@@ -93,4 +117,3 @@ final $typed_data.Uint8List mangasReplyDescriptor = $convert.base64Decode(
     'CgtNYW5nYXNSZXBseRI4CgpwYWdpbmF0aW9uGAEgASgLMhgucnVtZ2FwLnYxLlBhZ2luYXRlUm'
     'VwbHlSCnBhZ2luYXRpb24SKwoFaXRlbXMYAiADKAsyFS5ydW1nYXAudjEuTWFuZ2FSZXBseVIF'
     'aXRlbXM=');
-

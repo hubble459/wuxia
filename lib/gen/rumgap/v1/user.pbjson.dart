@@ -1,13 +1,15 @@
+// This is a generated file - do not edit.
 //
-//  Generated code. Do not modify.
-//  source: rumgap/v1/user.proto
-//
-// @dart = 2.12
+// Generated from rumgap/v1/user.proto.
+
+// @dart = 3.3
 
 // ignore_for_file: annotate_overrides, camel_case_types, comment_references
-// ignore_for_file: constant_identifier_names, library_prefixes
-// ignore_for_file: non_constant_identifier_names, prefer_final_fields
-// ignore_for_file: unnecessary_import, unnecessary_this, unused_import
+// ignore_for_file: constant_identifier_names
+// ignore_for_file: curly_braces_in_flow_control_structures
+// ignore_for_file: deprecated_member_use_from_same_package, library_prefixes
+// ignore_for_file: non_constant_identifier_names, prefer_relative_imports
+// ignore_for_file: unused_import
 
 import 'dart:convert' as $convert;
 import 'dart:core' as $core;
@@ -37,8 +39,8 @@ const DeviceTokenRequest$json = {
 };
 
 /// Descriptor for `DeviceTokenRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List deviceTokenRequestDescriptor = $convert.base64Decode(
-    'ChJEZXZpY2VUb2tlblJlcXVlc3QSFAoFdG9rZW4YASABKAlSBXRva2Vu');
+final $typed_data.Uint8List deviceTokenRequestDescriptor = $convert
+    .base64Decode('ChJEZXZpY2VUb2tlblJlcXVlc3QSFAoFdG9rZW4YASABKAlSBXRva2Vu');
 
 @$core.Deprecated('Use userRequestDescriptor instead')
 const UserRequest$json = {
@@ -62,10 +64,32 @@ final $typed_data.Uint8List userRequestDescriptor = $convert.base64Decode(
 const UserUpdateRequest$json = {
   '1': 'UserUpdateRequest',
   '2': [
-    {'1': 'password', '3': 1, '4': 1, '5': 9, '9': 0, '10': 'password', '17': true},
-    {'1': 'username', '3': 2, '4': 1, '5': 9, '9': 1, '10': 'username', '17': true},
+    {
+      '1': 'password',
+      '3': 1,
+      '4': 1,
+      '5': 9,
+      '9': 0,
+      '10': 'password',
+      '17': true
+    },
+    {
+      '1': 'username',
+      '3': 2,
+      '4': 1,
+      '5': 9,
+      '9': 1,
+      '10': 'username',
+      '17': true
+    },
     {'1': 'email', '3': 3, '4': 1, '5': 9, '9': 2, '10': 'email', '17': true},
-    {'1': 'preferred_hostnames', '3': 4, '4': 3, '5': 9, '10': 'preferredHostnames'},
+    {
+      '1': 'preferred_hostnames',
+      '3': 4,
+      '4': 3,
+      '5': 9,
+      '10': 'preferredHostnames'
+    },
     {'1': 'device_ids', '3': 5, '4': 3, '5': 9, '10': 'deviceIds'},
   ],
   '8': [
@@ -91,7 +115,13 @@ const UserReply$json = {
     {'1': 'username', '3': 2, '4': 1, '5': 9, '10': 'username'},
     {'1': 'email', '3': 3, '4': 1, '5': 9, '10': 'email'},
     {'1': 'permissions', '3': 4, '4': 1, '5': 5, '10': 'permissions'},
-    {'1': 'preferred_hostnames', '3': 5, '4': 3, '5': 9, '10': 'preferredHostnames'},
+    {
+      '1': 'preferred_hostnames',
+      '3': 5,
+      '4': 3,
+      '5': 9,
+      '10': 'preferredHostnames'
+    },
     {'1': 'device_ids', '3': 6, '4': 3, '5': 9, '10': 'deviceIds'},
     {'1': 'created_at', '3': 7, '4': 1, '5': 3, '10': 'createdAt'},
     {'1': 'updated_at', '3': 8, '4': 1, '5': 3, '10': 'updatedAt'},
@@ -114,7 +144,13 @@ const UserFullReply$json = {
     {'1': 'username', '3': 2, '4': 1, '5': 9, '10': 'username'},
     {'1': 'email', '3': 3, '4': 1, '5': 9, '10': 'email'},
     {'1': 'permissions', '3': 4, '4': 1, '5': 5, '10': 'permissions'},
-    {'1': 'preferred_hostnames', '3': 5, '4': 3, '5': 9, '10': 'preferredHostnames'},
+    {
+      '1': 'preferred_hostnames',
+      '3': 5,
+      '4': 3,
+      '5': 9,
+      '10': 'preferredHostnames'
+    },
     {'1': 'device_ids', '3': 6, '4': 3, '5': 9, '10': 'deviceIds'},
     {'1': 'count_following', '3': 7, '4': 1, '5': 3, '10': 'countFollowing'},
     {'1': 'count_followers', '3': 8, '4': 1, '5': 3, '10': 'countFollowers'},
@@ -137,7 +173,14 @@ final $typed_data.Uint8List userFullReplyDescriptor = $convert.base64Decode(
 const UserTokenReply$json = {
   '1': 'UserTokenReply',
   '2': [
-    {'1': 'user', '3': 1, '4': 1, '5': 11, '6': '.rumgap.v1.UserFullReply', '10': 'user'},
+    {
+      '1': 'user',
+      '3': 1,
+      '4': 1,
+      '5': 11,
+      '6': '.rumgap.v1.UserFullReply',
+      '10': 'user'
+    },
     {'1': 'token', '3': 2, '4': 1, '5': 9, '10': 'token'},
   ],
 };
@@ -151,8 +194,22 @@ final $typed_data.Uint8List userTokenReplyDescriptor = $convert.base64Decode(
 const UsersReply$json = {
   '1': 'UsersReply',
   '2': [
-    {'1': 'pagination', '3': 1, '4': 1, '5': 11, '6': '.rumgap.v1.PaginateReply', '10': 'pagination'},
-    {'1': 'items', '3': 2, '4': 3, '5': 11, '6': '.rumgap.v1.UserReply', '10': 'items'},
+    {
+      '1': 'pagination',
+      '3': 1,
+      '4': 1,
+      '5': 11,
+      '6': '.rumgap.v1.PaginateReply',
+      '10': 'pagination'
+    },
+    {
+      '1': 'items',
+      '3': 2,
+      '4': 3,
+      '5': 11,
+      '6': '.rumgap.v1.UserReply',
+      '10': 'items'
+    },
   ],
 };
 
@@ -161,4 +218,3 @@ final $typed_data.Uint8List usersReplyDescriptor = $convert.base64Decode(
     'CgpVc2Vyc1JlcGx5EjgKCnBhZ2luYXRpb24YASABKAsyGC5ydW1nYXAudjEuUGFnaW5hdGVSZX'
     'BseVIKcGFnaW5hdGlvbhIqCgVpdGVtcxgCIAMoCzIULnJ1bWdhcC52MS5Vc2VyUmVwbHlSBWl0'
     'ZW1z');
-
