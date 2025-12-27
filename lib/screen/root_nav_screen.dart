@@ -24,7 +24,7 @@ class Route {
 }
 
 class RootNavScreen extends StatefulWidget {
-  const RootNavScreen({Key? key}) : super(key: key);
+  const RootNavScreen({super.key});
 
   @override
   State<RootNavScreen> createState() => _RootNavScreenState();
@@ -35,22 +35,25 @@ class _RootNavScreenState extends State<RootNavScreen> {
   int stateChange = 0;
   int _selected = 0;
 
-  _handleNotificationClick(RemoteMessage message) async {
-    final mangaId = message.data['manga_id'] ?? null;
+  Future<void> _handleNotificationClick(RemoteMessage message) async {
+    final mangaId = message.data['manga_id'];
 
     if (mangaId is String) {
       final manga = await api.manga.get(Id(id: int.parse(mangaId)));
+      final context = navigatorKey.currentState?.context;
 
-      Navigator.of(navigatorKey.currentState!.context).push(MaterialPageRoute(
-        builder: (context) => MangaScreen(
-          manga: manga,
-          type: HeroScreenType.reading,
-        ),
-      ));
+      if (context?.mounted == true) {
+        Navigator.of(context!).push(MaterialPageRoute(
+          builder: (context) => MangaScreen(
+            manga: manga,
+            type: HeroScreenType.reading,
+          ),
+        ));
+      }
     }
   }
 
-  _initNotificationHandler() async {
+  Future<void> _initNotificationHandler() async {
     if (Platform.isLinux) {
       return;
     }

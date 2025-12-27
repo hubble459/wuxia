@@ -43,6 +43,7 @@ dependencies:
   url_launcher: ^6.1.4
   modal_bottom_sheet: ^3.0.0-pre
   protobuf: ^4.2.0
+  http: ^1.6.0
   grpc: ^4.1.0
   fixnum: ^1.0.1
   collection: ^1.17.2

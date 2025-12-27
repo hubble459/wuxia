@@ -19,7 +19,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:wuxia/util/store.dart';
 
 extension ReadingManga on MangaReply {
-  get progressPercentage {
+  double get progressPercentage {
     final count = countChapters.toInt();
     if (count.isNaN || count == 0) {
       return 0.0;
@@ -57,7 +57,7 @@ void main() async {
 }
 
 class WuxiaApp extends StatefulWidget {
-  const WuxiaApp({Key? key}) : super(key: key);
+  const WuxiaApp({super.key});
 
   @override
   State<WuxiaApp> createState() => _WuxiaAppState();

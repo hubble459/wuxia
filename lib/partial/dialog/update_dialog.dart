@@ -64,7 +64,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
                 textAlign: TextAlign.center,
               ),
               ElevatedButton(
-                style: ButtonStyle(backgroundColor: MaterialStatePropertyAll(Theme.of(context).colorScheme.secondary)),
+                style: ButtonStyle(backgroundColor: WidgetStatePropertyAll(Theme.of(context).colorScheme.secondary)),
                 onPressed: currentVersion.endsWith(release.tagName!)
                     ? null
                     : isDownloading

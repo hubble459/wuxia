@@ -14,7 +14,7 @@ import 'package:wuxia/util/filter_map.dart';
 import 'package:wuxia/util/store.dart';
 
 class LatestScreen extends StatefulWidget {
-  const LatestScreen({Key? key}) : super(key: key);
+  const LatestScreen({super.key});
 
   @override
   State<LatestScreen> createState() => _LatestScreenState();

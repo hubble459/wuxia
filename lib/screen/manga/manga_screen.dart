@@ -27,7 +27,7 @@ class MangaScreen extends StatefulWidget {
   final MangaReply manga;
   final HeroScreenType type;
 
-  const MangaScreen({Key? key, required this.manga, required this.type}) : super(key: key);
+  const MangaScreen({super.key, required this.manga, required this.type});
 
   @override
   State<MangaScreen> createState() => _MangaScreenState();
@@ -93,7 +93,7 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
     }
   }
 
-  var _imageHeight = 400.0;
+  final _imageHeight = 400.0;
 
   @override
   void initState() {
@@ -108,7 +108,7 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
   Widget build(BuildContext context) {
     return PopScope(
       canPop: false,
-      onPopInvoked: (didPop) async {
+      onPopInvokedWithResult: (didPop, result) {
         if (!didPop) {
           Navigator.of(context).pop(_manga.deepCopy());
         }
@@ -125,12 +125,12 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
                 expandedHeight: _imageHeight,
                 flexibleSpace: FlexibleSpaceBar(
                   title: PreferredSize(
+                    preferredSize: Size.fromHeight(1),
                     child: Text(
                       Uri.parse(_manga.url).host,
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(color: Colors.white54),
                       overflow: TextOverflow.ellipsis,
                     ),
-                    preferredSize: Size.fromHeight(1),
                   ),
                   background: Visibility(
                     visible: _manga.hasCover(),
@@ -204,7 +204,7 @@ class _NewMangaOptions extends StatelessWidget {
   final MangaReply manga;
   final Function() refreshParent;
 
-  const _NewMangaOptions({Key? key, required this.manga, required this.refreshParent}) : super(key: key);
+  const _NewMangaOptions({super.key, required this.manga, required this.refreshParent});
 
   @override
   Widget build(BuildContext context) {
@@ -225,7 +225,7 @@ class _NewMangaOptions extends StatelessWidget {
 }
 
 mixin ReadingManga on MangaReply {
-  get progressPercentage {
+  double get progressPercentage {
     final count = countChapters.toInt();
     if (count.isNaN || count == 0) {
       return 0.0;
@@ -238,7 +238,7 @@ class _ChapterSelector extends StatefulWidget {
   final MangaReply manga;
   final Function() refreshParent;
 
-  const _ChapterSelector({Key? key, required this.manga, required this.refreshParent}) : super(key: key);
+  const _ChapterSelector({super.key, required this.manga, required this.refreshParent});
 
   @override
   State<_ChapterSelector> createState() => _ChapterSelectorState();
@@ -249,7 +249,7 @@ class _ChapterSelectorState extends State<_ChapterSelector> {
   final _itemPositionListener = ItemPositionsListener.create();
   var _pageSize = 20;
 
-  openChapters() async {
+  Future<void> openChapters() async {
     await Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => MangaChaptersScreen(manga: widget.manga),
@@ -258,7 +258,7 @@ class _ChapterSelectorState extends State<_ChapterSelector> {
     refresh();
   }
 
-  continueReading() async {
+  Future<void> continueReading() async {
     if (widget.manga.readingProgress == 0) {
       widget.manga.readingProgress = 1;
       await api.reading.update(ReadingPatchRequest(
@@ -283,12 +283,15 @@ class _ChapterSelectorState extends State<_ChapterSelector> {
         .then((value) => refresh());
   }
 
-  gotoChapter(ChapterReply chapter) async {
+  Future<void> gotoChapter(ChapterReply chapter) async {
     widget.manga.readingProgress = chapter.index.toInt();
     await api.reading.update(ReadingPatchRequest(
       mangaId: widget.manga.id,
       progress: widget.manga.readingProgress,
     ));
+
+    if (!mounted) return;
+
     await Navigator.of(context)
         .push(
           MaterialPageRoute(
@@ -345,7 +348,7 @@ class _ChapterSelectorState extends State<_ChapterSelector> {
             : [
                 // Chapters
                 Expanded(
-                  child: Container(
+                  child: SizedBox(
                     height: 40,
                     child: Center(
                       child: SimpleFutureBuilder(
@@ -370,8 +373,9 @@ class _ChapterSelectorState extends State<_ChapterSelector> {
                                 );
                               }
                               return MaterialButton(
-                                color:
-                                    widget.manga.readingProgress >= chapter.index.toInt() ? Colors.grey.withOpacity(0.2) : null,
+                                color: widget.manga.readingProgress >= chapter.index.toInt()
+                                    ? Colors.grey.withValues(alpha: 0.2)
+                                    : null,
                                 materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                                 minWidth: 0,
                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
@@ -400,7 +404,7 @@ class _ChapterSelectorState extends State<_ChapterSelector> {
     );
   }
 
-  refresh() {
+  void refresh() {
     setState(() {});
     widget.refreshParent();
   }

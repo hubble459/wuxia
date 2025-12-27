@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:grpc/grpc.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+// ignore: implementation_imports
 import 'package:infinite_scroll_pagination/src/defaults/first_page_exception_indicator.dart';
 
 class ListErrorIndicator extends StatelessWidget {

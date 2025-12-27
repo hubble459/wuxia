@@ -11,7 +11,7 @@ import 'package:wuxia/util/tools.dart';
 class SearchMangaItem extends StatefulWidget {
   final SearchManga searchManga;
 
-  const SearchMangaItem({Key? key, required this.searchManga}) : super(key: key);
+  const SearchMangaItem({super.key, required this.searchManga});
 
   @override
   State<SearchMangaItem> createState() => _SearchMangaItemState();
@@ -58,7 +58,7 @@ class _SearchMangaItemState extends State<SearchMangaItem> {
           final manga = await api.manga.findOrCreate(MangaRequest(url: searchManga.url));
           searchManga.mangaId = manga.id;
 
-          if (!mounted) {
+          if (!context.mounted) {
             return;
           }
           Navigator.of(context).pop();

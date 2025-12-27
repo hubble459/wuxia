@@ -12,7 +12,7 @@ import 'package:wuxia/util/validator_builder.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+  const LoginScreen({super.key});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -112,7 +112,7 @@ class _LoginScreenState extends State<LoginScreen> {
               onPressed: dotenv.env['GITHUB_TOKEN'] != null
                   ? () async {
                       final info = await PackageInfo.fromPlatform();
-                      if (mounted) {
+                      if (context.mounted) {
                         showDialog(
                           context: context,
                           builder: (context) => UpdateDialog(packageInfo: info),

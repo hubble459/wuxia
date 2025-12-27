@@ -14,7 +14,7 @@ import 'package:wuxia/screen/manga/manga_chapter_screen.dart';
 class MangaChaptersScreen extends StatefulWidget {
   final MangaReply manga;
 
-  const MangaChaptersScreen({Key? key, required this.manga}) : super(key: key);
+  const MangaChaptersScreen({super.key, required this.manga});
 
   @override
   State<MangaChaptersScreen> createState() => _MangaChaptersScreenState();
@@ -59,6 +59,7 @@ class _MangaChaptersScreenState extends State<MangaChaptersScreen> {
                     mangaId: widget.manga.id,
                     progress: widget.manga.readingProgress,
                   ));
+                  if (!context.mounted) return;
                   await Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) => MangaChapterScreen(

@@ -14,7 +14,7 @@ import 'package:wuxia/util/filter_map.dart';
 import 'package:wuxia/util/store.dart';
 
 class ReadingScreen extends StatefulWidget {
-  const ReadingScreen({Key? key}) : super(key: key);
+  const ReadingScreen({super.key});
 
   @override
   State<ReadingScreen> createState() => _ReadingScreenState();

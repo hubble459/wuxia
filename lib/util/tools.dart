@@ -13,11 +13,7 @@ String getReferer(dynamic manga, [String? coverUrl]) {
 
   final coverAsReferer = mangaCoverReferer.firstWhereOrNull((hostname) => manga.url.contains(hostname)) != null;
   if (coverAsReferer) {
-    return coverUrl != null
-        ? coverUrl
-        : manga.hasCover()
-            ? manga.cover
-            : manga.url;
+    return coverUrl ?? (manga.hasCover() ? manga.cover : manga.url);
   }
 
   return manga.url;

@@ -9,9 +9,8 @@ class ChapterItem extends StatelessWidget {
   final ChapterReply chapter;
   final void Function(int progress) refreshParent;
 
-  ChapterItem({Key? key, required this.chapters, required this.manga, required int index, required this.refreshParent})
-      : chapter = chapters.items[index],
-        super(key: key);
+  ChapterItem({super.key, required this.chapters, required this.manga, required int index, required this.refreshParent})
+      : chapter = chapters.items[index];
 
   @override
   Widget build(BuildContext context) {

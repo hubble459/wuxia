@@ -30,7 +30,7 @@ class OpenURLDialog extends StatelessWidget {
           children: [
             Expanded(
               child: ElevatedButton(
-                style: ButtonStyle(backgroundColor: MaterialStatePropertyAll(Theme.of(context).colorScheme.secondary)),
+                style: ButtonStyle(backgroundColor: WidgetStatePropertyAll(Theme.of(context).colorScheme.secondary)),
                 onPressed: () async {
                   try {
                     await Clipboard.setData(ClipboardData(text: url));

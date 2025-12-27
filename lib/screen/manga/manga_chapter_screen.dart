@@ -21,7 +21,7 @@ class MangaChapterScreen extends StatefulWidget {
   final MangaReply manga;
   final ChapterReply chapter;
 
-  const MangaChapterScreen({Key? key, required this.manga, required this.chapter}) : super(key: key);
+  const MangaChapterScreen({super.key, required this.manga, required this.chapter});
 
   @override
   State<MangaChapterScreen> createState() => _MangaChapterScreenState();

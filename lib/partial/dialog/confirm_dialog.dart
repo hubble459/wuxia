@@ -33,7 +33,7 @@ class ConfirmDialog extends StatelessWidget {
             ),
             ElevatedButton(
               style: ButtonStyle(
-                backgroundColor: MaterialStatePropertyAll(confirmColor ?? Theme.of(context).colorScheme.secondary),
+                backgroundColor: WidgetStatePropertyAll(confirmColor ?? Theme.of(context).colorScheme.secondary),
               ),
               onPressed: () {
                 Navigator.pop(context, true);

@@ -68,7 +68,10 @@ class _ChangeAPIDialogState extends State<ChangeAPIDialog> {
             autovalidateMode: AutovalidateMode.onUserInteraction,
             keyboardType: TextInputType.url,
             textInputAction: TextInputAction.done,
-            onChanged: (value) => setState(() => {tested = false, _error = null}),
+            onChanged: (value) => setState(() {
+              tested = false;
+              _error = null;
+            }),
             decoration: InputDecoration(
                 label: I18nText('basic.url'),
                 isDense: true,
@@ -107,7 +110,7 @@ class _ChangeAPIDialogState extends State<ChangeAPIDialog> {
         ),
         ElevatedButton(
           style: ButtonStyle(
-            backgroundColor: MaterialStatePropertyAll(Theme.of(context).colorScheme.secondary),
+            backgroundColor: WidgetStatePropertyAll(Theme.of(context).colorScheme.secondary),
           ),
           onPressed: tested
               ? () async {
@@ -117,7 +120,9 @@ class _ChangeAPIDialogState extends State<ChangeAPIDialog> {
                     final port = int.parse(url[1]);
                     api = API(host, port);
                     await Store.getStoreInstance().setApiHost(api.getApiURL());
-                    Navigator.of(context).pop();
+                    if (context.mounted) {
+                      Navigator.of(context).pop();
+                    }
                   }
                 }
               : null,
