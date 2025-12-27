@@ -72,7 +72,7 @@ class _SearchScreenState extends State<SearchScreen> with AutomaticKeepAliveClie
                       MaterialPageRoute(
                         builder: (context) => FilterManga(
                           filterType: FilterType.online,
-                          defaultValue: API.loggedIn.preferredHostnames.map((e) => 'url:"$e"').join(' '),
+                          defaultValue: API.loggedIn.preferredHostnames.map((hostname) => 'url:"$hostname"').join(' '),
                         ),
                       ),
                     );

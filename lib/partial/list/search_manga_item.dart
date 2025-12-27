@@ -35,15 +35,19 @@ class _SearchMangaItemState extends State<SearchMangaItem> {
                 imageUrl: searchManga.cover,
                 filterQuality: FilterQuality.none,
                 fit: BoxFit.cover,
+                useOldImageOnUrlChange: true,
                 httpHeaders: {
                   'Referer': getReferer(searchManga),
+                  'Origin': Uri.parse(searchManga.url).origin,
                 },
                 width: 40,
               ),
             )
           : null,
       trailing:
-          searchManga.hasPosted() ? Text(Jiffy.parseFromMillisecondsSinceEpoch(searchManga.posted.toInt()).fromNow()) : null,
+          searchManga.hasPosted()
+            ? Text(Jiffy.parseFromMillisecondsSinceEpoch(searchManga.posted.toInt()).fromNow()) 
+            : null,
       onTap: () async {
         showDialog(
           context: context,

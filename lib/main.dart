@@ -3,8 +3,8 @@ import 'dart:ui';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:jiffy/jiffy.dart';
 import 'package:wuxia/firebase_options.dart';
+import 'package:jiffy/jiffy.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
@@ -32,11 +32,9 @@ extension ReadingManga on MangaReply {
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // If you're going to use other Firebase services in the background, such as Firestore,
   // make sure you call `initializeApp` before using other Firebase services.
-  if (Platform.isAndroid || Platform.isIOS) {
-    await Firebase.initializeApp();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-    print('Handling a background message: ${message.messageId}');
-  }
+  print('Handling a background message: ${message.messageId}');
 }
 
 GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();

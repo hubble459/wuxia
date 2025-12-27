@@ -151,7 +151,7 @@ class FilterMap {
         } else {
           map.genres.included.add(field.value);
         }
-      } else if (field.name?.toLowerCase().startsWith('host') == true) {
+      } else if (field.name?.toLowerCase().startsWith('url') == true) {
         if (field.exclude) {
           map.hosts.excluded.add(field.value);
         } else {

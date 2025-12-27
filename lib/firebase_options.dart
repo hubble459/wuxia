@@ -24,15 +24,9 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -46,30 +40,48 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyB0QPbt-1r1hUXoZpk_lVnfYzPwMi2wdCE',
-    appId: '1:337040486387:web:0d25710d4c179f1d906c86',
-    messagingSenderId: '337040486387',
-    projectId: 'rumgap',
-    authDomain: 'rumgap.firebaseapp.com',
-    storageBucket: 'rumgap.appspot.com',
-    measurementId: 'G-3Y81LRL9XT',
+    apiKey: 'AIzaSyDpaoMPCk-W0D2DhPRb7LihffJE6BFl4GA',
+    appId: '1:732960090044:web:3ac3459a54652f80aaedb9',
+    messagingSenderId: '732960090044',
+    projectId: 'wuxia-6a4d2',
+    authDomain: 'wuxia-6a4d2.firebaseapp.com',
+    storageBucket: 'wuxia-6a4d2.firebasestorage.app',
+    measurementId: 'G-ML2X6PXHBJ',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDxkRM_TYLI1SSCurG7hCdr3EJC4vpwFd8',
-    appId: '1:337040486387:android:bb59c6fccc7bf6f4906c86',
-    messagingSenderId: '337040486387',
-    projectId: 'rumgap',
-    storageBucket: 'rumgap.appspot.com',
+    apiKey: 'AIzaSyBlGEM1Yy0Q5BjXOW3-zlKS_CotQ0-VBUI',
+    appId: '1:732960090044:android:f71fe85349c19bcaaaedb9',
+    messagingSenderId: '732960090044',
+    projectId: 'wuxia-6a4d2',
+    storageBucket: 'wuxia-6a4d2.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyBAlAEtLrNzo544Ze-6gBQWNHSUvlZMVSk',
-    appId: '1:337040486387:ios:ac70337d210151dd906c86',
-    messagingSenderId: '337040486387',
-    projectId: 'rumgap',
-    storageBucket: 'rumgap.appspot.com',
-    iosClientId: '337040486387-ec3mu91jkrdm4s3h8hm9kja3rul16j3t.apps.googleusercontent.com',
+    apiKey: 'AIzaSyDB_B8azDIA4kiKFYRFm3DJP9O6DghMHRQ',
+    appId: '1:732960090044:ios:117723c1be5228dbaaedb9',
+    messagingSenderId: '732960090044',
+    projectId: 'wuxia-6a4d2',
+    storageBucket: 'wuxia-6a4d2.firebasestorage.app',
     iosBundleId: 'com.hubble.wuxia',
+  );
+
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyDB_B8azDIA4kiKFYRFm3DJP9O6DghMHRQ',
+    appId: '1:732960090044:ios:46078b2d00b0040faaedb9',
+    messagingSenderId: '732960090044',
+    projectId: 'wuxia-6a4d2',
+    storageBucket: 'wuxia-6a4d2.firebasestorage.app',
+    iosBundleId: 'com.hubble.wuxia',
+  );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyDpaoMPCk-W0D2DhPRb7LihffJE6BFl4GA',
+    appId: '1:732960090044:web:75adb686649201acaaedb9',
+    messagingSenderId: '732960090044',
+    projectId: 'wuxia-6a4d2',
+    authDomain: 'wuxia-6a4d2.firebaseapp.com',
+    storageBucket: 'wuxia-6a4d2.firebasestorage.app',
+    measurementId: 'G-V59SN26VK2',
   );
 }
