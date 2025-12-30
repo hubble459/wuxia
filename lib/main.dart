@@ -119,6 +119,7 @@ class _WuxiaAppState extends State<WuxiaApp> {
           floatingLabelBehavior: FloatingLabelBehavior.auto,
           floatingLabelStyle: TextStyle(color: Colors.white),
           border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(10.0))),
+          contentPadding: EdgeInsets.only(left: 4.0, top: 12.0, bottom: 12.0),
         ),
       ),
       themeAnimationCurve: Curves.bounceInOut,

@@ -5,7 +5,6 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:jiffy/jiffy.dart';
-import 'package:protobuf/protobuf.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:wuxia/api.dart';
 import 'package:wuxia/gen/rumgap/v1/chapter.pb.dart';
@@ -110,170 +109,181 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Tooltip(
-              message: _chapter.title.isEmpty ? 'Chapter ${_chapter.number.toString().replaceFirst('.0', '')}' : _chapter.title,
-              child:
-                  Text(_chapter.title.isEmpty ? 'Chapter ${_chapter.number.toString().replaceFirst('.0', '')}' : _chapter.title),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) => {
+        updateOffset(
+          chapterId: _chapter.id,
+          page: _chapter.offset.page,
+          pixels: _chapter.offset.pixels,
+        ),
+        Navigator.of(context).pop(result),
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Tooltip(
+                message: _chapter.title.isEmpty ? 'Chapter ${_chapter.number.toString().replaceFirst('.0', '')}' : _chapter.title,
+                child: Text(
+                    _chapter.title.isEmpty ? 'Chapter ${_chapter.number.toString().replaceFirst('.0', '')}' : _chapter.title),
+              ),
+              ...(_chapter.hasPosted()
+                  ? [
+                      Text(
+                        Jiffy.parseFromMillisecondsSinceEpoch(_chapter.posted.toInt()).fromNow(),
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(color: Colors.white54),
+                        overflow: TextOverflow.ellipsis,
+                      )
+                    ]
+                  : []),
+            ],
+          ),
+          centerTitle: false,
+          actions: [
+            IconButton(
+              onPressed: () async {
+                itemScrollController.jumpTo(index: 10000);
+              },
+              tooltip: FlutterI18n.translate(context, 'chapter.goto_bottom'),
+              icon: const Icon(Icons.arrow_downward),
             ),
-            ...(_chapter.hasPosted()
-                ? [
-                    Text(
-                      Jiffy.parseFromMillisecondsSinceEpoch(_chapter.posted.toInt()).fromNow(),
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(color: Colors.white54),
-                      overflow: TextOverflow.ellipsis,
-                    )
-                  ]
-                : []),
+            IconButton(
+              onPressed: () {
+                itemScrollController.jumpTo(index: 0);
+              },
+              tooltip: FlutterI18n.translate(context, 'chapter.goto_top'),
+              icon: const Icon(Icons.arrow_upward),
+            ),
+            OpenURLAction(url: _chapter.url),
           ],
         ),
-        centerTitle: false,
-        actions: [
-          IconButton(
-            onPressed: () async {
-              itemScrollController.jumpTo(index: 10000);
-            },
-            tooltip: FlutterI18n.translate(context, 'chapter.goto_bottom'),
-            icon: const Icon(Icons.arrow_downward),
-          ),
-          IconButton(
-            onPressed: () {
-              itemScrollController.jumpTo(index: 0);
-            },
-            tooltip: FlutterI18n.translate(context, 'chapter.goto_top'),
-            icon: const Icon(Icons.arrow_upward),
-          ),
-          OpenURLAction(url: _chapter.url),
-        ],
-      ),
-      body: SimpleFutureBuilder<ImagesReply>(
-        future: api.chapter.images(Id(id: _chapter.id)),
-        onLoadedBuilder: (context, data) {
-          final links = data.items;
+        body: SimpleFutureBuilder<ImagesReply>(
+          future: api.chapter.images(Id(id: _chapter.id)),
+          onLoadedBuilder: (context, data) {
+            final links = data.items;
 
-          (() async {
-            if (_chapter.hasOffset() && (_chapter.offset.page != 0 || _chapter.offset.pixels != 0)) {
-              int timeout = 0;
-              while (!itemScrollController.isAttached && timeout++ != 5) {
-                await Future.delayed(const Duration(milliseconds: 100));
+            (() async {
+              if (_chapter.hasOffset() && (_chapter.offset.page != 0 || _chapter.offset.pixels != 0)) {
+                int timeout = 0;
+                while (!itemScrollController.isAttached && timeout++ != 5) {
+                  await Future.delayed(const Duration(milliseconds: 100));
+                }
+                if (itemScrollController.isAttached) {
+                  itemScrollController.scrollTo(
+                    index: _chapter.offset.page,
+                    alignment: _chapter.offset.pixels / 100,
+                    duration: Duration(seconds: 3),
+                    opacityAnimationWeights: [20, 20, 60],
+                    curve: Curves.easeOut,
+                  );
+                }
               }
-              if (itemScrollController.isAttached) {
-                itemScrollController.scrollTo(
-                  index: _chapter.offset.page,
-                  alignment: _chapter.offset.pixels / 100,
-                  duration: Duration(seconds: 3),
-                  opacityAnimationWeights: [20, 20, 60],
-                  curve: Curves.easeOut,
-                );
-              }
-            }
-          })();
+            })();
 
-          return InteractiveViewer(
-            minScale: 1,
-            maxScale: 4,
-            child: Scrollbar(
-              controller: scrollController,
-              radius: const Radius.circular(4.0),
-              thickness: 6.0,
-              child: ScrollablePositionedList.builder(
-                itemScrollController: itemScrollController,
-                itemPositionsListener: itemPositionsListener,
-                padding: EdgeInsets.zero,
-                itemCount: links.length,
-                physics: const BouncingScrollPhysics(),
-                itemBuilder: (context, index) => CachedNetworkImage(
-                  imageUrl: links[index],
-                  alignment: Alignment.topCenter,
-                  fadeOutDuration: const Duration(microseconds: 1),
-                  filterQuality: FilterQuality.high,
-                  fit: BoxFit.fitWidth,
-                  width: double.infinity,
-                  httpHeaders: {
-                    'Referer': getReferer(_chapter, links[index]),
-                  },
-                  progressIndicatorBuilder: (context, url, downloadProgress) => SizedBox.fromSize(
-                    size: const Size.fromHeight(500),
-                    child: Center(
-                      child: CircularProgressIndicator(
-                        value: downloadProgress.progress,
+            return InteractiveViewer(
+              minScale: 1,
+              maxScale: 4,
+              child: Scrollbar(
+                controller: scrollController,
+                radius: const Radius.circular(4.0),
+                thickness: 6.0,
+                child: ScrollablePositionedList.builder(
+                  itemScrollController: itemScrollController,
+                  itemPositionsListener: itemPositionsListener,
+                  padding: EdgeInsets.zero,
+                  itemCount: links.length,
+                  physics: const BouncingScrollPhysics(),
+                  itemBuilder: (context, index) => CachedNetworkImage(
+                    imageUrl: links[index],
+                    alignment: Alignment.topCenter,
+                    fadeOutDuration: const Duration(microseconds: 1),
+                    filterQuality: FilterQuality.high,
+                    fit: BoxFit.fitWidth,
+                    width: double.infinity,
+                    httpHeaders: {
+                      'Referer': getReferer(_chapter, links[index]),
+                    },
+                    progressIndicatorBuilder: (context, url, downloadProgress) => SizedBox.fromSize(
+                      size: const Size.fromHeight(500),
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          value: downloadProgress.progress,
+                        ),
                       ),
                     ),
-                  ),
-                  placeholder: null,
-                  errorWidget: (context, url, error) => SizedBox.fromSize(
-                    size: const Size.fromHeight(500),
-                    child: const Center(
-                      child: Icon(Icons.error),
+                    placeholder: null,
+                    errorWidget: (context, url, error) => SizedBox.fromSize(
+                      size: const Size.fromHeight(500),
+                      child: const Center(
+                        child: Icon(Icons.error),
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-          );
-        },
-      ),
-      bottomNavigationBar: IntrinsicHeight(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            LinearProgressIndicator(
-              value: widget.manga.progressPercentage,
-              minHeight: 5,
-              color: Theme.of(context).colorScheme.tertiary,
-            ),
-            Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Expanded(
-                  child: Tooltip(
-                    message: FlutterI18n.translate(context, 'chapter.previous'),
-                    child: MaterialButton(
-                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      padding: EdgeInsets.zero,
-                      onPressed: widget.manga.readingProgress > 1 ? previous : null,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Visibility(
-                              visible: widget.manga.readingProgress > 1,
-                              child: Text((widget.manga.readingProgress - 1).toString())),
-                          const Icon(Icons.navigate_before)
-                        ],
+            );
+          },
+        ),
+        bottomNavigationBar: IntrinsicHeight(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              LinearProgressIndicator(
+                value: widget.manga.progressPercentage,
+                minHeight: 5,
+                color: Theme.of(context).colorScheme.tertiary,
+              ),
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: Tooltip(
+                      message: FlutterI18n.translate(context, 'chapter.previous'),
+                      child: MaterialButton(
+                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        padding: EdgeInsets.zero,
+                        onPressed: widget.manga.readingProgress > 1 ? previous : null,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Visibility(
+                                visible: widget.manga.readingProgress > 1,
+                                child: Text((widget.manga.readingProgress - 1).toString())),
+                            const Icon(Icons.navigate_before)
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-                Expanded(
-                  child: Tooltip(
-                    message: FlutterI18n.translate(context, 'chapter.next'),
-                    child: MaterialButton(
-                      padding: EdgeInsets.zero,
-                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      onPressed: widget.manga.readingProgress < widget.manga.countChapters.toInt() ? next : null,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(Icons.navigate_next),
-                          Visibility(
-                              visible: widget.manga.readingProgress < widget.manga.countChapters.toInt(),
-                              child: Text((widget.manga.readingProgress + 1).toString()))
-                        ],
+                  Expanded(
+                    child: Tooltip(
+                      message: FlutterI18n.translate(context, 'chapter.next'),
+                      child: MaterialButton(
+                        padding: EdgeInsets.zero,
+                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        onPressed: widget.manga.readingProgress < widget.manga.countChapters.toInt() ? next : null,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(Icons.navigate_next),
+                            Visibility(
+                                visible: widget.manga.readingProgress < widget.manga.countChapters.toInt(),
+                                child: Text((widget.manga.readingProgress + 1).toString()))
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
-            ),
-          ],
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
