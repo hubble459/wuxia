@@ -4,7 +4,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter/material.dart';
-import 'package:toastification/toastification.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:wuxia/api.dart';
 import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/user.pb.dart';
@@ -48,20 +48,10 @@ class _RootNavScreenState extends State<RootNavScreen> {
         return;
       }
 
-      toastification.show(
-        title: Text(FlutterI18n.translate(context, 'notification.new_chapter', translationParams: {'title': manga.title})),
-        type: ToastificationType.info,
-        autoCloseDuration: const Duration(seconds: 5),
-        callbacks: ToastificationCallbacks(
-          onTap: (toast) {
-            Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => MangaScreen(
-                manga: manga,
-                type: HeroScreenType.reading,
-              ),
-            ));
-          },
-        ),
+      Fluttertoast.showToast(
+        msg: FlutterI18n.translate(context, 'notification.new_chapter', translationParams: {'title': manga.title}),
+        timeInSecForIosWeb: 5,
+        toastLength: Toast.LENGTH_LONG,
       );
     }
   }

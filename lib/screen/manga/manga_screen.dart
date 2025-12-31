@@ -15,6 +15,7 @@ import 'package:wuxia/gen/rumgap/v1/reading.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/scrape_error.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/v1.pb.dart';
 import 'package:wuxia/partial/action/open_url_action.dart';
+import 'package:wuxia/partial/dialog/dead_provider_dialog.dart';
 import 'package:wuxia/partial/list/manga_item.dart';
 import 'package:wuxia/partial/manga_details.dart';
 import 'package:wuxia/partial/simple_future_builder.dart';
@@ -72,7 +73,11 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
             Fluttertoast.showToast(msg: 'WIP; but you probably have to replace this manga from a different website').ignore();
 
             // TODO 16/11/2023: Show dialog telling end user to switch manga provider
-            // showDialog(context: context, builder: (context) => const DeadProviderDialog());
+            showDialog(
+                context: context,
+                builder: (context) => DeadProviderDialog(
+                      mangaTitle: _manga.title,
+                    ));
             break;
           case ScrapeErrorType.WebScrapingError:
             // Scraper is broken

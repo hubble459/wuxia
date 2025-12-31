@@ -1,13 +1,13 @@
 # wuxia
 
-Manga Reader based on [RumGap](https://github.com/hubble459/rumgap).
+Manga Reader built upon the [RumGap](https://github.com/hubble459/rumgap) API.
 
 ## Features
 - Searching for manga
 - Reading chapters
     - List view (webtoon)
 - Keeping track of progress
-    - Progress of manga (chapter)
+    - Progress of manga (which chapter)
     - Progress of chapter (how far you scrolled)
 - Filtering on last read, latest update, manga title etc
 - Support for self-hosting the backend (custom API url)
@@ -34,7 +34,7 @@ Manga Reader based on [RumGap](https://github.com/hubble459/rumgap).
 - [x] Add from url
 - [x] Open manga in browser
 - [x] Open chapter in browser
-- [ ] Search alternatives
+- [x] Search alternatives
 - [ ] Notifications 
     - [ ] Background manga updater
         - [ ] Priority calculator
@@ -42,7 +42,7 @@ Manga Reader based on [RumGap](https://github.com/hubble459/rumgap).
     - [ ] Daily activity chart
 - [ ] Outage report/ handling
     - [ ] Like when a website is down, make the items red or inactive
-    - [ ] Advise to choose alternatives
+    - [x] Advise to choose alternatives
 - [x] Update app from within settings
 - [ ] Tests
 - [ ] Periodic Backups

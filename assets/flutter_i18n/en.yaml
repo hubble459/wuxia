@@ -111,3 +111,9 @@ splash:
   connecting: Connecting with server...
 notification:
   new_chapter: New Chapter Available in {title}
+dead_provider:
+  title: No scrapers available
+  message: >-
+    Unfortunately, this manga's provider is no longer supported. You will need
+    to replace this manga with one from a different website.
+  search_alternatives: Search for alternatives

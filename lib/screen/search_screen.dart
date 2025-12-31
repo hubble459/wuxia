@@ -11,7 +11,9 @@ import 'package:wuxia/util/filter_map.dart';
 Function eq = const ListEquality().equals;
 
 class SearchScreen extends StatefulWidget {
-  const SearchScreen({super.key});
+  const SearchScreen({super.key, this.query});
+
+  final String? query;
 
   @override
   State<SearchScreen> createState() => _SearchScreenState();
@@ -45,6 +47,16 @@ class _SearchScreenState extends State<SearchScreen> with AutomaticKeepAliveClie
         hostnames: hostnames ?? API.loggedIn.preferredHostnames,
       ));
       setState(() {});
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    if (widget.query != null && widget.query!.isNotEmpty) {
+      controller.text = _keyword;
+      _filter(keyword: widget.query);
     }
   }
 
