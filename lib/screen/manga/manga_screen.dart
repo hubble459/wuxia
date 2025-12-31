@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:grpc/grpc.dart';
-import 'package:protobuf/protobuf.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:wuxia/api.dart';
 import 'package:wuxia/gen/rumgap/v1/chapter.pb.dart';
@@ -204,7 +203,7 @@ class _NewMangaOptions extends StatelessWidget {
   final MangaReply manga;
   final Function() refreshParent;
 
-  const _NewMangaOptions({super.key, required this.manga, required this.refreshParent});
+  const _NewMangaOptions({required this.manga, required this.refreshParent});
 
   @override
   Widget build(BuildContext context) {
@@ -238,7 +237,7 @@ class _ChapterSelector extends StatefulWidget {
   final MangaReply manga;
   final Function() refreshParent;
 
-  const _ChapterSelector({super.key, required this.manga, required this.refreshParent});
+  const _ChapterSelector({required this.manga, required this.refreshParent});
 
   @override
   State<_ChapterSelector> createState() => _ChapterSelectorState();

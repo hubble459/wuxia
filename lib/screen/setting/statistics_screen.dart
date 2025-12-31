@@ -56,7 +56,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
 class _AverageReadingTime extends StatefulWidget {
   final int totalChaptersRead;
 
-  const _AverageReadingTime({super.key, required this.totalChaptersRead});
+  const _AverageReadingTime({required this.totalChaptersRead});
 
   @override
   State<_AverageReadingTime> createState() => __AverageStateReadingTime();
@@ -148,7 +148,6 @@ class _Progress extends StatelessWidget {
   final int progress;
 
   const _Progress({
-    super.key,
     required this.name,
     required this.total,
     required this.progress,
