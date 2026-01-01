@@ -25,7 +25,6 @@ jobs:
           cache: true
       - run: echo "${{ secrets.KEYSTORE_FILE_BASE64 }}" | base64 -d > /tmp/upload-keystore.jks
       - run: echo -e 'storePassword=${{secrets.KEYSTORE_PASSWORD}}\nkeyPassword=${{secrets.KEYSTORE_PASSWORD}}\nkeyAlias=upload\nstoreFile=/tmp/upload-keystore.jks' > android/key.properties
-      # - run: cp ./android/local.properties.example ./android/local.properties
       - run: flutter build apk --pub --suppress-analytics --build-name=`echo ${{ steps.push_release.outputs.tag_name }}` --build-number=`echo ${{ steps.push_release.outputs.tag_name }} | tr -d v.`
 
       - name: Get release
