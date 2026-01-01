@@ -71,13 +71,6 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
           case ScrapeErrorType.WebsiteNotSupported:
             // User should look for alternatives
             Fluttertoast.showToast(msg: 'WIP; but you probably have to replace this manga from a different website').ignore();
-
-            // TODO 16/11/2023: Show dialog telling end user to switch manga provider
-            showDialog(
-                context: context,
-                builder: (context) => DeadProviderDialog(
-                      mangaTitle: _manga.title,
-                    ));
             break;
           case ScrapeErrorType.WebScrapingError:
             // Scraper is broken
@@ -89,6 +82,9 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
         }
       } else {
         Fluttertoast.showToast(msg: e.toString()).ignore();
+      }
+      if (mounted && context.mounted) {
+        showDialog(context: context, builder: (context) => DeadProviderDialog(mangaTitle: _manga.title));
       }
     } finally {
       // Stop loading animation
