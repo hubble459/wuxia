@@ -21,7 +21,7 @@ search:
   search_manga: Search Manga
   search_manga_online: Search Manga Online
 manga:
-  chapters: "{amount} chapters"
+  chapters: '{amount} chapters'
   first: First
   continue: Continue
   last: Last
@@ -42,7 +42,7 @@ details:
   finished: Finished
   unknown: Unknown
   alt_titles: Alternative Titles
-error: "Error: {error}"
+error: 'Error: {error}'
 chapter:
   goto_top: Scroll to top
   goto_bottom: Scroll to bottom
@@ -64,8 +64,8 @@ settings:
     title: Statistics
     completed_manga: Completed Manga
     chapters_read: Chapters Read
-    minutes: " minutes"
-    seconds: " seconds"
+    minutes: ' minutes'
+    seconds: ' seconds'
     average_reading_time: Average Reading Time
   misc: Miscellaneous
   download: Download
@@ -80,19 +80,19 @@ reading:
   delete_content: Are you sure you want to delete "{title}"?
   add_from_url: Add Manga From URL
 validator:
-  min_length: "{name} has to be at least {length} characters long"
-  max_length: "{name} can not be longer than {length} characters"
-  regex: "{name} has to match the following: {regex}"
-  required: "{name} is required"
-  email: "{name} should be a valid email address"
-  url: "{name} should be a valid url"
+  min_length: '{name} has to be at least {length} characters long'
+  max_length: '{name} can not be longer than {length} characters'
+  regex: '{name} has to match the following: {regex}'
+  required: '{name} is required'
+  email: '{name} should be a valid email address'
+  url: '{name} should be a valid url'
   password_not_match: Passwords do not match
-  is_number: "{name} has to be a number"
-  is_string: "{name} has to contain text"
-  has_number: "{name} has to contain a number"
-  has_special_character: "{name} has to contain a special character"
-  has_uppercase: "{name} has to contain an uppercased letter"
-  has_lowercase: "{name} has to contain a lowercased letter"
+  is_number: '{name} has to be a number'
+  is_string: '{name} has to contain text'
+  has_number: '{name} has to contain a number'
+  has_special_character: '{name} has to contain a special character'
+  has_uppercase: '{name} has to contain an uppercased letter'
+  has_lowercase: '{name} has to contain a lowercased letter'
 dialog:
   open_url:
     title: Open URL
@@ -102,11 +102,12 @@ dialog:
   update:
     title: Update App
     update: Update
+    open_release_page: Open in browser
   confirm:
     title: Confirm
     delete: Are you sure you want to delete "{title}"
-    "no": "No"
-    "yes": "Yes"
+    'no': 'No'
+    'yes': 'Yes'
 splash:
   connecting: Connecting with server...
 notification:
