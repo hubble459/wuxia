@@ -1,0 +1,120 @@
+basic:
+  add: Toevoegen
+  cancel: Annuleren
+  confirm: Bevestigen
+  refresh: Vernieuwen
+  save: Redden
+  url: URL
+chapter:
+  goto_bottom: Scroll naar beneden
+  goto_top: Scroll naar boven
+  next: Volgende
+  previous: Vorig
+dead_provider:
+  message: |-
+    Helaas wordt de provider van deze manga niet langer ondersteund. 
+    Je zult deze manga moeten vervangen door een manga van een andere website.
+  search_alternatives: Zoek naar alternatieven
+  title: Geen schrapers aanwezig
+details:
+  alt_titles: Alternatieve titels
+  authors: Auteurs
+  finished: Afgerond
+  genres: Genres
+  next_chapter: Volgend hoofdstuk
+  ongoing: Lopend
+  read: Lezen
+  status: Status
+  unknown: Onbekend
+  unread: Ongelezen
+  updated: Bijgewerkt
+dialog:
+  confirm:
+    delete: Weet je zeker dat je "{title}" wilt verwijderen
+    "no": Nee
+    title: Bevestigen
+    "yes": Ja
+  open_url:
+    copied: URL gekopieerd naar klembord!
+    copy: Kopiëren
+    open: Open
+    title: URL openen
+  update:
+    open_release_page: Openen in browser
+    title: App bijwerken
+    update: Update
+empty: Geen artikelen gevonden
+error: "Fout: {error}"
+login:
+  change_host: Wijzig API
+  confirm_password: Bevestig wachtwoord
+  email: E-mail
+  forgot_password: Wachtwoord vergeten
+  password: Wachtwoord
+  sign_up: Schrijf je in
+  test_connection: Verbinding testen
+  title: Login
+  username: Gebruikersnaam
+  welcome: Welkom
+manga:
+  add: Toevoegen
+  chapters: "{amount} hoofdstukken"
+  continue: Doorgaan
+  expected-update: Verwachte update {date}
+  first: Eerst
+  last: Laatst
+  no-chapters: Kan hoofdstukken niet laden...
+  similar: Vergelijkbaar
+  will-update: Wordt op {date} bijgewerkt
+nav:
+  latest: Nieuwste
+  reading: Lezing
+  search: Zoekopdracht
+notification:
+  new_chapter: Nieuw hoofdstuk beschikbaar in {title}
+reading:
+  add_from_url: Manga toevoegen vanaf URL
+  delete: Lezing verwijderen
+  delete_content: Weet je zeker dat je "{title}" wilt verwijderen?
+search:
+  no_results: Geen zoekresultaten
+  search_manga: Manga zoeken
+  search_manga_online: Zoek manga online
+  search_reading: Zoek Lezen
+settings:
+  account: Rekening
+  check_update: Controleer op updates
+  data_saver: Gegevensbesparing
+  download: Downloaden
+  download_clear: Downloads wissen
+  download_directory: Directory downloaden
+  edit_account: Account bewerken
+  language: Taal
+  logout: Uitloggen
+  misc: Overig
+  remove_account: Account verwijderen
+  statistics:
+    average_reading_time: Gemiddelde leestijd
+    chapters_read: Hoofdstukken lezen
+    completed_manga: Voltooide manga
+    minutes: notulen
+    seconds: seconden
+    title: Statistieken
+  title: Instellingen
+splash:
+  connecting: Verbinding maken met server...
+title: 漫画
+validator:
+  email: "{name} moet een geldig e-mailadres zijn"
+  has_lowercase: "{name} moet een kleine letter bevatten"
+  has_number: "{name} moet een nummer bevatten"
+  has_special_character: "{name} moet een speciaal teken bevatten"
+  has_uppercase: "{name} moet een hoofdletter bevatten"
+  is_number: "{name} moet een getal zijn"
+  is_string: "{name} moet tekst bevatten"
+  max_length: "{name} mag niet langer zijn dan {length} tekens"
+  min_length: "{name} moet minimaal {length} tekens lang zijn"
+  password_not_match: Wachtwoorden komen niet overeen
+  regex: "{name} moet overeenkomen met het volgende: {regex}"
+  required: "{name} is vereist"
+  url: "{name} moet een geldige URL zijn"

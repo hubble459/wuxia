@@ -11,9 +11,7 @@
         "**/.settings": true,
         "**/.factorypath": true
     },
-    "i18n-ally.localesPaths": [
-        "assets/flutter_i18n"
-    ],
+    "i18n-ally.localesPaths": "assets/flutter_i18n",
     "i18n-ally.sourceLanguage": "en",
     "cSpell.words": [
         "fixnum",
@@ -25,7 +23,6 @@
         "wuxia"
     ],
     "dart.lineLength": 130,
-    "i18n-ally.keystyle": "nested",
     "editor.formatOnSave": true,
     "editor.codeActionsOnSave": {
         "source.fixAll": "explicit"
