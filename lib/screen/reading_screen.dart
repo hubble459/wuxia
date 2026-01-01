@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
@@ -16,14 +14,20 @@ import 'package:wuxia/util/filter_map.dart';
 import 'package:wuxia/util/store.dart';
 
 class ReadingScreen extends StatefulWidget {
-  const ReadingScreen({Key? key}) : super(key: key);
+  const ReadingScreen({super.key});
 
   @override
   State<ReadingScreen> createState() => _ReadingScreenState();
 }
 
 class _ReadingScreenState extends State<ReadingScreen> with AutomaticKeepAliveClientMixin<ReadingScreen> {
-  final _pagingController = PagingController<int, MangaReply>(firstPageKey: 0);
+  late final _pagingController = PagingController<int, MangaReply>(
+    getNextPageKey: (state) {
+      if (state.status != PagingStatus.loadingFirstPage && state.pages!.last.length < _pageSize) return null;
+      return state.nextIntPageKey;
+    },
+    fetchPage: (pageKey) => _fetchPage(pageKey),
+  );
   final _searchController = TextEditingController();
   final _pageSize = 20;
   String? _orderBy;
@@ -123,26 +127,30 @@ class _ReadingScreenState extends State<ReadingScreen> with AutomaticKeepAliveCl
             onRefresh: () async {
               _pagingController.refresh();
             },
-            child: PagedListView<int, MangaReply>(
-              pagingController: _pagingController,
-              builderDelegate: PagedChildBuilderDelegate<MangaReply>(
-                firstPageErrorIndicatorBuilder: (context) => ListErrorIndicator(pagingController: _pagingController),
-                noItemsFoundIndicatorBuilder: (context) => Center(
-                  child: I18nText('empty'),
-                ),
-                itemBuilder: (context, manga, index) => MangaItem(
-                  key: Key(manga.id.toString()),
-                  manga: manga,
-                  type: HeroScreenType.reading,
-                  reloadParent: (updated, deleted) {
-                    if (deleted) {
-                      _pagingController.itemList?.removeWhere((m) => m.id == updated.id);
-                    } else {
-                      manga.clear();
-                      manga.mergeFromMessage(updated);
-                    }
-                    setState(() {});
-                  },
+            child: PagingListener<int, MangaReply>(
+              controller: _pagingController,
+              builder: (context, state, fetchNextPage) => PagedListView<int, MangaReply>(
+                state: state,
+                fetchNextPage: fetchNextPage,
+                builderDelegate: PagedChildBuilderDelegate(
+                  firstPageErrorIndicatorBuilder: (context) => ListErrorIndicator(pagingController: _pagingController),
+                  noItemsFoundIndicatorBuilder: (context) => Center(
+                    child: I18nText('empty'),
+                  ),
+                  itemBuilder: (context, manga, index) => MangaItem(
+                    key: Key(manga.id.toString()),
+                    manga: manga,
+                    type: HeroScreenType.reading,
+                    reloadParent: (updated, deleted) {
+                      if (deleted) {
+                        _pagingController.items?.removeWhere((m) => m.id == updated.id);
+                      } else {
+                        manga.clear();
+                        manga.mergeFromMessage(updated);
+                      }
+                      setState(() {});
+                    },
+                  ),
                 ),
               ),
             ),
@@ -154,8 +162,24 @@ class _ReadingScreenState extends State<ReadingScreen> with AutomaticKeepAliveCl
 
   @override
   void initState() {
-    _pagingController.addPageRequestListener(_fetchPage);
     super.initState();
+    _pagingController.addListener(_showError);
+  }
+
+  Future<void> _showError() async {
+    if (_pagingController.value.status == PagingStatus.subsequentPageError) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text(
+            'Something went wrong while fetching a new page.',
+          ),
+          action: SnackBarAction(
+            label: 'Retry',
+            onPressed: () => _pagingController.fetchNextPage(),
+          ),
+        ),
+      );
+    }
   }
 
   @override
@@ -165,28 +189,17 @@ class _ReadingScreenState extends State<ReadingScreen> with AutomaticKeepAliveCl
     super.dispose();
   }
 
-  Future<void> _fetchPage(int page) async {
+  Future<List<MangaReply>> _fetchPage(int page) async {
     _orderBy ??= Store.getStoreInstance().getReadingOrder() ?? 'title:ASC';
 
-    try {
-      final result = await api.manga.index(PaginateSearchQuery(
-        page: Int64(page),
-        perPage: Int64(_pageSize),
-        search: 'reading:>=0 ${_searchController.text}',
-        order: _orderBy,
-      ));
-      final paginate = result.pagination;
-      final isLastPage = paginate.page == paginate.maxPage;
-      if (isLastPage) {
-        _pagingController.appendLastPage(result.items);
-      } else {
-        final nextPageKey = paginate.page + 1;
-        _pagingController.appendPage(result.items, nextPageKey.toInt());
-      }
-    } catch (error) {
-      log('reading', error: error);
-      _pagingController.error = error;
-    }
+    final result = await api.manga.index(PaginateSearchQuery(
+      page: Int64(page),
+      perPage: Int64(_pageSize),
+      search: 'reading:>=0 ${_searchController.text}',
+      order: _orderBy,
+    ));
+
+    return result.items;
   }
 
   @override

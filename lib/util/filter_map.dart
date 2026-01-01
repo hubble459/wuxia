@@ -58,7 +58,7 @@ class FilterMap {
   String toString() {
     String sb = '';
     sb += genres.intoString('genre');
-    sb += ' ' + hosts.intoString('host');
+    sb += ' ${hosts.intoString('host')}';
 
     if (title?.isNotEmpty == true) {
       sb += ' ';
@@ -69,7 +69,7 @@ class FilterMap {
       sb += description!.split(' ').expand((keyword) => keyword.isEmpty ? [] : ['description:"$keyword"']).join(' ');
     }
     if (global?.isNotEmpty == true) {
-      sb += ' ' + global!;
+      sb += ' ${global!}';
     }
     sb = sb.trim();
     return sb;
@@ -151,7 +151,7 @@ class FilterMap {
         } else {
           map.genres.included.add(field.value);
         }
-      } else if (field.name?.toLowerCase().startsWith('host') == true) {
+      } else if (field.name?.toLowerCase().startsWith('url') == true) {
         if (field.exclude) {
           map.hosts.excluded.add(field.value);
         } else {

@@ -1,13 +1,15 @@
+// This is a generated file - do not edit.
 //
-//  Generated code. Do not modify.
-//  source: rumgap/v1/chapter.proto
-//
-// @dart = 2.12
+// Generated from rumgap/v1/chapter.proto.
+
+// @dart = 3.3
 
 // ignore_for_file: annotate_overrides, camel_case_types, comment_references
-// ignore_for_file: constant_identifier_names, library_prefixes
-// ignore_for_file: non_constant_identifier_names, prefer_final_fields
-// ignore_for_file: unnecessary_import, unnecessary_this, unused_import
+// ignore_for_file: constant_identifier_names
+// ignore_for_file: curly_braces_in_flow_control_structures
+// ignore_for_file: deprecated_member_use_from_same_package, library_prefixes
+// ignore_for_file: non_constant_identifier_names, prefer_relative_imports
+// ignore_for_file: unused_import
 
 import 'dart:convert' as $convert;
 import 'dart:core' as $core;
@@ -52,7 +54,16 @@ const ChapterReply$json = {
     {'1': 'number', '3': 5, '4': 1, '5': 2, '10': 'number'},
     {'1': 'index', '3': 6, '4': 1, '5': 3, '10': 'index'},
     {'1': 'posted', '3': 7, '4': 1, '5': 3, '9': 0, '10': 'posted', '17': true},
-    {'1': 'offset', '3': 8, '4': 1, '5': 11, '6': '.rumgap.v1.ChapterOffset', '9': 1, '10': 'offset', '17': true},
+    {
+      '1': 'offset',
+      '3': 8,
+      '4': 1,
+      '5': 11,
+      '6': '.rumgap.v1.ChapterOffset',
+      '9': 1,
+      '10': 'offset',
+      '17': true
+    },
     {'1': 'created_at', '3': 9, '4': 1, '5': 3, '10': 'createdAt'},
     {'1': 'updated_at', '3': 10, '4': 1, '5': 3, '10': 'updatedAt'},
   ],
@@ -75,8 +86,22 @@ final $typed_data.Uint8List chapterReplyDescriptor = $convert.base64Decode(
 const ChaptersReply$json = {
   '1': 'ChaptersReply',
   '2': [
-    {'1': 'pagination', '3': 1, '4': 1, '5': 11, '6': '.rumgap.v1.PaginateReply', '10': 'pagination'},
-    {'1': 'items', '3': 2, '4': 3, '5': 11, '6': '.rumgap.v1.ChapterReply', '10': 'items'},
+    {
+      '1': 'pagination',
+      '3': 1,
+      '4': 1,
+      '5': 11,
+      '6': '.rumgap.v1.PaginateReply',
+      '10': 'pagination'
+    },
+    {
+      '1': 'items',
+      '3': 2,
+      '4': 3,
+      '5': 11,
+      '6': '.rumgap.v1.ChapterReply',
+      '10': 'items'
+    },
   ],
 };
 
@@ -95,16 +120,33 @@ const ImagesReply$json = {
 };
 
 /// Descriptor for `ImagesReply`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List imagesReplyDescriptor = $convert.base64Decode(
-    'CgtJbWFnZXNSZXBseRIUCgVpdGVtcxgBIAMoCVIFaXRlbXM=');
+final $typed_data.Uint8List imagesReplyDescriptor =
+    $convert.base64Decode('CgtJbWFnZXNSZXBseRIUCgVpdGVtcxgBIAMoCVIFaXRlbXM=');
 
 @$core.Deprecated('Use paginateChapterQueryDescriptor instead')
 const PaginateChapterQuery$json = {
   '1': 'PaginateChapterQuery',
   '2': [
     {'1': 'id', '3': 1, '4': 1, '5': 5, '10': 'id'},
-    {'1': 'paginate_query', '3': 2, '4': 1, '5': 11, '6': '.rumgap.v1.PaginateQuery', '9': 0, '10': 'paginateQuery', '17': true},
-    {'1': 'reversed', '3': 3, '4': 1, '5': 8, '9': 1, '10': 'reversed', '17': true},
+    {
+      '1': 'paginate_query',
+      '3': 2,
+      '4': 1,
+      '5': 11,
+      '6': '.rumgap.v1.PaginateQuery',
+      '9': 0,
+      '10': 'paginateQuery',
+      '17': true
+    },
+    {
+      '1': 'reversed',
+      '3': 3,
+      '4': 1,
+      '5': 8,
+      '9': 1,
+      '10': 'reversed',
+      '17': true
+    },
   ],
   '8': [
     {'1': '_paginate_query'},
@@ -118,4 +160,3 @@ final $typed_data.Uint8List paginateChapterQueryDescriptor = $convert.base64Deco
     'kYAiABKAsyGC5ydW1nYXAudjEuUGFnaW5hdGVRdWVyeUgAUg1wYWdpbmF0ZVF1ZXJ5iAEBEh8K'
     'CHJldmVyc2VkGAMgASgISAFSCHJldmVyc2VkiAEBQhEKD19wYWdpbmF0ZV9xdWVyeUILCglfcm'
     'V2ZXJzZWQ=');
-

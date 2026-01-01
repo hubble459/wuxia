@@ -86,7 +86,7 @@ class _AddMangaDialogState extends State<AddMangaDialog> {
               ));
               final reading = await api.reading.create(ReadingPostRequest(mangaId: manga.id));
 
-              if (mounted) {
+              if (context.mounted) {
                 Navigator.of(context).pop(reading);
               }
             } catch (e) {

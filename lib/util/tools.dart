@@ -3,7 +3,7 @@ import 'package:wuxia/gen/rumgap/v1/chapter.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/search.pb.dart';
 
-const mangaCoverReferer = ['buhh'];
+const mangaCoverReferer = ['manhuagui.com'];
 
 // manga should be MangaReply, SearchManga or ChapterReply
 String getReferer(dynamic manga, [String? coverUrl]) {
@@ -13,11 +13,7 @@ String getReferer(dynamic manga, [String? coverUrl]) {
 
   final coverAsReferer = mangaCoverReferer.firstWhereOrNull((hostname) => manga.url.contains(hostname)) != null;
   if (coverAsReferer) {
-    return coverUrl != null
-        ? coverUrl
-        : manga.hasCover()
-            ? manga.cover
-            : manga.url;
+    return coverUrl ?? (manga.hasCover() ? manga.cover : manga.url);
   }
 
   return manga.url;

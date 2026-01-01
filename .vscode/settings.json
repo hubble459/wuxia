@@ -19,6 +19,7 @@
         "fixnum",
         "fluttertoast",
         "Fluttertoast",
+        "Mangas",
         "protobuf",
         "rumgap",
         "wuxia"
@@ -27,7 +28,7 @@
     "i18n-ally.keystyle": "nested",
     "editor.formatOnSave": true,
     "editor.codeActionsOnSave": {
-        "source.fixAll": true
+        "source.fixAll": "explicit"
     },
     "java.configuration.updateBuildConfiguration": "interactive",
 }

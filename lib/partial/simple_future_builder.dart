@@ -33,13 +33,13 @@ class SimpleFutureBuilder<T> extends StatelessWidget {
   final WidgetBuilder onLoadingBuilder;
 
   const SimpleFutureBuilder({
-    Key? key,
+    super.key,
     required this.future,
     this.initialData,
     this.onErrorBuilder = defaultErrorBuilder,
     this.onLoadingBuilder = defaultLoadingBuilder,
     required this.onLoadedBuilder,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

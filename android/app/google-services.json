@@ -1,43 +1,26 @@
 {
   "project_info": {
-    "project_number": "337040486387",
-    "project_id": "rumgap",
-    "storage_bucket": "rumgap.appspot.com"
+    "project_number": "732960090044",
+    "project_id": "wuxia-6a4d2",
+    "storage_bucket": "wuxia-6a4d2.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:337040486387:android:bb59c6fccc7bf6f4906c86",
+        "mobilesdk_app_id": "1:732960090044:android:f71fe85349c19bcaaaedb9",
         "android_client_info": {
           "package_name": "com.hubble.wuxia"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "337040486387-1u2elr8kkt7tpnf8df4v65i0au2s7aqi.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDxkRM_TYLI1SSCurG7hCdr3EJC4vpwFd8"
+          "current_key": "AIzaSyBlGEM1Yy0Q5BjXOW3-zlKS_CotQ0-VBUI"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "337040486387-1u2elr8kkt7tpnf8df4v65i0au2s7aqi.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "337040486387-ec3mu91jkrdm4s3h8hm9kja3rul16j3t.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.hubble.wuxia"
-              }
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }

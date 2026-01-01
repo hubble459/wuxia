@@ -63,7 +63,7 @@ class _FilterMangaState extends State<FilterManga> {
 
     return PopScope(
       canPop: false,
-      onPopInvoked: (didPop) async {
+      onPopInvokedWithResult: (didPop, result) {
         if (!didPop) {
           Navigator.of(context).pop(filterMap);
         }

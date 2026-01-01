@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:grpc/grpc.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:infinite_scroll_pagination/src/widgets/helpers/default_status_indicators/first_page_exception_indicator.dart';
+// ignore: implementation_imports
+import 'package:infinite_scroll_pagination/src/defaults/first_page_exception_indicator.dart';
 
 class ListErrorIndicator extends StatelessWidget {
   final PagingController pagingController;
@@ -10,7 +11,6 @@ class ListErrorIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO 21/11/2023: translations
     String errorMessage = 'The application has encountered an unknown error.\nPlease try again later.';
 
     final error = pagingController.error;
@@ -21,7 +21,7 @@ class ListErrorIndicator extends StatelessWidget {
     return FirstPageExceptionIndicator(
       title: 'Something went wrong',
       message: errorMessage,
-      onTryAgain: pagingController.retryLastFailedRequest,
+      onTryAgain: pagingController.refresh,
     );
   }
 }

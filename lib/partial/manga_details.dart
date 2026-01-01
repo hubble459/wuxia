@@ -10,7 +10,7 @@ import 'package:wuxia/partial/simple_future_builder.dart';
 class MangaDetails extends StatelessWidget {
   final MangaReply manga;
 
-  const MangaDetails({Key? key, required this.manga}) : super(key: key);
+  const MangaDetails({super.key, required this.manga});
 
   Jiffy get nextUpdate {
     return Jiffy.parseFromMillisecondsSinceEpoch(manga.next.toInt());
@@ -44,7 +44,7 @@ class MangaDetails extends StatelessWidget {
           crossAxisAlignment: WrapCrossAlignment.center,
           children: [
             Icon(manga.isOngoing ? Icons.update : Icons.update_disabled),
-            Text((manga.isOngoing ? 'Ongoing' : manga.status) + ';'),
+            Text('${manga.isOngoing ? 'Ongoing' : manga.status};'),
             manga.hasNext()
                 ? Text(
                     FlutterI18n.translate(

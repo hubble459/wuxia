@@ -1,13 +1,15 @@
+// This is a generated file - do not edit.
 //
-//  Generated code. Do not modify.
-//  source: rumgap/v1/meta.proto
-//
-// @dart = 2.12
+// Generated from rumgap/v1/meta.proto.
+
+// @dart = 3.3
 
 // ignore_for_file: annotate_overrides, camel_case_types, comment_references
-// ignore_for_file: constant_identifier_names, library_prefixes
-// ignore_for_file: non_constant_identifier_names, prefer_final_fields
-// ignore_for_file: unnecessary_import, unnecessary_this, unused_import
+// ignore_for_file: constant_identifier_names
+// ignore_for_file: curly_braces_in_flow_control_structures
+// ignore_for_file: deprecated_member_use_from_same_package, library_prefixes
+// ignore_for_file: non_constant_identifier_names, prefer_relative_imports
+// ignore_for_file: unused_import
 
 import 'dart:convert' as $convert;
 import 'dart:core' as $core;
@@ -50,14 +52,23 @@ const MetaReply$json = {
 };
 
 /// Descriptor for `MetaReply`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List metaReplyDescriptor = $convert.base64Decode(
-    'CglNZXRhUmVwbHkSFAoFaXRlbXMYASADKAlSBWl0ZW1z');
+final $typed_data.Uint8List metaReplyDescriptor =
+    $convert.base64Decode('CglNZXRhUmVwbHkSFAoFaXRlbXMYASADKAlSBWl0ZW1z');
 
 @$core.Deprecated('Use metaHostnamesRequestDescriptor instead')
 const MetaHostnamesRequest$json = {
   '1': 'MetaHostnamesRequest',
   '2': [
-    {'1': 'option', '3': 1, '4': 1, '5': 14, '6': '.rumgap.v1.MetaHostnamesOption', '9': 0, '10': 'option', '17': true},
+    {
+      '1': 'option',
+      '3': 1,
+      '4': 1,
+      '5': 14,
+      '6': '.rumgap.v1.MetaHostnamesOption',
+      '9': 0,
+      '10': 'option',
+      '17': true
+    },
   ],
   '8': [
     {'1': '_option'},
@@ -73,7 +84,16 @@ final $typed_data.Uint8List metaHostnamesRequestDescriptor = $convert.base64Deco
 const MetaGenresRequest$json = {
   '1': 'MetaGenresRequest',
   '2': [
-    {'1': 'option', '3': 1, '4': 1, '5': 14, '6': '.rumgap.v1.MetaGenresOption', '9': 0, '10': 'option', '17': true},
+    {
+      '1': 'option',
+      '3': 1,
+      '4': 1,
+      '5': 14,
+      '6': '.rumgap.v1.MetaGenresOption',
+      '9': 0,
+      '10': 'option',
+      '17': true
+    },
   ],
   '8': [
     {'1': '_option'},
@@ -89,8 +109,20 @@ final $typed_data.Uint8List metaGenresRequestDescriptor = $convert.base64Decode(
 const StatsReply$json = {
   '1': 'StatsReply',
   '2': [
-    {'1': 'count_total_reading', '3': 1, '4': 1, '5': 3, '10': 'countTotalReading'},
-    {'1': 'count_total_chapters', '3': 2, '4': 1, '5': 3, '10': 'countTotalChapters'},
+    {
+      '1': 'count_total_reading',
+      '3': 1,
+      '4': 1,
+      '5': 3,
+      '10': 'countTotalReading'
+    },
+    {
+      '1': 'count_total_chapters',
+      '3': 2,
+      '4': 1,
+      '5': 3,
+      '10': 'countTotalChapters'
+    },
     {'1': 'count_reading', '3': 3, '4': 1, '5': 3, '10': 'countReading'},
     {'1': 'count_chapters', '3': 4, '4': 1, '5': 3, '10': 'countChapters'},
   ],
@@ -102,4 +134,3 @@ final $typed_data.Uint8List statsReplyDescriptor = $convert.base64Decode(
     'FkaW5nEjAKFGNvdW50X3RvdGFsX2NoYXB0ZXJzGAIgASgDUhJjb3VudFRvdGFsQ2hhcHRlcnMS'
     'IwoNY291bnRfcmVhZGluZxgDIAEoA1IMY291bnRSZWFkaW5nEiUKDmNvdW50X2NoYXB0ZXJzGA'
     'QgASgDUg1jb3VudENoYXB0ZXJz');
-

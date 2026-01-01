@@ -16,7 +16,7 @@ enum HeroScreenType {
   latest,
   search;
 
-  getTag(String url) {
+  String getTag(String url) {
     return '$url$name';
   }
 }
@@ -26,7 +26,7 @@ class MangaItem extends StatefulWidget {
   final HeroScreenType type;
   final ReloadParent reloadParent;
 
-  const MangaItem({Key? key, required this.manga, required this.type, required this.reloadParent}) : super(key: key);
+  const MangaItem({super.key, required this.manga, required this.type, required this.reloadParent});
 
   @override
   State<MangaItem> createState() => _MangaItemState();

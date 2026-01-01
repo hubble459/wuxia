@@ -1,12 +1,14 @@
 import 'dart:io' show Platform;
 
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
+import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:wuxia/api.dart';
 import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
-import 'package:wuxia/gen/rumgap/v1/v1.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/user.pb.dart';
+import 'package:wuxia/gen/rumgap/v1/v1.pb.dart';
 import 'package:wuxia/main.dart';
 import 'package:wuxia/partial/dialog/add_manga_dialog.dart';
 import 'package:wuxia/partial/list/manga_item.dart';
@@ -24,7 +26,7 @@ class Route {
 }
 
 class RootNavScreen extends StatefulWidget {
-  const RootNavScreen({Key? key}) : super(key: key);
+  const RootNavScreen({super.key});
 
   @override
   State<RootNavScreen> createState() => _RootNavScreenState();
@@ -35,35 +37,62 @@ class _RootNavScreenState extends State<RootNavScreen> {
   int stateChange = 0;
   int _selected = 0;
 
-  _handleNotificationClick(RemoteMessage message) async {
-    final mangaId = message.data['manga_id'] ?? null;
+  Future<void> _handleNotificationInForeground(RemoteMessage message) async {
+    final mangaId = message.data['manga_id'];
 
     if (mangaId is String) {
       final manga = await api.manga.get(Id(id: int.parse(mangaId)));
 
-      Navigator.of(navigatorKey.currentState!.context).push(MaterialPageRoute(
-        builder: (context) => MangaScreen(
-          manga: manga,
-          type: HeroScreenType.reading,
-        ),
-      ));
+      final context = navigatorKey.currentState?.context;
+      if (context == null || context.mounted != true) {
+        return;
+      }
+
+      Fluttertoast.showToast(
+        msg: FlutterI18n.translate(context, 'notification.new_chapter', translationParams: {'title': manga.title}),
+        timeInSecForIosWeb: 5,
+        toastLength: Toast.LENGTH_LONG,
+      );
     }
   }
 
-  _initNotificationHandler() async {
+  Future<void> _handleNotificationClick(RemoteMessage message) async {
+    final mangaId = message.data['manga_id'];
+
+    if (mangaId is String) {
+      final manga = await api.manga.get(Id(id: int.parse(mangaId)));
+      final context = navigatorKey.currentState?.context;
+
+      if (context?.mounted == true) {
+        Navigator.of(context!).push(MaterialPageRoute(
+          builder: (context) => MangaScreen(
+            manga: manga,
+            type: HeroScreenType.reading,
+          ),
+        ));
+      }
+    }
+  }
+
+  Future<void> _initNotificationHandler() async {
     if (Platform.isLinux) {
       return;
     }
 
-    final token = await FirebaseMessaging.instance.getToken();
+    final notificationSettings = await FirebaseMessaging.instance.requestPermission(provisional: true);
+
+    if (notificationSettings.authorizationStatus == AuthorizationStatus.denied) {
+      return;
+    }
+
+    final token = await FirebaseMessaging.instance.getToken(vapidKey: dotenv.env['VAPID_KEY']);
+
     print('FCM Token: $token');
     if (!API.loggedIn.deviceIds.contains(token)) {
       await api.user.addDeviceToken(DeviceTokenRequest(token: token));
     }
 
-    FirebaseMessaging messaging = FirebaseMessaging.instance;
-
-    messaging.onTokenRefresh.listen((fcmToken) async {
+    FirebaseMessaging.instance.onTokenRefresh.listen((fcmToken) async {
       if (!API.loggedIn.deviceIds.contains(fcmToken)) {
         print('Updating FCM Device Token');
         await api.user.removeDeviceToken(DeviceTokenRequest(token: token));
@@ -78,14 +107,17 @@ class _RootNavScreenState extends State<RootNavScreen> {
     if (message != null) {
       _handleNotificationClick(message);
     }
+
     FirebaseMessaging.onMessageOpenedApp.listen(_handleNotificationClick);
+
+    FirebaseMessaging.onMessage.listen(_handleNotificationInForeground);
   }
 
   @override
   void initState() {
-    _initNotificationHandler();
-
     super.initState();
+
+    _initNotificationHandler();
   }
 
   @override

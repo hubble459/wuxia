@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:wuxia/api.dart';
@@ -9,7 +10,7 @@ import 'package:wuxia/util/store.dart';
 const languages = [Locale('zh'), Locale('en')];
 
 class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({Key? key}) : super(key: key);
+  const SettingsScreen({super.key});
 
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();
@@ -61,10 +62,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       _locale = locale;
 
                       await store.setLanguage(locale!);
-                      await FlutterI18n.refresh(context, Locale(locale));
-                      await Jiffy.setLocale(locale);
+                      if (context.mounted) {
+                        await FlutterI18n.refresh(context, Locale(locale));
+                        await Jiffy.setLocale(locale);
 
-                      if (mounted) {
                         setState(() {});
                       }
                     }
@@ -77,11 +78,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
               },
             ),
             ListTile(
+              enabled: dotenv.env['GITHUB_TOKEN'] != null,
               title: I18nText('settings.check_update'),
               onTap: () async {
                 final info = await PackageInfo.fromPlatform();
 
-                if (mounted) {
+                if (context.mounted) {
                   showDialog(
                     context: context,
                     builder: (context) => UpdateDialog(packageInfo: info),

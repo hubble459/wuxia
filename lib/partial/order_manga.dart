@@ -50,13 +50,15 @@ class _OrderMangaState extends State<OrderManga> {
   Widget build(BuildContext context) {
     return PopScope(
       canPop: false,
-      onPopInvoked: (didPop) async {
+      onPopInvokedWithResult: (didPop, result) async {
         if (!didPop) {
           final orderBy = '$_selectedOrder:$_selectedOrderType';
           final store = Store.getStoreInstance();
           await (widget.filterType == FilterType.manga ? store.setOrderManga(orderBy) : store.setOrderReading(orderBy));
 
-          Navigator.pop(context, orderBy);
+          if (context.mounted) {
+            Navigator.pop(context, orderBy);
+          }
         }
       },
       child: SingleChildScrollView(

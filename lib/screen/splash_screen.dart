@@ -5,7 +5,7 @@ import 'package:wuxia/gen/rumgap/v1/v1.pb.dart';
 import 'package:wuxia/util/store.dart';
 
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({Key? key}) : super(key: key);
+  const SplashScreen({super.key});
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
@@ -14,7 +14,7 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   bool _connecting = false;
 
-  setupAPI() {
+  void setupAPI() {
     final store = Store.getStoreInstance();
     final apiURL = store.getApiHost();
     if (apiURL != null && api.getApiURL() != apiURL) {

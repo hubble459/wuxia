@@ -1,11 +1,10 @@
-import 'dart:developer';
 import 'dart:io';
 import 'dart:ui';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:jiffy/jiffy.dart';
 import 'package:wuxia/firebase_options.dart';
+import 'package:jiffy/jiffy.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
@@ -13,6 +12,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
 import 'package:wuxia/screen/login_screen.dart';
 import 'package:wuxia/screen/root_nav_screen.dart';
+import 'package:wuxia/screen/search_screen.dart';
 import 'package:wuxia/screen/setting/statistics_screen.dart';
 import 'package:wuxia/screen/settings_screen.dart';
 import 'package:wuxia/screen/splash_screen.dart';
@@ -20,7 +20,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:wuxia/util/store.dart';
 
 extension ReadingManga on MangaReply {
-  get progressPercentage {
+  double get progressPercentage {
     final count = countChapters.toInt();
     if (count.isNaN || count == 0) {
       return 0.0;
@@ -33,11 +33,9 @@ extension ReadingManga on MangaReply {
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // If you're going to use other Firebase services in the background, such as Firestore,
   // make sure you call `initializeApp` before using other Firebase services.
-  if (Platform.isAndroid || Platform.isIOS) {
-    await Firebase.initializeApp();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-    print('Handling a background message: ${message.messageId}');
-  }
+  print('Handling a background message: ${message.messageId}');
 }
 
 GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -58,7 +56,7 @@ void main() async {
 }
 
 class WuxiaApp extends StatefulWidget {
-  const WuxiaApp({Key? key}) : super(key: key);
+  const WuxiaApp({super.key});
 
   @override
   State<WuxiaApp> createState() => _WuxiaAppState();
@@ -90,7 +88,7 @@ class _WuxiaAppState extends State<WuxiaApp> {
             forcedLocale: Locale(store.getLanguage() ?? 'en'),
           ),
           missingTranslationHandler: (key, locale) {
-            log('"$key" not found in ${locale?.languageCode}.yaml');
+            print('"$key" not found in ${locale?.languageCode}.yaml');
           },
         ),
         GlobalMaterialLocalizations.delegate,
@@ -106,7 +104,7 @@ class _WuxiaAppState extends State<WuxiaApp> {
         'statistics': (context) => const StatisticsScreen(),
       },
       themeMode: ThemeMode.dark,
-      theme: ThemeData.light(),
+      theme: ThemeData.light(useMaterial3: true),
       darkTheme: ThemeData(
         useMaterial3: true,
         colorScheme: ColorScheme.fromSwatch(
@@ -122,6 +120,7 @@ class _WuxiaAppState extends State<WuxiaApp> {
           floatingLabelBehavior: FloatingLabelBehavior.auto,
           floatingLabelStyle: TextStyle(color: Colors.white),
           border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(10.0))),
+          contentPadding: EdgeInsets.only(left: 4.0, top: 12.0, bottom: 12.0),
         ),
       ),
       themeAnimationCurve: Curves.bounceInOut,
