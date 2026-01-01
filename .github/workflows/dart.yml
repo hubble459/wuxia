@@ -34,9 +34,8 @@ jobs:
           tag: ${{ steps.push_release.outputs.tag_name }}
 
       - name: Upload Release Asset
-        uses: actions/upload-release-asset@v1
+        uses: softprops/action-gh-release@v1
         with:
-          upload_url: ${{ steps.get_release.outputs.upload_url }}
-          asset_path: ./build/app/outputs/flutter-apk/app-release.apk
-          asset_name: wuxia-release.apk
-          asset_content_type: application/octet-stream
+          files: ./build/app/outputs/flutter-apk/app-release.apk
+          tag_name: ${{ steps.push_release.outputs.tag_name }}
+          generate_release_notes: true
