@@ -7,7 +7,7 @@ import 'package:wuxia/partial/dialog/update_dialog.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:wuxia/util/store.dart';
 
-const languages = [Locale('zh'), Locale('en')];
+const languages = [Locale('zh'), Locale('en'), Locale('nl')];
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});

@@ -21,7 +21,7 @@ search:
   search_manga_online: 搜索漫画
   search_manga: 搜索漫画
 manga:
-  chapters: {amount}章节
+  chapters: '{amount}章节'
   last: 最后
   continue: 继续
   first: 第一
@@ -102,6 +102,7 @@ dialog:
   update:
     title: 更新应用程序
     update: 更新
+    open_release_page: 在浏览器中打开
   confirm:
     delete: 您确定要删除“{title}”吗
     'no': 不
@@ -109,3 +110,11 @@ dialog:
     'yes': 是的
 splash:
   connecting: 正在与服务器连接...
+dead_provider:
+  message: |-
+    不幸的是，该漫画的提供商不再受支持。
+    您需要将这本漫画替换为来自其他网站的漫画。
+  search_alternatives: 寻找替代方案
+  title: 没有可用的刮刀
+notification:
+  new_chapter: 新章节可在{title}中找到
