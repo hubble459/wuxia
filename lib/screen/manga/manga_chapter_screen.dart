@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:collection/collection.dart';
@@ -13,7 +14,6 @@ import 'package:wuxia/gen/rumgap/v1/reading.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/v1.pb.dart';
 import 'package:wuxia/main.dart';
 import 'package:wuxia/partial/action/open_url_action.dart';
-import 'package:wuxia/partial/simple_future_builder.dart';
 import 'package:wuxia/util/tools.dart';
 
 class MangaChapterScreen extends StatefulWidget {
@@ -27,18 +27,57 @@ class MangaChapterScreen extends StatefulWidget {
 }
 
 class _MangaChapterScreenState extends State<MangaChapterScreen> {
-  final ScrollController scrollController = ScrollController();
   final ItemScrollController itemScrollController = ItemScrollController();
   final ItemPositionsListener itemPositionsListener = ItemPositionsListener.create();
   late ChapterReply _chapter;
+  List<String>? _images;
+  bool _isOffline = false;
 
   @override
   void initState() {
     _chapter = widget.chapter;
-
+    _loadImages();
     WidgetsBinding.instance.addPostFrameCallback((a) => offsetUpdater());
-
     super.initState();
+  }
+
+  Future<List<String>?> _localImagePaths() async {
+    final dir = await getDownloadDirectory();
+    final safeName = widget.manga.title.replaceAll(RegExp(r'[^\w\s\-]'), '_');
+    final chapterNum = _chapter.number.toStringAsFixed(1).replaceAll('.0', '');
+    final chapterDir = Directory('${dir.path}/$safeName/$chapterNum');
+
+    if (!await chapterDir.exists()) return null;
+
+    final files = (await chapterDir.list().toList()).whereType<File>().toList();
+    if (files.isEmpty) return null;
+
+    files.sort((a, b) {
+      final aNum = int.tryParse(a.uri.pathSegments.last.split('.').first) ?? 0;
+      final bNum = int.tryParse(b.uri.pathSegments.last.split('.').first) ?? 0;
+      return aNum.compareTo(bNum);
+    });
+
+    return files.map((f) => f.path).toList();
+  }
+
+  Future<void> _loadImages() async {
+    setState(() => _images = null);
+
+    final local = await _localImagePaths();
+    if (local != null) {
+      setState(() {
+        _images = local;
+        _isOffline = true;
+      });
+      return;
+    }
+
+    final reply = await api.chapter.images(Id(id: _chapter.id));
+    setState(() {
+      _images = reply.items;
+      _isOffline = false;
+    });
   }
 
   void offsetUpdater() {
@@ -94,8 +133,6 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
 
   @override
   void dispose() {
-    scrollController.dispose();
-
     super.dispose();
   }
 
@@ -111,13 +148,15 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
   Widget build(BuildContext context) {
     return PopScope(
       canPop: false,
-      onPopInvokedWithResult: (didPop, result) => {
-        updateOffset(
-          chapterId: _chapter.id,
-          page: _chapter.offset.page,
-          pixels: _chapter.offset.pixels,
-        ),
-        Navigator.of(context).pop(result),
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) {
+          updateOffset(
+            chapterId: _chapter.id,
+            page: _chapter.offset.page,
+            pixels: _chapter.offset.pixels,
+          );
+          Navigator.of(context).pop(result);
+        }
       },
       child: Scaffold(
         appBar: AppBar(
@@ -142,6 +181,14 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
           ),
           centerTitle: false,
           actions: [
+            if (_isOffline)
+              const Tooltip(
+                message: 'Offline',
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8),
+                  child: Icon(Icons.wifi_off),
+                ),
+              ),
             IconButton(
               onPressed: () async {
                 itemScrollController.jumpTo(index: 10000);
@@ -159,73 +206,7 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
             OpenURLAction(url: _chapter.url),
           ],
         ),
-        body: SimpleFutureBuilder<ImagesReply>(
-          future: api.chapter.images(Id(id: _chapter.id)),
-          onLoadedBuilder: (context, data) {
-            final links = data.items;
-
-            (() async {
-              if (_chapter.hasOffset() && (_chapter.offset.page != 0 || _chapter.offset.pixels != 0)) {
-                int timeout = 0;
-                while (!itemScrollController.isAttached && timeout++ != 5) {
-                  await Future.delayed(const Duration(milliseconds: 100));
-                }
-                if (itemScrollController.isAttached) {
-                  itemScrollController.scrollTo(
-                    index: _chapter.offset.page,
-                    alignment: _chapter.offset.pixels / 100,
-                    duration: Duration(seconds: 3),
-                    opacityAnimationWeights: [20, 20, 60],
-                    curve: Curves.easeOut,
-                  );
-                }
-              }
-            })();
-
-            return InteractiveViewer(
-              minScale: 1,
-              maxScale: 4,
-              child: Scrollbar(
-                controller: scrollController,
-                radius: const Radius.circular(4.0),
-                thickness: 6.0,
-                child: ScrollablePositionedList.builder(
-                  itemScrollController: itemScrollController,
-                  itemPositionsListener: itemPositionsListener,
-                  padding: EdgeInsets.zero,
-                  itemCount: links.length,
-                  physics: const BouncingScrollPhysics(),
-                  itemBuilder: (context, index) => CachedNetworkImage(
-                    imageUrl: links[index],
-                    alignment: Alignment.topCenter,
-                    fadeOutDuration: const Duration(microseconds: 1),
-                    filterQuality: FilterQuality.high,
-                    fit: BoxFit.fitWidth,
-                    width: double.infinity,
-                    httpHeaders: {
-                      'Referer': getReferer(_chapter, links[index]),
-                    },
-                    progressIndicatorBuilder: (context, url, downloadProgress) => SizedBox.fromSize(
-                      size: const Size.fromHeight(500),
-                      child: Center(
-                        child: CircularProgressIndicator(
-                          value: downloadProgress.progress,
-                        ),
-                      ),
-                    ),
-                    placeholder: null,
-                    errorWidget: (context, url, error) => SizedBox.fromSize(
-                      size: const Size.fromHeight(500),
-                      child: const Center(
-                        child: Icon(Icons.error),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            );
-          },
-        ),
+        body: _images == null ? const Center(child: CircularProgressIndicator()) : _buildImageList(_images!),
         bottomNavigationBar: IntrinsicHeight(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -289,6 +270,66 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
     );
   }
 
+  Widget _buildImageList(List<String> links) {
+    (() async {
+      if (_chapter.hasOffset() && (_chapter.offset.page != 0 || _chapter.offset.pixels != 0)) {
+        int timeout = 0;
+        while (!itemScrollController.isAttached && timeout++ != 5) {
+          await Future.delayed(const Duration(milliseconds: 100));
+        }
+        if (itemScrollController.isAttached) {
+          itemScrollController.scrollTo(
+            index: _chapter.offset.page,
+            alignment: _chapter.offset.pixels / 100,
+            duration: Duration(seconds: 3),
+            opacityAnimationWeights: [20, 20, 60],
+            curve: Curves.easeOut,
+          );
+        }
+      }
+    })();
+
+    return InteractiveViewer(
+      minScale: 1,
+      maxScale: 4,
+      child: ScrollablePositionedList.builder(
+        itemScrollController: itemScrollController,
+        itemPositionsListener: itemPositionsListener,
+        padding: EdgeInsets.zero,
+        itemCount: links.length,
+        physics: const BouncingScrollPhysics(),
+        itemBuilder: (context, index) => _isOffline
+            ? Image.file(
+                File(links[index]),
+                alignment: Alignment.topCenter,
+                filterQuality: FilterQuality.high,
+                fit: BoxFit.fitWidth,
+                width: double.infinity,
+              )
+            : CachedNetworkImage(
+                imageUrl: links[index],
+                alignment: Alignment.topCenter,
+                fadeOutDuration: const Duration(microseconds: 1),
+                filterQuality: FilterQuality.high,
+                fit: BoxFit.fitWidth,
+                width: double.infinity,
+                httpHeaders: {
+                  'Referer': getReferer(_chapter, links[index]),
+                },
+                progressIndicatorBuilder: (context, url, downloadProgress) => SizedBox.fromSize(
+                  size: const Size.fromHeight(500),
+                  child: Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
+                ),
+                placeholder: null,
+                errorWidget: (context, url, error) => SizedBox.fromSize(
+                  size: const Size.fromHeight(500),
+                  child: const Center(child: Icon(Icons.error)),
+                ),
+              ),
+      ),
+    );
+  }
+
   Future<void> previous() async {
     --widget.manga.readingProgress;
     await reloadChapter();
@@ -312,8 +353,7 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
         index: widget.manga.readingProgress,
       ),
     );
-    setState(() {
-      _chapter = chapter;
-    });
+    setState(() => _chapter = chapter);
+    _loadImages();
   }
 }

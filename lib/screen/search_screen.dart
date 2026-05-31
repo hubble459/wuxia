@@ -55,7 +55,7 @@ class _SearchScreenState extends State<SearchScreen> with AutomaticKeepAliveClie
     super.initState();
 
     if (widget.query != null && widget.query!.isNotEmpty) {
-      controller.text = _keyword;
+      controller.text = widget.query!;
       _filter(keyword: widget.query);
     }
   }
@@ -120,7 +120,7 @@ class _SearchScreenState extends State<SearchScreen> with AutomaticKeepAliveClie
                 return Expanded(
                   child: ListView.builder(
                     itemCount: results.length,
-                    itemBuilder: (context, index) => SearchMangaItem(searchManga: results[index]),
+                    itemBuilder: (context, index) => SearchMangaItem(searchManga: results[index], index: index),
                   ),
                 );
               } else {

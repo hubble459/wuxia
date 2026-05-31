@@ -4,6 +4,7 @@ nav:
   reading: Reading
   search: Search
   latest: Latest
+  downloads: Downloads
 login:
   title: Login
   password: Password
@@ -30,6 +31,9 @@ manga:
   expected-update: Expected update {date}
   will-update: Updates {date}
   no-chapters: Failed to load chapters...
+  search-alternatives: Search Alternatives
+  download: Download
+  download-complete: Download complete
 details:
   authors: Authors
   genres: Genres
@@ -55,6 +59,7 @@ basic:
   url: URL
   add: Add
   save: Save
+  reset: Reset
 settings:
   title: Settings
   data_saver: Data Saver
@@ -71,6 +76,7 @@ settings:
   download: Download
   download_directory: Download Directory
   download_clear: Clear Downloads
+  download_clear_confirm: Are you sure you want to delete all downloaded chapters?
   account: Account
   remove_account: Remove Account
   edit_account: Edit Account

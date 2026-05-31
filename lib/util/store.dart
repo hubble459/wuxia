@@ -11,6 +11,7 @@ class Store {
   static const String apiHostKey = 'api_url';
   static const String languageKey = 'language';
   static const String dataSaverKey = 'data_saver';
+  static const String downloadDirKey = 'download_dir';
 
   static late final Store _instance;
 
@@ -98,5 +99,17 @@ class Store {
 
   Future<void> setDataSaver(bool dataSaver) async {
     await _publicStorage.setBool(dataSaverKey, dataSaver);
+  }
+
+  String? getDownloadDir() {
+    return _publicStorage.getString(downloadDirKey);
+  }
+
+  Future<void> setDownloadDir(String path) async {
+    await _publicStorage.setString(downloadDirKey, path);
+  }
+
+  Future<void> clearDownloadDir() async {
+    await _publicStorage.remove(downloadDirKey);
   }
 }

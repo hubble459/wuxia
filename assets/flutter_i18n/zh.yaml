@@ -2,6 +2,7 @@ title: 漫画
 empty: 未找到任何项目
 nav:
   latest: 最新的
+  downloads: 下载
   reading: 阅读
   search: 搜索
 login:
@@ -28,6 +29,9 @@ manga:
   add: 添加
   similar: 相似的
   no-chapters: 无法加载章节...
+  search-alternatives: 搜索替代方案
+  download: 下载
+  download-complete: 下载完成
   expected-update: 预计更新 {date}
   will-update: 更新{date}
 details:
@@ -54,6 +58,7 @@ basic:
   cancel: 不对
   add: 添加
   save: 节省
+  reset: 重置
   url: 网址
 settings:
   title: 设置
@@ -70,6 +75,7 @@ settings:
   account: 帐户
   download: 下载
   download_clear: 清除下载
+  download_clear_confirm: 您确定要删除所有已下载的章节吗？
   download_directory: 下载目录
   edit_account: 编辑帐户
   misc: 各种各样的

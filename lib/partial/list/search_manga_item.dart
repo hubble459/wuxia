@@ -10,8 +10,9 @@ import 'package:wuxia/util/tools.dart';
 
 class SearchMangaItem extends StatefulWidget {
   final SearchManga searchManga;
+  final int index;
 
-  const SearchMangaItem({super.key, required this.searchManga});
+  const SearchMangaItem({super.key, required this.searchManga, required this.index});
 
   @override
   State<SearchMangaItem> createState() => _SearchMangaItemState();
@@ -30,7 +31,7 @@ class _SearchMangaItemState extends State<SearchMangaItem> {
       subtitle: Text(Uri.parse(searchManga.url).host),
       leading: searchManga.hasCover()
           ? Hero(
-              tag: HeroScreenType.search.getTag(searchManga.url),
+              tag: HeroScreenType.search.getTag('${searchManga.url}_${widget.index}'),
               child: CachedNetworkImage(
                 imageUrl: searchManga.cover,
                 filterQuality: FilterQuality.none,
@@ -71,6 +72,7 @@ class _SearchMangaItemState extends State<SearchMangaItem> {
               builder: (context) => MangaScreen(
                 manga: manga,
                 type: HeroScreenType.search,
+                heroTag: HeroScreenType.search.getTag('${searchManga.url}_${widget.index}'),
               ),
             ),
           );

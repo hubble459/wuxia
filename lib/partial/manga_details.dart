@@ -31,6 +31,13 @@ class MangaDetails extends StatelessWidget {
           style: Theme.of(context).textTheme.headlineSmall,
           overflow: TextOverflow.ellipsis,
         ),
+        if (manga.altTitles.isNotEmpty)
+          Text(
+            manga.altTitles.join(' · '),
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 2,
+          ),
         Visibility(
           visible: manga.authors.isNotEmpty,
           child: Text(

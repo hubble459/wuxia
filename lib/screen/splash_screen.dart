@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
+import 'package:grpc/grpc.dart';
 import 'package:wuxia/api.dart';
+import 'package:wuxia/gen/rumgap/v1/user.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/v1.pb.dart';
 import 'package:wuxia/util/store.dart';
 
@@ -27,27 +29,41 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   void initState() {
-    Future.delayed(const Duration(seconds: 1), () async {
-      setState(() {
-        _connecting = true;
-      });
+    super.initState();
+    _init();
+  }
 
-      setupAPI();
+  Future<void> _init() async {
+    setupAPI();
 
-      final store = Store.getStoreInstance();
-      try {
-        API.token = await store.readToken();
-        API.loggedIn = await api.user.me(Empty());
-        if (!mounted) return;
-        Navigator.of(context).pushReplacementNamed('root_nav');
-      } catch (e) {
+    final store = Store.getStoreInstance();
+    final token = await store.readToken();
+
+    if (token == null) {
+      if (!mounted) return;
+      Navigator.of(context).pushReplacementNamed('login');
+      return;
+    }
+
+    setState(() => _connecting = true);
+
+    API.token = token;
+    try {
+      API.loggedIn = await api.user.me(Empty());
+    } catch (e) {
+      if (e is GrpcError && e.code == StatusCode.unauthenticated) {
         await store.removeToken();
         API.token = null;
         if (!mounted) return;
         Navigator.of(context).pushReplacementNamed('login');
+        return;
       }
-    });
-    super.initState();
+      // Network error — continue offline with empty user
+      API.loggedIn = UserFullReply();
+    }
+
+    if (!mounted) return;
+    Navigator.of(context).pushReplacementNamed('root_nav');
   }
 
   @override

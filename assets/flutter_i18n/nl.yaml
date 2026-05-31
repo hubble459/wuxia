@@ -4,6 +4,7 @@ basic:
   confirm: Bevestigen
   refresh: Vernieuwen
   save: Redden
+  reset: Herstellen
   url: URL
 chapter:
   goto_bottom: Scroll naar beneden
@@ -64,10 +65,14 @@ manga:
   first: Eerst
   last: Laatst
   no-chapters: Kan hoofdstukken niet laden...
+  search-alternatives: Zoek alternatieven
+  download: Downloaden
+  download-complete: Download voltooid
   similar: Vergelijkbaar
   will-update: Wordt op {date} bijgewerkt
 nav:
   latest: Nieuwste
+  downloads: Downloads
   reading: Lezing
   search: Zoekopdracht
 notification:
@@ -87,6 +92,7 @@ settings:
   data_saver: Gegevensbesparing
   download: Downloaden
   download_clear: Downloads wissen
+  download_clear_confirm: Weet je zeker dat je alle gedownloade hoofdstukken wilt verwijderen?
   download_directory: Directory downloaden
   edit_account: Account bewerken
   language: Taal

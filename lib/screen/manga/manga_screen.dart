@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -6,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:grpc/grpc.dart';
+import 'package:http/http.dart' as http;
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:wuxia/api.dart';
 import 'package:wuxia/gen/rumgap/v1/chapter.pb.dart';
@@ -21,13 +23,17 @@ import 'package:wuxia/partial/manga_details.dart';
 import 'package:wuxia/partial/simple_future_builder.dart';
 import 'package:wuxia/screen/manga/manga_chapter_screen.dart';
 import 'package:wuxia/screen/manga/manga_chapters_screen.dart';
+import 'package:wuxia/screen/search_screen.dart';
 import 'package:wuxia/util/tools.dart';
+
+enum _MangaMenuAction { searchAlternatives, download }
 
 class MangaScreen extends StatefulWidget {
   final MangaReply manga;
   final HeroScreenType type;
+  final String? heroTag;
 
-  const MangaScreen({super.key, required this.manga, required this.type});
+  const MangaScreen({super.key, required this.manga, required this.type, this.heroTag});
 
   @override
   State<MangaScreen> createState() => _MangaScreenState();
@@ -93,6 +99,91 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
     }
   }
 
+  Future<void> _downloadManga() async {
+    final totalChapters = _manga.countChapters.toInt();
+    if (totalChapters == 0) {
+      Fluttertoast.showToast(msg: FlutterI18n.translate(context, 'manga.no-chapters')).ignore();
+      return;
+    }
+
+    final progress = ValueNotifier<int>(0);
+    var cancelled = false;
+
+    if (!mounted) return;
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => AlertDialog(
+        title: Text(FlutterI18n.translate(ctx, 'manga.download')),
+        content: ValueListenableBuilder<int>(
+          valueListenable: progress,
+          builder: (_, downloaded, __) => Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              LinearProgressIndicator(value: downloaded / totalChapters),
+              const SizedBox(height: 8),
+              Text('$downloaded / $totalChapters'),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              cancelled = true;
+              Navigator.of(ctx).pop();
+            },
+            child: Text(FlutterI18n.translate(ctx, 'basic.cancel')),
+          ),
+        ],
+      ),
+    );
+
+    try {
+      final dir = await getDownloadDirectory();
+      final safeName = _manga.title.replaceAll(RegExp(r'[^\w\s\-]'), '_');
+      final mangaDir = Directory('${dir.path}/$safeName');
+
+      final chapters = await api.chapter.index(PaginateChapterQuery(
+        id: _manga.id,
+        reversed: false,
+        paginateQuery: PaginateQuery(page: Int64(0), perPage: Int64(totalChapters)),
+      ));
+
+      await mangaDir.create(recursive: true);
+      await File('${mangaDir.path}/manga.pb').writeAsBytes(_manga.writeToBuffer());
+      await File('${mangaDir.path}/chapters.pb').writeAsBytes(chapters.writeToBuffer());
+
+      for (final chapter in chapters.items) {
+        if (cancelled) break;
+
+        final chapterDir = Directory('${mangaDir.path}/${chapter.number.toStringAsFixed(1).replaceAll('.0', '')}');
+        await chapterDir.create(recursive: true);
+
+        final images = await api.chapter.images(Id(id: chapter.id));
+        for (var i = 0; i < images.items.length; i++) {
+          if (cancelled) break;
+          final url = images.items[i];
+          final response = await http.get(
+            Uri.parse(url),
+            headers: {'Referer': getReferer(chapter, url)},
+          );
+          final ext = url.split('.').last.split('?').first;
+          await File('${chapterDir.path}/$i.$ext').writeAsBytes(response.bodyBytes);
+        }
+
+        progress.value++;
+      }
+    } catch (e) {
+      Fluttertoast.showToast(msg: e.toString()).ignore();
+    } finally {
+      progress.dispose();
+      if (mounted && !cancelled) {
+        Navigator.of(context).pop();
+        Fluttertoast.showToast(msg: FlutterI18n.translate(context, 'manga.download-complete')).ignore();
+      }
+    }
+  }
+
   final _imageHeight = 400.0;
 
   @override
@@ -135,7 +226,7 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
                   background: Visibility(
                     visible: _manga.hasCover(),
                     child: Hero(
-                      tag: widget.type.getTag(_manga.url),
+                      tag: widget.heroTag ?? widget.type.getTag(_manga.url),
                       child: CachedNetworkImage(
                         imageUrl: _manga.cover,
                         fit: BoxFit.fitWidth,
@@ -155,6 +246,47 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
                       tooltip: FlutterI18n.translate(context, 'basic.refresh'),
                       icon: const Icon(Icons.refresh),
                     ),
+                  ),
+                  PopupMenuButton<_MangaMenuAction>(
+                    onSelected: (action) async {
+                      if (action == _MangaMenuAction.searchAlternatives) {
+                        final titles = [_manga.title, ..._manga.altTitles];
+                        final chosen = await showDialog<String>(
+                          context: context,
+                          builder: (ctx) => SimpleDialog(
+                            title: Text(FlutterI18n.translate(ctx, 'manga.search-alternatives')),
+                            children: titles
+                                .map((t) => SimpleDialogOption(
+                                      onPressed: () => Navigator.of(ctx).pop(t),
+                                      child: Text(t),
+                                    ))
+                                .toList(),
+                          ),
+                        );
+                        if (chosen != null && context.mounted) {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => Scaffold(
+                                appBar: AppBar(),
+                                body: SearchScreen(query: chosen),
+                              ),
+                            ),
+                          );
+                        }
+                      } else if (action == _MangaMenuAction.download) {
+                        _downloadManga();
+                      }
+                    },
+                    itemBuilder: (_) => [
+                      PopupMenuItem(
+                        value: _MangaMenuAction.searchAlternatives,
+                        child: Text(FlutterI18n.translate(context, 'manga.search-alternatives')),
+                      ),
+                      PopupMenuItem(
+                        value: _MangaMenuAction.download,
+                        child: Text(FlutterI18n.translate(context, 'manga.download')),
+                      ),
+                    ],
                   ),
                 ],
               ),

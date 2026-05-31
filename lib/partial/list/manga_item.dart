@@ -14,7 +14,8 @@ typedef ReloadParent = Function(MangaReply manga, bool deleted);
 enum HeroScreenType {
   reading,
   latest,
-  search;
+  search,
+  downloads;
 
   String getTag(String url) {
     return '$url$name';
