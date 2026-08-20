@@ -31,7 +31,7 @@ class Store {
 
   Future<void> setToken(String token) async {
     if (_secureStorage != null) {
-      await _secureStorage!.write(key: tokenKey, value: token);
+      await _secureStorage.write(key: tokenKey, value: token);
     } else {
       await _publicStorage.setString(tokenKey, token);
     }
@@ -39,7 +39,7 @@ class Store {
 
   Future<void> removeToken() async {
     if (_secureStorage != null) {
-      await _secureStorage!.delete(key: tokenKey);
+      await _secureStorage.delete(key: tokenKey);
     } else {
       await _publicStorage.remove(tokenKey);
     }
@@ -47,7 +47,7 @@ class Store {
 
   Future<String?> readToken() async {
     if (_secureStorage != null) {
-      return _secureStorage!.read(key: tokenKey);
+      return _secureStorage.read(key: tokenKey);
     } else {
       return _publicStorage.getString(tokenKey);
     }
