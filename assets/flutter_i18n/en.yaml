@@ -33,6 +33,7 @@ manga:
   no-chapters: Failed to load chapters...
   search-alternatives: Search Alternatives
   add-source: Add Source
+  add-source-url: Add Source from URL
   switch_source: Switch Source
   download: Download
   download-complete: Download complete

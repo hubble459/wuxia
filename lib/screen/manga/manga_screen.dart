@@ -22,13 +22,14 @@ import 'package:wuxia/partial/dialog/dead_provider_dialog.dart';
 import 'package:wuxia/partial/dialog/source_picker_dialog.dart';
 import 'package:wuxia/partial/list/manga_item.dart';
 import 'package:wuxia/partial/manga_details.dart';
+import 'package:wuxia/partial/dialog/add_manga_dialog.dart';
 import 'package:wuxia/partial/simple_future_builder.dart';
 import 'package:wuxia/screen/manga/manga_chapter_screen.dart';
 import 'package:wuxia/screen/manga/manga_chapters_screen.dart';
 import 'package:wuxia/screen/search_screen.dart';
 import 'package:wuxia/util/tools.dart';
 
-enum _MangaMenuAction { addSource, download }
+enum _MangaMenuAction { addSource, addSourceFromUrl, download }
 
 class MangaScreen extends StatefulWidget {
   final MangaReply manga;
@@ -346,6 +347,17 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
                             });
                           }
                         }
+                      } else if (action == _MangaMenuAction.addSourceFromUrl) {
+                        final result = await showDialog<MangaReply>(
+                          context: context,
+                          builder: (_) => AddMangaDialog(existingMangaId: _manga.id),
+                        );
+                        if (result != null && mounted) {
+                          setState(() {
+                            _manga = result;
+                            _syncSelectedSource();
+                          });
+                        }
                       } else if (action == _MangaMenuAction.download) {
                         _downloadManga();
                       }
@@ -354,6 +366,10 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
                       PopupMenuItem(
                         value: _MangaMenuAction.addSource,
                         child: Text(FlutterI18n.translate(context, 'manga.add-source')),
+                      ),
+                      PopupMenuItem(
+                        value: _MangaMenuAction.addSourceFromUrl,
+                        child: Text(FlutterI18n.translate(context, 'manga.add-source-url')),
                       ),
                       PopupMenuItem(
                         value: _MangaMenuAction.download,

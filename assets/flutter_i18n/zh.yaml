@@ -31,6 +31,7 @@ manga:
   no-chapters: 无法加载章节...
   search-alternatives: 搜索替代方案
   add-source: 添加来源
+  add-source-url: 通过网址添加来源
   switch_source: 切换来源
   download: 下载
   download-complete: 下载完成
