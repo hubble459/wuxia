@@ -19,15 +19,15 @@ import 'dart:typed_data' as $typed_data;
 const ChapterRequest$json = {
   '1': 'ChapterRequest',
   '2': [
-    {'1': 'manga_id', '3': 1, '4': 1, '5': 5, '10': 'mangaId'},
+    {'1': 'manga_source_id', '3': 1, '4': 1, '5': 5, '10': 'mangaSourceId'},
     {'1': 'index', '3': 2, '4': 1, '5': 5, '10': 'index'},
   ],
 };
 
 /// Descriptor for `ChapterRequest`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List chapterRequestDescriptor = $convert.base64Decode(
-    'Cg5DaGFwdGVyUmVxdWVzdBIZCghtYW5nYV9pZBgBIAEoBVIHbWFuZ2FJZBIUCgVpbmRleBgCIA'
-    'EoBVIFaW5kZXg=');
+    'Cg5DaGFwdGVyUmVxdWVzdBImCg9tYW5nYV9zb3VyY2VfaWQYASABKAVSDW1hbmdhU291cmNlSW'
+    'QSFAoFaW5kZXgYAiABKAVSBWluZGV4');
 
 @$core.Deprecated('Use chapterOffsetDescriptor instead')
 const ChapterOffset$json = {
@@ -35,20 +35,32 @@ const ChapterOffset$json = {
   '2': [
     {'1': 'pixels', '3': 1, '4': 1, '5': 5, '10': 'pixels'},
     {'1': 'page', '3': 2, '4': 1, '5': 5, '10': 'page'},
+    {
+      '1': 'fraction',
+      '3': 3,
+      '4': 1,
+      '5': 2,
+      '9': 0,
+      '10': 'fraction',
+      '17': true
+    },
+  ],
+  '8': [
+    {'1': '_fraction'},
   ],
 };
 
 /// Descriptor for `ChapterOffset`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List chapterOffsetDescriptor = $convert.base64Decode(
     'Cg1DaGFwdGVyT2Zmc2V0EhYKBnBpeGVscxgBIAEoBVIGcGl4ZWxzEhIKBHBhZ2UYAiABKAVSBH'
-    'BhZ2U=');
+    'BhZ2USHwoIZnJhY3Rpb24YAyABKAJIAFIIZnJhY3Rpb26IAQFCCwoJX2ZyYWN0aW9u');
 
 @$core.Deprecated('Use chapterReplyDescriptor instead')
 const ChapterReply$json = {
   '1': 'ChapterReply',
   '2': [
     {'1': 'id', '3': 1, '4': 1, '5': 5, '10': 'id'},
-    {'1': 'manga_id', '3': 2, '4': 1, '5': 5, '10': 'mangaId'},
+    {'1': 'manga_source_id', '3': 2, '4': 1, '5': 5, '10': 'mangaSourceId'},
     {'1': 'url', '3': 3, '4': 1, '5': 9, '10': 'url'},
     {'1': 'title', '3': 4, '4': 1, '5': 9, '10': 'title'},
     {'1': 'number', '3': 5, '4': 1, '5': 2, '10': 'number'},
@@ -66,21 +78,33 @@ const ChapterReply$json = {
     },
     {'1': 'created_at', '3': 9, '4': 1, '5': 3, '10': 'createdAt'},
     {'1': 'updated_at', '3': 10, '4': 1, '5': 3, '10': 'updatedAt'},
+    {
+      '1': 'canonical_chapter_id',
+      '3': 11,
+      '4': 1,
+      '5': 5,
+      '9': 2,
+      '10': 'canonicalChapterId',
+      '17': true
+    },
   ],
   '8': [
     {'1': '_posted'},
     {'1': '_offset'},
+    {'1': '_canonical_chapter_id'},
   ],
 };
 
 /// Descriptor for `ChapterReply`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List chapterReplyDescriptor = $convert.base64Decode(
-    'CgxDaGFwdGVyUmVwbHkSDgoCaWQYASABKAVSAmlkEhkKCG1hbmdhX2lkGAIgASgFUgdtYW5nYU'
-    'lkEhAKA3VybBgDIAEoCVIDdXJsEhQKBXRpdGxlGAQgASgJUgV0aXRsZRIWCgZudW1iZXIYBSAB'
-    'KAJSBm51bWJlchIUCgVpbmRleBgGIAEoA1IFaW5kZXgSGwoGcG9zdGVkGAcgASgDSABSBnBvc3'
-    'RlZIgBARI1CgZvZmZzZXQYCCABKAsyGC5ydW1nYXAudjEuQ2hhcHRlck9mZnNldEgBUgZvZmZz'
-    'ZXSIAQESHQoKY3JlYXRlZF9hdBgJIAEoA1IJY3JlYXRlZEF0Eh0KCnVwZGF0ZWRfYXQYCiABKA'
-    'NSCXVwZGF0ZWRBdEIJCgdfcG9zdGVkQgkKB19vZmZzZXQ=');
+    'CgxDaGFwdGVyUmVwbHkSDgoCaWQYASABKAVSAmlkEiYKD21hbmdhX3NvdXJjZV9pZBgCIAEoBV'
+    'INbWFuZ2FTb3VyY2VJZBIQCgN1cmwYAyABKAlSA3VybBIUCgV0aXRsZRgEIAEoCVIFdGl0bGUS'
+    'FgoGbnVtYmVyGAUgASgCUgZudW1iZXISFAoFaW5kZXgYBiABKANSBWluZGV4EhsKBnBvc3RlZB'
+    'gHIAEoA0gAUgZwb3N0ZWSIAQESNQoGb2Zmc2V0GAggASgLMhgucnVtZ2FwLnYxLkNoYXB0ZXJP'
+    'ZmZzZXRIAVIGb2Zmc2V0iAEBEh0KCmNyZWF0ZWRfYXQYCSABKANSCWNyZWF0ZWRBdBIdCgp1cG'
+    'RhdGVkX2F0GAogASgDUgl1cGRhdGVkQXQSNQoUY2Fub25pY2FsX2NoYXB0ZXJfaWQYCyABKAVI'
+    'AlISY2Fub25pY2FsQ2hhcHRlcklkiAEBQgkKB19wb3N0ZWRCCQoHX29mZnNldEIXChVfY2Fub2'
+    '5pY2FsX2NoYXB0ZXJfaWQ=');
 
 @$core.Deprecated('Use chaptersReplyDescriptor instead')
 const ChaptersReply$json = {
@@ -127,7 +151,7 @@ final $typed_data.Uint8List imagesReplyDescriptor =
 const PaginateChapterQuery$json = {
   '1': 'PaginateChapterQuery',
   '2': [
-    {'1': 'id', '3': 1, '4': 1, '5': 5, '10': 'id'},
+    {'1': 'manga_source_id', '3': 1, '4': 1, '5': 5, '10': 'mangaSourceId'},
     {
       '1': 'paginate_query',
       '3': 2,
@@ -156,7 +180,60 @@ const PaginateChapterQuery$json = {
 
 /// Descriptor for `PaginateChapterQuery`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List paginateChapterQueryDescriptor = $convert.base64Decode(
-    'ChRQYWdpbmF0ZUNoYXB0ZXJRdWVyeRIOCgJpZBgBIAEoBVICaWQSRAoOcGFnaW5hdGVfcXVlcn'
-    'kYAiABKAsyGC5ydW1nYXAudjEuUGFnaW5hdGVRdWVyeUgAUg1wYWdpbmF0ZVF1ZXJ5iAEBEh8K'
-    'CHJldmVyc2VkGAMgASgISAFSCHJldmVyc2VkiAEBQhEKD19wYWdpbmF0ZV9xdWVyeUILCglfcm'
-    'V2ZXJzZWQ=');
+    'ChRQYWdpbmF0ZUNoYXB0ZXJRdWVyeRImCg9tYW5nYV9zb3VyY2VfaWQYASABKAVSDW1hbmdhU2'
+    '91cmNlSWQSRAoOcGFnaW5hdGVfcXVlcnkYAiABKAsyGC5ydW1nYXAudjEuUGFnaW5hdGVRdWVy'
+    'eUgAUg1wYWdpbmF0ZVF1ZXJ5iAEBEh8KCHJldmVyc2VkGAMgASgISAFSCHJldmVyc2VkiAEBQh'
+    'EKD19wYWdpbmF0ZV9xdWVyeUILCglfcmV2ZXJzZWQ=');
+
+@$core.Deprecated('Use linkChapterRequestDescriptor instead')
+const LinkChapterRequest$json = {
+  '1': 'LinkChapterRequest',
+  '2': [
+    {'1': 'chapter_id', '3': 1, '4': 1, '5': 5, '10': 'chapterId'},
+    {
+      '1': 'canonical_chapter_id',
+      '3': 2,
+      '4': 1,
+      '5': 5,
+      '10': 'canonicalChapterId'
+    },
+  ],
+};
+
+/// Descriptor for `LinkChapterRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List linkChapterRequestDescriptor = $convert.base64Decode(
+    'ChJMaW5rQ2hhcHRlclJlcXVlc3QSHQoKY2hhcHRlcl9pZBgBIAEoBVIJY2hhcHRlcklkEjAKFG'
+    'Nhbm9uaWNhbF9jaGFwdGVyX2lkGAIgASgFUhJjYW5vbmljYWxDaGFwdGVySWQ=');
+
+@$core.Deprecated('Use unlinkChapterRequestDescriptor instead')
+const UnlinkChapterRequest$json = {
+  '1': 'UnlinkChapterRequest',
+  '2': [
+    {'1': 'chapter_id', '3': 1, '4': 1, '5': 5, '10': 'chapterId'},
+  ],
+};
+
+/// Descriptor for `UnlinkChapterRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List unlinkChapterRequestDescriptor = $convert.base64Decode(
+    'ChRVbmxpbmtDaGFwdGVyUmVxdWVzdBIdCgpjaGFwdGVyX2lkGAEgASgFUgljaGFwdGVySWQ=');
+
+@$core.Deprecated('Use findEquivalentRequestDescriptor instead')
+const FindEquivalentRequest$json = {
+  '1': 'FindEquivalentRequest',
+  '2': [
+    {
+      '1': 'canonical_chapter_id',
+      '3': 1,
+      '4': 1,
+      '5': 5,
+      '10': 'canonicalChapterId'
+    },
+    {'1': 'manga_source_id', '3': 2, '4': 1, '5': 5, '10': 'mangaSourceId'},
+  ],
+};
+
+/// Descriptor for `FindEquivalentRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List findEquivalentRequestDescriptor = $convert.base64Decode(
+    'ChVGaW5kRXF1aXZhbGVudFJlcXVlc3QSMAoUY2Fub25pY2FsX2NoYXB0ZXJfaWQYASABKAVSEm'
+    'Nhbm9uaWNhbENoYXB0ZXJJZBImCg9tYW5nYV9zb3VyY2VfaWQYAiABKAVSDW1hbmdhU291cmNl'
+    'SWQ=');

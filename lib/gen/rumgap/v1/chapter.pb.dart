@@ -21,11 +21,11 @@ export 'package:protobuf/protobuf.dart' show GeneratedMessageGenericExtensions;
 
 class ChapterRequest extends $pb.GeneratedMessage {
   factory ChapterRequest({
-    $core.int? mangaId,
+    $core.int? mangaSourceId,
     $core.int? index,
   }) {
     final result = create();
-    if (mangaId != null) result.mangaId = mangaId;
+    if (mangaSourceId != null) result.mangaSourceId = mangaSourceId;
     if (index != null) result.index = index;
     return result;
   }
@@ -43,7 +43,7 @@ class ChapterRequest extends $pb.GeneratedMessage {
       _omitMessageNames ? '' : 'ChapterRequest',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'rumgap.v1'),
       createEmptyInstance: create)
-    ..aI(1, _omitFieldNames ? '' : 'mangaId')
+    ..aI(1, _omitFieldNames ? '' : 'mangaSourceId')
     ..aI(2, _omitFieldNames ? '' : 'index')
     ..hasRequiredFields = false;
 
@@ -67,13 +67,13 @@ class ChapterRequest extends $pb.GeneratedMessage {
   static ChapterRequest? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $core.int get mangaId => $_getIZ(0);
+  $core.int get mangaSourceId => $_getIZ(0);
   @$pb.TagNumber(1)
-  set mangaId($core.int value) => $_setSignedInt32(0, value);
+  set mangaSourceId($core.int value) => $_setSignedInt32(0, value);
   @$pb.TagNumber(1)
-  $core.bool hasMangaId() => $_has(0);
+  $core.bool hasMangaSourceId() => $_has(0);
   @$pb.TagNumber(1)
-  void clearMangaId() => $_clearField(1);
+  void clearMangaSourceId() => $_clearField(1);
 
   @$pb.TagNumber(2)
   $core.int get index => $_getIZ(1);
@@ -89,10 +89,12 @@ class ChapterOffset extends $pb.GeneratedMessage {
   factory ChapterOffset({
     $core.int? pixels,
     $core.int? page,
+    $core.double? fraction,
   }) {
     final result = create();
     if (pixels != null) result.pixels = pixels;
     if (page != null) result.page = page;
+    if (fraction != null) result.fraction = fraction;
     return result;
   }
 
@@ -111,6 +113,7 @@ class ChapterOffset extends $pb.GeneratedMessage {
       createEmptyInstance: create)
     ..aI(1, _omitFieldNames ? '' : 'pixels')
     ..aI(2, _omitFieldNames ? '' : 'page')
+    ..aD(3, _omitFieldNames ? '' : 'fraction', fieldType: $pb.PbFieldType.OF)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -149,12 +152,22 @@ class ChapterOffset extends $pb.GeneratedMessage {
   $core.bool hasPage() => $_has(1);
   @$pb.TagNumber(2)
   void clearPage() => $_clearField(2);
+
+  /// 0.0-1.0 fraction through the chapter, used for cross-source scroll resume.
+  @$pb.TagNumber(3)
+  $core.double get fraction => $_getN(2);
+  @$pb.TagNumber(3)
+  set fraction($core.double value) => $_setFloat(2, value);
+  @$pb.TagNumber(3)
+  $core.bool hasFraction() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearFraction() => $_clearField(3);
 }
 
 class ChapterReply extends $pb.GeneratedMessage {
   factory ChapterReply({
     $core.int? id,
-    $core.int? mangaId,
+    $core.int? mangaSourceId,
     $core.String? url,
     $core.String? title,
     $core.double? number,
@@ -163,10 +176,11 @@ class ChapterReply extends $pb.GeneratedMessage {
     ChapterOffset? offset,
     $fixnum.Int64? createdAt,
     $fixnum.Int64? updatedAt,
+    $core.int? canonicalChapterId,
   }) {
     final result = create();
     if (id != null) result.id = id;
-    if (mangaId != null) result.mangaId = mangaId;
+    if (mangaSourceId != null) result.mangaSourceId = mangaSourceId;
     if (url != null) result.url = url;
     if (title != null) result.title = title;
     if (number != null) result.number = number;
@@ -175,6 +189,8 @@ class ChapterReply extends $pb.GeneratedMessage {
     if (offset != null) result.offset = offset;
     if (createdAt != null) result.createdAt = createdAt;
     if (updatedAt != null) result.updatedAt = updatedAt;
+    if (canonicalChapterId != null)
+      result.canonicalChapterId = canonicalChapterId;
     return result;
   }
 
@@ -192,7 +208,7 @@ class ChapterReply extends $pb.GeneratedMessage {
       package: const $pb.PackageName(_omitMessageNames ? '' : 'rumgap.v1'),
       createEmptyInstance: create)
     ..aI(1, _omitFieldNames ? '' : 'id')
-    ..aI(2, _omitFieldNames ? '' : 'mangaId')
+    ..aI(2, _omitFieldNames ? '' : 'mangaSourceId')
     ..aOS(3, _omitFieldNames ? '' : 'url')
     ..aOS(4, _omitFieldNames ? '' : 'title')
     ..aD(5, _omitFieldNames ? '' : 'number', fieldType: $pb.PbFieldType.OF)
@@ -202,6 +218,7 @@ class ChapterReply extends $pb.GeneratedMessage {
         subBuilder: ChapterOffset.create)
     ..aInt64(9, _omitFieldNames ? '' : 'createdAt')
     ..aInt64(10, _omitFieldNames ? '' : 'updatedAt')
+    ..aI(11, _omitFieldNames ? '' : 'canonicalChapterId')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -233,13 +250,13 @@ class ChapterReply extends $pb.GeneratedMessage {
   void clearId() => $_clearField(1);
 
   @$pb.TagNumber(2)
-  $core.int get mangaId => $_getIZ(1);
+  $core.int get mangaSourceId => $_getIZ(1);
   @$pb.TagNumber(2)
-  set mangaId($core.int value) => $_setSignedInt32(1, value);
+  set mangaSourceId($core.int value) => $_setSignedInt32(1, value);
   @$pb.TagNumber(2)
-  $core.bool hasMangaId() => $_has(1);
+  $core.bool hasMangaSourceId() => $_has(1);
   @$pb.TagNumber(2)
-  void clearMangaId() => $_clearField(2);
+  void clearMangaSourceId() => $_clearField(2);
 
   @$pb.TagNumber(3)
   $core.String get url => $_getSZ(2);
@@ -314,6 +331,17 @@ class ChapterReply extends $pb.GeneratedMessage {
   $core.bool hasUpdatedAt() => $_has(9);
   @$pb.TagNumber(10)
   void clearUpdatedAt() => $_clearField(10);
+
+  /// NULL only for a manually-unlinked chapter (see UnlinkChapter) - every other
+  /// chapter is always attached to some canonical_chapter, even a solo one.
+  @$pb.TagNumber(11)
+  $core.int get canonicalChapterId => $_getIZ(10);
+  @$pb.TagNumber(11)
+  set canonicalChapterId($core.int value) => $_setSignedInt32(10, value);
+  @$pb.TagNumber(11)
+  $core.bool hasCanonicalChapterId() => $_has(10);
+  @$pb.TagNumber(11)
+  void clearCanonicalChapterId() => $_clearField(11);
 }
 
 class ChaptersReply extends $pb.GeneratedMessage {
@@ -430,12 +458,12 @@ class ImagesReply extends $pb.GeneratedMessage {
 
 class PaginateChapterQuery extends $pb.GeneratedMessage {
   factory PaginateChapterQuery({
-    $core.int? id,
+    $core.int? mangaSourceId,
     $0.PaginateQuery? paginateQuery,
     $core.bool? reversed,
   }) {
     final result = create();
-    if (id != null) result.id = id;
+    if (mangaSourceId != null) result.mangaSourceId = mangaSourceId;
     if (paginateQuery != null) result.paginateQuery = paginateQuery;
     if (reversed != null) result.reversed = reversed;
     return result;
@@ -454,7 +482,7 @@ class PaginateChapterQuery extends $pb.GeneratedMessage {
       _omitMessageNames ? '' : 'PaginateChapterQuery',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'rumgap.v1'),
       createEmptyInstance: create)
-    ..aI(1, _omitFieldNames ? '' : 'id')
+    ..aI(1, _omitFieldNames ? '' : 'mangaSourceId')
     ..aOM<$0.PaginateQuery>(2, _omitFieldNames ? '' : 'paginateQuery',
         subBuilder: $0.PaginateQuery.create)
     ..aOB(3, _omitFieldNames ? '' : 'reversed')
@@ -480,13 +508,13 @@ class PaginateChapterQuery extends $pb.GeneratedMessage {
   static PaginateChapterQuery? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $core.int get id => $_getIZ(0);
+  $core.int get mangaSourceId => $_getIZ(0);
   @$pb.TagNumber(1)
-  set id($core.int value) => $_setSignedInt32(0, value);
+  set mangaSourceId($core.int value) => $_setSignedInt32(0, value);
   @$pb.TagNumber(1)
-  $core.bool hasId() => $_has(0);
+  $core.bool hasMangaSourceId() => $_has(0);
   @$pb.TagNumber(1)
-  void clearId() => $_clearField(1);
+  void clearMangaSourceId() => $_clearField(1);
 
   @$pb.TagNumber(2)
   $0.PaginateQuery get paginateQuery => $_getN(1);
@@ -507,6 +535,195 @@ class PaginateChapterQuery extends $pb.GeneratedMessage {
   $core.bool hasReversed() => $_has(2);
   @$pb.TagNumber(3)
   void clearReversed() => $_clearField(3);
+}
+
+class LinkChapterRequest extends $pb.GeneratedMessage {
+  factory LinkChapterRequest({
+    $core.int? chapterId,
+    $core.int? canonicalChapterId,
+  }) {
+    final result = create();
+    if (chapterId != null) result.chapterId = chapterId;
+    if (canonicalChapterId != null)
+      result.canonicalChapterId = canonicalChapterId;
+    return result;
+  }
+
+  LinkChapterRequest._();
+
+  factory LinkChapterRequest.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory LinkChapterRequest.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'LinkChapterRequest',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'rumgap.v1'),
+      createEmptyInstance: create)
+    ..aI(1, _omitFieldNames ? '' : 'chapterId')
+    ..aI(2, _omitFieldNames ? '' : 'canonicalChapterId')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  LinkChapterRequest clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  LinkChapterRequest copyWith(void Function(LinkChapterRequest) updates) =>
+      super.copyWith((message) => updates(message as LinkChapterRequest))
+          as LinkChapterRequest;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static LinkChapterRequest create() => LinkChapterRequest._();
+  @$core.override
+  LinkChapterRequest createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static LinkChapterRequest getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<LinkChapterRequest>(create);
+  static LinkChapterRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.int get chapterId => $_getIZ(0);
+  @$pb.TagNumber(1)
+  set chapterId($core.int value) => $_setSignedInt32(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasChapterId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearChapterId() => $_clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.int get canonicalChapterId => $_getIZ(1);
+  @$pb.TagNumber(2)
+  set canonicalChapterId($core.int value) => $_setSignedInt32(1, value);
+  @$pb.TagNumber(2)
+  $core.bool hasCanonicalChapterId() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearCanonicalChapterId() => $_clearField(2);
+}
+
+class UnlinkChapterRequest extends $pb.GeneratedMessage {
+  factory UnlinkChapterRequest({
+    $core.int? chapterId,
+  }) {
+    final result = create();
+    if (chapterId != null) result.chapterId = chapterId;
+    return result;
+  }
+
+  UnlinkChapterRequest._();
+
+  factory UnlinkChapterRequest.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory UnlinkChapterRequest.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'UnlinkChapterRequest',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'rumgap.v1'),
+      createEmptyInstance: create)
+    ..aI(1, _omitFieldNames ? '' : 'chapterId')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  UnlinkChapterRequest clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  UnlinkChapterRequest copyWith(void Function(UnlinkChapterRequest) updates) =>
+      super.copyWith((message) => updates(message as UnlinkChapterRequest))
+          as UnlinkChapterRequest;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static UnlinkChapterRequest create() => UnlinkChapterRequest._();
+  @$core.override
+  UnlinkChapterRequest createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static UnlinkChapterRequest getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<UnlinkChapterRequest>(create);
+  static UnlinkChapterRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.int get chapterId => $_getIZ(0);
+  @$pb.TagNumber(1)
+  set chapterId($core.int value) => $_setSignedInt32(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasChapterId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearChapterId() => $_clearField(1);
+}
+
+class FindEquivalentRequest extends $pb.GeneratedMessage {
+  factory FindEquivalentRequest({
+    $core.int? canonicalChapterId,
+    $core.int? mangaSourceId,
+  }) {
+    final result = create();
+    if (canonicalChapterId != null)
+      result.canonicalChapterId = canonicalChapterId;
+    if (mangaSourceId != null) result.mangaSourceId = mangaSourceId;
+    return result;
+  }
+
+  FindEquivalentRequest._();
+
+  factory FindEquivalentRequest.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory FindEquivalentRequest.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'FindEquivalentRequest',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'rumgap.v1'),
+      createEmptyInstance: create)
+    ..aI(1, _omitFieldNames ? '' : 'canonicalChapterId')
+    ..aI(2, _omitFieldNames ? '' : 'mangaSourceId')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  FindEquivalentRequest clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  FindEquivalentRequest copyWith(
+          void Function(FindEquivalentRequest) updates) =>
+      super.copyWith((message) => updates(message as FindEquivalentRequest))
+          as FindEquivalentRequest;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static FindEquivalentRequest create() => FindEquivalentRequest._();
+  @$core.override
+  FindEquivalentRequest createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static FindEquivalentRequest getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<FindEquivalentRequest>(create);
+  static FindEquivalentRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.int get canonicalChapterId => $_getIZ(0);
+  @$pb.TagNumber(1)
+  set canonicalChapterId($core.int value) => $_setSignedInt32(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasCanonicalChapterId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearCanonicalChapterId() => $_clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.int get mangaSourceId => $_getIZ(1);
+  @$pb.TagNumber(2)
+  set mangaSourceId($core.int value) => $_setSignedInt32(1, value);
+  @$pb.TagNumber(2)
+  $core.bool hasMangaSourceId() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearMangaSourceId() => $_clearField(2);
 }
 
 const $core.bool _omitFieldNames =

@@ -85,6 +85,7 @@ class SearchManga extends $pb.GeneratedMessage {
     $fixnum.Int64? posted,
     $core.String? cover,
     $core.bool? isReading,
+    $core.int? suggestedMangaId,
   }) {
     final result = create();
     if (mangaId != null) result.mangaId = mangaId;
@@ -93,6 +94,7 @@ class SearchManga extends $pb.GeneratedMessage {
     if (posted != null) result.posted = posted;
     if (cover != null) result.cover = cover;
     if (isReading != null) result.isReading = isReading;
+    if (suggestedMangaId != null) result.suggestedMangaId = suggestedMangaId;
     return result;
   }
 
@@ -115,6 +117,7 @@ class SearchManga extends $pb.GeneratedMessage {
     ..aInt64(4, _omitFieldNames ? '' : 'posted')
     ..aOS(5, _omitFieldNames ? '' : 'cover')
     ..aOB(6, _omitFieldNames ? '' : 'isReading')
+    ..aI(7, _omitFieldNames ? '' : 'suggestedMangaId')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -189,6 +192,17 @@ class SearchManga extends $pb.GeneratedMessage {
   $core.bool hasIsReading() => $_has(5);
   @$pb.TagNumber(6)
   void clearIsReading() => $_clearField(6);
+
+  /// Best-effort "is this the same manga you already have?" suggestion via the
+  /// existing pg_trgm fuzzy title match, when manga_id itself isn't an exact hit.
+  @$pb.TagNumber(7)
+  $core.int get suggestedMangaId => $_getIZ(6);
+  @$pb.TagNumber(7)
+  set suggestedMangaId($core.int value) => $_setSignedInt32(6, value);
+  @$pb.TagNumber(7)
+  $core.bool hasSuggestedMangaId() => $_has(6);
+  @$pb.TagNumber(7)
+  void clearSuggestedMangaId() => $_clearField(7);
 }
 
 class SearchReply extends $pb.GeneratedMessage {

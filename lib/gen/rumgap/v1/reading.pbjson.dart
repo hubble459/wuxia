@@ -34,13 +34,26 @@ const ReadingPatchRequest$json = {
   '2': [
     {'1': 'manga_id', '3': 1, '4': 1, '5': 5, '10': 'mangaId'},
     {'1': 'progress', '3': 2, '4': 1, '5': 5, '10': 'progress'},
+    {
+      '1': 'chapter_id',
+      '3': 3,
+      '4': 1,
+      '5': 5,
+      '9': 0,
+      '10': 'chapterId',
+      '17': true
+    },
+  ],
+  '8': [
+    {'1': '_chapter_id'},
   ],
 };
 
 /// Descriptor for `ReadingPatchRequest`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List readingPatchRequestDescriptor = $convert.base64Decode(
     'ChNSZWFkaW5nUGF0Y2hSZXF1ZXN0EhkKCG1hbmdhX2lkGAEgASgFUgdtYW5nYUlkEhoKCHByb2'
-    'dyZXNzGAIgASgFUghwcm9ncmVzcw==');
+    'dyZXNzGAIgASgFUghwcm9ncmVzcxIiCgpjaGFwdGVyX2lkGAMgASgFSABSCWNoYXB0ZXJJZIgB'
+    'AUINCgtfY2hhcHRlcl9pZA==');
 
 @$core.Deprecated('Use updateChapterOffsetRequestDescriptor instead')
 const UpdateChapterOffsetRequest$json = {
@@ -49,6 +62,18 @@ const UpdateChapterOffsetRequest$json = {
     {'1': 'chapter_id', '3': 1, '4': 1, '5': 5, '10': 'chapterId'},
     {'1': 'pixels', '3': 2, '4': 1, '5': 5, '10': 'pixels'},
     {'1': 'page', '3': 3, '4': 1, '5': 5, '10': 'page'},
+    {
+      '1': 'fraction',
+      '3': 4,
+      '4': 1,
+      '5': 2,
+      '9': 0,
+      '10': 'fraction',
+      '17': true
+    },
+  ],
+  '8': [
+    {'1': '_fraction'},
   ],
 };
 
@@ -56,4 +81,50 @@ const UpdateChapterOffsetRequest$json = {
 final $typed_data.Uint8List updateChapterOffsetRequestDescriptor =
     $convert.base64Decode(
         'ChpVcGRhdGVDaGFwdGVyT2Zmc2V0UmVxdWVzdBIdCgpjaGFwdGVyX2lkGAEgASgFUgljaGFwdG'
-        'VySWQSFgoGcGl4ZWxzGAIgASgFUgZwaXhlbHMSEgoEcGFnZRgDIAEoBVIEcGFnZQ==');
+        'VySWQSFgoGcGl4ZWxzGAIgASgFUgZwaXhlbHMSEgoEcGFnZRgDIAEoBVIEcGFnZRIfCghmcmFj'
+        'dGlvbhgEIAEoAkgAUghmcmFjdGlvbogBAUILCglfZnJhY3Rpb24=');
+
+@$core.Deprecated('Use getCrossSourceOffsetRequestDescriptor instead')
+const GetCrossSourceOffsetRequest$json = {
+  '1': 'GetCrossSourceOffsetRequest',
+  '2': [
+    {
+      '1': 'canonical_chapter_id',
+      '3': 1,
+      '4': 1,
+      '5': 5,
+      '10': 'canonicalChapterId'
+    },
+  ],
+};
+
+/// Descriptor for `GetCrossSourceOffsetRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List getCrossSourceOffsetRequestDescriptor =
+    $convert.base64Decode(
+        'ChtHZXRDcm9zc1NvdXJjZU9mZnNldFJlcXVlc3QSMAoUY2Fub25pY2FsX2NoYXB0ZXJfaWQYAS'
+        'ABKAVSEmNhbm9uaWNhbENoYXB0ZXJJZA==');
+
+@$core.Deprecated('Use crossSourceOffsetReplyDescriptor instead')
+const CrossSourceOffsetReply$json = {
+  '1': 'CrossSourceOffsetReply',
+  '2': [
+    {
+      '1': 'fraction',
+      '3': 1,
+      '4': 1,
+      '5': 2,
+      '9': 0,
+      '10': 'fraction',
+      '17': true
+    },
+  ],
+  '8': [
+    {'1': '_fraction'},
+  ],
+};
+
+/// Descriptor for `CrossSourceOffsetReply`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List crossSourceOffsetReplyDescriptor =
+    $convert.base64Decode(
+        'ChZDcm9zc1NvdXJjZU9mZnNldFJlcGx5Eh8KCGZyYWN0aW9uGAEgASgCSABSCGZyYWN0aW9uiA'
+        'EBQgsKCV9mcmFjdGlvbg==');

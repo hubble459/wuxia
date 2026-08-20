@@ -121,10 +121,205 @@ class MangasRequest extends $pb.GeneratedMessage {
   $pb.PbList<$core.String> get urls => $_getList(0);
 }
 
+class MangaSourceReply extends $pb.GeneratedMessage {
+  factory MangaSourceReply({
+    $core.int? id,
+    $core.String? url,
+    $core.String? hostname,
+    $core.String? language,
+    $core.bool? isPrimary,
+    $fixnum.Int64? createdAt,
+    $fixnum.Int64? updatedAt,
+  }) {
+    final result = create();
+    if (id != null) result.id = id;
+    if (url != null) result.url = url;
+    if (hostname != null) result.hostname = hostname;
+    if (language != null) result.language = language;
+    if (isPrimary != null) result.isPrimary = isPrimary;
+    if (createdAt != null) result.createdAt = createdAt;
+    if (updatedAt != null) result.updatedAt = updatedAt;
+    return result;
+  }
+
+  MangaSourceReply._();
+
+  factory MangaSourceReply.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory MangaSourceReply.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'MangaSourceReply',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'rumgap.v1'),
+      createEmptyInstance: create)
+    ..aI(1, _omitFieldNames ? '' : 'id')
+    ..aOS(2, _omitFieldNames ? '' : 'url')
+    ..aOS(3, _omitFieldNames ? '' : 'hostname')
+    ..aOS(4, _omitFieldNames ? '' : 'language')
+    ..aOB(5, _omitFieldNames ? '' : 'isPrimary')
+    ..aInt64(6, _omitFieldNames ? '' : 'createdAt')
+    ..aInt64(7, _omitFieldNames ? '' : 'updatedAt')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  MangaSourceReply clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  MangaSourceReply copyWith(void Function(MangaSourceReply) updates) =>
+      super.copyWith((message) => updates(message as MangaSourceReply))
+          as MangaSourceReply;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static MangaSourceReply create() => MangaSourceReply._();
+  @$core.override
+  MangaSourceReply createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static MangaSourceReply getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<MangaSourceReply>(create);
+  static MangaSourceReply? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.int get id => $_getIZ(0);
+  @$pb.TagNumber(1)
+  set id($core.int value) => $_setSignedInt32(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearId() => $_clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.String get url => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set url($core.String value) => $_setString(1, value);
+  @$pb.TagNumber(2)
+  $core.bool hasUrl() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearUrl() => $_clearField(2);
+
+  @$pb.TagNumber(3)
+  $core.String get hostname => $_getSZ(2);
+  @$pb.TagNumber(3)
+  set hostname($core.String value) => $_setString(2, value);
+  @$pb.TagNumber(3)
+  $core.bool hasHostname() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearHostname() => $_clearField(3);
+
+  @$pb.TagNumber(4)
+  $core.String get language => $_getSZ(3);
+  @$pb.TagNumber(4)
+  set language($core.String value) => $_setString(3, value);
+  @$pb.TagNumber(4)
+  $core.bool hasLanguage() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearLanguage() => $_clearField(4);
+
+  @$pb.TagNumber(5)
+  $core.bool get isPrimary => $_getBF(4);
+  @$pb.TagNumber(5)
+  set isPrimary($core.bool value) => $_setBool(4, value);
+  @$pb.TagNumber(5)
+  $core.bool hasIsPrimary() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearIsPrimary() => $_clearField(5);
+
+  @$pb.TagNumber(6)
+  $fixnum.Int64 get createdAt => $_getI64(5);
+  @$pb.TagNumber(6)
+  set createdAt($fixnum.Int64 value) => $_setInt64(5, value);
+  @$pb.TagNumber(6)
+  $core.bool hasCreatedAt() => $_has(5);
+  @$pb.TagNumber(6)
+  void clearCreatedAt() => $_clearField(6);
+
+  @$pb.TagNumber(7)
+  $fixnum.Int64 get updatedAt => $_getI64(6);
+  @$pb.TagNumber(7)
+  set updatedAt($fixnum.Int64 value) => $_setInt64(6, value);
+  @$pb.TagNumber(7)
+  $core.bool hasUpdatedAt() => $_has(6);
+  @$pb.TagNumber(7)
+  void clearUpdatedAt() => $_clearField(7);
+}
+
+/// Progress ledger for an in-flight or completed `BackfillImages` walk.
+/// `images_total` is the count of `chapter_image` rows that exist so far for
+/// the source (rows are created lazily per-chapter as the walk progresses, so
+/// this grows during a backfill rather than being known up front).
+class BackfillStatusReply extends $pb.GeneratedMessage {
+  factory BackfillStatusReply({
+    $core.int? imagesDownloaded,
+    $core.int? imagesTotal,
+  }) {
+    final result = create();
+    if (imagesDownloaded != null) result.imagesDownloaded = imagesDownloaded;
+    if (imagesTotal != null) result.imagesTotal = imagesTotal;
+    return result;
+  }
+
+  BackfillStatusReply._();
+
+  factory BackfillStatusReply.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory BackfillStatusReply.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'BackfillStatusReply',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'rumgap.v1'),
+      createEmptyInstance: create)
+    ..aI(1, _omitFieldNames ? '' : 'imagesDownloaded')
+    ..aI(2, _omitFieldNames ? '' : 'imagesTotal')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  BackfillStatusReply clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  BackfillStatusReply copyWith(void Function(BackfillStatusReply) updates) =>
+      super.copyWith((message) => updates(message as BackfillStatusReply))
+          as BackfillStatusReply;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static BackfillStatusReply create() => BackfillStatusReply._();
+  @$core.override
+  BackfillStatusReply createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static BackfillStatusReply getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<BackfillStatusReply>(create);
+  static BackfillStatusReply? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.int get imagesDownloaded => $_getIZ(0);
+  @$pb.TagNumber(1)
+  set imagesDownloaded($core.int value) => $_setSignedInt32(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasImagesDownloaded() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearImagesDownloaded() => $_clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.int get imagesTotal => $_getIZ(1);
+  @$pb.TagNumber(2)
+  set imagesTotal($core.int value) => $_setSignedInt32(1, value);
+  @$pb.TagNumber(2)
+  $core.bool hasImagesTotal() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearImagesTotal() => $_clearField(2);
+}
+
 class MangaReply extends $pb.GeneratedMessage {
   factory MangaReply({
     $core.int? id,
-    $core.String? url,
     $core.String? title,
     $core.String? description,
     $core.String? cover,
@@ -139,10 +334,10 @@ class MangaReply extends $pb.GeneratedMessage {
     $fixnum.Int64? updatedAt,
     $core.int? readingProgress,
     $core.String? status,
+    $core.Iterable<MangaSourceReply>? sources,
   }) {
     final result = create();
     if (id != null) result.id = id;
-    if (url != null) result.url = url;
     if (title != null) result.title = title;
     if (description != null) result.description = description;
     if (cover != null) result.cover = cover;
@@ -157,6 +352,7 @@ class MangaReply extends $pb.GeneratedMessage {
     if (updatedAt != null) result.updatedAt = updatedAt;
     if (readingProgress != null) result.readingProgress = readingProgress;
     if (status != null) result.status = status;
+    if (sources != null) result.sources.addAll(sources);
     return result;
   }
 
@@ -174,7 +370,6 @@ class MangaReply extends $pb.GeneratedMessage {
       package: const $pb.PackageName(_omitMessageNames ? '' : 'rumgap.v1'),
       createEmptyInstance: create)
     ..aI(1, _omitFieldNames ? '' : 'id')
-    ..aOS(2, _omitFieldNames ? '' : 'url')
     ..aOS(3, _omitFieldNames ? '' : 'title')
     ..aOS(4, _omitFieldNames ? '' : 'description')
     ..aOS(5, _omitFieldNames ? '' : 'cover')
@@ -189,6 +384,8 @@ class MangaReply extends $pb.GeneratedMessage {
     ..aInt64(14, _omitFieldNames ? '' : 'updatedAt')
     ..aI(15, _omitFieldNames ? '' : 'readingProgress')
     ..aOS(16, _omitFieldNames ? '' : 'status')
+    ..pPM<MangaSourceReply>(17, _omitFieldNames ? '' : 'sources',
+        subBuilder: MangaSourceReply.create)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -218,122 +415,117 @@ class MangaReply extends $pb.GeneratedMessage {
   @$pb.TagNumber(1)
   void clearId() => $_clearField(1);
 
-  @$pb.TagNumber(2)
-  $core.String get url => $_getSZ(1);
-  @$pb.TagNumber(2)
-  set url($core.String value) => $_setString(1, value);
-  @$pb.TagNumber(2)
-  $core.bool hasUrl() => $_has(1);
-  @$pb.TagNumber(2)
-  void clearUrl() => $_clearField(2);
-
   @$pb.TagNumber(3)
-  $core.String get title => $_getSZ(2);
+  $core.String get title => $_getSZ(1);
   @$pb.TagNumber(3)
-  set title($core.String value) => $_setString(2, value);
+  set title($core.String value) => $_setString(1, value);
   @$pb.TagNumber(3)
-  $core.bool hasTitle() => $_has(2);
+  $core.bool hasTitle() => $_has(1);
   @$pb.TagNumber(3)
   void clearTitle() => $_clearField(3);
 
   @$pb.TagNumber(4)
-  $core.String get description => $_getSZ(3);
+  $core.String get description => $_getSZ(2);
   @$pb.TagNumber(4)
-  set description($core.String value) => $_setString(3, value);
+  set description($core.String value) => $_setString(2, value);
   @$pb.TagNumber(4)
-  $core.bool hasDescription() => $_has(3);
+  $core.bool hasDescription() => $_has(2);
   @$pb.TagNumber(4)
   void clearDescription() => $_clearField(4);
 
   @$pb.TagNumber(5)
-  $core.String get cover => $_getSZ(4);
+  $core.String get cover => $_getSZ(3);
   @$pb.TagNumber(5)
-  set cover($core.String value) => $_setString(4, value);
+  set cover($core.String value) => $_setString(3, value);
   @$pb.TagNumber(5)
-  $core.bool hasCover() => $_has(4);
+  $core.bool hasCover() => $_has(3);
   @$pb.TagNumber(5)
   void clearCover() => $_clearField(5);
 
   @$pb.TagNumber(6)
-  $core.bool get isOngoing => $_getBF(5);
+  $core.bool get isOngoing => $_getBF(4);
   @$pb.TagNumber(6)
-  set isOngoing($core.bool value) => $_setBool(5, value);
+  set isOngoing($core.bool value) => $_setBool(4, value);
   @$pb.TagNumber(6)
-  $core.bool hasIsOngoing() => $_has(5);
+  $core.bool hasIsOngoing() => $_has(4);
   @$pb.TagNumber(6)
   void clearIsOngoing() => $_clearField(6);
 
   @$pb.TagNumber(7)
-  $pb.PbList<$core.String> get genres => $_getList(6);
+  $pb.PbList<$core.String> get genres => $_getList(5);
 
   @$pb.TagNumber(8)
-  $pb.PbList<$core.String> get authors => $_getList(7);
+  $pb.PbList<$core.String> get authors => $_getList(6);
 
   @$pb.TagNumber(9)
-  $pb.PbList<$core.String> get altTitles => $_getList(8);
+  $pb.PbList<$core.String> get altTitles => $_getList(7);
 
+  /// Computed from the primary source only.
   @$pb.TagNumber(10)
-  $fixnum.Int64 get countChapters => $_getI64(9);
+  $fixnum.Int64 get countChapters => $_getI64(8);
   @$pb.TagNumber(10)
-  set countChapters($fixnum.Int64 value) => $_setInt64(9, value);
+  set countChapters($fixnum.Int64 value) => $_setInt64(8, value);
   @$pb.TagNumber(10)
-  $core.bool hasCountChapters() => $_has(9);
+  $core.bool hasCountChapters() => $_has(8);
   @$pb.TagNumber(10)
   void clearCountChapters() => $_clearField(10);
 
   @$pb.TagNumber(11)
-  $fixnum.Int64 get next => $_getI64(10);
+  $fixnum.Int64 get next => $_getI64(9);
   @$pb.TagNumber(11)
-  set next($fixnum.Int64 value) => $_setInt64(10, value);
+  set next($fixnum.Int64 value) => $_setInt64(9, value);
   @$pb.TagNumber(11)
-  $core.bool hasNext() => $_has(10);
+  $core.bool hasNext() => $_has(9);
   @$pb.TagNumber(11)
   void clearNext() => $_clearField(11);
 
   @$pb.TagNumber(12)
-  $fixnum.Int64 get last => $_getI64(11);
+  $fixnum.Int64 get last => $_getI64(10);
   @$pb.TagNumber(12)
-  set last($fixnum.Int64 value) => $_setInt64(11, value);
+  set last($fixnum.Int64 value) => $_setInt64(10, value);
   @$pb.TagNumber(12)
-  $core.bool hasLast() => $_has(11);
+  $core.bool hasLast() => $_has(10);
   @$pb.TagNumber(12)
   void clearLast() => $_clearField(12);
 
   @$pb.TagNumber(13)
-  $fixnum.Int64 get createdAt => $_getI64(12);
+  $fixnum.Int64 get createdAt => $_getI64(11);
   @$pb.TagNumber(13)
-  set createdAt($fixnum.Int64 value) => $_setInt64(12, value);
+  set createdAt($fixnum.Int64 value) => $_setInt64(11, value);
   @$pb.TagNumber(13)
-  $core.bool hasCreatedAt() => $_has(12);
+  $core.bool hasCreatedAt() => $_has(11);
   @$pb.TagNumber(13)
   void clearCreatedAt() => $_clearField(13);
 
   @$pb.TagNumber(14)
-  $fixnum.Int64 get updatedAt => $_getI64(13);
+  $fixnum.Int64 get updatedAt => $_getI64(12);
   @$pb.TagNumber(14)
-  set updatedAt($fixnum.Int64 value) => $_setInt64(13, value);
+  set updatedAt($fixnum.Int64 value) => $_setInt64(12, value);
   @$pb.TagNumber(14)
-  $core.bool hasUpdatedAt() => $_has(13);
+  $core.bool hasUpdatedAt() => $_has(12);
   @$pb.TagNumber(14)
   void clearUpdatedAt() => $_clearField(14);
 
   @$pb.TagNumber(15)
-  $core.int get readingProgress => $_getIZ(14);
+  $core.int get readingProgress => $_getIZ(13);
   @$pb.TagNumber(15)
-  set readingProgress($core.int value) => $_setSignedInt32(14, value);
+  set readingProgress($core.int value) => $_setSignedInt32(13, value);
   @$pb.TagNumber(15)
-  $core.bool hasReadingProgress() => $_has(14);
+  $core.bool hasReadingProgress() => $_has(13);
   @$pb.TagNumber(15)
   void clearReadingProgress() => $_clearField(15);
 
   @$pb.TagNumber(16)
-  $core.String get status => $_getSZ(15);
+  $core.String get status => $_getSZ(14);
   @$pb.TagNumber(16)
-  set status($core.String value) => $_setString(15, value);
+  set status($core.String value) => $_setString(14, value);
   @$pb.TagNumber(16)
-  $core.bool hasStatus() => $_has(15);
+  $core.bool hasStatus() => $_has(14);
   @$pb.TagNumber(16)
   void clearStatus() => $_clearField(16);
+
+  @$pb.TagNumber(17)
+  $pb.PbList<MangaSourceReply> get sources => $_getList(15);
 }
 
 class MangasReply extends $pb.GeneratedMessage {
@@ -398,6 +590,181 @@ class MangasReply extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(2)
   $pb.PbList<MangaReply> get items => $_getList(1);
+}
+
+class AddSourceRequest extends $pb.GeneratedMessage {
+  factory AddSourceRequest({
+    $core.int? mangaId,
+    $core.String? url,
+  }) {
+    final result = create();
+    if (mangaId != null) result.mangaId = mangaId;
+    if (url != null) result.url = url;
+    return result;
+  }
+
+  AddSourceRequest._();
+
+  factory AddSourceRequest.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory AddSourceRequest.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'AddSourceRequest',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'rumgap.v1'),
+      createEmptyInstance: create)
+    ..aI(1, _omitFieldNames ? '' : 'mangaId')
+    ..aOS(2, _omitFieldNames ? '' : 'url')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  AddSourceRequest clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  AddSourceRequest copyWith(void Function(AddSourceRequest) updates) =>
+      super.copyWith((message) => updates(message as AddSourceRequest))
+          as AddSourceRequest;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static AddSourceRequest create() => AddSourceRequest._();
+  @$core.override
+  AddSourceRequest createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static AddSourceRequest getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<AddSourceRequest>(create);
+  static AddSourceRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.int get mangaId => $_getIZ(0);
+  @$pb.TagNumber(1)
+  set mangaId($core.int value) => $_setSignedInt32(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasMangaId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearMangaId() => $_clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.String get url => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set url($core.String value) => $_setString(1, value);
+  @$pb.TagNumber(2)
+  $core.bool hasUrl() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearUrl() => $_clearField(2);
+}
+
+class RemoveSourceRequest extends $pb.GeneratedMessage {
+  factory RemoveSourceRequest({
+    $core.int? mangaSourceId,
+  }) {
+    final result = create();
+    if (mangaSourceId != null) result.mangaSourceId = mangaSourceId;
+    return result;
+  }
+
+  RemoveSourceRequest._();
+
+  factory RemoveSourceRequest.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory RemoveSourceRequest.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'RemoveSourceRequest',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'rumgap.v1'),
+      createEmptyInstance: create)
+    ..aI(1, _omitFieldNames ? '' : 'mangaSourceId')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  RemoveSourceRequest clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  RemoveSourceRequest copyWith(void Function(RemoveSourceRequest) updates) =>
+      super.copyWith((message) => updates(message as RemoveSourceRequest))
+          as RemoveSourceRequest;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static RemoveSourceRequest create() => RemoveSourceRequest._();
+  @$core.override
+  RemoveSourceRequest createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static RemoveSourceRequest getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<RemoveSourceRequest>(create);
+  static RemoveSourceRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.int get mangaSourceId => $_getIZ(0);
+  @$pb.TagNumber(1)
+  set mangaSourceId($core.int value) => $_setSignedInt32(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasMangaSourceId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearMangaSourceId() => $_clearField(1);
+}
+
+class SetPrimarySourceRequest extends $pb.GeneratedMessage {
+  factory SetPrimarySourceRequest({
+    $core.int? mangaSourceId,
+  }) {
+    final result = create();
+    if (mangaSourceId != null) result.mangaSourceId = mangaSourceId;
+    return result;
+  }
+
+  SetPrimarySourceRequest._();
+
+  factory SetPrimarySourceRequest.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory SetPrimarySourceRequest.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'SetPrimarySourceRequest',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'rumgap.v1'),
+      createEmptyInstance: create)
+    ..aI(1, _omitFieldNames ? '' : 'mangaSourceId')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  SetPrimarySourceRequest clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  SetPrimarySourceRequest copyWith(
+          void Function(SetPrimarySourceRequest) updates) =>
+      super.copyWith((message) => updates(message as SetPrimarySourceRequest))
+          as SetPrimarySourceRequest;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static SetPrimarySourceRequest create() => SetPrimarySourceRequest._();
+  @$core.override
+  SetPrimarySourceRequest createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static SetPrimarySourceRequest getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<SetPrimarySourceRequest>(create);
+  static SetPrimarySourceRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.int get mangaSourceId => $_getIZ(0);
+  @$pb.TagNumber(1)
+  set mangaSourceId($core.int value) => $_setSignedInt32(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasMangaSourceId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearMangaSourceId() => $_clearField(1);
 }
 
 const $core.bool _omitFieldNames =
