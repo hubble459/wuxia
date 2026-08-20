@@ -13,8 +13,9 @@ import 'package:wuxia/screen/manga/manga_chapter_screen.dart';
 
 class MangaChaptersScreen extends StatefulWidget {
   final MangaReply manga;
+  final MangaSourceReply source;
 
-  const MangaChaptersScreen({super.key, required this.manga});
+  const MangaChaptersScreen({super.key, required this.manga, required this.source});
 
   @override
   State<MangaChaptersScreen> createState() => _MangaChaptersScreenState();
@@ -58,6 +59,7 @@ class _MangaChaptersScreenState extends State<MangaChaptersScreen> {
                   await api.reading.update(ReadingPatchRequest(
                     mangaId: widget.manga.id,
                     progress: widget.manga.readingProgress,
+                    chapterId: chapter.id,
                   ));
                   if (!context.mounted) return;
                   await Navigator.of(context).push(
@@ -65,6 +67,7 @@ class _MangaChaptersScreenState extends State<MangaChaptersScreen> {
                       builder: (context) => MangaChapterScreen(
                         manga: widget.manga,
                         chapter: chapter,
+                        source: widget.source,
                       ),
                     ),
                   );
@@ -114,7 +117,7 @@ class _MangaChaptersScreenState extends State<MangaChaptersScreen> {
 
   Future<List<ChapterReply>> _fetchPage(int page) async {
     _result = await api.chapter.index(PaginateChapterQuery(
-        id: widget.manga.id,
+        mangaSourceId: widget.source.id,
         paginateQuery: PaginateQuery(
           page: Int64(page),
           perPage: Int64(_pageSize),

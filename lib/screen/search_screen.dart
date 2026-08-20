@@ -11,9 +11,13 @@ import 'package:wuxia/util/filter_map.dart';
 Function eq = const ListEquality().equals;
 
 class SearchScreen extends StatefulWidget {
-  const SearchScreen({super.key, this.query});
+  const SearchScreen({super.key, this.query, this.existingMangaId});
 
   final String? query;
+
+  /// When set, search results are added as a new source on this manga
+  /// instead of creating a disconnected duplicate. See `SearchMangaItem`.
+  final int? existingMangaId;
 
   @override
   State<SearchScreen> createState() => _SearchScreenState();
@@ -120,7 +124,11 @@ class _SearchScreenState extends State<SearchScreen> with AutomaticKeepAliveClie
                 return Expanded(
                   child: ListView.builder(
                     itemCount: results.length,
-                    itemBuilder: (context, index) => SearchMangaItem(searchManga: results[index], index: index),
+                    itemBuilder: (context, index) => SearchMangaItem(
+                      searchManga: results[index],
+                      index: index,
+                      existingMangaId: widget.existingMangaId,
+                    ),
                   ),
                 );
               } else {

@@ -8,7 +8,11 @@ import 'package:wuxia/gen/rumgap/v1/reading.pb.dart';
 import 'package:wuxia/util/validator_builder.dart';
 
 class AddMangaDialog extends StatefulWidget {
-  const AddMangaDialog({super.key});
+  /// When set, the submitted URL is added as a new source on this manga
+  /// instead of creating a disconnected duplicate.
+  final int? existingMangaId;
+
+  const AddMangaDialog({super.key, this.existingMangaId});
 
   @override
   State<AddMangaDialog> createState() => _AddMangaDialogState();
@@ -81,6 +85,19 @@ class _AddMangaDialogState extends State<AddMangaDialog> {
           onPressed: () async {
             _error = null;
             try {
+              final existingMangaId = widget.existingMangaId;
+              if (existingMangaId != null) {
+                final manga = await api.manga.addSource(AddSourceRequest(
+                  mangaId: existingMangaId,
+                  url: _urlController.text,
+                ));
+
+                if (context.mounted) {
+                  Navigator.of(context).pop(manga);
+                }
+                return;
+              }
+
               final manga = await api.manga.findOrCreate(MangaRequest(
                 url: _urlController.text,
               ));

@@ -66,6 +66,8 @@ manga:
   last: Laatst
   no-chapters: Kan hoofdstukken niet laden...
   search-alternatives: Zoek alternatieven
+  add-source: Bron toevoegen
+  switch_source: Bron wisselen
   download: Downloaden
   download-complete: Download voltooid
   similar: Vergelijkbaar

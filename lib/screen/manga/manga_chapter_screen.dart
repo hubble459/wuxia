@@ -5,6 +5,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:grpc/grpc.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:wuxia/api.dart';
@@ -14,13 +16,26 @@ import 'package:wuxia/gen/rumgap/v1/reading.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/v1.pb.dart';
 import 'package:wuxia/main.dart';
 import 'package:wuxia/partial/action/open_url_action.dart';
+import 'package:wuxia/partial/dialog/source_picker_dialog.dart';
 import 'package:wuxia/util/tools.dart';
 
 class MangaChapterScreen extends StatefulWidget {
   final MangaReply manga;
   final ChapterReply chapter;
+  final MangaSourceReply source;
 
-  const MangaChapterScreen({super.key, required this.manga, required this.chapter});
+  /// 0.0-1.0 target scroll position, used instead of `chapter.offset`'s raw
+  /// page/pixels when landing here from a cross-source switch (B5) -- the new
+  /// chapter almost certainly has a different page count.
+  final double? initialFraction;
+
+  const MangaChapterScreen({
+    super.key,
+    required this.manga,
+    required this.chapter,
+    required this.source,
+    this.initialFraction,
+  });
 
   @override
   State<MangaChapterScreen> createState() => _MangaChapterScreenState();
@@ -117,7 +132,7 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
             );
             // Cancel any other update
             debounced?.cancel();
-            // Send API an update if not scrolled for half a second
+            // Send API an update if not scrolled for 5 seconds
             debounced = Timer(Duration(milliseconds: 5000), () {
               updateOffset(
                 chapterId: lastChapter.id,
@@ -141,7 +156,66 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
       chapterId: chapterId,
       page: page,
       pixels: pixels,
+      fraction: pixels / 100.0,
     ));
+  }
+
+  Future<void> _switchSource() async {
+    final selected = await showSourcePickerDialog(context, widget.manga.sources.toList());
+    if (selected == null || !mounted) return;
+
+    try {
+      final newChapter = await api.chapter.findEquivalent(FindEquivalentRequest(
+        canonicalChapterId: _chapter.canonicalChapterId,
+        mangaSourceId: selected.id,
+      ));
+
+      double fraction = 0.0;
+      try {
+        final crossOffset =
+            await api.reading.getCrossSourceOffset(GetCrossSourceOffsetRequest(canonicalChapterId: _chapter.canonicalChapterId));
+        fraction = crossOffset.fraction;
+      } catch (_) {
+        // No recorded cross-source position (e.g. first time reading this chapter
+        // on any source) -- just land at the top instead of failing the switch.
+      }
+
+      widget.manga.readingProgress = newChapter.index.toInt();
+      await api.reading.update(ReadingPatchRequest(
+        mangaId: widget.manga.id,
+        progress: widget.manga.readingProgress,
+        chapterId: newChapter.id,
+      ));
+
+      // Mutate the shared source object in place so the change is reflected
+      // back up in whichever screen (MangaScreen, MangaChaptersScreen, ...)
+      // is holding the same reference once we pop back to it.
+      widget.source.clear();
+      widget.source.mergeFromMessage(selected);
+
+      if (!mounted) return;
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (_) => MangaChapterScreen(
+            manga: widget.manga,
+            chapter: newChapter,
+            source: widget.source,
+            initialFraction: fraction,
+          ),
+        ),
+      );
+    } catch (e) {
+      if (e is GrpcError && e.code == StatusCode.notFound) {
+        Fluttertoast.showToast(msg: 'This source doesn\'t have this chapter').ignore();
+        // Switch the active source anyway; next navigation from this source
+        // will fall back to wherever its own reading progress implies.
+        widget.source.clear();
+        widget.source.mergeFromMessage(selected);
+        setState(() {});
+      } else {
+        Fluttertoast.showToast(msg: e.toString()).ignore();
+      }
+    }
   }
 
   @override
@@ -165,8 +239,7 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
             children: [
               Tooltip(
                 message: _chapter.title.isEmpty ? 'Chapter ${_chapter.number.toString().replaceFirst('.0', '')}' : _chapter.title,
-                child: Text(
-                    _chapter.title.isEmpty ? 'Chapter ${_chapter.number.toString().replaceFirst('.0', '')}' : _chapter.title),
+                child: Text(_chapter.title.isEmpty ? 'Chapter ${_chapter.number.toString().replaceFirst('.0', '')}' : _chapter.title),
               ),
               ...(_chapter.hasPosted()
                   ? [
@@ -189,6 +262,11 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
                   child: Icon(Icons.wifi_off),
                 ),
               ),
+            IconButton(
+              onPressed: widget.manga.sources.length > 1 ? _switchSource : null,
+              tooltip: FlutterI18n.translate(context, 'manga.switch_source'),
+              icon: const Icon(Icons.swap_horiz),
+            ),
             IconButton(
               onPressed: () async {
                 itemScrollController.jumpTo(index: 10000);
@@ -233,8 +311,7 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Visibility(
-                                visible: widget.manga.readingProgress > 1,
-                                child: Text((widget.manga.readingProgress - 1).toString())),
+                                visible: widget.manga.readingProgress > 1, child: Text((widget.manga.readingProgress - 1).toString())),
                             const Icon(Icons.navigate_before)
                           ],
                         ),
@@ -272,20 +349,33 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
 
   Widget _buildImageList(List<String> links) {
     (() async {
-      if (_chapter.hasOffset() && (_chapter.offset.page != 0 || _chapter.offset.pixels != 0)) {
-        int timeout = 0;
-        while (!itemScrollController.isAttached && timeout++ != 5) {
-          await Future.delayed(const Duration(milliseconds: 100));
-        }
-        if (itemScrollController.isAttached) {
-          itemScrollController.scrollTo(
-            index: _chapter.offset.page,
-            alignment: _chapter.offset.pixels / 100,
-            duration: Duration(seconds: 3),
-            opacityAnimationWeights: [20, 20, 60],
-            curve: Curves.easeOut,
-          );
-        }
+      final initialFraction = widget.initialFraction;
+      final hasSavedOffset = _chapter.hasOffset() && (_chapter.offset.page != 0 || _chapter.offset.pixels != 0);
+      if (links.isEmpty || (initialFraction == null && !hasSavedOffset)) return;
+
+      int timeout = 0;
+      while (!itemScrollController.isAttached && timeout++ != 5) {
+        await Future.delayed(const Duration(milliseconds: 100));
+      }
+      if (!itemScrollController.isAttached) return;
+
+      if (initialFraction != null) {
+        final index = (initialFraction * links.length).round().clamp(0, links.length - 1);
+        itemScrollController.scrollTo(
+          index: index,
+          alignment: 0,
+          duration: Duration(seconds: 3),
+          opacityAnimationWeights: [20, 20, 60],
+          curve: Curves.easeOut,
+        );
+      } else {
+        itemScrollController.scrollTo(
+          index: _chapter.offset.page,
+          alignment: _chapter.offset.pixels / 100,
+          duration: Duration(seconds: 3),
+          opacityAnimationWeights: [20, 20, 60],
+          curve: Curves.easeOut,
+        );
       }
     })();
 
@@ -313,9 +403,6 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
                 filterQuality: FilterQuality.high,
                 fit: BoxFit.fitWidth,
                 width: double.infinity,
-                httpHeaders: {
-                  'Referer': getReferer(_chapter, links[index]),
-                },
                 progressIndicatorBuilder: (context, url, downloadProgress) => SizedBox.fromSize(
                   size: const Size.fromHeight(500),
                   child: Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
@@ -341,16 +428,17 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
   }
 
   Future<void> reloadChapter() async {
+    final chapter = await api.chapter.get(
+      ChapterRequest(
+        mangaSourceId: widget.source.id,
+        index: widget.manga.readingProgress,
+      ),
+    );
     await api.reading.update(
       ReadingPatchRequest(
         mangaId: widget.manga.id,
         progress: widget.manga.readingProgress,
-      ),
-    );
-    final chapter = await api.chapter.get(
-      ChapterRequest(
-        mangaId: widget.manga.id,
-        index: widget.manga.readingProgress,
+        chapterId: chapter.id,
       ),
     );
     setState(() => _chapter = chapter);
