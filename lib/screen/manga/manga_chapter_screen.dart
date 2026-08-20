@@ -255,7 +255,8 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
             children: [
               Tooltip(
                 message: _chapter.title.isEmpty ? 'Chapter ${_chapter.number.toString().replaceFirst('.0', '')}' : _chapter.title,
-                child: Text(_chapter.title.isEmpty ? 'Chapter ${_chapter.number.toString().replaceFirst('.0', '')}' : _chapter.title),
+                child: Text(
+                    _chapter.title.isEmpty ? 'Chapter ${_chapter.number.toString().replaceFirst('.0', '')}' : _chapter.title),
               ),
               Text(
                 _chapter.hasPosted()
@@ -308,6 +309,7 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
                 value: widget.manga.progressPercentage,
                 minHeight: 5,
                 color: Theme.of(context).colorScheme.tertiary,
+                backgroundColor: Colors.white24,
               ),
               Row(
                 mainAxisSize: MainAxisSize.max,
@@ -325,7 +327,8 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Visibility(
-                                visible: widget.manga.readingProgress > 1, child: Text((widget.manga.readingProgress - 1).toString())),
+                                visible: widget.manga.readingProgress > 1,
+                                child: Text((widget.manga.readingProgress - 1).toString())),
                             const Icon(Icons.navigate_before)
                           ],
                         ),
