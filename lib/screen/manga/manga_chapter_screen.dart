@@ -41,11 +41,19 @@ class MangaChapterScreen extends StatefulWidget {
   State<MangaChapterScreen> createState() => _MangaChapterScreenState();
 }
 
+class _ReaderPage {
+  final String url;
+  final int? width;
+  final int? height;
+
+  const _ReaderPage(this.url, {this.width, this.height});
+}
+
 class _MangaChapterScreenState extends State<MangaChapterScreen> {
   final ItemScrollController itemScrollController = ItemScrollController();
   final ItemPositionsListener itemPositionsListener = ItemPositionsListener.create();
   late ChapterReply _chapter;
-  List<String>? _images;
+  List<_ReaderPage>? _images;
   bool _isOffline = false;
 
   @override
@@ -82,7 +90,9 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
     final local = await _localImagePaths();
     if (local != null) {
       setState(() {
-        _images = local;
+        // No stored dimensions for offline-downloaded pages -- reader falls
+        // back to the fixed-height placeholder for these, same as before.
+        _images = local.map((path) => _ReaderPage(path)).toList();
         _isOffline = true;
       });
       return;
@@ -90,7 +100,13 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
 
     final reply = await api.chapter.images(Id(id: _chapter.id));
     setState(() {
-      _images = reply.items;
+      _images = reply.items
+          .map((page) => _ReaderPage(
+                page.url,
+                width: page.hasWidth() ? page.width : null,
+                height: page.hasHeight() ? page.height : null,
+              ))
+          .toList();
       _isOffline = false;
     });
   }
@@ -241,15 +257,13 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
                 message: _chapter.title.isEmpty ? 'Chapter ${_chapter.number.toString().replaceFirst('.0', '')}' : _chapter.title,
                 child: Text(_chapter.title.isEmpty ? 'Chapter ${_chapter.number.toString().replaceFirst('.0', '')}' : _chapter.title),
               ),
-              ...(_chapter.hasPosted()
-                  ? [
-                      Text(
-                        Jiffy.parseFromMillisecondsSinceEpoch(_chapter.posted.toInt()).fromNow(),
-                        style: Theme.of(context).textTheme.titleSmall?.copyWith(color: Colors.white54),
-                        overflow: TextOverflow.ellipsis,
-                      )
-                    ]
-                  : []),
+              Text(
+                _chapter.hasPosted()
+                    ? '${widget.source.hostname} · ${Jiffy.parseFromMillisecondsSinceEpoch(_chapter.posted.toInt()).fromNow()}'
+                    : widget.source.hostname,
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(color: Colors.white54),
+                overflow: TextOverflow.ellipsis,
+              ),
             ],
           ),
           centerTitle: false,
@@ -347,7 +361,7 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
     );
   }
 
-  Widget _buildImageList(List<String> links) {
+  Widget _buildImageList(List<_ReaderPage> links) {
     (() async {
       final initialFraction = widget.initialFraction;
       final hasSavedOffset = _chapter.hasOffset() && (_chapter.offset.page != 0 || _chapter.offset.pixels != 0);
@@ -388,33 +402,45 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
         padding: EdgeInsets.zero,
         itemCount: links.length,
         physics: const BouncingScrollPhysics(),
-        itemBuilder: (context, index) => _isOffline
-            ? Image.file(
-                File(links[index]),
-                alignment: Alignment.topCenter,
-                filterQuality: FilterQuality.high,
-                fit: BoxFit.fitWidth,
-                width: double.infinity,
-              )
-            : CachedNetworkImage(
-                imageUrl: links[index],
-                alignment: Alignment.topCenter,
-                fadeOutDuration: const Duration(microseconds: 1),
-                filterQuality: FilterQuality.high,
-                fit: BoxFit.fitWidth,
-                width: double.infinity,
-                progressIndicatorBuilder: (context, url, downloadProgress) => SizedBox.fromSize(
-                  size: const Size.fromHeight(500),
-                  child: Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
-                ),
-                placeholder: null,
-                errorWidget: (context, url, error) => SizedBox.fromSize(
-                  size: const Size.fromHeight(500),
-                  child: const Center(child: Icon(Icons.error)),
-                ),
-              ),
+        itemBuilder: (context, index) => _buildPage(links[index]),
       ),
     );
+  }
+
+  Widget _buildPage(_ReaderPage page) {
+    final Widget image = _isOffline
+        ? Image.file(
+            File(page.url),
+            alignment: Alignment.topCenter,
+            filterQuality: FilterQuality.high,
+            fit: BoxFit.fitWidth,
+            width: double.infinity,
+          )
+        : CachedNetworkImage(
+            imageUrl: page.url,
+            alignment: Alignment.topCenter,
+            fadeOutDuration: const Duration(microseconds: 1),
+            filterQuality: FilterQuality.high,
+            fit: BoxFit.fitWidth,
+            width: double.infinity,
+            progressIndicatorBuilder: (context, url, downloadProgress) => SizedBox.fromSize(
+              size: const Size.fromHeight(500),
+              child: Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
+            ),
+            placeholder: null,
+            errorWidget: (context, url, error) => SizedBox.fromSize(
+              size: const Size.fromHeight(500),
+              child: const Center(child: Icon(Icons.error)),
+            ),
+          );
+
+    // Known dimensions let the list item reserve the correct height up
+    // front (matching what BoxFit.fitWidth will render at), so swapping the
+    // loading placeholder for the real image never relayouts the list.
+    if (page.width == null || page.height == null || page.width! <= 0 || page.height! <= 0) {
+      return image;
+    }
+    return AspectRatio(aspectRatio: page.width! / page.height!, child: image);
   }
 
   Future<void> previous() async {

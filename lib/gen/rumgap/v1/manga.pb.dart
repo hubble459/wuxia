@@ -335,6 +335,7 @@ class MangaReply extends $pb.GeneratedMessage {
     $core.int? readingProgress,
     $core.String? status,
     $core.Iterable<MangaSourceReply>? sources,
+    $core.double? progressOrdinal,
   }) {
     final result = create();
     if (id != null) result.id = id;
@@ -353,6 +354,7 @@ class MangaReply extends $pb.GeneratedMessage {
     if (readingProgress != null) result.readingProgress = readingProgress;
     if (status != null) result.status = status;
     if (sources != null) result.sources.addAll(sources);
+    if (progressOrdinal != null) result.progressOrdinal = progressOrdinal;
     return result;
   }
 
@@ -386,6 +388,7 @@ class MangaReply extends $pb.GeneratedMessage {
     ..aOS(16, _omitFieldNames ? '' : 'status')
     ..pPM<MangaSourceReply>(17, _omitFieldNames ? '' : 'sources',
         subBuilder: MangaSourceReply.create)
+    ..aD(18, _omitFieldNames ? '' : 'progressOrdinal')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -526,6 +529,20 @@ class MangaReply extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(17)
   $pb.PbList<MangaSourceReply> get sources => $_getList(15);
+
+  /// The canonical ordinal of the last-read chapter (whichever source it was read on) -
+  /// comparable across sources, unlike reading_progress (a rank among canonical slots,
+  /// which can exceed any single source's own chapter count once bonus/unlinked chapters
+  /// exist). Compare against ChapterReply.ordinal to tell whether a specific chapter has
+  /// been read, regardless of which source it's from.
+  @$pb.TagNumber(18)
+  $core.double get progressOrdinal => $_getN(16);
+  @$pb.TagNumber(18)
+  set progressOrdinal($core.double value) => $_setDouble(16, value);
+  @$pb.TagNumber(18)
+  $core.bool hasProgressOrdinal() => $_has(16);
+  @$pb.TagNumber(18)
+  void clearProgressOrdinal() => $_clearField(18);
 }
 
 class MangasReply extends $pb.GeneratedMessage {

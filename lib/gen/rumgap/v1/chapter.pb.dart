@@ -177,6 +177,7 @@ class ChapterReply extends $pb.GeneratedMessage {
     $fixnum.Int64? createdAt,
     $fixnum.Int64? updatedAt,
     $core.int? canonicalChapterId,
+    $core.double? ordinal,
   }) {
     final result = create();
     if (id != null) result.id = id;
@@ -191,6 +192,7 @@ class ChapterReply extends $pb.GeneratedMessage {
     if (updatedAt != null) result.updatedAt = updatedAt;
     if (canonicalChapterId != null)
       result.canonicalChapterId = canonicalChapterId;
+    if (ordinal != null) result.ordinal = ordinal;
     return result;
   }
 
@@ -219,6 +221,7 @@ class ChapterReply extends $pb.GeneratedMessage {
     ..aInt64(9, _omitFieldNames ? '' : 'createdAt')
     ..aInt64(10, _omitFieldNames ? '' : 'updatedAt')
     ..aI(11, _omitFieldNames ? '' : 'canonicalChapterId')
+    ..aD(12, _omitFieldNames ? '' : 'ordinal')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -342,6 +345,19 @@ class ChapterReply extends $pb.GeneratedMessage {
   $core.bool hasCanonicalChapterId() => $_has(10);
   @$pb.TagNumber(11)
   void clearCanonicalChapterId() => $_clearField(11);
+
+  /// This chapter's canonical position - comparable across sources, unlike `index`
+  /// (a purely per-source position). Compare against MangaReply.progress_ordinal to
+  /// correctly tell whether this specific chapter has been read. NULL alongside
+  /// canonical_chapter_id being NULL (manually unlinked).
+  @$pb.TagNumber(12)
+  $core.double get ordinal => $_getN(11);
+  @$pb.TagNumber(12)
+  set ordinal($core.double value) => $_setDouble(11, value);
+  @$pb.TagNumber(12)
+  $core.bool hasOrdinal() => $_has(11);
+  @$pb.TagNumber(12)
+  void clearOrdinal() => $_clearField(12);
 }
 
 class ChaptersReply extends $pb.GeneratedMessage {
@@ -408,9 +424,87 @@ class ChaptersReply extends $pb.GeneratedMessage {
   $pb.PbList<ChapterReply> get items => $_getList(1);
 }
 
+class ImagePage extends $pb.GeneratedMessage {
+  factory ImagePage({
+    $core.String? url,
+    $core.int? width,
+    $core.int? height,
+  }) {
+    final result = create();
+    if (url != null) result.url = url;
+    if (width != null) result.width = width;
+    if (height != null) result.height = height;
+    return result;
+  }
+
+  ImagePage._();
+
+  factory ImagePage.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory ImagePage.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'ImagePage',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'rumgap.v1'),
+      createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'url')
+    ..aI(2, _omitFieldNames ? '' : 'width')
+    ..aI(3, _omitFieldNames ? '' : 'height')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  ImagePage clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  ImagePage copyWith(void Function(ImagePage) updates) =>
+      super.copyWith((message) => updates(message as ImagePage)) as ImagePage;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static ImagePage create() => ImagePage._();
+  @$core.override
+  ImagePage createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static ImagePage getDefault() =>
+      _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<ImagePage>(create);
+  static ImagePage? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get url => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set url($core.String value) => $_setString(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasUrl() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearUrl() => $_clearField(1);
+
+  /// NULL if the download failed, or the format isn't PNG/JPEG.
+  @$pb.TagNumber(2)
+  $core.int get width => $_getIZ(1);
+  @$pb.TagNumber(2)
+  set width($core.int value) => $_setSignedInt32(1, value);
+  @$pb.TagNumber(2)
+  $core.bool hasWidth() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearWidth() => $_clearField(2);
+
+  @$pb.TagNumber(3)
+  $core.int get height => $_getIZ(2);
+  @$pb.TagNumber(3)
+  set height($core.int value) => $_setSignedInt32(2, value);
+  @$pb.TagNumber(3)
+  $core.bool hasHeight() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearHeight() => $_clearField(3);
+}
+
 class ImagesReply extends $pb.GeneratedMessage {
   factory ImagesReply({
-    $core.Iterable<$core.String>? items,
+    $core.Iterable<ImagePage>? items,
   }) {
     final result = create();
     if (items != null) result.items.addAll(items);
@@ -430,7 +524,8 @@ class ImagesReply extends $pb.GeneratedMessage {
       _omitMessageNames ? '' : 'ImagesReply',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'rumgap.v1'),
       createEmptyInstance: create)
-    ..pPS(1, _omitFieldNames ? '' : 'items')
+    ..pPM<ImagePage>(1, _omitFieldNames ? '' : 'items',
+        subBuilder: ImagePage.create)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -453,7 +548,7 @@ class ImagesReply extends $pb.GeneratedMessage {
   static ImagesReply? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $pb.PbList<$core.String> get items => $_getList(0);
+  $pb.PbList<ImagePage> get items => $_getList(0);
 }
 
 class PaginateChapterQuery extends $pb.GeneratedMessage {

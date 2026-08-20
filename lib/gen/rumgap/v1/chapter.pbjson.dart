@@ -87,11 +87,21 @@ const ChapterReply$json = {
       '10': 'canonicalChapterId',
       '17': true
     },
+    {
+      '1': 'ordinal',
+      '3': 12,
+      '4': 1,
+      '5': 1,
+      '9': 3,
+      '10': 'ordinal',
+      '17': true
+    },
   ],
   '8': [
     {'1': '_posted'},
     {'1': '_offset'},
     {'1': '_canonical_chapter_id'},
+    {'1': '_ordinal'},
   ],
 };
 
@@ -103,8 +113,9 @@ final $typed_data.Uint8List chapterReplyDescriptor = $convert.base64Decode(
     'gHIAEoA0gAUgZwb3N0ZWSIAQESNQoGb2Zmc2V0GAggASgLMhgucnVtZ2FwLnYxLkNoYXB0ZXJP'
     'ZmZzZXRIAVIGb2Zmc2V0iAEBEh0KCmNyZWF0ZWRfYXQYCSABKANSCWNyZWF0ZWRBdBIdCgp1cG'
     'RhdGVkX2F0GAogASgDUgl1cGRhdGVkQXQSNQoUY2Fub25pY2FsX2NoYXB0ZXJfaWQYCyABKAVI'
-    'AlISY2Fub25pY2FsQ2hhcHRlcklkiAEBQgkKB19wb3N0ZWRCCQoHX29mZnNldEIXChVfY2Fub2'
-    '5pY2FsX2NoYXB0ZXJfaWQ=');
+    'AlISY2Fub25pY2FsQ2hhcHRlcklkiAEBEh0KB29yZGluYWwYDCABKAFIA1IHb3JkaW5hbIgBAU'
+    'IJCgdfcG9zdGVkQgkKB19vZmZzZXRCFwoVX2Nhbm9uaWNhbF9jaGFwdGVyX2lkQgoKCF9vcmRp'
+    'bmFs');
 
 @$core.Deprecated('Use chaptersReplyDescriptor instead')
 const ChaptersReply$json = {
@@ -135,17 +146,44 @@ final $typed_data.Uint8List chaptersReplyDescriptor = $convert.base64Decode(
     'VSZXBseVIKcGFnaW5hdGlvbhItCgVpdGVtcxgCIAMoCzIXLnJ1bWdhcC52MS5DaGFwdGVyUmVw'
     'bHlSBWl0ZW1z');
 
+@$core.Deprecated('Use imagePageDescriptor instead')
+const ImagePage$json = {
+  '1': 'ImagePage',
+  '2': [
+    {'1': 'url', '3': 1, '4': 1, '5': 9, '10': 'url'},
+    {'1': 'width', '3': 2, '4': 1, '5': 5, '9': 0, '10': 'width', '17': true},
+    {'1': 'height', '3': 3, '4': 1, '5': 5, '9': 1, '10': 'height', '17': true},
+  ],
+  '8': [
+    {'1': '_width'},
+    {'1': '_height'},
+  ],
+};
+
+/// Descriptor for `ImagePage`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List imagePageDescriptor = $convert.base64Decode(
+    'CglJbWFnZVBhZ2USEAoDdXJsGAEgASgJUgN1cmwSGQoFd2lkdGgYAiABKAVIAFIFd2lkdGiIAQ'
+    'ESGwoGaGVpZ2h0GAMgASgFSAFSBmhlaWdodIgBAUIICgZfd2lkdGhCCQoHX2hlaWdodA==');
+
 @$core.Deprecated('Use imagesReplyDescriptor instead')
 const ImagesReply$json = {
   '1': 'ImagesReply',
   '2': [
-    {'1': 'items', '3': 1, '4': 3, '5': 9, '10': 'items'},
+    {
+      '1': 'items',
+      '3': 1,
+      '4': 3,
+      '5': 11,
+      '6': '.rumgap.v1.ImagePage',
+      '10': 'items'
+    },
   ],
 };
 
 /// Descriptor for `ImagesReply`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List imagesReplyDescriptor =
-    $convert.base64Decode('CgtJbWFnZXNSZXBseRIUCgVpdGVtcxgBIAMoCVIFaXRlbXM=');
+final $typed_data.Uint8List imagesReplyDescriptor = $convert.base64Decode(
+    'CgtJbWFnZXNSZXBseRIqCgVpdGVtcxgBIAMoCzIULnJ1bWdhcC52MS5JbWFnZVBhZ2VSBWl0ZW'
+    '1z');
 
 @$core.Deprecated('Use paginateChapterQueryDescriptor instead')
 const PaginateChapterQuery$json = {

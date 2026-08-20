@@ -25,7 +25,9 @@ class _MangaChaptersScreenState extends State<MangaChaptersScreen> {
   late final _pagingController = PagingController<int, ChapterReply>(
     getNextPageKey: (state) {
       if (state.status != PagingStatus.loadingFirstPage && state.pages!.last.length < _pageSize) return null;
-      return state.nextIntPageKey;
+      // Not state.nextIntPageKey - that getter is (lastKey ?? 0) + 1, i.e. 1-indexed
+      // pagination, which skips rumgap's actual first page (0-indexed) on every fetch.
+      return (state.keys?.lastOrNull ?? -1) + 1;
     },
     fetchPage: (pageKey) => _fetchPage(pageKey),
   );
@@ -36,7 +38,17 @@ class _MangaChaptersScreenState extends State<MangaChaptersScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: I18nText('manga.chapters', translationParams: {'amount': widget.manga.countChapters.toString()}),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            I18nText('manga.chapters', translationParams: {'amount': widget.manga.countChapters.toString()}),
+            Text(
+              widget.source.hostname,
+              style: Theme.of(context).textTheme.titleSmall?.copyWith(color: Colors.white54),
+            ),
+          ],
+        ),
       ),
       body: RefreshIndicator(
         onRefresh: () async {

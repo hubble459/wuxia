@@ -227,7 +227,7 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
         final images = await api.chapter.images(Id(id: chapter.id));
         for (var i = 0; i < images.items.length; i++) {
           if (cancelled) break;
-          final url = images.items[i];
+          final url = images.items[i].url;
           final response = await http.get(Uri.parse(url));
           final ext = url.split('.').last.split('?').first;
           await File('${chapterDir.path}/$i.$ext').writeAsBytes(response.bodyBytes);
@@ -547,6 +547,18 @@ class _ChapterSelectorState extends State<_ChapterSelector> {
     );
   }
 
+  /// `chapter.index` is a purely per-source position and `readingProgress` is a canonical
+  /// rank - the two only coincidentally lined up before multi-source existed. Ordinal is the
+  /// one scale genuinely comparable across sources; fall back to the old index comparison
+  /// only when ordinal data isn't available (e.g. a manually-unlinked chapter, or no
+  /// progress recorded yet).
+  bool _isChapterRead(ChapterReply chapter) {
+    if (widget.manga.hasProgressOrdinal() && chapter.hasOrdinal()) {
+      return widget.manga.progressOrdinal >= chapter.ordinal;
+    }
+    return widget.manga.readingProgress >= chapter.index.toInt();
+  }
+
   Future<ChaptersReply> getChapters() async {
     // TODO 26/11/2023: Keep this in memory (inside manga object?)
     return api.chapter.index(PaginateChapterQuery(
@@ -599,7 +611,7 @@ class _ChapterSelectorState extends State<_ChapterSelector> {
                                 );
                               }
                               return MaterialButton(
-                                color: widget.manga.readingProgress >= chapter.index.toInt() ? Colors.grey.withValues(alpha: 0.2) : null,
+                                color: _isChapterRead(chapter) ? Colors.grey.withValues(alpha: 0.2) : null,
                                 materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                                 minWidth: 0,
                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
