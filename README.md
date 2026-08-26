@@ -40,8 +40,8 @@ sudo pacman -S protobuf
 sudo dnf install protobuf-compiler
 # macOS
 brew install protobuf
-Verify with protoc --version (3.15+ recommended for proto3 optional support).
 ```
+Verify with `protoc --version` (3.15+ recommended for proto3 `optional` support).
 
 2. Install the Dart protoc plugin and make sure it's on your PATH:
 ```bash

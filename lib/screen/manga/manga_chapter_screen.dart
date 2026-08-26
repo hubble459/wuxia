@@ -138,10 +138,11 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
     }
 
     final reply = await api.chapter.images(ChapterImagesRequest(chapterId: _chapter.id));
+    final dataSaver = Store.getStoreInstance().getDataSaver() ?? false;
     setState(() {
       _images = reply.items
           .map((page) => _ReaderPage(
-                page.url,
+                dataSaver ? '${page.url}?ds=true' : page.url,
                 width: page.hasWidth() ? page.width : null,
                 height: page.hasHeight() ? page.height : null,
               ))
