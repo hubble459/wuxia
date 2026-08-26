@@ -22,6 +22,7 @@ import 'manga.pb.dart' as $4;
 import 'meta.pb.dart' as $8;
 import 'paginate.pb.dart' as $2;
 import 'reading.pb.dart' as $6;
+import 'scraper.pb.dart' as $9;
 import 'search.pb.dart' as $7;
 import 'user.pb.dart' as $0;
 import 'v1.pb.dart' as $1;
@@ -1284,4 +1285,59 @@ abstract class MetaServiceBase extends $grpc.Service {
   }
 
   $async.Future<$8.StatsReply> stats($grpc.ServiceCall call, $1.Empty request);
+}
+
+/// Admin-only: per-hostname scraper health, backing an admin status page for keeping track of
+/// which sites' scrapers are currently broken.
+@$pb.GrpcServiceName('rumgap.v1.Scraper')
+class ScraperClient extends $grpc.Client {
+  /// The hostname for this service.
+  static const $core.String defaultHost = '';
+
+  /// OAuth scopes needed for the client.
+  static const $core.List<$core.String> oauthScopes = [
+    '',
+  ];
+
+  ScraperClient(super.channel, {super.options, super.interceptors});
+
+  $grpc.ResponseFuture<$9.ScraperStatusReply> status(
+    $9.ScraperStatusRequest request, {
+    $grpc.CallOptions? options,
+  }) {
+    return $createUnaryCall(_$status, request, options: options);
+  }
+
+  // method descriptors
+
+  static final _$status =
+      $grpc.ClientMethod<$9.ScraperStatusRequest, $9.ScraperStatusReply>(
+          '/rumgap.v1.Scraper/Status',
+          ($9.ScraperStatusRequest value) => value.writeToBuffer(),
+          $9.ScraperStatusReply.fromBuffer);
+}
+
+@$pb.GrpcServiceName('rumgap.v1.Scraper')
+abstract class ScraperServiceBase extends $grpc.Service {
+  $core.String get $name => 'rumgap.v1.Scraper';
+
+  ScraperServiceBase() {
+    $addMethod(
+        $grpc.ServiceMethod<$9.ScraperStatusRequest, $9.ScraperStatusReply>(
+            'Status',
+            status_Pre,
+            false,
+            false,
+            ($core.List<$core.int> value) =>
+                $9.ScraperStatusRequest.fromBuffer(value),
+            ($9.ScraperStatusReply value) => value.writeToBuffer()));
+  }
+
+  $async.Future<$9.ScraperStatusReply> status_Pre($grpc.ServiceCall $call,
+      $async.Future<$9.ScraperStatusRequest> $request) async {
+    return status($call, await $request);
+  }
+
+  $async.Future<$9.ScraperStatusReply> status(
+      $grpc.ServiceCall call, $9.ScraperStatusRequest request);
 }

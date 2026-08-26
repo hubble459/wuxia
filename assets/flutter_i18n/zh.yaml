@@ -75,6 +75,16 @@ settings:
     minutes: 分
     seconds: 秒
     average_reading_time: 平均阅读时间
+  scraper_status:
+    title: 抓取器状态
+    empty: 尚未记录任何抓取尝试
+    last_attempt: '上次尝试 {time}'
+    never_attempted: 从未尝试过
+    last_success: '上次成功 {time}'
+    never_succeeded: 从未成功过
+    stats_24h: '{attempts} 次尝试 / {failures} 次失败（24小时）'
+    no_recent_errors: 没有最近的错误
+    close: 关闭
   account: 帐户
   download: 下载
   download_clear: 清除下载

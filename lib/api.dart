@@ -13,6 +13,13 @@ const _defaultPort = 5909;
 
 // extension PooPoo on GrpcError {}
 
+// Mirrors UserPermissions::ADMIN (0b00000100) on the server -- see interceptor/auth.rs.
+const _adminPermissionBit = 0x4;
+
+extension UserPermissionsX on UserFullReply {
+  bool get isAdmin => permissions & _adminPermissionBit != 0;
+}
+
 // gRCP
 class API {
   static String? _token;
@@ -27,6 +34,7 @@ class API {
   late final FriendClient friend = FriendClient(_channel, options: options);
   late final SearchClient search = SearchClient(_channel, options: options);
   late final MetaClient meta = MetaClient(_channel, options: options);
+  late final ScraperClient scraper = ScraperClient(_channel, options: options);
 
   static void authProvider(Map<String, String> metadata, uri) {
     if (_token != null) {
@@ -73,6 +81,8 @@ class API {
   static set token(String? token) {
     API._token = token;
   }
+
+  static bool get isLoggedIn => _token != null;
 
   static final options = CallOptions(
     providers: [API.authProvider],

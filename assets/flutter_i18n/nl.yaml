@@ -102,6 +102,16 @@ settings:
   logout: Uitloggen
   misc: Overig
   remove_account: Account verwijderen
+  scraper_status:
+    close: Sluiten
+    empty: Nog geen scrape-pogingen geregistreerd
+    last_attempt: 'Laatste poging {time}'
+    last_success: 'Laatste succes {time}'
+    never_attempted: Nog nooit geprobeerd
+    never_succeeded: Nog nooit gelukt
+    no_recent_errors: Geen recente fouten
+    stats_24h: '{attempts} pogingen / {failures} mislukt (24u)'
+    title: Scraper Status
   statistics:
     average_reading_time: Gemiddelde leestijd
     chapters_read: Hoofdstukken lezen

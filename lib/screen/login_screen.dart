@@ -7,6 +7,7 @@ import 'package:wuxia/constant.dart';
 import 'package:wuxia/gen/rumgap/v1/user.pb.dart';
 import 'package:wuxia/partial/dialog/change_host_dialog.dart';
 import 'package:wuxia/partial/dialog/update_dialog.dart';
+import 'package:wuxia/partial/responsive_content.dart';
 import 'package:wuxia/util/store.dart';
 import 'package:wuxia/util/validator_builder.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -132,148 +133,151 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ],
         ),
-        body: CustomScrollView(
-          slivers: [
-            SliverFillRemaining(
-              hasScrollBody: false,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Text(
-                      FlutterI18n.translate(context, isLogin ? 'login.welcome' : 'login.sign_up'),
-                      style: Theme.of(context).textTheme.headlineMedium,
-                    ),
-                    ...(error != null
-                        ? [
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                error!,
-                                style: const TextStyle(color: Colors.red),
-                              ),
-                            )
-                          ]
-                        : []),
-                    Form(
-                      key: fkLogin,
-                      child: Column(
-                        children: [
-                          TextFormField(
-                            validator: ValidatorBuilder.translate(context, 'login.username')
-                                .required()
-                                .minLength(3)
-                                .maxLength(20)
-                                .build(),
-                            controller: uController,
-                            textInputAction: TextInputAction.next,
-                            decoration: InputDecoration(
-                              label: I18nText('login.username'),
-                            ),
-                          ),
-                          ...(isLogin
-                              ? []
-                              : [
-                                  const SizedBox(
-                                    height: Constants.padding,
-                                  ),
-                                  TextFormField(
-                                    validator: ValidatorBuilder.translate(context, 'login.email').required().isEmail().build(),
-                                    controller: eController,
-                                    keyboardType: TextInputType.emailAddress,
-                                    textInputAction: TextInputAction.next,
-                                    decoration: InputDecoration(
-                                      label: I18nText('login.email'),
-                                    ),
-                                  ),
-                                ]),
-                          const SizedBox(height: Constants.padding),
-                          TextFormField(
-                            obscureText: true,
-                            validator: ValidatorBuilder.translate(context, 'login.password')
-                                .required()
-                                .minLength(3)
-                                .maxLength(255)
-                                .hasNumber()
-                                .hasSpecialCharacter()
-                                .hasUppercase()
-                                .hasLowercase()
-                                .build(),
-                            textInputAction: isLogin ? TextInputAction.done : TextInputAction.next,
-                            onFieldSubmitted: (password) => submit(),
-                            controller: pController,
-                            decoration: InputDecoration(
-                              label: I18nText('login.password'),
-                            ),
-                          ),
-                          ...(isLogin
-                              ? []
-                              : [
-                                  const SizedBox(height: Constants.padding),
-                                  TextFormField(
-                                    validator: ValidatorBuilder.translate(context, 'login.confirm_password')
-                                        .required()
-                                        .custom((value) => value == pController.text
-                                            ? null
-                                            : FlutterI18n.translate(context, 'validator.password_not_match'))
-                                        .build(),
-                                    obscureText: true,
-                                    textInputAction: TextInputAction.done,
-                                    onFieldSubmitted: (password) => submit(),
-                                    decoration: InputDecoration(
-                                      label: I18nText('login.confirm_password'),
-                                    ),
-                                  )
-                                ]),
-                          const SizedBox(height: 20),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  FlutterI18n.translate(context, isLogin ? 'login.title' : 'login.sign_up'),
-                                  style: Theme.of(context).textTheme.titleLarge,
-                                ),
-                                CircleAvatar(
-                                  backgroundColor: const Color(0xff4c505b),
-                                  child: IconButton(
-                                    color: Colors.white,
-                                    onPressed: submit,
-                                    icon: const Icon(
-                                      Icons.arrow_forward,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
+        body: ResponsiveContent(
+          maxWidth: 420,
+          child: CustomScrollView(
+            slivers: [
+              SliverFillRemaining(
+                hasScrollBody: false,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Text(
+                        FlutterI18n.translate(context, isLogin ? 'login.welcome' : 'login.sign_up'),
+                        style: Theme.of(context).textTheme.headlineMedium,
                       ),
-                    ),
-                    Center(
-                      child: TextButton(
-                        onPressed: () => setState(() {
-                          error = null;
-                          isLogin = !isLogin;
-                        }),
-                        style: const ButtonStyle(),
-                        child: Text(
-                          FlutterI18n.translate(context, isLogin ? 'login.sign_up' : 'login.title'),
-                          textAlign: TextAlign.left,
-                          style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                                decoration: TextDecoration.underline,
+                      ...(error != null
+                          ? [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  error!,
+                                  style: const TextStyle(color: Colors.red),
+                                ),
+                              )
+                            ]
+                          : []),
+                      Form(
+                        key: fkLogin,
+                        child: Column(
+                          children: [
+                            TextFormField(
+                              validator: ValidatorBuilder.translate(context, 'login.username')
+                                  .required()
+                                  .minLength(3)
+                                  .maxLength(20)
+                                  .build(),
+                              controller: uController,
+                              textInputAction: TextInputAction.next,
+                              decoration: InputDecoration(
+                                label: I18nText('login.username'),
                               ),
+                            ),
+                            ...(isLogin
+                                ? []
+                                : [
+                                    const SizedBox(
+                                      height: Constants.padding,
+                                    ),
+                                    TextFormField(
+                                      validator: ValidatorBuilder.translate(context, 'login.email').required().isEmail().build(),
+                                      controller: eController,
+                                      keyboardType: TextInputType.emailAddress,
+                                      textInputAction: TextInputAction.next,
+                                      decoration: InputDecoration(
+                                        label: I18nText('login.email'),
+                                      ),
+                                    ),
+                                  ]),
+                            const SizedBox(height: Constants.padding),
+                            TextFormField(
+                              obscureText: true,
+                              validator: ValidatorBuilder.translate(context, 'login.password')
+                                  .required()
+                                  .minLength(3)
+                                  .maxLength(255)
+                                  .hasNumber()
+                                  .hasSpecialCharacter()
+                                  .hasUppercase()
+                                  .hasLowercase()
+                                  .build(),
+                              textInputAction: isLogin ? TextInputAction.done : TextInputAction.next,
+                              onFieldSubmitted: (password) => submit(),
+                              controller: pController,
+                              decoration: InputDecoration(
+                                label: I18nText('login.password'),
+                              ),
+                            ),
+                            ...(isLogin
+                                ? []
+                                : [
+                                    const SizedBox(height: Constants.padding),
+                                    TextFormField(
+                                      validator: ValidatorBuilder.translate(context, 'login.confirm_password')
+                                          .required()
+                                          .custom((value) => value == pController.text
+                                              ? null
+                                              : FlutterI18n.translate(context, 'validator.password_not_match'))
+                                          .build(),
+                                      obscureText: true,
+                                      textInputAction: TextInputAction.done,
+                                      onFieldSubmitted: (password) => submit(),
+                                      decoration: InputDecoration(
+                                        label: I18nText('login.confirm_password'),
+                                      ),
+                                    )
+                                  ]),
+                            const SizedBox(height: 20),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    FlutterI18n.translate(context, isLogin ? 'login.title' : 'login.sign_up'),
+                                    style: Theme.of(context).textTheme.titleLarge,
+                                  ),
+                                  CircleAvatar(
+                                    backgroundColor: const Color(0xff4c505b),
+                                    child: IconButton(
+                                      color: Colors.white,
+                                      onPressed: submit,
+                                      icon: const Icon(
+                                        Icons.arrow_forward,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ),
-                  ],
+                      Center(
+                        child: TextButton(
+                          onPressed: () => setState(() {
+                            error = null;
+                            isLogin = !isLogin;
+                          }),
+                          style: const ButtonStyle(),
+                          child: Text(
+                            FlutterI18n.translate(context, isLogin ? 'login.sign_up' : 'login.title'),
+                            textAlign: TextAlign.left,
+                            style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                                  decoration: TextDecoration.underline,
+                                ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            )
-          ],
+              )
+            ],
+          ),
         ),
       ),
     );

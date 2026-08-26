@@ -24,10 +24,12 @@ import 'package:wuxia/partial/dialog/source_picker_dialog.dart';
 import 'package:wuxia/partial/list/manga_item.dart';
 import 'package:wuxia/partial/manga_details.dart';
 import 'package:wuxia/partial/dialog/add_manga_dialog.dart';
+import 'package:wuxia/partial/responsive_content.dart';
 import 'package:wuxia/partial/simple_future_builder.dart';
 import 'package:wuxia/screen/manga/manga_chapter_screen.dart';
 import 'package:wuxia/screen/manga/manga_chapters_screen.dart';
 import 'package:wuxia/screen/search_screen.dart';
+import 'package:wuxia/util/app_routes.dart';
 import 'package:wuxia/util/tools.dart';
 
 enum _MangaMenuAction { addSource, addSourceFromUrl, download }
@@ -119,7 +121,8 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
         switch (error.type) {
           case ScrapeErrorType.CloudflareIUAM:
             // Tell user to wait for a couple of minutes and try again
-            Fluttertoast.showToast(msg: 'CloudFlare is in "I\'m Under Attack Mode". Wait a couple of minutes before trying again').ignore();
+            Fluttertoast.showToast(msg: 'CloudFlare is in "I\'m Under Attack Mode". Wait a couple of minutes before trying again')
+                .ignore();
             break;
           case ScrapeErrorType.WebsiteNotSupported:
             // User should look for alternatives
@@ -261,8 +264,213 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
     super.initState();
   }
 
+  static const _wideBreakpoint = 900.0;
+
+  List<Widget> _appBarActions(BuildContext context) {
+    return [
+      OpenURLAction(url: _selectedSource.url),
+      IconButton(
+        onPressed: _manga.sources.length > 1 ? _switchSource : null,
+        tooltip: FlutterI18n.translate(context, 'manga.switch_source'),
+        icon: const Icon(Icons.swap_horiz),
+      ),
+      RotationTransition(
+        turns: CurvedAnimation(parent: _animationController, curve: Curves.linear),
+        child: IconButton(
+          onPressed: _animationController.isAnimating ? null : () => loadManga(force: true),
+          tooltip: FlutterI18n.translate(context, 'basic.refresh'),
+          icon: const Icon(Icons.refresh),
+        ),
+      ),
+      PopupMenuButton<_MangaMenuAction>(
+        onSelected: (action) async {
+          if (action == _MangaMenuAction.addSource) {
+            final titles = [_manga.title, ..._manga.altTitles];
+            final chosen = await showDialog<String>(
+              context: context,
+              builder: (ctx) => SimpleDialog(
+                title: Text(FlutterI18n.translate(ctx, 'manga.search-alternatives')),
+                children: titles
+                    .map((t) => SimpleDialogOption(
+                          onPressed: () => Navigator.of(ctx).pop(t),
+                          child: Text(t),
+                        ))
+                    .toList(),
+              ),
+            );
+            if (chosen != null && context.mounted) {
+              final result = await Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => Scaffold(
+                    appBar: AppBar(),
+                    body: SearchScreen(query: chosen, existingMangaId: _manga.id),
+                  ),
+                ),
+              );
+              if (result is MangaReply && mounted) {
+                setState(() {
+                  _manga = result;
+                  _syncSelectedSource();
+                });
+              }
+            }
+          } else if (action == _MangaMenuAction.addSourceFromUrl) {
+            final result = await showDialog<MangaReply>(
+              context: context,
+              builder: (_) => AddMangaDialog(existingMangaId: _manga.id),
+            );
+            if (result != null && mounted) {
+              setState(() {
+                _manga = result;
+                _syncSelectedSource();
+              });
+            }
+          } else if (action == _MangaMenuAction.download) {
+            _downloadManga();
+          }
+        },
+        itemBuilder: (_) => [
+          PopupMenuItem(
+            value: _MangaMenuAction.addSource,
+            child: Text(FlutterI18n.translate(context, 'manga.add-source')),
+          ),
+          PopupMenuItem(
+            value: _MangaMenuAction.addSourceFromUrl,
+            child: Text(FlutterI18n.translate(context, 'manga.add-source-url')),
+          ),
+          if (!kIsWeb)
+            PopupMenuItem(
+              value: _MangaMenuAction.download,
+              child: Text(FlutterI18n.translate(context, 'manga.download')),
+            ),
+        ],
+      ),
+    ];
+  }
+
+  Widget _sourceSwitcher(BuildContext context, {TextStyle? style}) {
+    return GestureDetector(
+      onTap: _switchSource,
+      child: Text(
+        _selectedSource.hostname,
+        style: style,
+        overflow: TextOverflow.ellipsis,
+      ),
+    );
+  }
+
+  Widget _coverImage({BoxFit fit = BoxFit.fitWidth}) {
+    return Visibility(
+      visible: _manga.hasCover(),
+      child: Hero(
+        tag: widget.heroTag ?? widget.type.getTag(_manga.id.toString()),
+        child: CachedNetworkImage(
+          imageUrl: _manga.cover,
+          fit: fit,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNarrowBody(BuildContext context) {
+    return CustomScrollView(
+      slivers: [
+        SliverAppBar.large(
+          pinned: true,
+          snap: false,
+          floating: true,
+          stretch: true,
+          expandedHeight: _imageHeight,
+          flexibleSpace: FlexibleSpaceBar(
+            title: PreferredSize(
+              preferredSize: Size.fromHeight(1),
+              child: _sourceSwitcher(context, style: Theme.of(context).textTheme.titleSmall?.copyWith(color: Colors.white54)),
+            ),
+            background: _coverImage(),
+          ),
+          actions: _appBarActions(context),
+        ),
+        SliverPadding(
+          padding: const EdgeInsets.all(8.0),
+          sliver: SliverList.list(
+            children: [
+              ResponsiveContent(
+                maxWidth: 800,
+                child: MangaDetails(
+                  manga: _manga,
+                ),
+              ),
+            ],
+          ),
+        )
+      ],
+    );
+  }
+
+  Widget _buildWideBody(BuildContext context) {
+    return Column(
+      children: [
+        AppBar(
+          title: _sourceSwitcher(context, style: Theme.of(context).textTheme.titleSmall?.copyWith(color: Colors.white54)),
+          actions: _appBarActions(context),
+        ),
+        Expanded(
+          child: SingleChildScrollView(
+            child: ResponsiveContent(
+              maxWidth: 1100,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      width: 280,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            _manga.title.replaceAll('\n', ' '),
+                            style: Theme.of(context).textTheme.headlineSmall,
+                          ),
+                          if (_manga.altTitles.isNotEmpty)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 4.0),
+                              child: Text(
+                                _manga.altTitles.join(' · '),
+                                style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey),
+                                maxLines: 3,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          const SizedBox(height: 12),
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: AspectRatio(
+                              aspectRatio: 2 / 3,
+                              child: _coverImage(fit: BoxFit.cover),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 24),
+                    Expanded(
+                      child: MangaDetails(manga: _manga, showTitle: false),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final isWide = MediaQuery.sizeOf(context).width >= _wideBreakpoint;
+
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
@@ -272,129 +480,7 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
       },
       child: SafeArea(
         child: Scaffold(
-          body: CustomScrollView(
-            slivers: [
-              SliverAppBar.large(
-                pinned: true,
-                snap: false,
-                floating: true,
-                stretch: true,
-                expandedHeight: _imageHeight,
-                flexibleSpace: FlexibleSpaceBar(
-                  title: PreferredSize(
-                    preferredSize: Size.fromHeight(1),
-                    child: GestureDetector(
-                      onTap: _switchSource,
-                      child: Text(
-                        _selectedSource.hostname,
-                        style: Theme.of(context).textTheme.titleSmall?.copyWith(color: Colors.white54),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ),
-                  background: Visibility(
-                    visible: _manga.hasCover(),
-                    child: Hero(
-                      tag: widget.heroTag ?? widget.type.getTag(_manga.id.toString()),
-                      child: CachedNetworkImage(
-                        imageUrl: _manga.cover,
-                        fit: BoxFit.fitWidth,
-                      ),
-                    ),
-                  ),
-                ),
-                actions: [
-                  OpenURLAction(url: _selectedSource.url),
-                  IconButton(
-                    onPressed: _manga.sources.length > 1 ? _switchSource : null,
-                    tooltip: FlutterI18n.translate(context, 'manga.switch_source'),
-                    icon: const Icon(Icons.swap_horiz),
-                  ),
-                  RotationTransition(
-                    turns: CurvedAnimation(parent: _animationController, curve: Curves.linear),
-                    child: IconButton(
-                      onPressed: _animationController.isAnimating ? null : () => loadManga(force: true),
-                      tooltip: FlutterI18n.translate(context, 'basic.refresh'),
-                      icon: const Icon(Icons.refresh),
-                    ),
-                  ),
-                  PopupMenuButton<_MangaMenuAction>(
-                    onSelected: (action) async {
-                      if (action == _MangaMenuAction.addSource) {
-                        final titles = [_manga.title, ..._manga.altTitles];
-                        final chosen = await showDialog<String>(
-                          context: context,
-                          builder: (ctx) => SimpleDialog(
-                            title: Text(FlutterI18n.translate(ctx, 'manga.search-alternatives')),
-                            children: titles
-                                .map((t) => SimpleDialogOption(
-                                      onPressed: () => Navigator.of(ctx).pop(t),
-                                      child: Text(t),
-                                    ))
-                                .toList(),
-                          ),
-                        );
-                        if (chosen != null && context.mounted) {
-                          final result = await Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => Scaffold(
-                                appBar: AppBar(),
-                                body: SearchScreen(query: chosen, existingMangaId: _manga.id),
-                              ),
-                            ),
-                          );
-                          if (result is MangaReply && mounted) {
-                            setState(() {
-                              _manga = result;
-                              _syncSelectedSource();
-                            });
-                          }
-                        }
-                      } else if (action == _MangaMenuAction.addSourceFromUrl) {
-                        final result = await showDialog<MangaReply>(
-                          context: context,
-                          builder: (_) => AddMangaDialog(existingMangaId: _manga.id),
-                        );
-                        if (result != null && mounted) {
-                          setState(() {
-                            _manga = result;
-                            _syncSelectedSource();
-                          });
-                        }
-                      } else if (action == _MangaMenuAction.download) {
-                        _downloadManga();
-                      }
-                    },
-                    itemBuilder: (_) => [
-                      PopupMenuItem(
-                        value: _MangaMenuAction.addSource,
-                        child: Text(FlutterI18n.translate(context, 'manga.add-source')),
-                      ),
-                      PopupMenuItem(
-                        value: _MangaMenuAction.addSourceFromUrl,
-                        child: Text(FlutterI18n.translate(context, 'manga.add-source-url')),
-                      ),
-                      if (!kIsWeb)
-                        PopupMenuItem(
-                          value: _MangaMenuAction.download,
-                          child: Text(FlutterI18n.translate(context, 'manga.download')),
-                        ),
-                    ],
-                  ),
-                ],
-              ),
-              SliverPadding(
-                padding: const EdgeInsets.all(8.0),
-                sliver: SliverList.list(
-                  children: [
-                    MangaDetails(
-                      manga: _manga,
-                    ),
-                  ],
-                ),
-              )
-            ],
-          ),
+          body: isWide ? _buildWideBody(context) : _buildNarrowBody(context),
           bottomNavigationBar: _animationController.isAnimating
               ? null
               : SizedBox(
@@ -501,6 +587,7 @@ class _ChapterSelectorState extends State<_ChapterSelector> {
     await Navigator.of(context)
         .push(
           MaterialPageRoute(
+            settings: RouteSettings(name: chapterRouteNameFor(mangaId: widget.manga.id, chapter: chapter)),
             builder: (context) => MangaChapterScreen(
               manga: widget.manga,
               chapter: chapter,
@@ -524,6 +611,7 @@ class _ChapterSelectorState extends State<_ChapterSelector> {
     await Navigator.of(context)
         .push(
           MaterialPageRoute(
+            settings: RouteSettings(name: chapterRouteNameFor(mangaId: widget.manga.id, chapter: chapter)),
             builder: (context) => MangaChapterScreen(
               manga: widget.manga,
               chapter: chapter,

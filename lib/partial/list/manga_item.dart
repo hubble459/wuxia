@@ -8,6 +8,7 @@ import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/v1.pb.dart';
 import 'package:wuxia/partial/dialog/confirm_dialog.dart';
 import 'package:wuxia/screen/manga/manga_screen.dart';
+import 'package:wuxia/util/app_routes.dart';
 
 typedef ReloadParent = Function(MangaReply manga, bool deleted);
 
@@ -125,6 +126,7 @@ class _MangaItemState extends State<MangaItem> {
       onTap: () async {
         final manga = await Navigator.of(context).push(
           MaterialPageRoute(
+            settings: RouteSettings(name: mangaRouteName(_manga.id)),
             builder: (context) => MangaScreen(
               manga: _manga,
               type: widget.type,

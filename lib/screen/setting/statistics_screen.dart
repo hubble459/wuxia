@@ -7,6 +7,7 @@ import 'package:wuxia/api.dart';
 import 'package:wuxia/gen/rumgap/v1/meta.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/v1.pb.dart';
 import 'package:wuxia/partial/simple_future_builder.dart';
+import 'package:wuxia/util/session.dart';
 
 class StatisticsScreen extends StatefulWidget {
   const StatisticsScreen({super.key});
@@ -16,8 +17,34 @@ class StatisticsScreen extends StatefulWidget {
 }
 
 class _StatisticsScreenState extends State<StatisticsScreen> {
+  // A web deep link can land here directly, skipping the screens that
+  // normally restore credentials before this screen reads API.loggedIn.
+  bool _ready = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _bootstrap();
+  }
+
+  Future<void> _bootstrap() async {
+    await restoreSession();
+    if (!mounted) return;
+
+    if (!API.isLoggedIn) {
+      Navigator.of(context).pushReplacementNamed('login');
+      return;
+    }
+
+    setState(() => _ready = true);
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (!_ready) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Column(

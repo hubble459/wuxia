@@ -75,6 +75,16 @@ settings:
     minutes: ' minutes'
     seconds: ' seconds'
     average_reading_time: Average Reading Time
+  scraper_status:
+    title: Scraper Status
+    empty: No scrape attempts recorded yet
+    last_attempt: 'Last attempt {time}'
+    never_attempted: Never attempted
+    last_success: 'Last success {time}'
+    never_succeeded: Never succeeded
+    stats_24h: '{attempts} attempts / {failures} failures (24h)'
+    no_recent_errors: No recent errors
+    close: Close
   misc: Miscellaneous
   download: Download
   download_directory: Download Directory

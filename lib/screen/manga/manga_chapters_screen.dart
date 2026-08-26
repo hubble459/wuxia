@@ -9,7 +9,9 @@ import 'package:wuxia/gen/rumgap/v1/paginate.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/reading.pb.dart';
 import 'package:wuxia/partial/list/chapter_item.dart';
 import 'package:wuxia/partial/list_error_indicator.dart';
+import 'package:wuxia/partial/responsive_content.dart';
 import 'package:wuxia/screen/manga/manga_chapter_screen.dart';
+import 'package:wuxia/util/app_routes.dart';
 
 class MangaChaptersScreen extends StatefulWidget {
   final MangaReply manga;
@@ -50,47 +52,50 @@ class _MangaChaptersScreenState extends State<MangaChaptersScreen> {
           ],
         ),
       ),
-      body: RefreshIndicator(
-        onRefresh: () async {
-          _pagingController.refresh();
-        },
-        child: PagingListener<int, ChapterReply>(
-          controller: _pagingController,
-          builder: (context, state, fetchNextPage) => PagedListView<int, ChapterReply>(
-            state: state,
-            fetchNextPage: fetchNextPage,
-            builderDelegate: PagedChildBuilderDelegate<ChapterReply>(
-              firstPageErrorIndicatorBuilder: (context) => ListErrorIndicator(pagingController: _pagingController),
-              noItemsFoundIndicatorBuilder: (context) => Center(
-                child: I18nText('empty'),
-              ),
-              itemBuilder: (context, chapter, index) => ChapterItem(
-                manga: widget.manga,
-                refreshParent: (progress) async {
-                  widget.manga.readingProgress = progress;
-                  await api.reading.update(ReadingPatchRequest(
-                    mangaId: widget.manga.id,
-                    progress: widget.manga.readingProgress,
-                    chapterId: chapter.id,
-                  ));
-                  if (!context.mounted) return;
-                  await Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => MangaChapterScreen(
-                        manga: widget.manga,
-                        chapter: chapter,
-                        source: widget.source,
+      body: ResponsiveContent(
+        child: RefreshIndicator(
+          onRefresh: () async {
+            _pagingController.refresh();
+          },
+          child: PagingListener<int, ChapterReply>(
+            controller: _pagingController,
+            builder: (context, state, fetchNextPage) => PagedListView<int, ChapterReply>(
+              state: state,
+              fetchNextPage: fetchNextPage,
+              builderDelegate: PagedChildBuilderDelegate<ChapterReply>(
+                firstPageErrorIndicatorBuilder: (context) => ListErrorIndicator(pagingController: _pagingController),
+                noItemsFoundIndicatorBuilder: (context) => Center(
+                  child: I18nText('empty'),
+                ),
+                itemBuilder: (context, chapter, index) => ChapterItem(
+                  manga: widget.manga,
+                  refreshParent: (progress) async {
+                    widget.manga.readingProgress = progress;
+                    await api.reading.update(ReadingPatchRequest(
+                      mangaId: widget.manga.id,
+                      progress: widget.manga.readingProgress,
+                      chapterId: chapter.id,
+                    ));
+                    if (!context.mounted) return;
+                    await Navigator.of(context).push(
+                      MaterialPageRoute(
+                        settings: RouteSettings(name: chapterRouteNameFor(mangaId: widget.manga.id, chapter: chapter)),
+                        builder: (context) => MangaChapterScreen(
+                          manga: widget.manga,
+                          chapter: chapter,
+                          source: widget.source,
+                        ),
                       ),
-                    ),
-                  );
-                  setState(() {});
-                },
-                chapters: () {
-                  _result.items.clear();
-                  _result.items.addAll(_pagingController.items!);
-                  return _result;
-                }(),
-                index: index,
+                    );
+                    setState(() {});
+                  },
+                  chapters: () {
+                    _result.items.clear();
+                    _result.items.addAll(_pagingController.items!);
+                    return _result;
+                  }(),
+                  index: index,
+                ),
               ),
             ),
           ),

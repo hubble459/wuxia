@@ -6,6 +6,7 @@ import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/search.pb.dart';
 import 'package:wuxia/partial/list/manga_item.dart';
 import 'package:wuxia/screen/manga/manga_screen.dart';
+import 'package:wuxia/util/app_routes.dart';
 
 class SearchMangaItem extends StatefulWidget {
   final SearchManga searchManga;
@@ -54,7 +55,8 @@ class _SearchMangaItemState extends State<SearchMangaItem> {
               ),
             )
           : null,
-      trailing: searchManga.hasPosted() ? Text(Jiffy.parseFromMillisecondsSinceEpoch(searchManga.posted.toInt()).fromNow()) : null,
+      trailing:
+          searchManga.hasPosted() ? Text(Jiffy.parseFromMillisecondsSinceEpoch(searchManga.posted.toInt()).fromNow()) : null,
       onTap: () async {
         showDialog(
           context: context,
@@ -87,6 +89,7 @@ class _SearchMangaItemState extends State<SearchMangaItem> {
           Navigator.of(context).pop();
           Navigator.of(context).push(
             MaterialPageRoute(
+              settings: RouteSettings(name: mangaRouteName(manga.id)),
               builder: (context) => MangaScreen(
                 manga: manga,
                 type: HeroScreenType.search,

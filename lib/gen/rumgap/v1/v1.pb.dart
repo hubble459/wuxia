@@ -13,7 +13,7 @@
 import 'dart:core' as $core;
 
 import 'package:protobuf/protobuf.dart' as $pb;
-import 'package:protobuf/well_known_types/google/protobuf/any.pb.dart' as $9;
+import 'package:protobuf/well_known_types/google/protobuf/any.pb.dart' as $10;
 
 export 'package:protobuf/protobuf.dart' show GeneratedMessageGenericExtensions;
 
@@ -111,7 +111,7 @@ class DetailedError extends $pb.GeneratedMessage {
   factory DetailedError({
     $core.int? status,
     $core.String? message,
-    $core.Iterable<$9.Any>? details,
+    $core.Iterable<$10.Any>? details,
   }) {
     final result = create();
     if (status != null) result.status = status;
@@ -135,8 +135,8 @@ class DetailedError extends $pb.GeneratedMessage {
       createEmptyInstance: create)
     ..aI(1, _omitFieldNames ? '' : 'status')
     ..aOS(2, _omitFieldNames ? '' : 'message')
-    ..pPM<$9.Any>(3, _omitFieldNames ? '' : 'details',
-        subBuilder: $9.Any.create)
+    ..pPM<$10.Any>(3, _omitFieldNames ? '' : 'details',
+        subBuilder: $10.Any.create)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -177,7 +177,7 @@ class DetailedError extends $pb.GeneratedMessage {
   void clearMessage() => $_clearField(2);
 
   @$pb.TagNumber(3)
-  $pb.PbList<$9.Any> get details => $_getList(2);
+  $pb.PbList<$10.Any> get details => $_getList(2);
 }
 
 const $core.bool _omitFieldNames =
