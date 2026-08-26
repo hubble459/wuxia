@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:wuxia/util/tools.dart';
@@ -23,6 +24,8 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
   }
 
   Future<List<MangaReply>> _loadDownloaded() async {
+    if (kIsWeb) return [];
+
     final dir = await getDownloadDirectory();
     final results = <MangaReply>[];
 

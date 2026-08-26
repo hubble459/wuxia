@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:math';
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:collection/collection.dart';
 import 'package:fixnum/fixnum.dart';
@@ -165,6 +166,8 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
   }
 
   Future<void> _downloadManga() async {
+    if (kIsWeb) return;
+
     final totalChapters = _manga.countChapters.toInt();
     if (totalChapters == 0) {
       Fluttertoast.showToast(msg: FlutterI18n.translate(context, 'manga.no-chapters')).ignore();
@@ -371,10 +374,11 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
                         value: _MangaMenuAction.addSourceFromUrl,
                         child: Text(FlutterI18n.translate(context, 'manga.add-source-url')),
                       ),
-                      PopupMenuItem(
-                        value: _MangaMenuAction.download,
-                        child: Text(FlutterI18n.translate(context, 'manga.download')),
-                      ),
+                      if (!kIsWeb)
+                        PopupMenuItem(
+                          value: _MangaMenuAction.download,
+                          child: Text(FlutterI18n.translate(context, 'manga.download')),
+                        ),
                     ],
                   ),
                 ],

@@ -1,5 +1,6 @@
 import 'dart:io' show Platform;
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -21,7 +22,7 @@ class Store {
   Store._(this._secureStorage, this._publicStorage);
 
   static Future<Store> init() async {
-    _instance = Store._(Platform.isLinux ? null : FlutterSecureStorage(), await SharedPreferences.getInstance());
+    _instance = Store._((!kIsWeb && Platform.isLinux) ? null : FlutterSecureStorage(), await SharedPreferences.getInstance());
     return _instance;
   }
 

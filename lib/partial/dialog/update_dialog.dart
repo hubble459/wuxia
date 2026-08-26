@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:app_installer/app_installer.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:github/github.dart';
@@ -153,6 +154,8 @@ class _UpdateDialogState extends State<UpdateDialog> {
   }
 
   Future<String?> getDownloadPath() async {
+    if (kIsWeb) return null;
+
     Directory? directory;
     try {
       if (Platform.isIOS) {

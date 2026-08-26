@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:grpc/grpc.dart';
+import 'package:grpc/grpc_connection_interface.dart' show ClientChannelBase;
+import 'package:grpc/grpc_or_grpcweb.dart';
 import 'package:wuxia/gen/rumgap/v1/v1.pbgrpc.dart';
 import 'package:wuxia/gen/rumgap/v1/user.pb.dart';
 
@@ -15,7 +17,9 @@ const _defaultPort = 5909;
 class API {
   static String? _token;
   static late UserFullReply loggedIn;
-  late final ClientChannel _channel;
+  final String host;
+  final int port;
+  late final ClientChannelBase _channel;
   late final UserClient user = UserClient(_channel, options: options);
   late final MangaClient manga = MangaClient(_channel, options: options);
   late final ChapterClient chapter = ChapterClient(_channel, options: options);
@@ -48,21 +52,21 @@ class API {
   }
 
   String getApiURL() {
-    return '${_channel.host}:${_channel.port}';
+    return '$host:$port';
   }
 
   void reset() {
     api = API(_defaultHost, _defaultPort);
   }
 
-  API(String host, int port) {
-    _channel = ClientChannel(
-      host,
+  API(this.host, this.port) {
+    // Uses raw gRPC (HTTP/2 sockets) everywhere except web, where it falls
+    // back to gRPC-Web (XHR) since browsers can't open raw sockets. The
+    // server must speak both protocols on this host/port for web to work.
+    _channel = GrpcOrGrpcWebClientChannel.toSingleEndpoint(
+      host: host,
       port: port,
-      options: const ChannelOptions(
-        credentials: ChannelCredentials.insecure(),
-        connectTimeout: Duration(seconds: 20),
-      ),
+      transportSecure: false,
     );
   }
 

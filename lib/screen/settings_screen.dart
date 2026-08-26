@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
@@ -28,7 +29,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   void initState() {
     super.initState();
-    _loadDownloadInfo();
+    if (!kIsWeb) _loadDownloadInfo();
   }
 
   Future<void> _loadDownloadInfo() async {
@@ -139,48 +140,51 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 Navigator.of(context).pushNamed('statistics');
               },
             ),
-            ListTile(
-              enabled: dotenv.env['GITHUB_TOKEN'] != null,
-              title: I18nText('settings.check_update'),
-              onTap: () async {
-                final info = await PackageInfo.fromPlatform();
+            if (!kIsWeb)
+              ListTile(
+                enabled: dotenv.env['GITHUB_TOKEN'] != null,
+                title: I18nText('settings.check_update'),
+                onTap: () async {
+                  final info = await PackageInfo.fromPlatform();
 
-                if (context.mounted) {
-                  showDialog(
-                    context: context,
-                    builder: (context) => UpdateDialog(packageInfo: info),
-                  );
-                }
-              },
-            ),
-            const Divider(),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: I18nText('settings.download'),
-            ),
-            ListTile(
-              title: I18nText('settings.download_directory'),
-              subtitle: Text(_downloadDir ?? '…'),
-              trailing: const Icon(Icons.folder_open),
-              onTap: () async {
-                final path = await getDirectoryPath();
-                if (path == null) return;
-                await Store.getStoreInstance().setDownloadDir(path);
-                _loadDownloadInfo();
-              },
-              onLongPress: () async {
-                await Store.getStoreInstance().clearDownloadDir();
-                _loadDownloadInfo();
-              },
-            ),
-            ListTile(
-              title: Text(
-                FlutterI18n.translate(context, 'settings.download_clear'),
-                style: const TextStyle(color: Colors.red),
+                  if (context.mounted) {
+                    showDialog(
+                      context: context,
+                      builder: (context) => UpdateDialog(packageInfo: info),
+                    );
+                  }
+                },
               ),
-              subtitle: Text(_downloadSize ?? '…'),
-              onTap: _clearDownloads,
-            ),
+            if (!kIsWeb) ...[
+              const Divider(),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: I18nText('settings.download'),
+              ),
+              ListTile(
+                title: I18nText('settings.download_directory'),
+                subtitle: Text(_downloadDir ?? '…'),
+                trailing: const Icon(Icons.folder_open),
+                onTap: () async {
+                  final path = await getDirectoryPath();
+                  if (path == null) return;
+                  await Store.getStoreInstance().setDownloadDir(path);
+                  _loadDownloadInfo();
+                },
+                onLongPress: () async {
+                  await Store.getStoreInstance().clearDownloadDir();
+                  _loadDownloadInfo();
+                },
+              ),
+              ListTile(
+                title: Text(
+                  FlutterI18n.translate(context, 'settings.download_clear'),
+                  style: const TextStyle(color: Colors.red),
+                ),
+                subtitle: Text(_downloadSize ?? '…'),
+                onTap: _clearDownloads,
+              ),
+            ],
             const Divider(),
             Padding(
               padding: const EdgeInsets.all(8.0),

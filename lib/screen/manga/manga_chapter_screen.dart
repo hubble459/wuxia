@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
@@ -65,6 +66,8 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
   }
 
   Future<List<String>?> _localImagePaths() async {
+    if (kIsWeb) return null;
+
     final dir = await getDownloadDirectory();
     final safeName = widget.manga.title.replaceAll(RegExp(r'[^\w\s\-]'), '_');
     final chapterNum = _chapter.number.toStringAsFixed(1).replaceAll('.0', '');

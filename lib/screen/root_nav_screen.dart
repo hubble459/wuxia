@@ -3,6 +3,7 @@ import 'dart:io' show Platform;
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:wuxia/api.dart';
@@ -76,7 +77,7 @@ class _RootNavScreenState extends State<RootNavScreen> {
   }
 
   Future<void> _initNotificationHandler() async {
-    if (Platform.isLinux) {
+    if (kIsWeb || Platform.isLinux) {
       return;
     }
 
@@ -127,7 +128,7 @@ class _RootNavScreenState extends State<RootNavScreen> {
       Route(label: FlutterI18n.translate(context, 'nav.reading'), icon: Icons.my_library_books, widget: const ReadingScreen()),
       Route(label: FlutterI18n.translate(context, 'nav.latest'), icon: Icons.whatshot, widget: const LatestScreen()),
       Route(label: FlutterI18n.translate(context, 'nav.search'), icon: Icons.search, widget: const SearchScreen()),
-      Route(label: FlutterI18n.translate(context, 'nav.downloads'), icon: Icons.download, widget: const DownloadsScreen()),
+      if (!kIsWeb) Route(label: FlutterI18n.translate(context, 'nav.downloads'), icon: Icons.download, widget: const DownloadsScreen()),
     ];
 
     return GestureDetector(
