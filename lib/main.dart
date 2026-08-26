@@ -46,7 +46,11 @@ GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   await dotenv.load(fileName: '.env');
-  if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
+  if (kIsWeb) {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  } else if (Platform.isAndroid || Platform.isIOS) {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
@@ -172,7 +176,14 @@ class _WuxiaAppState extends State<WuxiaApp> {
 
         final rootRoute = MaterialPageRoute(
           settings: const RouteSettings(name: 'root_nav'),
-          builder: (context) => const RootNavScreen(),
+          // This instance is seeded offstage from frame one (it's never the
+          // visible route) so its text never actually gets laid out --
+          // opt it out of the app-wide SelectionArea, which otherwise
+          // crashes trying to compute a selection order over an unlaid-out
+          // RenderParagraph. The normal in-app RootNavScreen (reached via
+          // Splash) is visible before ever being buried, so it doesn't hit
+          // this and keeps working as a normal SelectionArea participant.
+          builder: (context) => const SelectionContainer.disabled(child: RootNavScreen()),
         );
         final targetRoute = generateDynamicRoute(RouteSettings(name: initialRouteName));
 

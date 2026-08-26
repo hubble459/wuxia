@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:wuxia/api.dart';
 import 'package:wuxia/gen/rumgap/v1/chapter.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
-import 'package:wuxia/gen/rumgap/v1/v1.pb.dart';
 import 'package:wuxia/screen/manga/manga_chapter_screen.dart';
 import 'package:wuxia/util/session.dart';
 
@@ -36,7 +35,7 @@ class _MangaChapterRouteLoaderState extends State<MangaChapterRouteLoader> {
       throw StateError('not logged in');
     }
 
-    final manga = await api.manga.get(Id(id: widget.mangaId));
+    final manga = await api.manga.get(GetMangaRequest(id: widget.mangaId));
     final source = manga.sources.firstWhere((s) => s.id == widget.sourceId);
     final chapter = await api.chapter.get(ChapterRequest(mangaSourceId: widget.sourceId, index: widget.chapterIndex));
 

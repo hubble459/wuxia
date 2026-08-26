@@ -73,8 +73,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
   String _formatBytes(int bytes) {
     if (bytes < 1024) return '$bytes B';
     if (bytes < 1024 * 1024) return '${(bytes / 1024).toStringAsFixed(1)} KB';
-    if (bytes < 1024 * 1024 * 1024)
+    if (bytes < 1024 * 1024 * 1024) {
       return '${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB';
+    }
     return '${(bytes / (1024 * 1024 * 1024)).toStringAsFixed(2)} GB';
   }
 
@@ -83,15 +84,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         title: Text(FlutterI18n.translate(ctx, 'dialog.confirm.title')),
-        content:
-            Text(FlutterI18n.translate(ctx, 'settings.download_clear_confirm')),
+        content: Text(FlutterI18n.translate(ctx, 'settings.download_clear_confirm')),
         actions: [
-          TextButton(
-              onPressed: () => Navigator.of(ctx).pop(false),
-              child: Text(FlutterI18n.translate(ctx, 'dialog.confirm.no'))),
-          TextButton(
-              onPressed: () => Navigator.of(ctx).pop(true),
-              child: Text(FlutterI18n.translate(ctx, 'dialog.confirm.yes'))),
+          TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: Text(FlutterI18n.translate(ctx, 'dialog.confirm.no'))),
+          TextButton(onPressed: () => Navigator.of(ctx).pop(true), child: Text(FlutterI18n.translate(ctx, 'dialog.confirm.yes'))),
         ],
       ),
     );
@@ -151,8 +147,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         )
                         .toList(),
                     onChanged: (locale) async {
-                      if (FlutterI18n.currentLocale(context)?.languageCode !=
-                          locale) {
+                      if (FlutterI18n.currentLocale(context)?.languageCode != locale) {
                         _locale = locale;
 
                         await store.setLanguage(locale!);
@@ -163,6 +158,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           setState(() {});
                         }
                       }
+                    }),
+              ),
+              ListTile(
+                title: I18nText('settings.reading_mode'),
+                trailing: DropdownButton<String>(
+                    value: store.getReadingMode(),
+                    items: [
+                      DropdownMenuItem<String>(
+                          value: 'webtoon', child: Text(FlutterI18n.translate(context, 'settings.reading_mode_webtoon'))),
+                      DropdownMenuItem<String>(
+                          value: 'paged', child: Text(FlutterI18n.translate(context, 'settings.reading_mode_paged'))),
+                    ],
+                    onChanged: (mode) async {
+                      if (mode == null) return;
+                      await store.setReadingMode(mode);
+                      setState(() {});
                     }),
               ),
               ListTile(

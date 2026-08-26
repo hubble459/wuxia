@@ -218,3 +218,54 @@ final $typed_data.Uint8List setPrimarySourceRequestDescriptor =
     $convert.base64Decode(
         'ChdTZXRQcmltYXJ5U291cmNlUmVxdWVzdBImCg9tYW5nYV9zb3VyY2VfaWQYASABKAVSDW1hbm'
         'dhU291cmNlSWQ=');
+
+@$core.Deprecated('Use getMangaRequestDescriptor instead')
+const GetMangaRequest$json = {
+  '1': 'GetMangaRequest',
+  '2': [
+    {'1': 'id', '3': 1, '4': 1, '5': 5, '10': 'id'},
+  ],
+};
+
+/// Descriptor for `GetMangaRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List getMangaRequestDescriptor =
+    $convert.base64Decode('Cg9HZXRNYW5nYVJlcXVlc3QSDgoCaWQYASABKAVSAmlk');
+
+@$core.Deprecated('Use similarMangaRequestDescriptor instead')
+const SimilarMangaRequest$json = {
+  '1': 'SimilarMangaRequest',
+  '2': [
+    {'1': 'id', '3': 1, '4': 1, '5': 5, '10': 'id'},
+  ],
+};
+
+/// Descriptor for `SimilarMangaRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List similarMangaRequestDescriptor = $convert
+    .base64Decode('ChNTaW1pbGFyTWFuZ2FSZXF1ZXN0Eg4KAmlkGAEgASgFUgJpZA==');
+
+@$core.Deprecated('Use backfillImagesRequestDescriptor instead')
+const BackfillImagesRequest$json = {
+  '1': 'BackfillImagesRequest',
+  '2': [
+    {'1': 'manga_source_id', '3': 1, '4': 1, '5': 5, '10': 'mangaSourceId'},
+  ],
+};
+
+/// Descriptor for `BackfillImagesRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List backfillImagesRequestDescriptor = $convert.base64Decode(
+    'ChVCYWNrZmlsbEltYWdlc1JlcXVlc3QSJgoPbWFuZ2Ffc291cmNlX2lkGAEgASgFUg1tYW5nYV'
+    'NvdXJjZUlk');
+
+@$core.Deprecated('Use getBackfillStatusRequestDescriptor instead')
+const GetBackfillStatusRequest$json = {
+  '1': 'GetBackfillStatusRequest',
+  '2': [
+    {'1': 'manga_source_id', '3': 1, '4': 1, '5': 5, '10': 'mangaSourceId'},
+  ],
+};
+
+/// Descriptor for `GetBackfillStatusRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List getBackfillStatusRequestDescriptor =
+    $convert.base64Decode(
+        'ChhHZXRCYWNrZmlsbFN0YXR1c1JlcXVlc3QSJgoPbWFuZ2Ffc291cmNlX2lkGAEgASgFUg1tYW'
+        '5nYVNvdXJjZUlk');

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wuxia/api.dart';
 import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
-import 'package:wuxia/gen/rumgap/v1/v1.pb.dart';
 import 'package:wuxia/partial/list/manga_item.dart';
 import 'package:wuxia/screen/manga/manga_screen.dart';
 import 'package:wuxia/util/session.dart';
@@ -26,7 +25,7 @@ class _MangaRouteLoaderState extends State<MangaRouteLoader> {
     if (!API.isLoggedIn) {
       throw StateError('not logged in');
     }
-    return api.manga.get(Id(id: widget.mangaId));
+    return api.manga.get(GetMangaRequest(id: widget.mangaId));
   }
 
   @override

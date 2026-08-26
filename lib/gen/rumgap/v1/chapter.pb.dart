@@ -821,6 +821,114 @@ class FindEquivalentRequest extends $pb.GeneratedMessage {
   void clearMangaSourceId() => $_clearField(2);
 }
 
+class ChapterImagesRequest extends $pb.GeneratedMessage {
+  factory ChapterImagesRequest({
+    $core.int? chapterId,
+  }) {
+    final result = create();
+    if (chapterId != null) result.chapterId = chapterId;
+    return result;
+  }
+
+  ChapterImagesRequest._();
+
+  factory ChapterImagesRequest.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory ChapterImagesRequest.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'ChapterImagesRequest',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'rumgap.v1'),
+      createEmptyInstance: create)
+    ..aI(1, _omitFieldNames ? '' : 'chapterId')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  ChapterImagesRequest clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  ChapterImagesRequest copyWith(void Function(ChapterImagesRequest) updates) =>
+      super.copyWith((message) => updates(message as ChapterImagesRequest))
+          as ChapterImagesRequest;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static ChapterImagesRequest create() => ChapterImagesRequest._();
+  @$core.override
+  ChapterImagesRequest createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static ChapterImagesRequest getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<ChapterImagesRequest>(create);
+  static ChapterImagesRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.int get chapterId => $_getIZ(0);
+  @$pb.TagNumber(1)
+  set chapterId($core.int value) => $_setSignedInt32(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasChapterId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearChapterId() => $_clearField(1);
+}
+
+class RefreshImagesRequest extends $pb.GeneratedMessage {
+  factory RefreshImagesRequest({
+    $core.int? chapterId,
+  }) {
+    final result = create();
+    if (chapterId != null) result.chapterId = chapterId;
+    return result;
+  }
+
+  RefreshImagesRequest._();
+
+  factory RefreshImagesRequest.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory RefreshImagesRequest.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'RefreshImagesRequest',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'rumgap.v1'),
+      createEmptyInstance: create)
+    ..aI(1, _omitFieldNames ? '' : 'chapterId')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  RefreshImagesRequest clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  RefreshImagesRequest copyWith(void Function(RefreshImagesRequest) updates) =>
+      super.copyWith((message) => updates(message as RefreshImagesRequest))
+          as RefreshImagesRequest;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static RefreshImagesRequest create() => RefreshImagesRequest._();
+  @$core.override
+  RefreshImagesRequest createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static RefreshImagesRequest getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<RefreshImagesRequest>(create);
+  static RefreshImagesRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.int get chapterId => $_getIZ(0);
+  @$pb.TagNumber(1)
+  set chapterId($core.int value) => $_setSignedInt32(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasChapterId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearChapterId() => $_clearField(1);
+}
+
 const $core.bool _omitFieldNames =
     $core.bool.fromEnvironment('protobuf.omit_field_names');
 const $core.bool _omitMessageNames =

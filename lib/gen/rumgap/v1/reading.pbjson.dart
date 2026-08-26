@@ -104,6 +104,19 @@ final $typed_data.Uint8List getCrossSourceOffsetRequestDescriptor =
         'ChtHZXRDcm9zc1NvdXJjZU9mZnNldFJlcXVlc3QSMAoUY2Fub25pY2FsX2NoYXB0ZXJfaWQYAS'
         'ABKAVSEmNhbm9uaWNhbENoYXB0ZXJJZA==');
 
+@$core.Deprecated('Use deleteReadingRequestDescriptor instead')
+const DeleteReadingRequest$json = {
+  '1': 'DeleteReadingRequest',
+  '2': [
+    {'1': 'manga_id', '3': 1, '4': 1, '5': 5, '10': 'mangaId'},
+  ],
+};
+
+/// Descriptor for `DeleteReadingRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List deleteReadingRequestDescriptor =
+    $convert.base64Decode(
+        'ChREZWxldGVSZWFkaW5nUmVxdWVzdBIZCghtYW5nYV9pZBgBIAEoBVIHbWFuZ2FJZA==');
+
 @$core.Deprecated('Use crossSourceOffsetReplyDescriptor instead')
 const CrossSourceOffsetReply$json = {
   '1': 'CrossSourceOffsetReply',

@@ -32,7 +32,15 @@ import 'package:wuxia/screen/search_screen.dart';
 import 'package:wuxia/util/app_routes.dart';
 import 'package:wuxia/util/tools.dart';
 
-enum _MangaMenuAction { addSource, addSourceFromUrl, download }
+enum _MangaMenuAction { addSource, addSourceFromUrl, download, forceRescrape }
+
+/// The three ways manga data can be refreshed, cheapest first:
+/// - [cached]: plain read from rumgap's own store, no scraping.
+/// - [rescrape]: triggers a scrape, but lets the server decide whether it's
+///   actually due for one.
+/// - [forceRescrape]: always scrapes regardless of staleness -- admin only,
+///   since it's the most expensive and easiest to abuse.
+enum _RefreshMode { cached, rescrape, forceRescrape }
 
 class MangaScreen extends StatefulWidget {
   final MangaReply manga;
@@ -98,7 +106,7 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
     }
   }
 
-  Future<void> loadManga({bool force = false}) async {
+  Future<void> loadManga({_RefreshMode mode = _RefreshMode.cached}) async {
     // Start loading animation
     _animationController
         .repeat(period: const Duration(seconds: 1))
@@ -106,10 +114,13 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
     setState(() {});
 
     try {
-      if (force) {
-        _manga = await api.manga.update(Id(id: _manga.id));
-      } else {
-        _manga = await api.manga.get(Id(id: _manga.id));
+      switch (mode) {
+        case _RefreshMode.cached:
+          _manga = await api.manga.get(GetMangaRequest(id: _manga.id));
+        case _RefreshMode.rescrape:
+          _manga = await api.manga.update(UpdateMangaRequest(id: _manga.id, force: false));
+        case _RefreshMode.forceRescrape:
+          _manga = await api.manga.update(UpdateMangaRequest(id: _manga.id, force: true));
       }
       _syncSelectedSource();
     } catch (e) {
@@ -230,7 +241,7 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
         final chapterDir = Directory('${mangaDir.path}/${chapter.number.toStringAsFixed(1).replaceAll('.0', '')}');
         await chapterDir.create(recursive: true);
 
-        final images = await api.chapter.images(Id(id: chapter.id));
+        final images = await api.chapter.images(ChapterImagesRequest(chapterId: chapter.id));
         for (var i = 0; i < images.items.length; i++) {
           if (cancelled) break;
           final url = images.items[i].url;
@@ -277,7 +288,8 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
       RotationTransition(
         turns: CurvedAnimation(parent: _animationController, curve: Curves.linear),
         child: IconButton(
-          onPressed: _animationController.isAnimating ? null : () => loadManga(force: true),
+          onPressed: _animationController.isAnimating ? null : () => loadManga(),
+          onLongPress: _animationController.isAnimating ? null : () => loadManga(mode: _RefreshMode.rescrape),
           tooltip: FlutterI18n.translate(context, 'basic.refresh'),
           icon: const Icon(Icons.refresh),
         ),
@@ -327,6 +339,8 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
             }
           } else if (action == _MangaMenuAction.download) {
             _downloadManga();
+          } else if (action == _MangaMenuAction.forceRescrape) {
+            loadManga(mode: _RefreshMode.forceRescrape);
           }
         },
         itemBuilder: (_) => [
@@ -342,6 +356,11 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
             PopupMenuItem(
               value: _MangaMenuAction.download,
               child: Text(FlutterI18n.translate(context, 'manga.download')),
+            ),
+          if (API.loggedIn.isAdmin)
+            PopupMenuItem(
+              value: _MangaMenuAction.forceRescrape,
+              child: Text(FlutterI18n.translate(context, 'manga.force-rescrape')),
             ),
         ],
       ),
@@ -560,7 +579,7 @@ class _ChapterSelector extends StatefulWidget {
 class _ChapterSelectorState extends State<_ChapterSelector> {
   final _scrollController = ItemScrollController();
   final _itemPositionListener = ItemPositionsListener.create();
-  var _pageSize = 20;
+  var _pageSize = 100;
 
   Future<void> openChapters() async {
     await Navigator.of(context).push(
@@ -676,7 +695,11 @@ class _ChapterSelectorState extends State<_ChapterSelector> {
                 )
               ]
             : [
-                // Chapters
+                // Chapters -- the two arrows are pinned outside the scrollable
+                // list (not items within it), so they stay put at the row's
+                // edges instead of scrolling out of view along with the
+                // chapter buttons once there are enough of them to overflow.
+                MaterialButton(onPressed: openChapters, minWidth: 0, child: const Icon(Icons.arrow_left)),
                 Expanded(
                   child: SizedBox(
                     height: 40,
@@ -684,8 +707,6 @@ class _ChapterSelectorState extends State<_ChapterSelector> {
                       child: SimpleFutureBuilder(
                         future: getChapters(),
                         onLoadedBuilder: (context, ChaptersReply chapters) {
-                          chapters.items.insert(0, ChapterReply());
-                          chapters.items.add(ChapterReply());
                           return ScrollablePositionedList.builder(
                             initialScrollIndex: widget.manga.readingProgress % _pageSize,
                             itemScrollController: _scrollController,
@@ -695,13 +716,6 @@ class _ChapterSelectorState extends State<_ChapterSelector> {
                             itemCount: chapters.items.length,
                             itemBuilder: (context, index) {
                               final chapter = chapters.items[index];
-                              if (index == 0 || index == chapters.items.length - 1) {
-                                return MaterialButton(
-                                  onPressed: openChapters,
-                                  minWidth: 0,
-                                  child: Icon(index == 0 ? Icons.arrow_left : Icons.arrow_right),
-                                );
-                              }
                               return MaterialButton(
                                 color: _isChapterRead(chapter) ? Colors.grey.withValues(alpha: 0.2) : null,
                                 materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -717,6 +731,7 @@ class _ChapterSelectorState extends State<_ChapterSelector> {
                     ),
                   ),
                 ),
+                MaterialButton(onPressed: openChapters, minWidth: 0, child: const Icon(Icons.arrow_right)),
                 // Continue
                 MaterialButton(
                   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,

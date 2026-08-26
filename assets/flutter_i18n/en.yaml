@@ -37,6 +37,7 @@ manga:
   switch_source: Switch Source
   download: Download
   download-complete: Download complete
+  force-rescrape: Force Rescrape
 details:
   authors: Authors
   genres: Genres
@@ -53,6 +54,10 @@ error: 'Error: {error}'
 chapter:
   goto_top: Scroll to top
   goto_bottom: Scroll to bottom
+  goto_first_page: First page
+  goto_last_page: Last page
+  mode_webtoon: Switch to paged mode
+  mode_paged: Switch to webtoon mode
   previous: Previous
   next: Next
 basic:
@@ -68,6 +73,9 @@ settings:
   data_saver: Data Saver
   logout: Logout
   language: Language
+  reading_mode: Default Reading Mode
+  reading_mode_webtoon: Webtoon
+  reading_mode_paged: Paged
   statistics:
     title: Statistics
     completed_manga: Completed Manga
@@ -131,6 +139,7 @@ splash:
   connecting: Connecting with server...
 notification:
   new_chapter: New Chapter Available in {title}
+  push_unavailable: Couldn't enable push notifications
 dead_provider:
   title: No scrapers available
   message: >-

@@ -300,6 +300,60 @@ class GetCrossSourceOffsetRequest extends $pb.GeneratedMessage {
   void clearCanonicalChapterId() => $_clearField(1);
 }
 
+class DeleteReadingRequest extends $pb.GeneratedMessage {
+  factory DeleteReadingRequest({
+    $core.int? mangaId,
+  }) {
+    final result = create();
+    if (mangaId != null) result.mangaId = mangaId;
+    return result;
+  }
+
+  DeleteReadingRequest._();
+
+  factory DeleteReadingRequest.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory DeleteReadingRequest.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'DeleteReadingRequest',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'rumgap.v1'),
+      createEmptyInstance: create)
+    ..aI(1, _omitFieldNames ? '' : 'mangaId')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  DeleteReadingRequest clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  DeleteReadingRequest copyWith(void Function(DeleteReadingRequest) updates) =>
+      super.copyWith((message) => updates(message as DeleteReadingRequest))
+          as DeleteReadingRequest;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static DeleteReadingRequest create() => DeleteReadingRequest._();
+  @$core.override
+  DeleteReadingRequest createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static DeleteReadingRequest getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<DeleteReadingRequest>(create);
+  static DeleteReadingRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.int get mangaId => $_getIZ(0);
+  @$pb.TagNumber(1)
+  set mangaId($core.int value) => $_setSignedInt32(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasMangaId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearMangaId() => $_clearField(1);
+}
+
 class CrossSourceOffsetReply extends $pb.GeneratedMessage {
   factory CrossSourceOffsetReply({
     $core.double? fraction,

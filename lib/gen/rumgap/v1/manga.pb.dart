@@ -784,6 +784,224 @@ class SetPrimarySourceRequest extends $pb.GeneratedMessage {
   void clearMangaSourceId() => $_clearField(1);
 }
 
+class GetMangaRequest extends $pb.GeneratedMessage {
+  factory GetMangaRequest({
+    $core.int? id,
+  }) {
+    final result = create();
+    if (id != null) result.id = id;
+    return result;
+  }
+
+  GetMangaRequest._();
+
+  factory GetMangaRequest.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory GetMangaRequest.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'GetMangaRequest',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'rumgap.v1'),
+      createEmptyInstance: create)
+    ..aI(1, _omitFieldNames ? '' : 'id')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  GetMangaRequest clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  GetMangaRequest copyWith(void Function(GetMangaRequest) updates) =>
+      super.copyWith((message) => updates(message as GetMangaRequest))
+          as GetMangaRequest;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static GetMangaRequest create() => GetMangaRequest._();
+  @$core.override
+  GetMangaRequest createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static GetMangaRequest getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<GetMangaRequest>(create);
+  static GetMangaRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.int get id => $_getIZ(0);
+  @$pb.TagNumber(1)
+  set id($core.int value) => $_setSignedInt32(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearId() => $_clearField(1);
+}
+
+class SimilarMangaRequest extends $pb.GeneratedMessage {
+  factory SimilarMangaRequest({
+    $core.int? id,
+  }) {
+    final result = create();
+    if (id != null) result.id = id;
+    return result;
+  }
+
+  SimilarMangaRequest._();
+
+  factory SimilarMangaRequest.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory SimilarMangaRequest.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'SimilarMangaRequest',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'rumgap.v1'),
+      createEmptyInstance: create)
+    ..aI(1, _omitFieldNames ? '' : 'id')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  SimilarMangaRequest clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  SimilarMangaRequest copyWith(void Function(SimilarMangaRequest) updates) =>
+      super.copyWith((message) => updates(message as SimilarMangaRequest))
+          as SimilarMangaRequest;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static SimilarMangaRequest create() => SimilarMangaRequest._();
+  @$core.override
+  SimilarMangaRequest createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static SimilarMangaRequest getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<SimilarMangaRequest>(create);
+  static SimilarMangaRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.int get id => $_getIZ(0);
+  @$pb.TagNumber(1)
+  set id($core.int value) => $_setSignedInt32(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearId() => $_clearField(1);
+}
+
+class BackfillImagesRequest extends $pb.GeneratedMessage {
+  factory BackfillImagesRequest({
+    $core.int? mangaSourceId,
+  }) {
+    final result = create();
+    if (mangaSourceId != null) result.mangaSourceId = mangaSourceId;
+    return result;
+  }
+
+  BackfillImagesRequest._();
+
+  factory BackfillImagesRequest.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory BackfillImagesRequest.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'BackfillImagesRequest',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'rumgap.v1'),
+      createEmptyInstance: create)
+    ..aI(1, _omitFieldNames ? '' : 'mangaSourceId')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  BackfillImagesRequest clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  BackfillImagesRequest copyWith(
+          void Function(BackfillImagesRequest) updates) =>
+      super.copyWith((message) => updates(message as BackfillImagesRequest))
+          as BackfillImagesRequest;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static BackfillImagesRequest create() => BackfillImagesRequest._();
+  @$core.override
+  BackfillImagesRequest createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static BackfillImagesRequest getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<BackfillImagesRequest>(create);
+  static BackfillImagesRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.int get mangaSourceId => $_getIZ(0);
+  @$pb.TagNumber(1)
+  set mangaSourceId($core.int value) => $_setSignedInt32(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasMangaSourceId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearMangaSourceId() => $_clearField(1);
+}
+
+class GetBackfillStatusRequest extends $pb.GeneratedMessage {
+  factory GetBackfillStatusRequest({
+    $core.int? mangaSourceId,
+  }) {
+    final result = create();
+    if (mangaSourceId != null) result.mangaSourceId = mangaSourceId;
+    return result;
+  }
+
+  GetBackfillStatusRequest._();
+
+  factory GetBackfillStatusRequest.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory GetBackfillStatusRequest.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'GetBackfillStatusRequest',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'rumgap.v1'),
+      createEmptyInstance: create)
+    ..aI(1, _omitFieldNames ? '' : 'mangaSourceId')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  GetBackfillStatusRequest clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  GetBackfillStatusRequest copyWith(
+          void Function(GetBackfillStatusRequest) updates) =>
+      super.copyWith((message) => updates(message as GetBackfillStatusRequest))
+          as GetBackfillStatusRequest;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static GetBackfillStatusRequest create() => GetBackfillStatusRequest._();
+  @$core.override
+  GetBackfillStatusRequest createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static GetBackfillStatusRequest getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<GetBackfillStatusRequest>(create);
+  static GetBackfillStatusRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.int get mangaSourceId => $_getIZ(0);
+  @$pb.TagNumber(1)
+  set mangaSourceId($core.int value) => $_setSignedInt32(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasMangaSourceId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearMangaSourceId() => $_clearField(1);
+}
+
 const $core.bool _omitFieldNames =
     $core.bool.fromEnvironment('protobuf.omit_field_names');
 const $core.bool _omitMessageNames =

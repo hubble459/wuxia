@@ -275,3 +275,27 @@ final $typed_data.Uint8List findEquivalentRequestDescriptor = $convert.base64Dec
     'ChVGaW5kRXF1aXZhbGVudFJlcXVlc3QSMAoUY2Fub25pY2FsX2NoYXB0ZXJfaWQYASABKAVSEm'
     'Nhbm9uaWNhbENoYXB0ZXJJZBImCg9tYW5nYV9zb3VyY2VfaWQYAiABKAVSDW1hbmdhU291cmNl'
     'SWQ=');
+
+@$core.Deprecated('Use chapterImagesRequestDescriptor instead')
+const ChapterImagesRequest$json = {
+  '1': 'ChapterImagesRequest',
+  '2': [
+    {'1': 'chapter_id', '3': 1, '4': 1, '5': 5, '10': 'chapterId'},
+  ],
+};
+
+/// Descriptor for `ChapterImagesRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List chapterImagesRequestDescriptor = $convert.base64Decode(
+    'ChRDaGFwdGVySW1hZ2VzUmVxdWVzdBIdCgpjaGFwdGVyX2lkGAEgASgFUgljaGFwdGVySWQ=');
+
+@$core.Deprecated('Use refreshImagesRequestDescriptor instead')
+const RefreshImagesRequest$json = {
+  '1': 'RefreshImagesRequest',
+  '2': [
+    {'1': 'chapter_id', '3': 1, '4': 1, '5': 5, '10': 'chapterId'},
+  ],
+};
+
+/// Descriptor for `RefreshImagesRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List refreshImagesRequestDescriptor = $convert.base64Decode(
+    'ChRSZWZyZXNoSW1hZ2VzUmVxdWVzdBIdCgpjaGFwdGVyX2lkGAEgASgFUgljaGFwdGVySWQ=');

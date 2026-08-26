@@ -9,7 +9,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:wuxia/api.dart';
 import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/user.pb.dart';
-import 'package:wuxia/gen/rumgap/v1/v1.pb.dart';
 import 'package:wuxia/main.dart';
 import 'package:wuxia/partial/dialog/add_manga_dialog.dart';
 import 'package:wuxia/partial/list/manga_item.dart';
@@ -64,7 +63,7 @@ class _RootNavScreenState extends State<RootNavScreen> {
     final mangaId = message.data['manga_id'];
 
     if (mangaId is String) {
-      final manga = await api.manga.get(Id(id: int.parse(mangaId)));
+      final manga = await api.manga.get(GetMangaRequest(id: int.parse(mangaId)));
 
       final context = navigatorKey.currentState?.context;
       if (context == null || context.mounted != true) {
@@ -83,7 +82,7 @@ class _RootNavScreenState extends State<RootNavScreen> {
     final mangaId = message.data['manga_id'];
 
     if (mangaId is String) {
-      final manga = await api.manga.get(Id(id: int.parse(mangaId)));
+      final manga = await api.manga.get(GetMangaRequest(id: int.parse(mangaId)));
       final context = navigatorKey.currentState?.context;
 
       if (context?.mounted == true) {
@@ -99,42 +98,55 @@ class _RootNavScreenState extends State<RootNavScreen> {
   }
 
   Future<void> _initNotificationHandler() async {
-    if (kIsWeb || Platform.isLinux) {
+    if (!kIsWeb && Platform.isLinux) {
       return;
     }
 
-    final notificationSettings = await FirebaseMessaging.instance.requestPermission(provisional: true);
+    try {
+      final notificationSettings = await FirebaseMessaging.instance.requestPermission(provisional: true);
 
-    if (notificationSettings.authorizationStatus == AuthorizationStatus.denied) {
-      return;
-    }
-
-    final token = await FirebaseMessaging.instance.getToken(vapidKey: dotenv.env['VAPID_KEY']);
-
-    print('FCM Token: $token');
-    if (!API.loggedIn.deviceIds.contains(token)) {
-      await api.user.addDeviceToken(DeviceTokenRequest(token: token));
-    }
-
-    FirebaseMessaging.instance.onTokenRefresh.listen((fcmToken) async {
-      if (!API.loggedIn.deviceIds.contains(fcmToken)) {
-        print('Updating FCM Device Token');
-        await api.user.removeDeviceToken(DeviceTokenRequest(token: token));
-        await api.user.addDeviceToken(DeviceTokenRequest(token: fcmToken));
+      if (notificationSettings.authorizationStatus == AuthorizationStatus.denied) {
+        return;
       }
-    }).onError((err) {
-      // UHHHHH
-      print(err);
-    });
 
-    final message = await FirebaseMessaging.instance.getInitialMessage();
-    if (message != null) {
-      _handleNotificationClick(message);
+      final token = await FirebaseMessaging.instance.getToken(vapidKey: dotenv.env['VAPID_KEY']);
+
+      print('FCM Token: $token');
+      if (!API.loggedIn.deviceIds.contains(token)) {
+        await api.user.addDeviceToken(DeviceTokenRequest(token: token));
+      }
+
+      FirebaseMessaging.instance.onTokenRefresh.listen((fcmToken) async {
+        if (!API.loggedIn.deviceIds.contains(fcmToken)) {
+          print('Updating FCM Device Token');
+          await api.user.removeDeviceToken(DeviceTokenRequest(token: token));
+          await api.user.addDeviceToken(DeviceTokenRequest(token: fcmToken));
+        }
+      }).onError((err) {
+        // UHHHHH
+        print(err);
+      });
+
+      final message = await FirebaseMessaging.instance.getInitialMessage();
+      if (message != null) {
+        _handleNotificationClick(message);
+      }
+
+      FirebaseMessaging.onMessageOpenedApp.listen(_handleNotificationClick);
+
+      FirebaseMessaging.onMessage.listen(_handleNotificationInForeground);
+    } catch (err) {
+      print('Failed to set up push notifications: $err');
+
+      final context = navigatorKey.currentState?.context;
+      if (context != null && context.mounted) {
+        Fluttertoast.showToast(
+          msg: FlutterI18n.translate(context, 'notification.push_unavailable'),
+          timeInSecForIosWeb: 5,
+          toastLength: Toast.LENGTH_LONG,
+        );
+      }
     }
-
-    FirebaseMessaging.onMessageOpenedApp.listen(_handleNotificationClick);
-
-    FirebaseMessaging.onMessage.listen(_handleNotificationInForeground);
   }
 
   @override

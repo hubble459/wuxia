@@ -5,7 +5,7 @@ import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:wuxia/api.dart';
 import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
-import 'package:wuxia/gen/rumgap/v1/v1.pb.dart';
+import 'package:wuxia/gen/rumgap/v1/reading.pb.dart';
 import 'package:wuxia/partial/dialog/confirm_dialog.dart';
 import 'package:wuxia/screen/manga/manga_screen.dart';
 import 'package:wuxia/util/app_routes.dart';
@@ -151,7 +151,7 @@ class _MangaItemState extends State<MangaItem> {
             ),
           );
           if (confirmed == true) {
-            await api.reading.delete(Id(id: _manga.id));
+            await api.reading.delete(DeleteReadingRequest(mangaId: _manga.id));
             widget.reloadParent(_manga, true);
           }
         }

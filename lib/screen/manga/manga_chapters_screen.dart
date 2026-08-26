@@ -35,6 +35,7 @@ class _MangaChaptersScreenState extends State<MangaChaptersScreen> {
   );
   final _pageSize = 20;
   late ChaptersReply _result;
+  final _scrollController = ScrollController();
 
   @override
   Widget build(BuildContext context) {
@@ -51,6 +52,24 @@ class _MangaChaptersScreenState extends State<MangaChaptersScreen> {
             ),
           ],
         ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              if (!_scrollController.hasClients) return;
+              _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+            },
+            tooltip: FlutterI18n.translate(context, 'chapter.goto_bottom'),
+            icon: const Icon(Icons.arrow_downward),
+          ),
+          IconButton(
+            onPressed: () {
+              if (!_scrollController.hasClients) return;
+              _scrollController.jumpTo(0);
+            },
+            tooltip: FlutterI18n.translate(context, 'chapter.goto_top'),
+            icon: const Icon(Icons.arrow_upward),
+          ),
+        ],
       ),
       body: ResponsiveContent(
         child: RefreshIndicator(
@@ -60,6 +79,7 @@ class _MangaChaptersScreenState extends State<MangaChaptersScreen> {
           child: PagingListener<int, ChapterReply>(
             controller: _pagingController,
             builder: (context, state, fetchNextPage) => PagedListView<int, ChapterReply>(
+              scrollController: _scrollController,
               state: state,
               fetchNextPage: fetchNextPage,
               builderDelegate: PagedChildBuilderDelegate<ChapterReply>(
@@ -129,6 +149,7 @@ class _MangaChaptersScreenState extends State<MangaChaptersScreen> {
   @override
   void dispose() {
     _pagingController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 

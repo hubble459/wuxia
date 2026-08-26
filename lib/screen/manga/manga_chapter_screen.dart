@@ -15,12 +15,12 @@ import 'package:wuxia/api.dart';
 import 'package:wuxia/gen/rumgap/v1/chapter.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/reading.pb.dart';
-import 'package:wuxia/gen/rumgap/v1/v1.pb.dart';
 import 'package:wuxia/main.dart';
 import 'package:wuxia/partial/action/open_url_action.dart';
 import 'package:wuxia/partial/dialog/source_picker_dialog.dart';
 import 'package:wuxia/partial/responsive_content.dart';
 import 'package:wuxia/util/app_routes.dart';
+import 'package:wuxia/util/store.dart';
 import 'package:wuxia/util/tools.dart';
 
 class MangaChapterScreen extends StatefulWidget {
@@ -56,16 +56,49 @@ class _ReaderPage {
 class _MangaChapterScreenState extends State<MangaChapterScreen> {
   final ItemScrollController itemScrollController = ItemScrollController();
   final ItemPositionsListener itemPositionsListener = ItemPositionsListener.create();
+  final PageController _pageController = PageController();
+  final FocusNode _focusNode = FocusNode();
   late ChapterReply _chapter;
   List<_ReaderPage>? _images;
   bool _isOffline = false;
+  late bool _isPagedMode;
+  late int _currentPage;
+
+  Timer? _offsetDebounce;
+  late int _lastOffsetPage;
+  late int _lastOffsetPixels;
 
   @override
   void initState() {
     _chapter = widget.chapter;
+    _lastOffsetPage = _chapter.offset.page;
+    _lastOffsetPixels = _chapter.offset.pixels;
+    _currentPage = _lastOffsetPage;
+
+    final store = Store.getStoreInstance();
+    _isPagedMode = (store.getMangaReadingMode(widget.manga.id) ?? store.getReadingMode()) == 'paged';
+
     _loadImages();
     WidgetsBinding.instance.addPostFrameCallback((a) => offsetUpdater());
+    _focusNode.addListener(_reclaimFocus);
     super.initState();
+  }
+
+  // A plain (non-dragging) tap inside the reader -- e.g. on the page image --
+  // ends up unfocusing this node entirely (nothing else claims it), which
+  // silently kills WASD/arrow handling until something else requests focus.
+  // Tapping-and-dragging avoids it because the drag gesture itself requests
+  // focus for the scrollable, which still bubbles key events up here fine.
+  // Rather than chase the exact pointer phase responsible, just take focus
+  // back immediately whenever it's lost -- unless a dialog/other route is on
+  // top, in which case that route should keep it.
+  void _reclaimFocus() {
+    if (_focusNode.hasFocus || !mounted) return;
+    final route = ModalRoute.of(context);
+    if (route != null && !route.isCurrent) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && !_focusNode.hasFocus) _focusNode.requestFocus();
+    });
   }
 
   Future<List<String>?> _localImagePaths() async {
@@ -104,7 +137,7 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
       return;
     }
 
-    final reply = await api.chapter.images(Id(id: _chapter.id));
+    final reply = await api.chapter.images(ChapterImagesRequest(chapterId: _chapter.id));
     setState(() {
       _images = reply.items
           .map((page) => _ReaderPage(
@@ -118,58 +151,40 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
   }
 
   void offsetUpdater() {
-    var lastChapter = _chapter.deepCopy();
-    var lastOffset = lastChapter.offset.deepCopy();
+    itemPositionsListener.itemPositions.addListener(() {
+      if (_isPagedMode) return;
 
-    Timer? debounced;
+      final lastItem = itemPositionsListener.itemPositions.value.lastOrNull;
+      if (lastItem == null) return;
 
-    itemPositionsListener.itemPositions.addListener(() async {
-      if (lastChapter.id != _chapter.id) {
-        debounced?.cancel();
+      final page = lastItem.index;
+      final pixels = (lastItem.itemLeadingEdge * 100).floor();
+      _recordOffset(page, pixels);
+    });
+  }
 
-        // Chapter changed, update offset nonetheless
-        await updateOffset(
-          chapterId: lastChapter.id,
-          page: lastOffset.page,
-          pixels: lastOffset.pixels,
-        );
-
-        // Update watched chapter
-        lastChapter = _chapter.deepCopy();
-      } else {
-        // Get the first visible item
-        final lastItem = itemPositionsListener.itemPositions.value.lastOrNull;
-        // If not null
-        if (lastItem != null) {
-          // Get the "page"
-          int page = lastItem.index;
-          // The amount of pixels scrolled in the page
-          final pixels = (lastItem.itemLeadingEdge * 100).floor();
-          // If different than what is saved
-          if ((pixels != 0 || page != 0) && (page != lastOffset.page || pixels != lastOffset.pixels)) {
-            // Set the last to this
-            lastOffset = ChapterOffset(
-              page: page,
-              pixels: pixels,
-            );
-            // Cancel any other update
-            debounced?.cancel();
-            // Send API an update if not scrolled for 5 seconds
-            debounced = Timer(Duration(milliseconds: 5000), () {
-              updateOffset(
-                chapterId: lastChapter.id,
-                page: lastOffset.page,
-                pixels: lastOffset.pixels,
-              );
-            });
-          }
-        }
-      }
+  // Debounces reading-progress persistence so we're not hitting the API on
+  // every scroll tick / page turn -- shared by both webtoon (item position
+  // listener) and paged (PageView.onPageChanged) modes, and also doubles as
+  // the "current position" used to re-target the reader when the user
+  // toggles between modes mid-chapter.
+  void _recordOffset(int page, int pixels) {
+    if (page == _lastOffsetPage && pixels == _lastOffsetPixels) return;
+    _lastOffsetPage = page;
+    _lastOffsetPixels = pixels;
+    _offsetDebounce?.cancel();
+    final chapterId = _chapter.id;
+    _offsetDebounce = Timer(const Duration(milliseconds: 5000), () {
+      updateOffset(chapterId: chapterId, page: page, pixels: pixels);
     });
   }
 
   @override
   void dispose() {
+    _offsetDebounce?.cancel();
+    _pageController.dispose();
+    _focusNode.removeListener(_reclaimFocus);
+    _focusNode.dispose();
     super.dispose();
   }
 
@@ -236,10 +251,11 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
         if (!didPop) {
+          _offsetDebounce?.cancel();
           updateOffset(
             chapterId: _chapter.id,
-            page: _chapter.offset.page,
-            pixels: _chapter.offset.pixels,
+            page: _lastOffsetPage,
+            pixels: _lastOffsetPixels,
           );
           Navigator.of(context).pop(result);
         }
@@ -249,119 +265,169 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
       // takes focus -- Focus.onKeyEvent only fires for ancestors of
       // whichever node currently holds it.
       child: Focus(
+        focusNode: _focusNode,
         autofocus: true,
         onKeyEvent: _handleKeyEvent,
-        child: Scaffold(
-          appBar: AppBar(
-            title: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Tooltip(
-                  message:
-                      _chapter.title.isEmpty ? 'Chapter ${_chapter.number.toString().replaceFirst('.0', '')}' : _chapter.title,
-                  child: Text(
-                      _chapter.title.isEmpty ? 'Chapter ${_chapter.number.toString().replaceFirst('.0', '')}' : _chapter.title),
+        // Interacting with a scrollable (dragging the page list, swiping in
+        // the PageView) makes Flutter hand it keyboard focus automatically,
+        // which silently steals focus away from this Focus node -- reclaim
+        // it on every tap so WASD/arrow keys keep working after clicking
+        // into the reader.
+        child: Listener(
+          onPointerDown: (_) => _focusNode.requestFocus(),
+          child: Scaffold(
+            appBar: AppBar(
+              title: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Tooltip(
+                    message:
+                        _chapter.title.isEmpty ? 'Chapter ${_chapter.number.toString().replaceFirst('.0', '')}' : _chapter.title,
+                    child: Text(
+                        _chapter.title.isEmpty ? 'Chapter ${_chapter.number.toString().replaceFirst('.0', '')}' : _chapter.title),
+                  ),
+                  Text(
+                    _chapter.hasPosted()
+                        ? '${widget.source.hostname} · ${Jiffy.parseFromMillisecondsSinceEpoch(_chapter.posted.toInt()).fromNow()}'
+                        : widget.source.hostname,
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(color: Colors.white54),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+              centerTitle: false,
+              actions: [
+                if (_isPagedMode && _images != null)
+                  Center(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: Text(
+                        '${_currentPage + 1} / ${_images!.length}',
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(color: Colors.white54),
+                      ),
+                    ),
+                  ),
+                if (_isOffline)
+                  const Tooltip(
+                    message: 'Offline',
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 8),
+                      child: Icon(Icons.wifi_off),
+                    ),
+                  ),
+                IconButton(
+                  onPressed: widget.manga.sources.length > 1 ? _switchSource : null,
+                  tooltip: FlutterI18n.translate(context, 'manga.switch_source'),
+                  icon: const Icon(Icons.swap_horiz),
                 ),
-                Text(
-                  _chapter.hasPosted()
-                      ? '${widget.source.hostname} · ${Jiffy.parseFromMillisecondsSinceEpoch(_chapter.posted.toInt()).fromNow()}'
-                      : widget.source.hostname,
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(color: Colors.white54),
-                  overflow: TextOverflow.ellipsis,
+                IconButton(
+                  onPressed: () {
+                    setState(() => _isPagedMode = !_isPagedMode);
+                    Store.getStoreInstance().setMangaReadingMode(widget.manga.id, _isPagedMode ? 'paged' : 'webtoon');
+                  },
+                  tooltip: FlutterI18n.translate(context, _isPagedMode ? 'chapter.mode_paged' : 'chapter.mode_webtoon'),
+                  icon: Icon(_isPagedMode ? Icons.menu_book : Icons.view_day),
                 ),
+                if (_isPagedMode) ...[
+                  IconButton(
+                    onPressed: () {
+                      if (_pageController.hasClients) {
+                        _pageController.jumpToPage((_images?.length ?? 1) - 1);
+                      }
+                    },
+                    tooltip: FlutterI18n.translate(context, 'chapter.goto_last_page'),
+                    icon: const Icon(Icons.last_page),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      if (_pageController.hasClients) {
+                        _pageController.jumpToPage(0);
+                      }
+                    },
+                    tooltip: FlutterI18n.translate(context, 'chapter.goto_first_page'),
+                    icon: const Icon(Icons.first_page),
+                  ),
+                ] else ...[
+                  IconButton(
+                    onPressed: () async {
+                      itemScrollController.jumpTo(index: 10000);
+                    },
+                    tooltip: FlutterI18n.translate(context, 'chapter.goto_bottom'),
+                    icon: const Icon(Icons.arrow_downward),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      itemScrollController.jumpTo(index: 0);
+                    },
+                    tooltip: FlutterI18n.translate(context, 'chapter.goto_top'),
+                    icon: const Icon(Icons.arrow_upward),
+                  ),
+                ],
+                OpenURLAction(url: _chapter.url),
               ],
             ),
-            centerTitle: false,
-            actions: [
-              if (_isOffline)
-                const Tooltip(
-                  message: 'Offline',
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 8),
-                    child: Icon(Icons.wifi_off),
+            body: _images == null
+                ? const Center(child: CircularProgressIndicator())
+                : (_isPagedMode ? _buildPagedView(_images!) : _buildImageList(_images!)),
+            bottomNavigationBar: IntrinsicHeight(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  LinearProgressIndicator(
+                    value: widget.manga.progressPercentage,
+                    minHeight: 5,
+                    color: Theme.of(context).colorScheme.tertiary,
+                    backgroundColor: Colors.white24,
                   ),
-                ),
-              IconButton(
-                onPressed: widget.manga.sources.length > 1 ? _switchSource : null,
-                tooltip: FlutterI18n.translate(context, 'manga.switch_source'),
-                icon: const Icon(Icons.swap_horiz),
-              ),
-              IconButton(
-                onPressed: () async {
-                  itemScrollController.jumpTo(index: 10000);
-                },
-                tooltip: FlutterI18n.translate(context, 'chapter.goto_bottom'),
-                icon: const Icon(Icons.arrow_downward),
-              ),
-              IconButton(
-                onPressed: () {
-                  itemScrollController.jumpTo(index: 0);
-                },
-                tooltip: FlutterI18n.translate(context, 'chapter.goto_top'),
-                icon: const Icon(Icons.arrow_upward),
-              ),
-              OpenURLAction(url: _chapter.url),
-            ],
-          ),
-          body: _images == null ? const Center(child: CircularProgressIndicator()) : _buildImageList(_images!),
-          bottomNavigationBar: IntrinsicHeight(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                LinearProgressIndicator(
-                  value: widget.manga.progressPercentage,
-                  minHeight: 5,
-                  color: Theme.of(context).colorScheme.tertiary,
-                  backgroundColor: Colors.white24,
-                ),
-                Row(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      child: Tooltip(
-                        message: FlutterI18n.translate(context, 'chapter.previous'),
-                        child: MaterialButton(
-                          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          padding: EdgeInsets.zero,
-                          onPressed: widget.manga.readingProgress > 1 ? previous : null,
-                          child: Row(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Visibility(
-                                  visible: widget.manga.readingProgress > 1,
-                                  child: Text((widget.manga.readingProgress - 1).toString())),
-                              const Icon(Icons.navigate_before)
-                            ],
+                  Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: Tooltip(
+                          message: FlutterI18n.translate(context, 'chapter.previous'),
+                          child: MaterialButton(
+                            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            padding: EdgeInsets.zero,
+                            onPressed: widget.manga.readingProgress > 1 ? previous : null,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Visibility(
+                                    visible: widget.manga.readingProgress > 1,
+                                    child: Text((widget.manga.readingProgress - 1).toString())),
+                                const Icon(Icons.navigate_before)
+                              ],
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    Expanded(
-                      child: Tooltip(
-                        message: FlutterI18n.translate(context, 'chapter.next'),
-                        child: MaterialButton(
-                          padding: EdgeInsets.zero,
-                          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          onPressed: widget.manga.readingProgress < widget.manga.countChapters.toInt() ? next : null,
-                          child: Row(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Icon(Icons.navigate_next),
-                              Visibility(
-                                  visible: widget.manga.readingProgress < widget.manga.countChapters.toInt(),
-                                  child: Text((widget.manga.readingProgress + 1).toString()))
-                            ],
+                      Expanded(
+                        child: Tooltip(
+                          message: FlutterI18n.translate(context, 'chapter.next'),
+                          child: MaterialButton(
+                            padding: EdgeInsets.zero,
+                            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            onPressed: widget.manga.readingProgress < widget.manga.countChapters.toInt() ? next : null,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(Icons.navigate_next),
+                                Visibility(
+                                    visible: widget.manga.readingProgress < widget.manga.countChapters.toInt(),
+                                    child: Text((widget.manga.readingProgress + 1).toString()))
+                              ],
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -401,6 +467,25 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
       return KeyEventResult.ignored;
     }
 
+    if (_isPagedMode) {
+      switch (event.logicalKey) {
+        case LogicalKeyboardKey.arrowUp:
+        case LogicalKeyboardKey.keyW:
+        case LogicalKeyboardKey.arrowLeft:
+        case LogicalKeyboardKey.keyA:
+          _pageBackward();
+          return KeyEventResult.handled;
+        case LogicalKeyboardKey.arrowDown:
+        case LogicalKeyboardKey.keyS:
+        case LogicalKeyboardKey.arrowRight:
+        case LogicalKeyboardKey.keyD:
+          _pageForward();
+          return KeyEventResult.handled;
+        default:
+          return KeyEventResult.ignored;
+      }
+    }
+
     final step = HardwareKeyboard.instance.isShiftPressed ? _keyScrollStepFast : _keyScrollStep;
 
     switch (event.logicalKey) {
@@ -418,10 +503,33 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
         return KeyEventResult.handled;
       case LogicalKeyboardKey.arrowRight:
       case LogicalKeyboardKey.keyD:
-        if (widget.manga.readingProgress < widget.manga.countChapters.toInt()) next();
+        if (widget.manga.readingProgress < widget.manga.countChapters.toInt()) {
+          next();
+        }
         return KeyEventResult.handled;
       default:
         return KeyEventResult.ignored;
+    }
+  }
+
+  void _pageForward() {
+    if (!_pageController.hasClients) return;
+    final current = _pageController.page?.round() ?? 0;
+    final last = (_images?.length ?? 1) - 1;
+    if (current < last) {
+      _pageController.nextPage(duration: const Duration(milliseconds: 200), curve: Curves.easeOut);
+    } else if (widget.manga.readingProgress < widget.manga.countChapters.toInt()) {
+      next();
+    }
+  }
+
+  void _pageBackward() {
+    if (!_pageController.hasClients) return;
+    final current = _pageController.page?.round() ?? 0;
+    if (current > 0) {
+      _pageController.previousPage(duration: const Duration(milliseconds: 200), curve: Curves.easeOut);
+    } else if (widget.manga.readingProgress > 1) {
+      previous();
     }
   }
 
@@ -470,22 +578,62 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
     );
   }
 
-  Widget _buildPage(_ReaderPage page) {
+  Widget _buildPagedView(List<_ReaderPage> links) {
+    (() async {
+      if (links.isEmpty) return;
+
+      final initialFraction = widget.initialFraction;
+      final index = initialFraction != null
+          ? (initialFraction * links.length).round().clamp(0, links.length - 1)
+          : _lastOffsetPage.clamp(0, links.length - 1);
+
+      int timeout = 0;
+      while (!_pageController.hasClients && timeout++ != 5) {
+        await Future.delayed(const Duration(milliseconds: 100));
+      }
+      if (!_pageController.hasClients) return;
+
+      _pageController.jumpToPage(index);
+      if (mounted) setState(() => _currentPage = index);
+    })();
+
+    return ResponsiveContent(
+      maxWidth: 900,
+      child: PageView.builder(
+        controller: _pageController,
+        itemCount: links.length,
+        onPageChanged: (index) {
+          _recordOffset(index, 0);
+          setState(() => _currentPage = index);
+        },
+        itemBuilder: (context, index) => _buildPage(links[index], paged: true),
+      ),
+    );
+  }
+
+  Widget _buildPage(_ReaderPage page, {bool paged = false}) {
+    // Webtoon items reserve their own height and grow with the image
+    // (fitWidth), so the reader can scroll past them. A paged page instead
+    // gets a fixed-size slot from PageView -- fitWidth there would overflow
+    // vertically and clip, so it needs `contain` to always show the whole
+    // page, centered, letterboxed if its aspect ratio doesn't match.
     final Widget image = _isOffline
         ? Image.file(
             File(page.url),
-            alignment: Alignment.topCenter,
+            alignment: paged ? Alignment.center : Alignment.topCenter,
             filterQuality: FilterQuality.high,
-            fit: BoxFit.fitWidth,
+            fit: paged ? BoxFit.contain : BoxFit.fitWidth,
             width: double.infinity,
+            height: paged ? double.infinity : null,
           )
         : CachedNetworkImage(
             imageUrl: page.url,
-            alignment: Alignment.topCenter,
+            alignment: paged ? Alignment.center : Alignment.topCenter,
             fadeOutDuration: const Duration(microseconds: 1),
             filterQuality: FilterQuality.high,
-            fit: BoxFit.fitWidth,
+            fit: paged ? BoxFit.contain : BoxFit.fitWidth,
             width: double.infinity,
+            height: paged ? double.infinity : null,
             progressIndicatorBuilder: (context, url, downloadProgress) => SizedBox.fromSize(
               size: const Size.fromHeight(500),
               child: Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
@@ -496,6 +644,8 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
               child: const Center(child: Icon(Icons.error)),
             ),
           );
+
+    if (paged) return SizedBox.expand(child: image);
 
     // Known dimensions let the list item reserve the correct height up
     // front (matching what BoxFit.fitWidth will render at), so swapping the
@@ -539,6 +689,11 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
   /// same continuous reading session, not a navigation to a new screen.
   Future<void> _goToChapter(ChapterReply chapter, {double? initialFraction}) async {
     if (!mounted) return;
+
+    _offsetDebounce?.cancel();
+    await updateOffset(chapterId: _chapter.id, page: _lastOffsetPage, pixels: _lastOffsetPixels);
+    if (!mounted) return;
+
     await Navigator.of(context).pushReplacement(
       PageRouteBuilder(
         settings: RouteSettings(name: chapterRouteNameFor(mangaId: widget.manga.id, chapter: chapter)),

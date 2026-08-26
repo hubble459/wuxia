@@ -3,7 +3,6 @@ import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:wuxia/api.dart';
 import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
-import 'package:wuxia/gen/rumgap/v1/v1.pb.dart';
 import 'package:wuxia/partial/list/manga_item.dart';
 import 'package:wuxia/partial/simple_future_builder.dart';
 
@@ -84,7 +83,7 @@ class MangaDetails extends StatelessWidget {
           child: Text(manga.description),
         ),
         SimpleFutureBuilder<MangasReply>(
-          future: api.manga.similar(Id(id: manga.id)),
+          future: api.manga.similar(SimilarMangaRequest(id: manga.id)),
           onLoadedBuilder: (context, similar) {
             return Visibility(
               visible: similar.items.isNotEmpty,

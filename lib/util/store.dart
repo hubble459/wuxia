@@ -13,6 +13,8 @@ class Store {
   static const String languageKey = 'language';
   static const String dataSaverKey = 'data_saver';
   static const String downloadDirKey = 'download_dir';
+  static const String readingModeKey = 'reading_mode';
+  static const String mangaReadingModeKeyPrefix = 'reading_mode_manga_';
 
   static late final Store _instance;
 
@@ -22,7 +24,9 @@ class Store {
   Store._(this._secureStorage, this._publicStorage);
 
   static Future<Store> init() async {
-    _instance = Store._((!kIsWeb && Platform.isLinux) ? null : FlutterSecureStorage(), await SharedPreferences.getInstance());
+    _instance = Store._(
+        (!kIsWeb && Platform.isLinux) ? null : FlutterSecureStorage(),
+        await SharedPreferences.getInstance());
     return _instance;
   }
 
@@ -112,5 +116,21 @@ class Store {
 
   Future<void> clearDownloadDir() async {
     await _publicStorage.remove(downloadDirKey);
+  }
+
+  String getReadingMode() {
+    return _publicStorage.getString(readingModeKey) ?? 'webtoon';
+  }
+
+  Future<void> setReadingMode(String mode) async {
+    await _publicStorage.setString(readingModeKey, mode);
+  }
+
+  String? getMangaReadingMode(int mangaId) {
+    return _publicStorage.getString('$mangaReadingModeKeyPrefix$mangaId');
+  }
+
+  Future<void> setMangaReadingMode(int mangaId, String mode) async {
+    await _publicStorage.setString('$mangaReadingModeKeyPrefix$mangaId', mode);
   }
 }

@@ -4,7 +4,7 @@ import 'package:wuxia/gen/rumgap/v1/user.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/v1.pb.dart';
 import 'package:wuxia/util/store.dart';
 
-bool _restoreAttempted = false;
+Future<void>? _restoreFuture;
 
 /// Restores the persisted API host + auth token into [api]/[API].
 ///
@@ -12,11 +12,16 @@ bool _restoreAttempted = false;
 /// route like RootNavScreen or SettingsScreen, skipping SplashScreen -- the
 /// only place this used to run -- entirely. Protected screens call this
 /// themselves so credentials are available no matter how they were reached.
-/// Idempotent: only does the work the first time it's called.
-Future<void> restoreSession() async {
-  if (_restoreAttempted) return;
-  _restoreAttempted = true;
+///
+/// A deep link also seeds a buried root_nav route alongside the visible one
+/// (see main.dart's onGenerateInitialRoutes), so this is commonly called by
+/// more than one screen around the same time -- memoize the Future itself,
+/// not just a "started" flag, so a later caller actually awaits the first
+/// call's in-flight work instead of seeing it as instantly (and wrongly)
+/// "done" before the token read/validation has resolved.
+Future<void> restoreSession() => _restoreFuture ??= _restoreSession();
 
+Future<void> _restoreSession() async {
   final store = Store.getStoreInstance();
   final apiURL = store.getApiHost();
   if (apiURL != null && api.getApiURL() != apiURL) {

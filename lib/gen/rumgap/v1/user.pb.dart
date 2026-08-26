@@ -151,6 +151,60 @@ class DeviceTokenRequest extends $pb.GeneratedMessage {
   void clearToken() => $_clearField(1);
 }
 
+class GetUserRequest extends $pb.GeneratedMessage {
+  factory GetUserRequest({
+    $core.int? id,
+  }) {
+    final result = create();
+    if (id != null) result.id = id;
+    return result;
+  }
+
+  GetUserRequest._();
+
+  factory GetUserRequest.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory GetUserRequest.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'GetUserRequest',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'rumgap.v1'),
+      createEmptyInstance: create)
+    ..aI(1, _omitFieldNames ? '' : 'id')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  GetUserRequest clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  GetUserRequest copyWith(void Function(GetUserRequest) updates) =>
+      super.copyWith((message) => updates(message as GetUserRequest))
+          as GetUserRequest;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static GetUserRequest create() => GetUserRequest._();
+  @$core.override
+  GetUserRequest createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static GetUserRequest getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<GetUserRequest>(create);
+  static GetUserRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.int get id => $_getIZ(0);
+  @$pb.TagNumber(1)
+  set id($core.int value) => $_setSignedInt32(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearId() => $_clearField(1);
+}
+
 enum UserRequest_Identifier { username, email, notSet }
 
 class UserRequest extends $pb.GeneratedMessage {
