@@ -27,6 +27,12 @@ jobs:
           echo "${{ secrets.WIREGUARD_CONFIG }}" > /tmp/wg0.conf
           sudo wg-quick up /tmp/wg0.conf
 
+      - name: Debug routing
+        run: |
+          ip addr show
+          ip route show
+          ip route get ${{ vars.DEPLOY_SSH_HOST }}
+
       - name: Deploy build/web over rsync
         run: |
           mkdir -p ~/.ssh
