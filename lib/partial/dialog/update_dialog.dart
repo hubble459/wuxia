@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:app_installer/app_installer.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:github/github.dart';
@@ -10,7 +11,6 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher_string.dart';
-import 'package:wuxia/partial/action/open_url_action.dart';
 import 'package:wuxia/partial/simple_future_builder.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -154,6 +154,8 @@ class _UpdateDialogState extends State<UpdateDialog> {
   }
 
   Future<String?> getDownloadPath() async {
+    if (kIsWeb) return null;
+
     Directory? directory;
     try {
       if (Platform.isIOS) {

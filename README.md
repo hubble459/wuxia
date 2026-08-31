@@ -24,6 +24,44 @@ Manga Reader built upon the [RumGap](https://github.com/hubble459/rumgap) API.
 > sudo dnf install gtk3
 > ```
 
+## Development
+
+### Regenerating the gRPC client
+
+The Dart gRPC client in `lib/gen` is generated from rumgap's `.proto` files (`../rumgap/proto`, so this repo must sit next to a `rumgap` checkout).
+
+1. **Install `protoc`** (the Protobuf compiler):
+```bash
+# Debian/Ubuntu
+sudo apt-get install protobuf-compiler
+# Arch
+sudo pacman -S protobuf
+# Fedora
+sudo dnf install protobuf-compiler
+# macOS
+brew install protobuf
+```
+Verify with `protoc --version` (3.15+ recommended for proto3 `optional` support).
+
+2. Install the Dart protoc plugin and make sure it's on your PATH:
+```bash
+dart pub global activate protoc_plugin
+export PATH="$PATH:$HOME/.pub-cache/bin"
+```
+
+3. Clone the Google proto dependencies anywhere, then point the env vars at them (defaults used by gen_google_grpc.sh are /opt/protobuf and /opt/googleapis):
+```bash
+git clone https://github.com/protocolbuffers/protobuf /opt/protobuf
+git clone https://github.com/googleapis/googleapis /opt/googleapis
+```
+
+4. Generate the client:
+```bash
+./gen_grpc_client.sh
+```
+
+Run this whenever rumgap's proto/**/*.proto files change.
+
 ## Features
 - Searching for manga
 - Reading chapters

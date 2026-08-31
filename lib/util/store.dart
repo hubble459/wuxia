@@ -1,5 +1,6 @@
 import 'dart:io' show Platform;
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -12,6 +13,8 @@ class Store {
   static const String languageKey = 'language';
   static const String dataSaverKey = 'data_saver';
   static const String downloadDirKey = 'download_dir';
+  static const String readingModeKey = 'reading_mode';
+  static const String mangaReadingModeKeyPrefix = 'reading_mode_manga_';
 
   static late final Store _instance;
 
@@ -21,7 +24,9 @@ class Store {
   Store._(this._secureStorage, this._publicStorage);
 
   static Future<Store> init() async {
-    _instance = Store._(Platform.isLinux ? null : FlutterSecureStorage(), await SharedPreferences.getInstance());
+    _instance = Store._(
+        (!kIsWeb && Platform.isLinux) ? null : FlutterSecureStorage(),
+        await SharedPreferences.getInstance());
     return _instance;
   }
 
@@ -31,7 +36,7 @@ class Store {
 
   Future<void> setToken(String token) async {
     if (_secureStorage != null) {
-      await _secureStorage!.write(key: tokenKey, value: token);
+      await _secureStorage.write(key: tokenKey, value: token);
     } else {
       await _publicStorage.setString(tokenKey, token);
     }
@@ -39,7 +44,7 @@ class Store {
 
   Future<void> removeToken() async {
     if (_secureStorage != null) {
-      await _secureStorage!.delete(key: tokenKey);
+      await _secureStorage.delete(key: tokenKey);
     } else {
       await _publicStorage.remove(tokenKey);
     }
@@ -47,7 +52,7 @@ class Store {
 
   Future<String?> readToken() async {
     if (_secureStorage != null) {
-      return _secureStorage!.read(key: tokenKey);
+      return _secureStorage.read(key: tokenKey);
     } else {
       return _publicStorage.getString(tokenKey);
     }
@@ -111,5 +116,21 @@ class Store {
 
   Future<void> clearDownloadDir() async {
     await _publicStorage.remove(downloadDirKey);
+  }
+
+  String getReadingMode() {
+    return _publicStorage.getString(readingModeKey) ?? 'webtoon';
+  }
+
+  Future<void> setReadingMode(String mode) async {
+    await _publicStorage.setString(readingModeKey, mode);
+  }
+
+  String? getMangaReadingMode(int mangaId) {
+    return _publicStorage.getString('$mangaReadingModeKeyPrefix$mangaId');
+  }
+
+  Future<void> setMangaReadingMode(int mangaId, String mode) async {
+    await _publicStorage.setString('$mangaReadingModeKeyPrefix$mangaId', mode);
   }
 }

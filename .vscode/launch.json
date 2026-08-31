@@ -20,6 +20,13 @@
             "request": "launch",
             "type": "dart",
             "flutterMode": "release"
+        },
+        {
+            "name": "wuxia (web)",
+            "request": "launch",
+            "type": "dart",
+            "deviceId": "chrome",
+            "args": ["--web-port", "5000"]
         }
     ]
 }

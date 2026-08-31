@@ -15,17 +15,19 @@ import 'dart:convert' as $convert;
 import 'dart:core' as $core;
 import 'dart:typed_data' as $typed_data;
 
-@$core.Deprecated('Use idDescriptor instead')
-const Id$json = {
-  '1': 'Id',
+@$core.Deprecated('Use updateMangaRequestDescriptor instead')
+const UpdateMangaRequest$json = {
+  '1': 'UpdateMangaRequest',
   '2': [
     {'1': 'id', '3': 1, '4': 1, '5': 5, '10': 'id'},
+    {'1': 'force', '3': 2, '4': 1, '5': 8, '10': 'force'},
   ],
 };
 
-/// Descriptor for `Id`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List idDescriptor =
-    $convert.base64Decode('CgJJZBIOCgJpZBgBIAEoBVICaWQ=');
+/// Descriptor for `UpdateMangaRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List updateMangaRequestDescriptor = $convert.base64Decode(
+    'ChJVcGRhdGVNYW5nYVJlcXVlc3QSDgoCaWQYASABKAVSAmlkEhQKBWZvcmNlGAIgASgIUgVmb3'
+    'JjZQ==');
 
 @$core.Deprecated('Use emptyDescriptor instead')
 const Empty$json = {

@@ -20,11 +20,12 @@ import 'chapter.pb.dart' as $5;
 import 'friend.pb.dart' as $3;
 import 'manga.pb.dart' as $4;
 import 'meta.pb.dart' as $8;
-import 'paginate.pb.dart' as $2;
+import 'paginate.pb.dart' as $1;
 import 'reading.pb.dart' as $6;
+import 'scraper.pb.dart' as $9;
 import 'search.pb.dart' as $7;
 import 'user.pb.dart' as $0;
-import 'v1.pb.dart' as $1;
+import 'v1.pb.dart' as $2;
 
 export 'v1.pb.dart';
 
@@ -55,21 +56,21 @@ class UserClient extends $grpc.Client {
   }
 
   $grpc.ResponseFuture<$0.UserFullReply> get(
-    $1.Id request, {
+    $0.GetUserRequest request, {
     $grpc.CallOptions? options,
   }) {
     return $createUnaryCall(_$get, request, options: options);
   }
 
   $grpc.ResponseFuture<$0.UsersReply> index(
-    $2.PaginateQuery request, {
+    $1.PaginateQuery request, {
     $grpc.CallOptions? options,
   }) {
     return $createUnaryCall(_$index, request, options: options);
   }
 
   $grpc.ResponseFuture<$0.UserFullReply> me(
-    $1.Empty request, {
+    $2.Empty request, {
     $grpc.CallOptions? options,
   }) {
     return $createUnaryCall(_$me, request, options: options);
@@ -82,14 +83,14 @@ class UserClient extends $grpc.Client {
     return $createUnaryCall(_$update, request, options: options);
   }
 
-  $grpc.ResponseFuture<$1.Empty> addDeviceToken(
+  $grpc.ResponseFuture<$2.Empty> addDeviceToken(
     $0.DeviceTokenRequest request, {
     $grpc.CallOptions? options,
   }) {
     return $createUnaryCall(_$addDeviceToken, request, options: options);
   }
 
-  $grpc.ResponseFuture<$1.Empty> removeDeviceToken(
+  $grpc.ResponseFuture<$2.Empty> removeDeviceToken(
     $0.DeviceTokenRequest request, {
     $grpc.CallOptions? options,
   }) {
@@ -107,17 +108,17 @@ class UserClient extends $grpc.Client {
       '/rumgap.v1.User/Login',
       ($0.UserRequest value) => value.writeToBuffer(),
       $0.UserTokenReply.fromBuffer);
-  static final _$get = $grpc.ClientMethod<$1.Id, $0.UserFullReply>(
+  static final _$get = $grpc.ClientMethod<$0.GetUserRequest, $0.UserFullReply>(
       '/rumgap.v1.User/Get',
-      ($1.Id value) => value.writeToBuffer(),
+      ($0.GetUserRequest value) => value.writeToBuffer(),
       $0.UserFullReply.fromBuffer);
-  static final _$index = $grpc.ClientMethod<$2.PaginateQuery, $0.UsersReply>(
+  static final _$index = $grpc.ClientMethod<$1.PaginateQuery, $0.UsersReply>(
       '/rumgap.v1.User/Index',
-      ($2.PaginateQuery value) => value.writeToBuffer(),
+      ($1.PaginateQuery value) => value.writeToBuffer(),
       $0.UsersReply.fromBuffer);
-  static final _$me = $grpc.ClientMethod<$1.Empty, $0.UserFullReply>(
+  static final _$me = $grpc.ClientMethod<$2.Empty, $0.UserFullReply>(
       '/rumgap.v1.User/Me',
-      ($1.Empty value) => value.writeToBuffer(),
+      ($2.Empty value) => value.writeToBuffer(),
       $0.UserFullReply.fromBuffer);
   static final _$update =
       $grpc.ClientMethod<$0.UserUpdateRequest, $0.UserFullReply>(
@@ -125,15 +126,15 @@ class UserClient extends $grpc.Client {
           ($0.UserUpdateRequest value) => value.writeToBuffer(),
           $0.UserFullReply.fromBuffer);
   static final _$addDeviceToken =
-      $grpc.ClientMethod<$0.DeviceTokenRequest, $1.Empty>(
+      $grpc.ClientMethod<$0.DeviceTokenRequest, $2.Empty>(
           '/rumgap.v1.User/AddDeviceToken',
           ($0.DeviceTokenRequest value) => value.writeToBuffer(),
-          $1.Empty.fromBuffer);
+          $2.Empty.fromBuffer);
   static final _$removeDeviceToken =
-      $grpc.ClientMethod<$0.DeviceTokenRequest, $1.Empty>(
+      $grpc.ClientMethod<$0.DeviceTokenRequest, $2.Empty>(
           '/rumgap.v1.User/RemoveDeviceToken',
           ($0.DeviceTokenRequest value) => value.writeToBuffer(),
-          $1.Empty.fromBuffer);
+          $2.Empty.fromBuffer);
 }
 
 @$pb.GrpcServiceName('rumgap.v1.User')
@@ -156,26 +157,26 @@ abstract class UserServiceBase extends $grpc.Service {
         false,
         ($core.List<$core.int> value) => $0.UserRequest.fromBuffer(value),
         ($0.UserTokenReply value) => value.writeToBuffer()));
-    $addMethod($grpc.ServiceMethod<$1.Id, $0.UserFullReply>(
+    $addMethod($grpc.ServiceMethod<$0.GetUserRequest, $0.UserFullReply>(
         'Get',
         get_Pre,
         false,
         false,
-        ($core.List<$core.int> value) => $1.Id.fromBuffer(value),
+        ($core.List<$core.int> value) => $0.GetUserRequest.fromBuffer(value),
         ($0.UserFullReply value) => value.writeToBuffer()));
-    $addMethod($grpc.ServiceMethod<$2.PaginateQuery, $0.UsersReply>(
+    $addMethod($grpc.ServiceMethod<$1.PaginateQuery, $0.UsersReply>(
         'Index',
         index_Pre,
         false,
         false,
-        ($core.List<$core.int> value) => $2.PaginateQuery.fromBuffer(value),
+        ($core.List<$core.int> value) => $1.PaginateQuery.fromBuffer(value),
         ($0.UsersReply value) => value.writeToBuffer()));
-    $addMethod($grpc.ServiceMethod<$1.Empty, $0.UserFullReply>(
+    $addMethod($grpc.ServiceMethod<$2.Empty, $0.UserFullReply>(
         'Me',
         me_Pre,
         false,
         false,
-        ($core.List<$core.int> value) => $1.Empty.fromBuffer(value),
+        ($core.List<$core.int> value) => $2.Empty.fromBuffer(value),
         ($0.UserFullReply value) => value.writeToBuffer()));
     $addMethod($grpc.ServiceMethod<$0.UserUpdateRequest, $0.UserFullReply>(
         'Update',
@@ -184,22 +185,22 @@ abstract class UserServiceBase extends $grpc.Service {
         false,
         ($core.List<$core.int> value) => $0.UserUpdateRequest.fromBuffer(value),
         ($0.UserFullReply value) => value.writeToBuffer()));
-    $addMethod($grpc.ServiceMethod<$0.DeviceTokenRequest, $1.Empty>(
+    $addMethod($grpc.ServiceMethod<$0.DeviceTokenRequest, $2.Empty>(
         'AddDeviceToken',
         addDeviceToken_Pre,
         false,
         false,
         ($core.List<$core.int> value) =>
             $0.DeviceTokenRequest.fromBuffer(value),
-        ($1.Empty value) => value.writeToBuffer()));
-    $addMethod($grpc.ServiceMethod<$0.DeviceTokenRequest, $1.Empty>(
+        ($2.Empty value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$0.DeviceTokenRequest, $2.Empty>(
         'RemoveDeviceToken',
         removeDeviceToken_Pre,
         false,
         false,
         ($core.List<$core.int> value) =>
             $0.DeviceTokenRequest.fromBuffer(value),
-        ($1.Empty value) => value.writeToBuffer()));
+        ($2.Empty value) => value.writeToBuffer()));
   }
 
   $async.Future<$0.UserTokenReply> register_Pre($grpc.ServiceCall $call,
@@ -218,27 +219,28 @@ abstract class UserServiceBase extends $grpc.Service {
   $async.Future<$0.UserTokenReply> login(
       $grpc.ServiceCall call, $0.UserRequest request);
 
-  $async.Future<$0.UserFullReply> get_Pre(
-      $grpc.ServiceCall $call, $async.Future<$1.Id> $request) async {
+  $async.Future<$0.UserFullReply> get_Pre($grpc.ServiceCall $call,
+      $async.Future<$0.GetUserRequest> $request) async {
     return get($call, await $request);
   }
 
-  $async.Future<$0.UserFullReply> get($grpc.ServiceCall call, $1.Id request);
+  $async.Future<$0.UserFullReply> get(
+      $grpc.ServiceCall call, $0.GetUserRequest request);
 
   $async.Future<$0.UsersReply> index_Pre(
-      $grpc.ServiceCall $call, $async.Future<$2.PaginateQuery> $request) async {
+      $grpc.ServiceCall $call, $async.Future<$1.PaginateQuery> $request) async {
     return index($call, await $request);
   }
 
   $async.Future<$0.UsersReply> index(
-      $grpc.ServiceCall call, $2.PaginateQuery request);
+      $grpc.ServiceCall call, $1.PaginateQuery request);
 
   $async.Future<$0.UserFullReply> me_Pre(
-      $grpc.ServiceCall $call, $async.Future<$1.Empty> $request) async {
+      $grpc.ServiceCall $call, $async.Future<$2.Empty> $request) async {
     return me($call, await $request);
   }
 
-  $async.Future<$0.UserFullReply> me($grpc.ServiceCall call, $1.Empty request);
+  $async.Future<$0.UserFullReply> me($grpc.ServiceCall call, $2.Empty request);
 
   $async.Future<$0.UserFullReply> update_Pre($grpc.ServiceCall $call,
       $async.Future<$0.UserUpdateRequest> $request) async {
@@ -248,20 +250,20 @@ abstract class UserServiceBase extends $grpc.Service {
   $async.Future<$0.UserFullReply> update(
       $grpc.ServiceCall call, $0.UserUpdateRequest request);
 
-  $async.Future<$1.Empty> addDeviceToken_Pre($grpc.ServiceCall $call,
+  $async.Future<$2.Empty> addDeviceToken_Pre($grpc.ServiceCall $call,
       $async.Future<$0.DeviceTokenRequest> $request) async {
     return addDeviceToken($call, await $request);
   }
 
-  $async.Future<$1.Empty> addDeviceToken(
+  $async.Future<$2.Empty> addDeviceToken(
       $grpc.ServiceCall call, $0.DeviceTokenRequest request);
 
-  $async.Future<$1.Empty> removeDeviceToken_Pre($grpc.ServiceCall $call,
+  $async.Future<$2.Empty> removeDeviceToken_Pre($grpc.ServiceCall $call,
       $async.Future<$0.DeviceTokenRequest> $request) async {
     return removeDeviceToken($call, await $request);
   }
 
-  $async.Future<$1.Empty> removeDeviceToken(
+  $async.Future<$2.Empty> removeDeviceToken(
       $grpc.ServiceCall call, $0.DeviceTokenRequest request);
 }
 
@@ -292,14 +294,14 @@ class FriendClient extends $grpc.Client {
   }
 
   $grpc.ResponseFuture<$0.UsersReply> following(
-    $2.PaginateQuery request, {
+    $1.PaginateQuery request, {
     $grpc.CallOptions? options,
   }) {
     return $createUnaryCall(_$following, request, options: options);
   }
 
   $grpc.ResponseFuture<$0.UsersReply> followers(
-    $2.PaginateQuery request, {
+    $1.PaginateQuery request, {
     $grpc.CallOptions? options,
   }) {
     return $createUnaryCall(_$followers, request, options: options);
@@ -318,14 +320,14 @@ class FriendClient extends $grpc.Client {
           ($3.FriendRequest value) => value.writeToBuffer(),
           $0.UserFullReply.fromBuffer);
   static final _$following =
-      $grpc.ClientMethod<$2.PaginateQuery, $0.UsersReply>(
+      $grpc.ClientMethod<$1.PaginateQuery, $0.UsersReply>(
           '/rumgap.v1.Friend/Following',
-          ($2.PaginateQuery value) => value.writeToBuffer(),
+          ($1.PaginateQuery value) => value.writeToBuffer(),
           $0.UsersReply.fromBuffer);
   static final _$followers =
-      $grpc.ClientMethod<$2.PaginateQuery, $0.UsersReply>(
+      $grpc.ClientMethod<$1.PaginateQuery, $0.UsersReply>(
           '/rumgap.v1.Friend/Followers',
-          ($2.PaginateQuery value) => value.writeToBuffer(),
+          ($1.PaginateQuery value) => value.writeToBuffer(),
           $0.UsersReply.fromBuffer);
 }
 
@@ -348,19 +350,19 @@ abstract class FriendServiceBase extends $grpc.Service {
         false,
         ($core.List<$core.int> value) => $3.FriendRequest.fromBuffer(value),
         ($0.UserFullReply value) => value.writeToBuffer()));
-    $addMethod($grpc.ServiceMethod<$2.PaginateQuery, $0.UsersReply>(
+    $addMethod($grpc.ServiceMethod<$1.PaginateQuery, $0.UsersReply>(
         'Following',
         following_Pre,
         false,
         false,
-        ($core.List<$core.int> value) => $2.PaginateQuery.fromBuffer(value),
+        ($core.List<$core.int> value) => $1.PaginateQuery.fromBuffer(value),
         ($0.UsersReply value) => value.writeToBuffer()));
-    $addMethod($grpc.ServiceMethod<$2.PaginateQuery, $0.UsersReply>(
+    $addMethod($grpc.ServiceMethod<$1.PaginateQuery, $0.UsersReply>(
         'Followers',
         followers_Pre,
         false,
         false,
-        ($core.List<$core.int> value) => $2.PaginateQuery.fromBuffer(value),
+        ($core.List<$core.int> value) => $1.PaginateQuery.fromBuffer(value),
         ($0.UsersReply value) => value.writeToBuffer()));
   }
 
@@ -381,20 +383,20 @@ abstract class FriendServiceBase extends $grpc.Service {
       $grpc.ServiceCall call, $3.FriendRequest request);
 
   $async.Future<$0.UsersReply> following_Pre(
-      $grpc.ServiceCall $call, $async.Future<$2.PaginateQuery> $request) async {
+      $grpc.ServiceCall $call, $async.Future<$1.PaginateQuery> $request) async {
     return following($call, await $request);
   }
 
   $async.Future<$0.UsersReply> following(
-      $grpc.ServiceCall call, $2.PaginateQuery request);
+      $grpc.ServiceCall call, $1.PaginateQuery request);
 
   $async.Future<$0.UsersReply> followers_Pre(
-      $grpc.ServiceCall $call, $async.Future<$2.PaginateQuery> $request) async {
+      $grpc.ServiceCall $call, $async.Future<$1.PaginateQuery> $request) async {
     return followers($call, await $request);
   }
 
   $async.Future<$0.UsersReply> followers(
-      $grpc.ServiceCall call, $2.PaginateQuery request);
+      $grpc.ServiceCall call, $1.PaginateQuery request);
 }
 
 @$pb.GrpcServiceName('rumgap.v1.Manga')
@@ -426,21 +428,23 @@ class MangaClient extends $grpc.Client {
   }
 
   $grpc.ResponseFuture<$4.MangaReply> get(
-    $1.Id request, {
+    $4.GetMangaRequest request, {
     $grpc.CallOptions? options,
   }) {
     return $createUnaryCall(_$get, request, options: options);
   }
 
+  /// Refreshes this manga's primary source (only a primary-source refresh updates
+  /// canonical manga title/description/cover/etc).
   $grpc.ResponseFuture<$4.MangaReply> update(
-    $1.Id request, {
+    $2.UpdateMangaRequest request, {
     $grpc.CallOptions? options,
   }) {
     return $createUnaryCall(_$update, request, options: options);
   }
 
   $grpc.ResponseFuture<$4.MangasReply> index(
-    $2.PaginateSearchQuery request, {
+    $1.PaginateSearchQuery request, {
     $grpc.CallOptions? options,
   }) {
     return $createUnaryCall(_$index, request, options: options);
@@ -454,10 +458,50 @@ class MangaClient extends $grpc.Client {
   }
 
   $grpc.ResponseFuture<$4.MangasReply> similar(
-    $1.Id request, {
+    $4.SimilarMangaRequest request, {
     $grpc.CallOptions? options,
   }) {
     return $createUnaryCall(_$similar, request, options: options);
+  }
+
+  $grpc.ResponseFuture<$4.MangaReply> addSource(
+    $4.AddSourceRequest request, {
+    $grpc.CallOptions? options,
+  }) {
+    return $createUnaryCall(_$addSource, request, options: options);
+  }
+
+  $grpc.ResponseFuture<$4.MangaReply> removeSource(
+    $4.RemoveSourceRequest request, {
+    $grpc.CallOptions? options,
+  }) {
+    return $createUnaryCall(_$removeSource, request, options: options);
+  }
+
+  $grpc.ResponseFuture<$4.MangaReply> setPrimarySource(
+    $4.SetPrimarySourceRequest request, {
+    $grpc.CallOptions? options,
+  }) {
+    return $createUnaryCall(_$setPrimarySource, request, options: options);
+  }
+
+  /// Kicks off (or resumes) a throttled background walk that downloads every
+  /// not-yet-`done` page of every chapter of that source.
+  $grpc.ResponseFuture<$2.Empty> backfillImages(
+    $4.BackfillImagesRequest request, {
+    $grpc.CallOptions? options,
+  }) {
+    return $createUnaryCall(_$backfillImages, request, options: options);
+  }
+
+  /// See BackfillImages. Cheap `GROUP BY status` count, meant to be polled on
+  /// the client's own schedule -- no long-lived streaming RPC for a job that
+  /// can run for hours.
+  $grpc.ResponseFuture<$4.BackfillStatusReply> getBackfillStatus(
+    $4.GetBackfillStatusRequest request, {
+    $grpc.CallOptions? options,
+  }) {
+    return $createUnaryCall(_$getBackfillStatus, request, options: options);
   }
 
   // method descriptors
@@ -471,28 +515,55 @@ class MangaClient extends $grpc.Client {
           '/rumgap.v1.Manga/CreateMany',
           ($4.MangasRequest value) => value.writeToBuffer(),
           $4.MangaReply.fromBuffer);
-  static final _$get = $grpc.ClientMethod<$1.Id, $4.MangaReply>(
+  static final _$get = $grpc.ClientMethod<$4.GetMangaRequest, $4.MangaReply>(
       '/rumgap.v1.Manga/Get',
-      ($1.Id value) => value.writeToBuffer(),
+      ($4.GetMangaRequest value) => value.writeToBuffer(),
       $4.MangaReply.fromBuffer);
-  static final _$update = $grpc.ClientMethod<$1.Id, $4.MangaReply>(
-      '/rumgap.v1.Manga/Update',
-      ($1.Id value) => value.writeToBuffer(),
-      $4.MangaReply.fromBuffer);
+  static final _$update =
+      $grpc.ClientMethod<$2.UpdateMangaRequest, $4.MangaReply>(
+          '/rumgap.v1.Manga/Update',
+          ($2.UpdateMangaRequest value) => value.writeToBuffer(),
+          $4.MangaReply.fromBuffer);
   static final _$index =
-      $grpc.ClientMethod<$2.PaginateSearchQuery, $4.MangasReply>(
+      $grpc.ClientMethod<$1.PaginateSearchQuery, $4.MangasReply>(
           '/rumgap.v1.Manga/Index',
-          ($2.PaginateSearchQuery value) => value.writeToBuffer(),
+          ($1.PaginateSearchQuery value) => value.writeToBuffer(),
           $4.MangasReply.fromBuffer);
   static final _$findOrCreate =
       $grpc.ClientMethod<$4.MangaRequest, $4.MangaReply>(
           '/rumgap.v1.Manga/FindOrCreate',
           ($4.MangaRequest value) => value.writeToBuffer(),
           $4.MangaReply.fromBuffer);
-  static final _$similar = $grpc.ClientMethod<$1.Id, $4.MangasReply>(
-      '/rumgap.v1.Manga/Similar',
-      ($1.Id value) => value.writeToBuffer(),
-      $4.MangasReply.fromBuffer);
+  static final _$similar =
+      $grpc.ClientMethod<$4.SimilarMangaRequest, $4.MangasReply>(
+          '/rumgap.v1.Manga/Similar',
+          ($4.SimilarMangaRequest value) => value.writeToBuffer(),
+          $4.MangasReply.fromBuffer);
+  static final _$addSource =
+      $grpc.ClientMethod<$4.AddSourceRequest, $4.MangaReply>(
+          '/rumgap.v1.Manga/AddSource',
+          ($4.AddSourceRequest value) => value.writeToBuffer(),
+          $4.MangaReply.fromBuffer);
+  static final _$removeSource =
+      $grpc.ClientMethod<$4.RemoveSourceRequest, $4.MangaReply>(
+          '/rumgap.v1.Manga/RemoveSource',
+          ($4.RemoveSourceRequest value) => value.writeToBuffer(),
+          $4.MangaReply.fromBuffer);
+  static final _$setPrimarySource =
+      $grpc.ClientMethod<$4.SetPrimarySourceRequest, $4.MangaReply>(
+          '/rumgap.v1.Manga/SetPrimarySource',
+          ($4.SetPrimarySourceRequest value) => value.writeToBuffer(),
+          $4.MangaReply.fromBuffer);
+  static final _$backfillImages =
+      $grpc.ClientMethod<$4.BackfillImagesRequest, $2.Empty>(
+          '/rumgap.v1.Manga/BackfillImages',
+          ($4.BackfillImagesRequest value) => value.writeToBuffer(),
+          $2.Empty.fromBuffer);
+  static final _$getBackfillStatus =
+      $grpc.ClientMethod<$4.GetBackfillStatusRequest, $4.BackfillStatusReply>(
+          '/rumgap.v1.Manga/GetBackfillStatus',
+          ($4.GetBackfillStatusRequest value) => value.writeToBuffer(),
+          $4.BackfillStatusReply.fromBuffer);
 }
 
 @$pb.GrpcServiceName('rumgap.v1.Manga')
@@ -514,27 +585,28 @@ abstract class MangaServiceBase extends $grpc.Service {
         true,
         ($core.List<$core.int> value) => $4.MangasRequest.fromBuffer(value),
         ($4.MangaReply value) => value.writeToBuffer()));
-    $addMethod($grpc.ServiceMethod<$1.Id, $4.MangaReply>(
+    $addMethod($grpc.ServiceMethod<$4.GetMangaRequest, $4.MangaReply>(
         'Get',
         get_Pre,
         false,
         false,
-        ($core.List<$core.int> value) => $1.Id.fromBuffer(value),
+        ($core.List<$core.int> value) => $4.GetMangaRequest.fromBuffer(value),
         ($4.MangaReply value) => value.writeToBuffer()));
-    $addMethod($grpc.ServiceMethod<$1.Id, $4.MangaReply>(
+    $addMethod($grpc.ServiceMethod<$2.UpdateMangaRequest, $4.MangaReply>(
         'Update',
         update_Pre,
         false,
         false,
-        ($core.List<$core.int> value) => $1.Id.fromBuffer(value),
+        ($core.List<$core.int> value) =>
+            $2.UpdateMangaRequest.fromBuffer(value),
         ($4.MangaReply value) => value.writeToBuffer()));
-    $addMethod($grpc.ServiceMethod<$2.PaginateSearchQuery, $4.MangasReply>(
+    $addMethod($grpc.ServiceMethod<$1.PaginateSearchQuery, $4.MangasReply>(
         'Index',
         index_Pre,
         false,
         false,
         ($core.List<$core.int> value) =>
-            $2.PaginateSearchQuery.fromBuffer(value),
+            $1.PaginateSearchQuery.fromBuffer(value),
         ($4.MangasReply value) => value.writeToBuffer()));
     $addMethod($grpc.ServiceMethod<$4.MangaRequest, $4.MangaReply>(
         'FindOrCreate',
@@ -543,13 +615,54 @@ abstract class MangaServiceBase extends $grpc.Service {
         false,
         ($core.List<$core.int> value) => $4.MangaRequest.fromBuffer(value),
         ($4.MangaReply value) => value.writeToBuffer()));
-    $addMethod($grpc.ServiceMethod<$1.Id, $4.MangasReply>(
+    $addMethod($grpc.ServiceMethod<$4.SimilarMangaRequest, $4.MangasReply>(
         'Similar',
         similar_Pre,
         false,
         false,
-        ($core.List<$core.int> value) => $1.Id.fromBuffer(value),
+        ($core.List<$core.int> value) =>
+            $4.SimilarMangaRequest.fromBuffer(value),
         ($4.MangasReply value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$4.AddSourceRequest, $4.MangaReply>(
+        'AddSource',
+        addSource_Pre,
+        false,
+        false,
+        ($core.List<$core.int> value) => $4.AddSourceRequest.fromBuffer(value),
+        ($4.MangaReply value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$4.RemoveSourceRequest, $4.MangaReply>(
+        'RemoveSource',
+        removeSource_Pre,
+        false,
+        false,
+        ($core.List<$core.int> value) =>
+            $4.RemoveSourceRequest.fromBuffer(value),
+        ($4.MangaReply value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$4.SetPrimarySourceRequest, $4.MangaReply>(
+        'SetPrimarySource',
+        setPrimarySource_Pre,
+        false,
+        false,
+        ($core.List<$core.int> value) =>
+            $4.SetPrimarySourceRequest.fromBuffer(value),
+        ($4.MangaReply value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$4.BackfillImagesRequest, $2.Empty>(
+        'BackfillImages',
+        backfillImages_Pre,
+        false,
+        false,
+        ($core.List<$core.int> value) =>
+            $4.BackfillImagesRequest.fromBuffer(value),
+        ($2.Empty value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$4.GetBackfillStatusRequest,
+            $4.BackfillStatusReply>(
+        'GetBackfillStatus',
+        getBackfillStatus_Pre,
+        false,
+        false,
+        ($core.List<$core.int> value) =>
+            $4.GetBackfillStatusRequest.fromBuffer(value),
+        ($4.BackfillStatusReply value) => value.writeToBuffer()));
   }
 
   $async.Future<$4.MangaReply> create_Pre(
@@ -568,27 +681,29 @@ abstract class MangaServiceBase extends $grpc.Service {
   $async.Stream<$4.MangaReply> createMany(
       $grpc.ServiceCall call, $4.MangasRequest request);
 
-  $async.Future<$4.MangaReply> get_Pre(
-      $grpc.ServiceCall $call, $async.Future<$1.Id> $request) async {
+  $async.Future<$4.MangaReply> get_Pre($grpc.ServiceCall $call,
+      $async.Future<$4.GetMangaRequest> $request) async {
     return get($call, await $request);
   }
 
-  $async.Future<$4.MangaReply> get($grpc.ServiceCall call, $1.Id request);
+  $async.Future<$4.MangaReply> get(
+      $grpc.ServiceCall call, $4.GetMangaRequest request);
 
-  $async.Future<$4.MangaReply> update_Pre(
-      $grpc.ServiceCall $call, $async.Future<$1.Id> $request) async {
+  $async.Future<$4.MangaReply> update_Pre($grpc.ServiceCall $call,
+      $async.Future<$2.UpdateMangaRequest> $request) async {
     return update($call, await $request);
   }
 
-  $async.Future<$4.MangaReply> update($grpc.ServiceCall call, $1.Id request);
+  $async.Future<$4.MangaReply> update(
+      $grpc.ServiceCall call, $2.UpdateMangaRequest request);
 
   $async.Future<$4.MangasReply> index_Pre($grpc.ServiceCall $call,
-      $async.Future<$2.PaginateSearchQuery> $request) async {
+      $async.Future<$1.PaginateSearchQuery> $request) async {
     return index($call, await $request);
   }
 
   $async.Future<$4.MangasReply> index(
-      $grpc.ServiceCall call, $2.PaginateSearchQuery request);
+      $grpc.ServiceCall call, $1.PaginateSearchQuery request);
 
   $async.Future<$4.MangaReply> findOrCreate_Pre(
       $grpc.ServiceCall $call, $async.Future<$4.MangaRequest> $request) async {
@@ -598,12 +713,54 @@ abstract class MangaServiceBase extends $grpc.Service {
   $async.Future<$4.MangaReply> findOrCreate(
       $grpc.ServiceCall call, $4.MangaRequest request);
 
-  $async.Future<$4.MangasReply> similar_Pre(
-      $grpc.ServiceCall $call, $async.Future<$1.Id> $request) async {
+  $async.Future<$4.MangasReply> similar_Pre($grpc.ServiceCall $call,
+      $async.Future<$4.SimilarMangaRequest> $request) async {
     return similar($call, await $request);
   }
 
-  $async.Future<$4.MangasReply> similar($grpc.ServiceCall call, $1.Id request);
+  $async.Future<$4.MangasReply> similar(
+      $grpc.ServiceCall call, $4.SimilarMangaRequest request);
+
+  $async.Future<$4.MangaReply> addSource_Pre($grpc.ServiceCall $call,
+      $async.Future<$4.AddSourceRequest> $request) async {
+    return addSource($call, await $request);
+  }
+
+  $async.Future<$4.MangaReply> addSource(
+      $grpc.ServiceCall call, $4.AddSourceRequest request);
+
+  $async.Future<$4.MangaReply> removeSource_Pre($grpc.ServiceCall $call,
+      $async.Future<$4.RemoveSourceRequest> $request) async {
+    return removeSource($call, await $request);
+  }
+
+  $async.Future<$4.MangaReply> removeSource(
+      $grpc.ServiceCall call, $4.RemoveSourceRequest request);
+
+  $async.Future<$4.MangaReply> setPrimarySource_Pre($grpc.ServiceCall $call,
+      $async.Future<$4.SetPrimarySourceRequest> $request) async {
+    return setPrimarySource($call, await $request);
+  }
+
+  $async.Future<$4.MangaReply> setPrimarySource(
+      $grpc.ServiceCall call, $4.SetPrimarySourceRequest request);
+
+  $async.Future<$2.Empty> backfillImages_Pre($grpc.ServiceCall $call,
+      $async.Future<$4.BackfillImagesRequest> $request) async {
+    return backfillImages($call, await $request);
+  }
+
+  $async.Future<$2.Empty> backfillImages(
+      $grpc.ServiceCall call, $4.BackfillImagesRequest request);
+
+  $async.Future<$4.BackfillStatusReply> getBackfillStatus_Pre(
+      $grpc.ServiceCall $call,
+      $async.Future<$4.GetBackfillStatusRequest> $request) async {
+    return getBackfillStatus($call, await $request);
+  }
+
+  $async.Future<$4.BackfillStatusReply> getBackfillStatus(
+      $grpc.ServiceCall call, $4.GetBackfillStatusRequest request);
 }
 
 @$pb.GrpcServiceName('rumgap.v1.Chapter')
@@ -632,11 +789,46 @@ class ChapterClient extends $grpc.Client {
     return $createUnaryCall(_$index, request, options: options);
   }
 
+  /// Never blocks on downloads -- ensures `chapter_image` rows exist and returns
+  /// deterministic local image-server URLs; the actual download happens lazily
+  /// on first real request to that URL.
   $grpc.ResponseFuture<$5.ImagesReply> images(
-    $1.Id request, {
+    $5.ChapterImagesRequest request, {
     $grpc.CallOptions? options,
   }) {
     return $createUnaryCall(_$images, request, options: options);
+  }
+
+  $grpc.ResponseFuture<$5.ChapterReply> linkChapter(
+    $5.LinkChapterRequest request, {
+    $grpc.CallOptions? options,
+  }) {
+    return $createUnaryCall(_$linkChapter, request, options: options);
+  }
+
+  $grpc.ResponseFuture<$5.ChapterReply> unlinkChapter(
+    $5.UnlinkChapterRequest request, {
+    $grpc.CallOptions? options,
+  }) {
+    return $createUnaryCall(_$unlinkChapter, request, options: options);
+  }
+
+  $grpc.ResponseFuture<$5.ChapterReply> findEquivalent(
+    $5.FindEquivalentRequest request, {
+    $grpc.CallOptions? options,
+  }) {
+    return $createUnaryCall(_$findEquivalent, request, options: options);
+  }
+
+  /// Manual-only force-refresh: deletes this chapter's existing `chapter_image`
+  /// rows (and their stored bytes) and re-scrapes from scratch. For the handful
+  /// of sites that briefly serve a placeholder/troll image right after a
+  /// chapter is scraped.
+  $grpc.ResponseFuture<$5.ImagesReply> refreshImages(
+    $5.RefreshImagesRequest request, {
+    $grpc.CallOptions? options,
+  }) {
+    return $createUnaryCall(_$refreshImages, request, options: options);
   }
 
   // method descriptors
@@ -650,10 +842,31 @@ class ChapterClient extends $grpc.Client {
           '/rumgap.v1.Chapter/Index',
           ($5.PaginateChapterQuery value) => value.writeToBuffer(),
           $5.ChaptersReply.fromBuffer);
-  static final _$images = $grpc.ClientMethod<$1.Id, $5.ImagesReply>(
-      '/rumgap.v1.Chapter/Images',
-      ($1.Id value) => value.writeToBuffer(),
-      $5.ImagesReply.fromBuffer);
+  static final _$images =
+      $grpc.ClientMethod<$5.ChapterImagesRequest, $5.ImagesReply>(
+          '/rumgap.v1.Chapter/Images',
+          ($5.ChapterImagesRequest value) => value.writeToBuffer(),
+          $5.ImagesReply.fromBuffer);
+  static final _$linkChapter =
+      $grpc.ClientMethod<$5.LinkChapterRequest, $5.ChapterReply>(
+          '/rumgap.v1.Chapter/LinkChapter',
+          ($5.LinkChapterRequest value) => value.writeToBuffer(),
+          $5.ChapterReply.fromBuffer);
+  static final _$unlinkChapter =
+      $grpc.ClientMethod<$5.UnlinkChapterRequest, $5.ChapterReply>(
+          '/rumgap.v1.Chapter/UnlinkChapter',
+          ($5.UnlinkChapterRequest value) => value.writeToBuffer(),
+          $5.ChapterReply.fromBuffer);
+  static final _$findEquivalent =
+      $grpc.ClientMethod<$5.FindEquivalentRequest, $5.ChapterReply>(
+          '/rumgap.v1.Chapter/FindEquivalent',
+          ($5.FindEquivalentRequest value) => value.writeToBuffer(),
+          $5.ChapterReply.fromBuffer);
+  static final _$refreshImages =
+      $grpc.ClientMethod<$5.RefreshImagesRequest, $5.ImagesReply>(
+          '/rumgap.v1.Chapter/RefreshImages',
+          ($5.RefreshImagesRequest value) => value.writeToBuffer(),
+          $5.ImagesReply.fromBuffer);
 }
 
 @$pb.GrpcServiceName('rumgap.v1.Chapter')
@@ -676,12 +889,45 @@ abstract class ChapterServiceBase extends $grpc.Service {
         ($core.List<$core.int> value) =>
             $5.PaginateChapterQuery.fromBuffer(value),
         ($5.ChaptersReply value) => value.writeToBuffer()));
-    $addMethod($grpc.ServiceMethod<$1.Id, $5.ImagesReply>(
+    $addMethod($grpc.ServiceMethod<$5.ChapterImagesRequest, $5.ImagesReply>(
         'Images',
         images_Pre,
         false,
         false,
-        ($core.List<$core.int> value) => $1.Id.fromBuffer(value),
+        ($core.List<$core.int> value) =>
+            $5.ChapterImagesRequest.fromBuffer(value),
+        ($5.ImagesReply value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$5.LinkChapterRequest, $5.ChapterReply>(
+        'LinkChapter',
+        linkChapter_Pre,
+        false,
+        false,
+        ($core.List<$core.int> value) =>
+            $5.LinkChapterRequest.fromBuffer(value),
+        ($5.ChapterReply value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$5.UnlinkChapterRequest, $5.ChapterReply>(
+        'UnlinkChapter',
+        unlinkChapter_Pre,
+        false,
+        false,
+        ($core.List<$core.int> value) =>
+            $5.UnlinkChapterRequest.fromBuffer(value),
+        ($5.ChapterReply value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$5.FindEquivalentRequest, $5.ChapterReply>(
+        'FindEquivalent',
+        findEquivalent_Pre,
+        false,
+        false,
+        ($core.List<$core.int> value) =>
+            $5.FindEquivalentRequest.fromBuffer(value),
+        ($5.ChapterReply value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$5.RefreshImagesRequest, $5.ImagesReply>(
+        'RefreshImages',
+        refreshImages_Pre,
+        false,
+        false,
+        ($core.List<$core.int> value) =>
+            $5.RefreshImagesRequest.fromBuffer(value),
         ($5.ImagesReply value) => value.writeToBuffer()));
   }
 
@@ -701,12 +947,45 @@ abstract class ChapterServiceBase extends $grpc.Service {
   $async.Future<$5.ChaptersReply> index(
       $grpc.ServiceCall call, $5.PaginateChapterQuery request);
 
-  $async.Future<$5.ImagesReply> images_Pre(
-      $grpc.ServiceCall $call, $async.Future<$1.Id> $request) async {
+  $async.Future<$5.ImagesReply> images_Pre($grpc.ServiceCall $call,
+      $async.Future<$5.ChapterImagesRequest> $request) async {
     return images($call, await $request);
   }
 
-  $async.Future<$5.ImagesReply> images($grpc.ServiceCall call, $1.Id request);
+  $async.Future<$5.ImagesReply> images(
+      $grpc.ServiceCall call, $5.ChapterImagesRequest request);
+
+  $async.Future<$5.ChapterReply> linkChapter_Pre($grpc.ServiceCall $call,
+      $async.Future<$5.LinkChapterRequest> $request) async {
+    return linkChapter($call, await $request);
+  }
+
+  $async.Future<$5.ChapterReply> linkChapter(
+      $grpc.ServiceCall call, $5.LinkChapterRequest request);
+
+  $async.Future<$5.ChapterReply> unlinkChapter_Pre($grpc.ServiceCall $call,
+      $async.Future<$5.UnlinkChapterRequest> $request) async {
+    return unlinkChapter($call, await $request);
+  }
+
+  $async.Future<$5.ChapterReply> unlinkChapter(
+      $grpc.ServiceCall call, $5.UnlinkChapterRequest request);
+
+  $async.Future<$5.ChapterReply> findEquivalent_Pre($grpc.ServiceCall $call,
+      $async.Future<$5.FindEquivalentRequest> $request) async {
+    return findEquivalent($call, await $request);
+  }
+
+  $async.Future<$5.ChapterReply> findEquivalent(
+      $grpc.ServiceCall call, $5.FindEquivalentRequest request);
+
+  $async.Future<$5.ImagesReply> refreshImages_Pre($grpc.ServiceCall $call,
+      $async.Future<$5.RefreshImagesRequest> $request) async {
+    return refreshImages($call, await $request);
+  }
+
+  $async.Future<$5.ImagesReply> refreshImages(
+      $grpc.ServiceCall call, $5.RefreshImagesRequest request);
 }
 
 @$pb.GrpcServiceName('rumgap.v1.Reading')
@@ -735,18 +1014,25 @@ class ReadingClient extends $grpc.Client {
     return $createUnaryCall(_$create, request, options: options);
   }
 
-  $grpc.ResponseFuture<$1.Empty> delete(
-    $1.Id request, {
+  $grpc.ResponseFuture<$2.Empty> delete(
+    $6.DeleteReadingRequest request, {
     $grpc.CallOptions? options,
   }) {
     return $createUnaryCall(_$delete, request, options: options);
   }
 
-  $grpc.ResponseFuture<$1.Empty> updateChapterOffset(
+  $grpc.ResponseFuture<$2.Empty> updateChapterOffset(
     $6.UpdateChapterOffsetRequest request, {
     $grpc.CallOptions? options,
   }) {
     return $createUnaryCall(_$updateChapterOffset, request, options: options);
+  }
+
+  $grpc.ResponseFuture<$6.CrossSourceOffsetReply> getCrossSourceOffset(
+    $6.GetCrossSourceOffsetRequest request, {
+    $grpc.CallOptions? options,
+  }) {
+    return $createUnaryCall(_$getCrossSourceOffset, request, options: options);
   }
 
   // method descriptors
@@ -761,15 +1047,20 @@ class ReadingClient extends $grpc.Client {
           '/rumgap.v1.Reading/Create',
           ($6.ReadingPostRequest value) => value.writeToBuffer(),
           $4.MangaReply.fromBuffer);
-  static final _$delete = $grpc.ClientMethod<$1.Id, $1.Empty>(
+  static final _$delete = $grpc.ClientMethod<$6.DeleteReadingRequest, $2.Empty>(
       '/rumgap.v1.Reading/Delete',
-      ($1.Id value) => value.writeToBuffer(),
-      $1.Empty.fromBuffer);
+      ($6.DeleteReadingRequest value) => value.writeToBuffer(),
+      $2.Empty.fromBuffer);
   static final _$updateChapterOffset =
-      $grpc.ClientMethod<$6.UpdateChapterOffsetRequest, $1.Empty>(
+      $grpc.ClientMethod<$6.UpdateChapterOffsetRequest, $2.Empty>(
           '/rumgap.v1.Reading/UpdateChapterOffset',
           ($6.UpdateChapterOffsetRequest value) => value.writeToBuffer(),
-          $1.Empty.fromBuffer);
+          $2.Empty.fromBuffer);
+  static final _$getCrossSourceOffset = $grpc.ClientMethod<
+          $6.GetCrossSourceOffsetRequest, $6.CrossSourceOffsetReply>(
+      '/rumgap.v1.Reading/GetCrossSourceOffset',
+      ($6.GetCrossSourceOffsetRequest value) => value.writeToBuffer(),
+      $6.CrossSourceOffsetReply.fromBuffer);
 }
 
 @$pb.GrpcServiceName('rumgap.v1.Reading')
@@ -793,21 +1084,31 @@ abstract class ReadingServiceBase extends $grpc.Service {
         ($core.List<$core.int> value) =>
             $6.ReadingPostRequest.fromBuffer(value),
         ($4.MangaReply value) => value.writeToBuffer()));
-    $addMethod($grpc.ServiceMethod<$1.Id, $1.Empty>(
+    $addMethod($grpc.ServiceMethod<$6.DeleteReadingRequest, $2.Empty>(
         'Delete',
         delete_Pre,
         false,
         false,
-        ($core.List<$core.int> value) => $1.Id.fromBuffer(value),
-        ($1.Empty value) => value.writeToBuffer()));
-    $addMethod($grpc.ServiceMethod<$6.UpdateChapterOffsetRequest, $1.Empty>(
+        ($core.List<$core.int> value) =>
+            $6.DeleteReadingRequest.fromBuffer(value),
+        ($2.Empty value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$6.UpdateChapterOffsetRequest, $2.Empty>(
         'UpdateChapterOffset',
         updateChapterOffset_Pre,
         false,
         false,
         ($core.List<$core.int> value) =>
             $6.UpdateChapterOffsetRequest.fromBuffer(value),
-        ($1.Empty value) => value.writeToBuffer()));
+        ($2.Empty value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$6.GetCrossSourceOffsetRequest,
+            $6.CrossSourceOffsetReply>(
+        'GetCrossSourceOffset',
+        getCrossSourceOffset_Pre,
+        false,
+        false,
+        ($core.List<$core.int> value) =>
+            $6.GetCrossSourceOffsetRequest.fromBuffer(value),
+        ($6.CrossSourceOffsetReply value) => value.writeToBuffer()));
   }
 
   $async.Future<$4.MangaReply> update_Pre($grpc.ServiceCall $call,
@@ -826,20 +1127,30 @@ abstract class ReadingServiceBase extends $grpc.Service {
   $async.Future<$4.MangaReply> create(
       $grpc.ServiceCall call, $6.ReadingPostRequest request);
 
-  $async.Future<$1.Empty> delete_Pre(
-      $grpc.ServiceCall $call, $async.Future<$1.Id> $request) async {
+  $async.Future<$2.Empty> delete_Pre($grpc.ServiceCall $call,
+      $async.Future<$6.DeleteReadingRequest> $request) async {
     return delete($call, await $request);
   }
 
-  $async.Future<$1.Empty> delete($grpc.ServiceCall call, $1.Id request);
+  $async.Future<$2.Empty> delete(
+      $grpc.ServiceCall call, $6.DeleteReadingRequest request);
 
-  $async.Future<$1.Empty> updateChapterOffset_Pre($grpc.ServiceCall $call,
+  $async.Future<$2.Empty> updateChapterOffset_Pre($grpc.ServiceCall $call,
       $async.Future<$6.UpdateChapterOffsetRequest> $request) async {
     return updateChapterOffset($call, await $request);
   }
 
-  $async.Future<$1.Empty> updateChapterOffset(
+  $async.Future<$2.Empty> updateChapterOffset(
       $grpc.ServiceCall call, $6.UpdateChapterOffsetRequest request);
+
+  $async.Future<$6.CrossSourceOffsetReply> getCrossSourceOffset_Pre(
+      $grpc.ServiceCall $call,
+      $async.Future<$6.GetCrossSourceOffsetRequest> $request) async {
+    return getCrossSourceOffset($call, await $request);
+  }
+
+  $async.Future<$6.CrossSourceOffsetReply> getCrossSourceOffset(
+      $grpc.ServiceCall call, $6.GetCrossSourceOffsetRequest request);
 }
 
 @$pb.GrpcServiceName('rumgap.v1.Search')
@@ -919,7 +1230,7 @@ class MetaClient extends $grpc.Client {
   }
 
   $grpc.ResponseFuture<$8.StatsReply> stats(
-    $1.Empty request, {
+    $2.Empty request, {
     $grpc.CallOptions? options,
   }) {
     return $createUnaryCall(_$stats, request, options: options);
@@ -937,9 +1248,9 @@ class MetaClient extends $grpc.Client {
           '/rumgap.v1.Meta/Genres',
           ($8.MetaGenresRequest value) => value.writeToBuffer(),
           $8.MetaReply.fromBuffer);
-  static final _$stats = $grpc.ClientMethod<$1.Empty, $8.StatsReply>(
+  static final _$stats = $grpc.ClientMethod<$2.Empty, $8.StatsReply>(
       '/rumgap.v1.Meta/Stats',
-      ($1.Empty value) => value.writeToBuffer(),
+      ($2.Empty value) => value.writeToBuffer(),
       $8.StatsReply.fromBuffer);
 }
 
@@ -963,12 +1274,12 @@ abstract class MetaServiceBase extends $grpc.Service {
         false,
         ($core.List<$core.int> value) => $8.MetaGenresRequest.fromBuffer(value),
         ($8.MetaReply value) => value.writeToBuffer()));
-    $addMethod($grpc.ServiceMethod<$1.Empty, $8.StatsReply>(
+    $addMethod($grpc.ServiceMethod<$2.Empty, $8.StatsReply>(
         'Stats',
         stats_Pre,
         false,
         false,
-        ($core.List<$core.int> value) => $1.Empty.fromBuffer(value),
+        ($core.List<$core.int> value) => $2.Empty.fromBuffer(value),
         ($8.StatsReply value) => value.writeToBuffer()));
   }
 
@@ -989,9 +1300,64 @@ abstract class MetaServiceBase extends $grpc.Service {
       $grpc.ServiceCall call, $8.MetaGenresRequest request);
 
   $async.Future<$8.StatsReply> stats_Pre(
-      $grpc.ServiceCall $call, $async.Future<$1.Empty> $request) async {
+      $grpc.ServiceCall $call, $async.Future<$2.Empty> $request) async {
     return stats($call, await $request);
   }
 
-  $async.Future<$8.StatsReply> stats($grpc.ServiceCall call, $1.Empty request);
+  $async.Future<$8.StatsReply> stats($grpc.ServiceCall call, $2.Empty request);
+}
+
+/// Admin-only: per-hostname scraper health, backing an admin status page for keeping track of
+/// which sites' scrapers are currently broken.
+@$pb.GrpcServiceName('rumgap.v1.Scraper')
+class ScraperClient extends $grpc.Client {
+  /// The hostname for this service.
+  static const $core.String defaultHost = '';
+
+  /// OAuth scopes needed for the client.
+  static const $core.List<$core.String> oauthScopes = [
+    '',
+  ];
+
+  ScraperClient(super.channel, {super.options, super.interceptors});
+
+  $grpc.ResponseFuture<$9.ScraperStatusReply> status(
+    $9.ScraperStatusRequest request, {
+    $grpc.CallOptions? options,
+  }) {
+    return $createUnaryCall(_$status, request, options: options);
+  }
+
+  // method descriptors
+
+  static final _$status =
+      $grpc.ClientMethod<$9.ScraperStatusRequest, $9.ScraperStatusReply>(
+          '/rumgap.v1.Scraper/Status',
+          ($9.ScraperStatusRequest value) => value.writeToBuffer(),
+          $9.ScraperStatusReply.fromBuffer);
+}
+
+@$pb.GrpcServiceName('rumgap.v1.Scraper')
+abstract class ScraperServiceBase extends $grpc.Service {
+  $core.String get $name => 'rumgap.v1.Scraper';
+
+  ScraperServiceBase() {
+    $addMethod(
+        $grpc.ServiceMethod<$9.ScraperStatusRequest, $9.ScraperStatusReply>(
+            'Status',
+            status_Pre,
+            false,
+            false,
+            ($core.List<$core.int> value) =>
+                $9.ScraperStatusRequest.fromBuffer(value),
+            ($9.ScraperStatusReply value) => value.writeToBuffer()));
+  }
+
+  $async.Future<$9.ScraperStatusReply> status_Pre($grpc.ServiceCall $call,
+      $async.Future<$9.ScraperStatusRequest> $request) async {
+    return status($call, await $request);
+  }
+
+  $async.Future<$9.ScraperStatusReply> status(
+      $grpc.ServiceCall call, $9.ScraperStatusRequest request);
 }

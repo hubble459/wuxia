@@ -47,11 +47,21 @@ const SearchManga$json = {
     {'1': 'posted', '3': 4, '4': 1, '5': 3, '9': 1, '10': 'posted', '17': true},
     {'1': 'cover', '3': 5, '4': 1, '5': 9, '9': 2, '10': 'cover', '17': true},
     {'1': 'is_reading', '3': 6, '4': 1, '5': 8, '10': 'isReading'},
+    {
+      '1': 'suggested_manga_id',
+      '3': 7,
+      '4': 1,
+      '5': 5,
+      '9': 3,
+      '10': 'suggestedMangaId',
+      '17': true
+    },
   ],
   '8': [
     {'1': '_manga_id'},
     {'1': '_posted'},
     {'1': '_cover'},
+    {'1': '_suggested_manga_id'},
   ],
 };
 
@@ -60,7 +70,9 @@ final $typed_data.Uint8List searchMangaDescriptor = $convert.base64Decode(
     'CgtTZWFyY2hNYW5nYRIeCghtYW5nYV9pZBgBIAEoBUgAUgdtYW5nYUlkiAEBEhQKBXRpdGxlGA'
     'IgASgJUgV0aXRsZRIQCgN1cmwYAyABKAlSA3VybBIbCgZwb3N0ZWQYBCABKANIAVIGcG9zdGVk'
     'iAEBEhkKBWNvdmVyGAUgASgJSAJSBWNvdmVyiAEBEh0KCmlzX3JlYWRpbmcYBiABKAhSCWlzUm'
-    'VhZGluZ0ILCglfbWFuZ2FfaWRCCQoHX3Bvc3RlZEIICgZfY292ZXI=');
+    'VhZGluZxIxChJzdWdnZXN0ZWRfbWFuZ2FfaWQYByABKAVIA1IQc3VnZ2VzdGVkTWFuZ2FJZIgB'
+    'AUILCglfbWFuZ2FfaWRCCQoHX3Bvc3RlZEIICgZfY292ZXJCFQoTX3N1Z2dlc3RlZF9tYW5nYV'
+    '9pZA==');
 
 @$core.Deprecated('Use searchReplyDescriptor instead')
 const SearchReply$json = {

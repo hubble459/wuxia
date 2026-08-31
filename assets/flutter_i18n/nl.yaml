@@ -9,6 +9,10 @@ basic:
 chapter:
   goto_bottom: Scroll naar beneden
   goto_top: Scroll naar boven
+  goto_first_page: Eerste pagina
+  goto_last_page: Laatste pagina
+  mode_webtoon: Overschakelen naar paginamodus
+  mode_paged: Overschakelen naar webtoonmodus
   next: Volgende
   previous: Vorig
 dead_provider:
@@ -66,8 +70,12 @@ manga:
   last: Laatst
   no-chapters: Kan hoofdstukken niet laden...
   search-alternatives: Zoek alternatieven
+  add-source: Bron toevoegen
+  add-source-url: Bron toevoegen via URL
+  switch_source: Bron wisselen
   download: Downloaden
   download-complete: Download voltooid
+  force-rescrape: Forceer herscrapen
   similar: Vergelijkbaar
   will-update: Wordt op {date} bijgewerkt
 nav:
@@ -77,6 +85,7 @@ nav:
   search: Zoekopdracht
 notification:
   new_chapter: Nieuw hoofdstuk beschikbaar in {title}
+  push_unavailable: Pushmeldingen konden niet worden ingeschakeld
 reading:
   add_from_url: Manga toevoegen vanaf URL
   delete: Lezing verwijderen
@@ -98,7 +107,20 @@ settings:
   language: Taal
   logout: Uitloggen
   misc: Overig
+  reading_mode: Standaard leesmodus
+  reading_mode_webtoon: Webtoon
+  reading_mode_paged: Pagina's
   remove_account: Account verwijderen
+  scraper_status:
+    close: Sluiten
+    empty: Nog geen scrape-pogingen geregistreerd
+    last_attempt: 'Laatste poging {time}'
+    last_success: 'Laatste succes {time}'
+    never_attempted: Nog nooit geprobeerd
+    never_succeeded: Nog nooit gelukt
+    no_recent_errors: Geen recente fouten
+    stats_24h: '{attempts} pogingen / {failures} mislukt (24u)'
+    title: Scraper Status
   statistics:
     average_reading_time: Gemiddelde leestijd
     chapters_read: Hoofdstukken lezen

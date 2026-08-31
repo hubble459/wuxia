@@ -74,10 +74,12 @@ class ReadingPatchRequest extends $pb.GeneratedMessage {
   factory ReadingPatchRequest({
     $core.int? mangaId,
     $core.int? progress,
+    $core.int? chapterId,
   }) {
     final result = create();
     if (mangaId != null) result.mangaId = mangaId;
     if (progress != null) result.progress = progress;
+    if (chapterId != null) result.chapterId = chapterId;
     return result;
   }
 
@@ -96,6 +98,7 @@ class ReadingPatchRequest extends $pb.GeneratedMessage {
       createEmptyInstance: create)
     ..aI(1, _omitFieldNames ? '' : 'mangaId')
     ..aI(2, _omitFieldNames ? '' : 'progress')
+    ..aI(3, _omitFieldNames ? '' : 'chapterId')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -134,6 +137,17 @@ class ReadingPatchRequest extends $pb.GeneratedMessage {
   $core.bool hasProgress() => $_has(1);
   @$pb.TagNumber(2)
   void clearProgress() => $_clearField(2);
+
+  /// If set, `progress`/`last_canonical_chapter_id` are derived from this chapter's
+  /// canonical chapter instead of trusting the raw `progress` int directly.
+  @$pb.TagNumber(3)
+  $core.int get chapterId => $_getIZ(2);
+  @$pb.TagNumber(3)
+  set chapterId($core.int value) => $_setSignedInt32(2, value);
+  @$pb.TagNumber(3)
+  $core.bool hasChapterId() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearChapterId() => $_clearField(3);
 }
 
 class UpdateChapterOffsetRequest extends $pb.GeneratedMessage {
@@ -141,11 +155,13 @@ class UpdateChapterOffsetRequest extends $pb.GeneratedMessage {
     $core.int? chapterId,
     $core.int? pixels,
     $core.int? page,
+    $core.double? fraction,
   }) {
     final result = create();
     if (chapterId != null) result.chapterId = chapterId;
     if (pixels != null) result.pixels = pixels;
     if (page != null) result.page = page;
+    if (fraction != null) result.fraction = fraction;
     return result;
   }
 
@@ -165,6 +181,7 @@ class UpdateChapterOffsetRequest extends $pb.GeneratedMessage {
     ..aI(1, _omitFieldNames ? '' : 'chapterId')
     ..aI(2, _omitFieldNames ? '' : 'pixels')
     ..aI(3, _omitFieldNames ? '' : 'page')
+    ..aD(4, _omitFieldNames ? '' : 'fraction', fieldType: $pb.PbFieldType.OF)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -214,6 +231,183 @@ class UpdateChapterOffsetRequest extends $pb.GeneratedMessage {
   $core.bool hasPage() => $_has(2);
   @$pb.TagNumber(3)
   void clearPage() => $_clearField(3);
+
+  @$pb.TagNumber(4)
+  $core.double get fraction => $_getN(3);
+  @$pb.TagNumber(4)
+  set fraction($core.double value) => $_setFloat(3, value);
+  @$pb.TagNumber(4)
+  $core.bool hasFraction() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearFraction() => $_clearField(4);
+}
+
+class GetCrossSourceOffsetRequest extends $pb.GeneratedMessage {
+  factory GetCrossSourceOffsetRequest({
+    $core.int? canonicalChapterId,
+  }) {
+    final result = create();
+    if (canonicalChapterId != null)
+      result.canonicalChapterId = canonicalChapterId;
+    return result;
+  }
+
+  GetCrossSourceOffsetRequest._();
+
+  factory GetCrossSourceOffsetRequest.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory GetCrossSourceOffsetRequest.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'GetCrossSourceOffsetRequest',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'rumgap.v1'),
+      createEmptyInstance: create)
+    ..aI(1, _omitFieldNames ? '' : 'canonicalChapterId')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  GetCrossSourceOffsetRequest clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  GetCrossSourceOffsetRequest copyWith(
+          void Function(GetCrossSourceOffsetRequest) updates) =>
+      super.copyWith(
+              (message) => updates(message as GetCrossSourceOffsetRequest))
+          as GetCrossSourceOffsetRequest;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static GetCrossSourceOffsetRequest create() =>
+      GetCrossSourceOffsetRequest._();
+  @$core.override
+  GetCrossSourceOffsetRequest createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static GetCrossSourceOffsetRequest getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<GetCrossSourceOffsetRequest>(create);
+  static GetCrossSourceOffsetRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.int get canonicalChapterId => $_getIZ(0);
+  @$pb.TagNumber(1)
+  set canonicalChapterId($core.int value) => $_setSignedInt32(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasCanonicalChapterId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearCanonicalChapterId() => $_clearField(1);
+}
+
+class DeleteReadingRequest extends $pb.GeneratedMessage {
+  factory DeleteReadingRequest({
+    $core.int? mangaId,
+  }) {
+    final result = create();
+    if (mangaId != null) result.mangaId = mangaId;
+    return result;
+  }
+
+  DeleteReadingRequest._();
+
+  factory DeleteReadingRequest.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory DeleteReadingRequest.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'DeleteReadingRequest',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'rumgap.v1'),
+      createEmptyInstance: create)
+    ..aI(1, _omitFieldNames ? '' : 'mangaId')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  DeleteReadingRequest clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  DeleteReadingRequest copyWith(void Function(DeleteReadingRequest) updates) =>
+      super.copyWith((message) => updates(message as DeleteReadingRequest))
+          as DeleteReadingRequest;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static DeleteReadingRequest create() => DeleteReadingRequest._();
+  @$core.override
+  DeleteReadingRequest createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static DeleteReadingRequest getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<DeleteReadingRequest>(create);
+  static DeleteReadingRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.int get mangaId => $_getIZ(0);
+  @$pb.TagNumber(1)
+  set mangaId($core.int value) => $_setSignedInt32(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasMangaId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearMangaId() => $_clearField(1);
+}
+
+class CrossSourceOffsetReply extends $pb.GeneratedMessage {
+  factory CrossSourceOffsetReply({
+    $core.double? fraction,
+  }) {
+    final result = create();
+    if (fraction != null) result.fraction = fraction;
+    return result;
+  }
+
+  CrossSourceOffsetReply._();
+
+  factory CrossSourceOffsetReply.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory CrossSourceOffsetReply.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'CrossSourceOffsetReply',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'rumgap.v1'),
+      createEmptyInstance: create)
+    ..aD(1, _omitFieldNames ? '' : 'fraction', fieldType: $pb.PbFieldType.OF)
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  CrossSourceOffsetReply clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  CrossSourceOffsetReply copyWith(
+          void Function(CrossSourceOffsetReply) updates) =>
+      super.copyWith((message) => updates(message as CrossSourceOffsetReply))
+          as CrossSourceOffsetReply;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static CrossSourceOffsetReply create() => CrossSourceOffsetReply._();
+  @$core.override
+  CrossSourceOffsetReply createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static CrossSourceOffsetReply getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<CrossSourceOffsetReply>(create);
+  static CrossSourceOffsetReply? _defaultInstance;
+
+  /// Most recent fraction recorded across any chapter sharing this canonical_chapter_id.
+  @$pb.TagNumber(1)
+  $core.double get fraction => $_getN(0);
+  @$pb.TagNumber(1)
+  set fraction($core.double value) => $_setFloat(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasFraction() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearFraction() => $_clearField(1);
 }
 
 const $core.bool _omitFieldNames =

@@ -13,52 +13,56 @@
 import 'dart:core' as $core;
 
 import 'package:protobuf/protobuf.dart' as $pb;
-import 'package:protobuf/well_known_types/google/protobuf/any.pb.dart' as $9;
+import 'package:protobuf/well_known_types/google/protobuf/any.pb.dart' as $10;
 
 export 'package:protobuf/protobuf.dart' show GeneratedMessageGenericExtensions;
 
-class Id extends $pb.GeneratedMessage {
-  factory Id({
+class UpdateMangaRequest extends $pb.GeneratedMessage {
+  factory UpdateMangaRequest({
     $core.int? id,
+    $core.bool? force,
   }) {
     final result = create();
     if (id != null) result.id = id;
+    if (force != null) result.force = force;
     return result;
   }
 
-  Id._();
+  UpdateMangaRequest._();
 
-  factory Id.fromBuffer($core.List<$core.int> data,
+  factory UpdateMangaRequest.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromBuffer(data, registry);
-  factory Id.fromJson($core.String json,
+  factory UpdateMangaRequest.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
-      _omitMessageNames ? '' : 'Id',
+      _omitMessageNames ? '' : 'UpdateMangaRequest',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'rumgap.v1'),
       createEmptyInstance: create)
     ..aI(1, _omitFieldNames ? '' : 'id')
+    ..aOB(2, _omitFieldNames ? '' : 'force')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  Id clone() => deepCopy();
+  UpdateMangaRequest clone() => deepCopy();
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  Id copyWith(void Function(Id) updates) =>
-      super.copyWith((message) => updates(message as Id)) as Id;
+  UpdateMangaRequest copyWith(void Function(UpdateMangaRequest) updates) =>
+      super.copyWith((message) => updates(message as UpdateMangaRequest))
+          as UpdateMangaRequest;
 
   @$core.override
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
-  static Id create() => Id._();
+  static UpdateMangaRequest create() => UpdateMangaRequest._();
   @$core.override
-  Id createEmptyInstance() => create();
+  UpdateMangaRequest createEmptyInstance() => create();
   @$core.pragma('dart2js:noInline')
-  static Id getDefault() =>
-      _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<Id>(create);
-  static Id? _defaultInstance;
+  static UpdateMangaRequest getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<UpdateMangaRequest>(create);
+  static UpdateMangaRequest? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.int get id => $_getIZ(0);
@@ -68,6 +72,17 @@ class Id extends $pb.GeneratedMessage {
   $core.bool hasId() => $_has(0);
   @$pb.TagNumber(1)
   void clearId() => $_clearField(1);
+
+  /// Bypass the suspicious-chapter-drop safety net (see sync_chapters_for_source) and force
+  /// the reset through -- only set this once you've checked the source yourself.
+  @$pb.TagNumber(2)
+  $core.bool get force => $_getBF(1);
+  @$pb.TagNumber(2)
+  set force($core.bool value) => $_setBool(1, value);
+  @$pb.TagNumber(2)
+  $core.bool hasForce() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearForce() => $_clearField(2);
 }
 
 class Empty extends $pb.GeneratedMessage {
@@ -111,7 +126,7 @@ class DetailedError extends $pb.GeneratedMessage {
   factory DetailedError({
     $core.int? status,
     $core.String? message,
-    $core.Iterable<$9.Any>? details,
+    $core.Iterable<$10.Any>? details,
   }) {
     final result = create();
     if (status != null) result.status = status;
@@ -135,8 +150,8 @@ class DetailedError extends $pb.GeneratedMessage {
       createEmptyInstance: create)
     ..aI(1, _omitFieldNames ? '' : 'status')
     ..aOS(2, _omitFieldNames ? '' : 'message')
-    ..pPM<$9.Any>(3, _omitFieldNames ? '' : 'details',
-        subBuilder: $9.Any.create)
+    ..pPM<$10.Any>(3, _omitFieldNames ? '' : 'details',
+        subBuilder: $10.Any.create)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -177,7 +192,7 @@ class DetailedError extends $pb.GeneratedMessage {
   void clearMessage() => $_clearField(2);
 
   @$pb.TagNumber(3)
-  $pb.PbList<$9.Any> get details => $_getList(2);
+  $pb.PbList<$10.Any> get details => $_getList(2);
 }
 
 const $core.bool _omitFieldNames =

@@ -1,13 +1,14 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:wuxia/api.dart';
 import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
-import 'package:wuxia/gen/rumgap/v1/v1.pb.dart';
+import 'package:wuxia/gen/rumgap/v1/reading.pb.dart';
 import 'package:wuxia/partial/dialog/confirm_dialog.dart';
 import 'package:wuxia/screen/manga/manga_screen.dart';
-import 'package:wuxia/util/tools.dart';
+import 'package:wuxia/util/app_routes.dart';
 
 typedef ReloadParent = Function(MangaReply manga, bool deleted);
 
@@ -46,6 +47,14 @@ class _MangaItemState extends State<MangaItem> {
     return _manga.hasReadingProgress();
   }
 
+  /// Primary source's hostname, falling back to the first available source.
+  /// `MangaItem` shows library rows and doesn't track a "current source"
+  /// selection the way `MangaScreen` does -- that's picked once you open it.
+  String get _hostname {
+    final source = _manga.sources.firstWhereOrNull((s) => s.isPrimary) ?? _manga.sources.firstOrNull;
+    return source?.hostname ?? '';
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListTile(
@@ -61,7 +70,7 @@ class _MangaItemState extends State<MangaItem> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(Uri.parse(_manga.url).host),
+          Text(_hostname),
           Visibility(
             visible: _manga.hasLast(),
             child: Text(
@@ -73,7 +82,7 @@ class _MangaItemState extends State<MangaItem> {
       ),
       leading: _manga.hasCover()
           ? Hero(
-              tag: widget.type.getTag(_manga.url),
+              tag: widget.type.getTag(_manga.id.toString()),
               child: CachedNetworkImage(
                 fit: BoxFit.fill,
                 errorListener: (value) => {},
@@ -88,9 +97,6 @@ class _MangaItemState extends State<MangaItem> {
                     value: progress.progress,
                   ),
                 ),
-                httpHeaders: {
-                  'Referer': getReferer(_manga),
-                },
               ),
             )
           : null,
@@ -120,6 +126,7 @@ class _MangaItemState extends State<MangaItem> {
       onTap: () async {
         final manga = await Navigator.of(context).push(
           MaterialPageRoute(
+            settings: RouteSettings(name: mangaRouteName(_manga.id)),
             builder: (context) => MangaScreen(
               manga: _manga,
               type: widget.type,
@@ -144,7 +151,7 @@ class _MangaItemState extends State<MangaItem> {
             ),
           );
           if (confirmed == true) {
-            await api.reading.delete(Id(id: _manga.id));
+            await api.reading.delete(DeleteReadingRequest(mangaId: _manga.id));
             widget.reloadParent(_manga, true);
           }
         }

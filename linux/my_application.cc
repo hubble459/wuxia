@@ -14,11 +14,34 @@ struct _MyApplication {
 
 G_DEFINE_TYPE(MyApplication, my_application, GTK_TYPE_APPLICATION)
 
+// The window icon isn't part of any platform's launcher-icon pipeline
+// (flutter_launcher_icons doesn't generate anything for Linux) - load it
+// straight from the already-bundled pubspec asset instead, resolved
+// relative to the running executable so it works regardless of cwd.
+static gchar* get_window_icon_path() {
+  g_autoptr(GError) error = nullptr;
+  g_autofree gchar* exe_path = g_file_read_link("/proc/self/exe", &error);
+  if (exe_path == nullptr) {
+    return nullptr;
+  }
+  g_autofree gchar* exe_dir = g_path_get_dirname(exe_path);
+  return g_build_filename(exe_dir, "data", "flutter_assets", "assets", "image", "icon.png", nullptr);
+}
+
 // Implements GApplication::activate.
 static void my_application_activate(GApplication* application) {
   MyApplication* self = MY_APPLICATION(application);
   GtkWindow* window =
       GTK_WINDOW(gtk_application_window_new(GTK_APPLICATION(application)));
+
+  g_autofree gchar* icon_path = get_window_icon_path();
+  if (icon_path != nullptr) {
+    g_autoptr(GError) icon_error = nullptr;
+    gtk_window_set_icon_from_file(window, icon_path, &icon_error);
+    if (icon_error != nullptr) {
+      g_warning("Failed to load window icon from %s: %s", icon_path, icon_error->message);
+    }
+  }
 
   // Use a header bar when running in GNOME as this is the common style used
   // by applications and is the setup most users will be using (e.g. Ubuntu

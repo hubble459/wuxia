@@ -42,6 +42,18 @@ const DeviceTokenRequest$json = {
 final $typed_data.Uint8List deviceTokenRequestDescriptor = $convert
     .base64Decode('ChJEZXZpY2VUb2tlblJlcXVlc3QSFAoFdG9rZW4YASABKAlSBXRva2Vu');
 
+@$core.Deprecated('Use getUserRequestDescriptor instead')
+const GetUserRequest$json = {
+  '1': 'GetUserRequest',
+  '2': [
+    {'1': 'id', '3': 1, '4': 1, '5': 5, '10': 'id'},
+  ],
+};
+
+/// Descriptor for `GetUserRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List getUserRequestDescriptor =
+    $convert.base64Decode('Cg5HZXRVc2VyUmVxdWVzdBIOCgJpZBgBIAEoBVICaWQ=');
+
 @$core.Deprecated('Use userRequestDescriptor instead')
 const UserRequest$json = {
   '1': 'UserRequest',

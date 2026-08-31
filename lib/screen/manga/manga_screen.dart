@@ -1,7 +1,9 @@
 import 'dart:io';
 import 'dart:math';
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:collection/collection.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
@@ -18,15 +20,27 @@ import 'package:wuxia/gen/rumgap/v1/scrape_error.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/v1.pb.dart';
 import 'package:wuxia/partial/action/open_url_action.dart';
 import 'package:wuxia/partial/dialog/dead_provider_dialog.dart';
+import 'package:wuxia/partial/dialog/source_picker_dialog.dart';
 import 'package:wuxia/partial/list/manga_item.dart';
 import 'package:wuxia/partial/manga_details.dart';
+import 'package:wuxia/partial/dialog/add_manga_dialog.dart';
+import 'package:wuxia/partial/responsive_content.dart';
 import 'package:wuxia/partial/simple_future_builder.dart';
 import 'package:wuxia/screen/manga/manga_chapter_screen.dart';
 import 'package:wuxia/screen/manga/manga_chapters_screen.dart';
 import 'package:wuxia/screen/search_screen.dart';
+import 'package:wuxia/util/app_routes.dart';
 import 'package:wuxia/util/tools.dart';
 
-enum _MangaMenuAction { searchAlternatives, download }
+enum _MangaMenuAction { addSource, addSourceFromUrl, download, forceRescrape }
+
+/// The three ways manga data can be refreshed, cheapest first:
+/// - [cached]: plain read from rumgap's own store, no scraping.
+/// - [rescrape]: triggers a scrape, but lets the server decide whether it's
+///   actually due for one.
+/// - [forceRescrape]: always scrapes regardless of staleness -- admin only,
+///   since it's the most expensive and easiest to abuse.
+enum _RefreshMode { cached, rescrape, forceRescrape }
 
 class MangaScreen extends StatefulWidget {
   final MangaReply manga;
@@ -49,7 +63,50 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
   );
   late MangaReply _manga;
 
-  Future<void> loadManga({bool force = false}) async {
+  // The source chapters/reading actions are currently scoped to. Kept as a
+  // single stable object (mutated in place rather than reassigned) so that
+  // widgets further down the navigation stack (MangaChaptersScreen,
+  // MangaChapterScreen) which hold the same reference automatically see a
+  // source switch made from within them once we're back on this screen.
+  late MangaSourceReply _selectedSource;
+  bool _selectedSourceInitialized = false;
+
+  void _syncSelectedSource() {
+    if (_manga.sources.isEmpty) {
+      _selectedSource = MangaSourceReply();
+      _selectedSourceInitialized = true;
+      return;
+    }
+
+    if (_selectedSourceInitialized) {
+      final stillExists = _manga.sources.firstWhereOrNull((s) => s.id == _selectedSource.id);
+      if (stillExists != null) {
+        _selectedSource.clear();
+        _selectedSource.mergeFromMessage(stillExists);
+        return;
+      }
+    }
+
+    final preferredHostname = API.loggedIn.preferredHostnames.firstOrNull;
+    final preferred = _manga.sources.firstWhereOrNull((s) => s.hostname == preferredHostname);
+    final primary = _manga.sources.firstWhereOrNull((s) => s.isPrimary);
+    _selectedSource = (preferred ?? primary ?? _manga.sources.first).deepCopy();
+    _selectedSourceInitialized = true;
+  }
+
+  Future<void> _switchSource() async {
+    if (_manga.sources.length <= 1) return;
+
+    final selected = await showSourcePickerDialog(context, _manga.sources.toList());
+    if (selected != null && mounted) {
+      setState(() {
+        _selectedSource.clear();
+        _selectedSource.mergeFromMessage(selected);
+      });
+    }
+  }
+
+  Future<void> loadManga({_RefreshMode mode = _RefreshMode.cached}) async {
     // Start loading animation
     _animationController
         .repeat(period: const Duration(seconds: 1))
@@ -57,11 +114,15 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
     setState(() {});
 
     try {
-      if (force) {
-        _manga = await api.manga.update(Id(id: _manga.id));
-      } else {
-        _manga = await api.manga.get(Id(id: _manga.id));
+      switch (mode) {
+        case _RefreshMode.cached:
+          _manga = await api.manga.get(GetMangaRequest(id: _manga.id));
+        case _RefreshMode.rescrape:
+          _manga = await api.manga.update(UpdateMangaRequest(id: _manga.id, force: false));
+        case _RefreshMode.forceRescrape:
+          _manga = await api.manga.update(UpdateMangaRequest(id: _manga.id, force: true));
       }
+      _syncSelectedSource();
     } catch (e) {
       print('error');
       print(e);
@@ -90,7 +151,26 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
         Fluttertoast.showToast(msg: e.toString()).ignore();
       }
       if (mounted && context.mounted) {
-        showDialog(context: context, builder: (context) => DeadProviderDialog(mangaTitle: _manga.title));
+        showDialog(
+          context: context,
+          builder: (context) => DeadProviderDialog(
+            mangaTitle: _manga.title,
+            mangaId: _manga.id,
+            sources: _manga.sources,
+            onSwitchSource: (source) {
+              setState(() {
+                _selectedSource.clear();
+                _selectedSource.mergeFromMessage(source);
+              });
+            },
+            onMangaUpdated: (manga) {
+              setState(() {
+                _manga = manga;
+                _syncSelectedSource();
+              });
+            },
+          ),
+        );
       }
     } finally {
       // Stop loading animation
@@ -100,6 +180,8 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
   }
 
   Future<void> _downloadManga() async {
+    if (kIsWeb) return;
+
     final totalChapters = _manga.countChapters.toInt();
     if (totalChapters == 0) {
       Fluttertoast.showToast(msg: FlutterI18n.translate(context, 'manga.no-chapters')).ignore();
@@ -144,7 +226,7 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
       final mangaDir = Directory('${dir.path}/$safeName');
 
       final chapters = await api.chapter.index(PaginateChapterQuery(
-        id: _manga.id,
+        mangaSourceId: _selectedSource.id,
         reversed: false,
         paginateQuery: PaginateQuery(page: Int64(0), perPage: Int64(totalChapters)),
       ));
@@ -159,14 +241,11 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
         final chapterDir = Directory('${mangaDir.path}/${chapter.number.toStringAsFixed(1).replaceAll('.0', '')}');
         await chapterDir.create(recursive: true);
 
-        final images = await api.chapter.images(Id(id: chapter.id));
+        final images = await api.chapter.images(ChapterImagesRequest(chapterId: chapter.id));
         for (var i = 0; i < images.items.length; i++) {
           if (cancelled) break;
-          final url = images.items[i];
-          final response = await http.get(
-            Uri.parse(url),
-            headers: {'Referer': getReferer(chapter, url)},
-          );
+          final url = images.items[i].url;
+          final response = await http.get(Uri.parse(url));
           final ext = url.split('.').last.split('?').first;
           await File('${chapterDir.path}/$i.$ext').writeAsBytes(response.bodyBytes);
         }
@@ -189,14 +268,228 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
   @override
   void initState() {
     _manga = widget.manga;
+    _syncSelectedSource();
 
     loadManga();
 
     super.initState();
   }
 
+  static const _wideBreakpoint = 900.0;
+
+  List<Widget> _appBarActions(BuildContext context) {
+    return [
+      OpenURLAction(url: _selectedSource.url),
+      IconButton(
+        onPressed: _manga.sources.length > 1 ? _switchSource : null,
+        tooltip: FlutterI18n.translate(context, 'manga.switch_source'),
+        icon: const Icon(Icons.swap_horiz),
+      ),
+      RotationTransition(
+        turns: CurvedAnimation(parent: _animationController, curve: Curves.linear),
+        child: IconButton(
+          onPressed: _animationController.isAnimating ? null : () => loadManga(),
+          onLongPress: _animationController.isAnimating ? null : () => loadManga(mode: _RefreshMode.rescrape),
+          tooltip: FlutterI18n.translate(context, 'basic.refresh'),
+          icon: const Icon(Icons.refresh),
+        ),
+      ),
+      PopupMenuButton<_MangaMenuAction>(
+        onSelected: (action) async {
+          if (action == _MangaMenuAction.addSource) {
+            final titles = [_manga.title, ..._manga.altTitles];
+            final chosen = await showDialog<String>(
+              context: context,
+              builder: (ctx) => SimpleDialog(
+                title: Text(FlutterI18n.translate(ctx, 'manga.search-alternatives')),
+                children: titles
+                    .map((t) => SimpleDialogOption(
+                          onPressed: () => Navigator.of(ctx).pop(t),
+                          child: Text(t),
+                        ))
+                    .toList(),
+              ),
+            );
+            if (chosen != null && context.mounted) {
+              final result = await Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => Scaffold(
+                    appBar: AppBar(),
+                    body: SearchScreen(query: chosen, existingMangaId: _manga.id),
+                  ),
+                ),
+              );
+              if (result is MangaReply && mounted) {
+                setState(() {
+                  _manga = result;
+                  _syncSelectedSource();
+                });
+              }
+            }
+          } else if (action == _MangaMenuAction.addSourceFromUrl) {
+            final result = await showDialog<MangaReply>(
+              context: context,
+              builder: (_) => AddMangaDialog(existingMangaId: _manga.id),
+            );
+            if (result != null && mounted) {
+              setState(() {
+                _manga = result;
+                _syncSelectedSource();
+              });
+            }
+          } else if (action == _MangaMenuAction.download) {
+            _downloadManga();
+          } else if (action == _MangaMenuAction.forceRescrape) {
+            loadManga(mode: _RefreshMode.forceRescrape);
+          }
+        },
+        itemBuilder: (_) => [
+          PopupMenuItem(
+            value: _MangaMenuAction.addSource,
+            child: Text(FlutterI18n.translate(context, 'manga.add-source')),
+          ),
+          PopupMenuItem(
+            value: _MangaMenuAction.addSourceFromUrl,
+            child: Text(FlutterI18n.translate(context, 'manga.add-source-url')),
+          ),
+          if (!kIsWeb)
+            PopupMenuItem(
+              value: _MangaMenuAction.download,
+              child: Text(FlutterI18n.translate(context, 'manga.download')),
+            ),
+          if (API.loggedIn.isAdmin)
+            PopupMenuItem(
+              value: _MangaMenuAction.forceRescrape,
+              child: Text(FlutterI18n.translate(context, 'manga.force-rescrape')),
+            ),
+        ],
+      ),
+    ];
+  }
+
+  Widget _sourceSwitcher(BuildContext context, {TextStyle? style}) {
+    return GestureDetector(
+      onTap: _switchSource,
+      child: Text(
+        _selectedSource.hostname,
+        style: style,
+        overflow: TextOverflow.ellipsis,
+      ),
+    );
+  }
+
+  Widget _coverImage({BoxFit fit = BoxFit.fitWidth}) {
+    return Visibility(
+      visible: _manga.hasCover(),
+      child: Hero(
+        tag: widget.heroTag ?? widget.type.getTag(_manga.id.toString()),
+        child: CachedNetworkImage(
+          imageUrl: _manga.cover,
+          fit: fit,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNarrowBody(BuildContext context) {
+    return CustomScrollView(
+      slivers: [
+        SliverAppBar.large(
+          pinned: true,
+          snap: false,
+          floating: true,
+          stretch: true,
+          expandedHeight: _imageHeight,
+          flexibleSpace: FlexibleSpaceBar(
+            title: PreferredSize(
+              preferredSize: Size.fromHeight(1),
+              child: _sourceSwitcher(context, style: Theme.of(context).textTheme.titleSmall?.copyWith(color: Colors.white54)),
+            ),
+            background: _coverImage(),
+          ),
+          actions: _appBarActions(context),
+        ),
+        SliverPadding(
+          padding: const EdgeInsets.all(8.0),
+          sliver: SliverList.list(
+            children: [
+              ResponsiveContent(
+                maxWidth: 800,
+                child: MangaDetails(
+                  manga: _manga,
+                ),
+              ),
+            ],
+          ),
+        )
+      ],
+    );
+  }
+
+  Widget _buildWideBody(BuildContext context) {
+    return Column(
+      children: [
+        AppBar(
+          title: _sourceSwitcher(context, style: Theme.of(context).textTheme.titleSmall?.copyWith(color: Colors.white54)),
+          actions: _appBarActions(context),
+        ),
+        Expanded(
+          child: SingleChildScrollView(
+            child: ResponsiveContent(
+              maxWidth: 1100,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      width: 280,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            _manga.title.replaceAll('\n', ' '),
+                            style: Theme.of(context).textTheme.headlineSmall,
+                          ),
+                          if (_manga.altTitles.isNotEmpty)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 4.0),
+                              child: Text(
+                                _manga.altTitles.join(' · '),
+                                style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey),
+                                maxLines: 3,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          const SizedBox(height: 12),
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: AspectRatio(
+                              aspectRatio: 2 / 3,
+                              child: _coverImage(fit: BoxFit.cover),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 24),
+                    Expanded(
+                      child: MangaDetails(manga: _manga, showTitle: false),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final isWide = MediaQuery.sizeOf(context).width >= _wideBreakpoint;
+
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
@@ -206,102 +499,7 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
       },
       child: SafeArea(
         child: Scaffold(
-          body: CustomScrollView(
-            slivers: [
-              SliverAppBar.large(
-                pinned: true,
-                snap: false,
-                floating: true,
-                stretch: true,
-                expandedHeight: _imageHeight,
-                flexibleSpace: FlexibleSpaceBar(
-                  title: PreferredSize(
-                    preferredSize: Size.fromHeight(1),
-                    child: Text(
-                      Uri.parse(_manga.url).host,
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(color: Colors.white54),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  background: Visibility(
-                    visible: _manga.hasCover(),
-                    child: Hero(
-                      tag: widget.heroTag ?? widget.type.getTag(_manga.url),
-                      child: CachedNetworkImage(
-                        imageUrl: _manga.cover,
-                        fit: BoxFit.fitWidth,
-                        httpHeaders: {
-                          'Referer': getReferer(_manga),
-                        },
-                      ),
-                    ),
-                  ),
-                ),
-                actions: [
-                  OpenURLAction(url: _manga.url),
-                  RotationTransition(
-                    turns: CurvedAnimation(parent: _animationController, curve: Curves.linear),
-                    child: IconButton(
-                      onPressed: _animationController.isAnimating ? null : () => loadManga(force: true),
-                      tooltip: FlutterI18n.translate(context, 'basic.refresh'),
-                      icon: const Icon(Icons.refresh),
-                    ),
-                  ),
-                  PopupMenuButton<_MangaMenuAction>(
-                    onSelected: (action) async {
-                      if (action == _MangaMenuAction.searchAlternatives) {
-                        final titles = [_manga.title, ..._manga.altTitles];
-                        final chosen = await showDialog<String>(
-                          context: context,
-                          builder: (ctx) => SimpleDialog(
-                            title: Text(FlutterI18n.translate(ctx, 'manga.search-alternatives')),
-                            children: titles
-                                .map((t) => SimpleDialogOption(
-                                      onPressed: () => Navigator.of(ctx).pop(t),
-                                      child: Text(t),
-                                    ))
-                                .toList(),
-                          ),
-                        );
-                        if (chosen != null && context.mounted) {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => Scaffold(
-                                appBar: AppBar(),
-                                body: SearchScreen(query: chosen),
-                              ),
-                            ),
-                          );
-                        }
-                      } else if (action == _MangaMenuAction.download) {
-                        _downloadManga();
-                      }
-                    },
-                    itemBuilder: (_) => [
-                      PopupMenuItem(
-                        value: _MangaMenuAction.searchAlternatives,
-                        child: Text(FlutterI18n.translate(context, 'manga.search-alternatives')),
-                      ),
-                      PopupMenuItem(
-                        value: _MangaMenuAction.download,
-                        child: Text(FlutterI18n.translate(context, 'manga.download')),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              SliverPadding(
-                padding: const EdgeInsets.all(8.0),
-                sliver: SliverList.list(
-                  children: [
-                    MangaDetails(
-                      manga: _manga,
-                    ),
-                  ],
-                ),
-              )
-            ],
-          ),
+          body: isWide ? _buildWideBody(context) : _buildNarrowBody(context),
           bottomNavigationBar: _animationController.isAnimating
               ? null
               : SizedBox(
@@ -309,6 +507,7 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
                   child: _manga.hasReadingProgress()
                       ? _ChapterSelector(
                           manga: _manga,
+                          source: _selectedSource,
                           refreshParent: () {
                             setState(() {});
                           },
@@ -368,9 +567,10 @@ mixin ReadingManga on MangaReply {
 
 class _ChapterSelector extends StatefulWidget {
   final MangaReply manga;
+  final MangaSourceReply source;
   final Function() refreshParent;
 
-  const _ChapterSelector({required this.manga, required this.refreshParent});
+  const _ChapterSelector({required this.manga, required this.source, required this.refreshParent});
 
   @override
   State<_ChapterSelector> createState() => _ChapterSelectorState();
@@ -379,12 +579,12 @@ class _ChapterSelector extends StatefulWidget {
 class _ChapterSelectorState extends State<_ChapterSelector> {
   final _scrollController = ItemScrollController();
   final _itemPositionListener = ItemPositionsListener.create();
-  var _pageSize = 20;
+  var _pageSize = 100;
 
   Future<void> openChapters() async {
     await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => MangaChaptersScreen(manga: widget.manga),
+        builder: (context) => MangaChaptersScreen(manga: widget.manga, source: widget.source),
       ),
     );
     refresh();
@@ -399,16 +599,18 @@ class _ChapterSelectorState extends State<_ChapterSelector> {
       ));
     }
     final chapter = await api.chapter.get(ChapterRequest(
-      mangaId: widget.manga.id,
+      mangaSourceId: widget.source.id,
       index: widget.manga.readingProgress,
     ));
     if (!mounted) return;
     await Navigator.of(context)
         .push(
           MaterialPageRoute(
+            settings: RouteSettings(name: chapterRouteNameFor(mangaId: widget.manga.id, chapter: chapter)),
             builder: (context) => MangaChapterScreen(
               manga: widget.manga,
               chapter: chapter,
+              source: widget.source,
             ),
           ),
         )
@@ -420,6 +622,7 @@ class _ChapterSelectorState extends State<_ChapterSelector> {
     await api.reading.update(ReadingPatchRequest(
       mangaId: widget.manga.id,
       progress: widget.manga.readingProgress,
+      chapterId: chapter.id,
     ));
 
     if (!mounted) return;
@@ -427,9 +630,11 @@ class _ChapterSelectorState extends State<_ChapterSelector> {
     await Navigator.of(context)
         .push(
           MaterialPageRoute(
+            settings: RouteSettings(name: chapterRouteNameFor(mangaId: widget.manga.id, chapter: chapter)),
             builder: (context) => MangaChapterScreen(
               manga: widget.manga,
               chapter: chapter,
+              source: widget.source,
             ),
           ),
         )
@@ -453,10 +658,22 @@ class _ChapterSelectorState extends State<_ChapterSelector> {
     );
   }
 
+  /// `chapter.index` is a purely per-source position and `readingProgress` is a canonical
+  /// rank - the two only coincidentally lined up before multi-source existed. Ordinal is the
+  /// one scale genuinely comparable across sources; fall back to the old index comparison
+  /// only when ordinal data isn't available (e.g. a manually-unlinked chapter, or no
+  /// progress recorded yet).
+  bool _isChapterRead(ChapterReply chapter) {
+    if (widget.manga.hasProgressOrdinal() && chapter.hasOrdinal()) {
+      return widget.manga.progressOrdinal >= chapter.ordinal;
+    }
+    return widget.manga.readingProgress >= chapter.index.toInt();
+  }
+
   Future<ChaptersReply> getChapters() async {
     // TODO 26/11/2023: Keep this in memory (inside manga object?)
     return api.chapter.index(PaginateChapterQuery(
-      id: widget.manga.id,
+      mangaSourceId: widget.source.id,
       reversed: true,
       paginateQuery: paginateQuery,
     ));
@@ -478,7 +695,11 @@ class _ChapterSelectorState extends State<_ChapterSelector> {
                 )
               ]
             : [
-                // Chapters
+                // Chapters -- the two arrows are pinned outside the scrollable
+                // list (not items within it), so they stay put at the row's
+                // edges instead of scrolling out of view along with the
+                // chapter buttons once there are enough of them to overflow.
+                MaterialButton(onPressed: openChapters, minWidth: 0, child: const Icon(Icons.arrow_left)),
                 Expanded(
                   child: SizedBox(
                     height: 40,
@@ -486,8 +707,6 @@ class _ChapterSelectorState extends State<_ChapterSelector> {
                       child: SimpleFutureBuilder(
                         future: getChapters(),
                         onLoadedBuilder: (context, ChaptersReply chapters) {
-                          chapters.items.insert(0, ChapterReply());
-                          chapters.items.add(ChapterReply());
                           return ScrollablePositionedList.builder(
                             initialScrollIndex: widget.manga.readingProgress % _pageSize,
                             itemScrollController: _scrollController,
@@ -497,17 +716,8 @@ class _ChapterSelectorState extends State<_ChapterSelector> {
                             itemCount: chapters.items.length,
                             itemBuilder: (context, index) {
                               final chapter = chapters.items[index];
-                              if (index == 0 || index == chapters.items.length - 1) {
-                                return MaterialButton(
-                                  onPressed: openChapters,
-                                  minWidth: 0,
-                                  child: Icon(index == 0 ? Icons.arrow_left : Icons.arrow_right),
-                                );
-                              }
                               return MaterialButton(
-                                color: widget.manga.readingProgress >= chapter.index.toInt()
-                                    ? Colors.grey.withValues(alpha: 0.2)
-                                    : null,
+                                color: _isChapterRead(chapter) ? Colors.grey.withValues(alpha: 0.2) : null,
                                 materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                                 minWidth: 0,
                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
@@ -521,6 +731,7 @@ class _ChapterSelectorState extends State<_ChapterSelector> {
                     ),
                   ),
                 ),
+                MaterialButton(onPressed: openChapters, minWidth: 0, child: const Icon(Icons.arrow_right)),
                 // Continue
                 MaterialButton(
                   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,

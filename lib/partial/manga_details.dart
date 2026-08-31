@@ -3,14 +3,17 @@ import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:wuxia/api.dart';
 import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
-import 'package:wuxia/gen/rumgap/v1/v1.pb.dart';
 import 'package:wuxia/partial/list/manga_item.dart';
 import 'package:wuxia/partial/simple_future_builder.dart';
 
 class MangaDetails extends StatelessWidget {
   final MangaReply manga;
 
-  const MangaDetails({super.key, required this.manga});
+  /// Whether to render the title/alt-titles block. Set to false on desktop,
+  /// where MangaScreen renders that block itself alongside the cover.
+  final bool showTitle;
+
+  const MangaDetails({super.key, required this.manga, this.showTitle = true});
 
   Jiffy get nextUpdate {
     return Jiffy.parseFromMillisecondsSinceEpoch(manga.next.toInt());
@@ -26,18 +29,20 @@ class MangaDetails extends StatelessWidget {
           manga.genres.join(', '),
           style: Theme.of(context).textTheme.bodySmall,
         ),
-        Text(
-          manga.title.replaceAll('\n', ' '),
-          style: Theme.of(context).textTheme.headlineSmall,
-          overflow: TextOverflow.ellipsis,
-        ),
-        if (manga.altTitles.isNotEmpty)
+        if (showTitle) ...[
           Text(
-            manga.altTitles.join(' · '),
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey),
+            manga.title.replaceAll('\n', ' '),
+            style: Theme.of(context).textTheme.headlineSmall,
             overflow: TextOverflow.ellipsis,
-            maxLines: 2,
           ),
+          if (manga.altTitles.isNotEmpty)
+            Text(
+              manga.altTitles.join(' · '),
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey),
+              overflow: TextOverflow.ellipsis,
+              maxLines: 2,
+            ),
+        ],
         Visibility(
           visible: manga.authors.isNotEmpty,
           child: Text(
@@ -78,7 +83,7 @@ class MangaDetails extends StatelessWidget {
           child: Text(manga.description),
         ),
         SimpleFutureBuilder<MangasReply>(
-          future: api.manga.similar(Id(id: manga.id)),
+          future: api.manga.similar(SimilarMangaRequest(id: manga.id)),
           onLoadedBuilder: (context, similar) {
             return Visibility(
               visible: similar.items.isNotEmpty,

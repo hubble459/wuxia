@@ -6,14 +6,19 @@ import 'package:wuxia/gen/rumgap/v1/user.pb.dart';
 import 'package:wuxia/partial/filter_manga.dart';
 import 'package:wuxia/partial/list/search_manga_item.dart';
 import 'package:collection/collection.dart';
+import 'package:wuxia/partial/responsive_content.dart';
 import 'package:wuxia/util/filter_map.dart';
 
 Function eq = const ListEquality().equals;
 
 class SearchScreen extends StatefulWidget {
-  const SearchScreen({super.key, this.query});
+  const SearchScreen({super.key, this.query, this.existingMangaId});
 
   final String? query;
+
+  /// When set, search results are added as a new source on this manga
+  /// instead of creating a disconnected duplicate. See `SearchMangaItem`.
+  final int? existingMangaId;
 
   @override
   State<SearchScreen> createState() => _SearchScreenState();
@@ -63,81 +68,87 @@ class _SearchScreenState extends State<SearchScreen> with AutomaticKeepAliveClie
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return Column(
-      mainAxisSize: MainAxisSize.max,
-      children: [
-        TextField(
-          controller: controller,
-          textAlignVertical: TextAlignVertical.center,
-          textAlign: TextAlign.start,
-          textInputAction: TextInputAction.search,
-          decoration: InputDecoration(
-            suffixIcon: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(Icons.search),
-                IconButton(
-                  icon: const Icon(Icons.filter_alt),
-                  onPressed: () async {
-                    final filter = await Navigator.of(context).push<FilterMap>(
-                      MaterialPageRoute(
-                        builder: (context) => FilterManga(
-                          filterType: FilterType.online,
-                          defaultValue: API.loggedIn.preferredHostnames.map((hostname) => 'url:"$hostname"').join(' '),
+    return ResponsiveContent(
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          TextField(
+            controller: controller,
+            textAlignVertical: TextAlignVertical.center,
+            textAlign: TextAlign.start,
+            textInputAction: TextInputAction.search,
+            decoration: InputDecoration(
+              suffixIcon: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.search),
+                  IconButton(
+                    icon: const Icon(Icons.filter_alt),
+                    onPressed: () async {
+                      final filter = await Navigator.of(context).push<FilterMap>(
+                        MaterialPageRoute(
+                          builder: (context) => FilterManga(
+                            filterType: FilterType.online,
+                            defaultValue: API.loggedIn.preferredHostnames.map((hostname) => 'url:"$hostname"').join(' '),
+                          ),
                         ),
+                      );
+
+                      _filter(hostnames: filter?.hosts.included);
+                    },
+                  ),
+                ],
+              ),
+              hintText: FlutterI18n.translate(context, 'search.search_manga_online'),
+              isDense: false,
+              border: const UnderlineInputBorder(),
+            ),
+            onSubmitted: (query) {
+              if (controller.text.isNotEmpty) {
+                _filter(keyword: controller.text);
+              }
+            },
+          ),
+          FutureBuilder<SearchReply>(
+            future: _searchResults,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                if (snapshot.hasData) {
+                  final results = snapshot.requireData.items;
+                  if (results.isEmpty) {
+                    return Expanded(
+                      child: Center(
+                        child: I18nText('search.no_results'),
                       ),
                     );
-
-                    _filter(hostnames: filter?.hosts.included);
-                  },
-                ),
-              ],
-            ),
-            hintText: FlutterI18n.translate(context, 'search.search_manga_online'),
-            isDense: false,
-            border: const UnderlineInputBorder(),
-          ),
-          onSubmitted: (query) {
-            if (controller.text.isNotEmpty) {
-              _filter(keyword: controller.text);
-            }
-          },
-        ),
-        FutureBuilder<SearchReply>(
-          future: _searchResults,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              if (snapshot.hasData) {
-                final results = snapshot.requireData.items;
-                if (results.isEmpty) {
+                  }
                   return Expanded(
-                    child: Center(
-                      child: I18nText('search.no_results'),
+                    child: ListView.builder(
+                      itemCount: results.length,
+                      itemBuilder: (context, index) => SearchMangaItem(
+                        searchManga: results[index],
+                        index: index,
+                        existingMangaId: widget.existingMangaId,
+                      ),
                     ),
                   );
+                } else {
+                  return Center(
+                    child: Text(snapshot.hasError ? snapshot.error.toString() : 'Error'),
+                  );
                 }
-                return Expanded(
-                  child: ListView.builder(
-                    itemCount: results.length,
-                    itemBuilder: (context, index) => SearchMangaItem(searchManga: results[index], index: index),
+              } else {
+                return const Expanded(
+                  child: Center(
+                    child: CircularProgressIndicator(),
                   ),
                 );
-              } else {
-                return Center(
-                  child: Text(snapshot.hasError ? snapshot.error.toString() : 'Error'),
-                );
               }
-            } else {
-              return const Expanded(
-                child: Center(
-                  child: CircularProgressIndicator(),
-                ),
-              );
-            }
-          },
-        )
-      ],
+            },
+          )
+        ],
+      ),
     );
   }
 

@@ -32,8 +32,12 @@ manga:
   will-update: Updates {date}
   no-chapters: Failed to load chapters...
   search-alternatives: Search Alternatives
+  add-source: Add Source
+  add-source-url: Add Source from URL
+  switch_source: Switch Source
   download: Download
   download-complete: Download complete
+  force-rescrape: Force Rescrape
 details:
   authors: Authors
   genres: Genres
@@ -50,6 +54,10 @@ error: 'Error: {error}'
 chapter:
   goto_top: Scroll to top
   goto_bottom: Scroll to bottom
+  goto_first_page: First page
+  goto_last_page: Last page
+  mode_webtoon: Switch to paged mode
+  mode_paged: Switch to webtoon mode
   previous: Previous
   next: Next
 basic:
@@ -65,6 +73,9 @@ settings:
   data_saver: Data Saver
   logout: Logout
   language: Language
+  reading_mode: Default Reading Mode
+  reading_mode_webtoon: Webtoon
+  reading_mode_paged: Paged
   statistics:
     title: Statistics
     completed_manga: Completed Manga
@@ -72,6 +83,16 @@ settings:
     minutes: ' minutes'
     seconds: ' seconds'
     average_reading_time: Average Reading Time
+  scraper_status:
+    title: Scraper Status
+    empty: No scrape attempts recorded yet
+    last_attempt: 'Last attempt {time}'
+    never_attempted: Never attempted
+    last_success: 'Last success {time}'
+    never_succeeded: Never succeeded
+    stats_24h: '{attempts} attempts / {failures} failures (24h)'
+    no_recent_errors: No recent errors
+    close: Close
   misc: Miscellaneous
   download: Download
   download_directory: Download Directory
@@ -118,6 +139,7 @@ splash:
   connecting: Connecting with server...
 notification:
   new_chapter: New Chapter Available in {title}
+  push_unavailable: Couldn't enable push notifications
 dead_provider:
   title: No scrapers available
   message: >-
