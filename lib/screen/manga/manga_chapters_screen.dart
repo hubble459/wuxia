@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
@@ -24,6 +26,14 @@ class MangaChaptersScreen extends StatefulWidget {
 }
 
 class _MangaChaptersScreenState extends State<MangaChaptersScreen> {
+  final _pageSize = 20;
+
+  // rumgap's `reversed` query flag sorts server-side: false = newest chapter
+  // first (its default), true = chapter 1 first. Jumping to "the other end"
+  // of a possibly-5000-chapter list is a re-sort + refetch of just page 0,
+  // rather than paginating through every page to physically reach it.
+  var _reversed = false;
+
   late final _pagingController = PagingController<int, ChapterReply>(
     getNextPageKey: (state) {
       if (state.status != PagingStatus.loadingFirstPage && state.pages!.last.length < _pageSize) return null;
@@ -33,9 +43,33 @@ class _MangaChaptersScreenState extends State<MangaChaptersScreen> {
     },
     fetchPage: (pageKey) => _fetchPage(pageKey),
   );
-  final _pageSize = 20;
   late ChaptersReply _result;
   final _scrollController = ScrollController();
+  var _jumping = false;
+
+  Future<void> _jumpToEnd({required bool reversed}) async {
+    if (_jumping) return;
+    setState(() => _jumping = true);
+
+    if (_reversed != reversed) {
+      _reversed = reversed;
+      final completer = Completer<void>();
+      void listener() {
+        if (!_pagingController.value.isLoading) completer.complete();
+      }
+
+      _pagingController.addListener(listener);
+      _pagingController.refresh();
+      await completer.future;
+      _pagingController.removeListener(listener);
+    }
+
+    if (!mounted) return;
+    setState(() => _jumping = false);
+    if (_scrollController.hasClients) {
+      _scrollController.jumpTo(0);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,20 +88,15 @@ class _MangaChaptersScreenState extends State<MangaChaptersScreen> {
         ),
         actions: [
           IconButton(
-            onPressed: () {
-              if (!_scrollController.hasClients) return;
-              _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
-            },
-            tooltip: FlutterI18n.translate(context, 'chapter.goto_bottom'),
-            icon: const Icon(Icons.arrow_downward),
-          ),
-          IconButton(
-            onPressed: () {
-              if (!_scrollController.hasClients) return;
-              _scrollController.jumpTo(0);
-            },
-            tooltip: FlutterI18n.translate(context, 'chapter.goto_top'),
-            icon: const Icon(Icons.arrow_upward),
+            onPressed: _jumping ? null : () => _jumpToEnd(reversed: !_reversed),
+            tooltip: FlutterI18n.translate(context, _reversed ? 'chapter.goto_top' : 'chapter.goto_bottom'),
+            icon: _jumping
+                ? const SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : Icon(_reversed ? Icons.arrow_upward : Icons.arrow_downward),
           ),
         ],
       ),
@@ -156,6 +185,7 @@ class _MangaChaptersScreenState extends State<MangaChaptersScreen> {
   Future<List<ChapterReply>> _fetchPage(int page) async {
     _result = await api.chapter.index(PaginateChapterQuery(
         mangaSourceId: widget.source.id,
+        reversed: _reversed,
         paginateQuery: PaginateQuery(
           page: Int64(page),
           perPage: Int64(_pageSize),

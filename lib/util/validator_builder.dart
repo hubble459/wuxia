@@ -2,7 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 
 final emailRegex = RegExp(r'^[^\s@]+@([^\s@.,]+\.)+[^\s@.,]{2,}$');
-final hostRegex = RegExp(r'^(\d+\.){3}(\d+):\d+$');
+
+/// Parses either a bare `host:port` (IP or hostname, no scheme -- e.g.
+/// `192.168.1.54:8000` or `localhost:8000`) or a full `scheme://host[:port]`
+/// URL (e.g. `https://api.manga.quentincorreia.nl`, port defaulted from the
+/// scheme). A bare hostname:port parses via [Uri.tryParse] as a bogus
+/// `scheme:opaque-path` URI (empty host), which is why that case is
+/// distinguished by checking `uri.host.isNotEmpty` rather than by whether
+/// parsing itself succeeded.
+({String host, int port})? parseHostAndPort(String value) {
+  final uri = Uri.tryParse(value);
+  if (uri != null && uri.host.isNotEmpty) {
+    return (host: uri.host, port: uri.port);
+  }
+
+  final parts = value.split(':');
+  if (parts.length != 2 || parts[0].isEmpty) return null;
+  final port = int.tryParse(parts[1]);
+  if (port == null) return null;
+  return (host: parts[0], port: port);
+}
 
 typedef Validator = String? Function(String? value);
 
@@ -109,11 +128,7 @@ class ValidatorBuilder {
   }
 
   String? _isHostWithPortUrl(String? value) {
-    final url = Uri.tryParse(value!);
-    if (url == null) {
-      return hostRegex.hasMatch(value) ? null : _t('validator.url');
-    }
-    return url.hasPort && !url.hasAbsolutePath && !url.hasScheme ? null : _t('validator.url');
+    return parseHostAndPort(value!) != null ? null : _t('validator.url');
   }
 
   String _t(String key, [Map<String, String>? params]) {
