@@ -4,6 +4,10 @@ on:
   push:
     branches: ["main"]
 
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}-web
+
 jobs:
   deploy-web:
     runs-on: ubuntu-latest
@@ -20,29 +24,21 @@ jobs:
 
       - run: flutter build web --release --pub --suppress-analytics --dart-define=API_HOST=${{ vars.API_HOST }}
 
-      - name: Set up WireGuard
-        run: |
-          sudo apt-get update && sudo apt-get install -y wireguard-tools
-          umask 077
-          echo "${{ secrets.WIREGUARD_CONFIG }}" > /tmp/wg0.conf
-          sudo wg-quick up /tmp/wg0.conf
+      - uses: docker/setup-buildx-action@v4
 
-      - name: Debug routing
-        run: |
-          ip addr show
-          ip route show
-          ip route get ${{ vars.DEPLOY_SSH_HOST }}
+      - name: Log in to the Container registry
+        uses: docker/login-action@v4
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Deploy build/web over rsync
-        run: |
-          mkdir -p ~/.ssh
-          umask 077
-          echo "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/deploy_key
-          rsync -avz --delete \
-            -e "ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=accept-new" \
-            build/web/ \
-            "${{ vars.DEPLOY_SSH_USER }}@${{ vars.DEPLOY_SSH_HOST }}:/opt/rumgap/wuxia-web/"
-
-      - name: Tear down WireGuard
-        if: always()
-        run: sudo wg-quick down /tmp/wg0.conf
+      - name: Build and push
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: Dockerfile.web
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:main
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
