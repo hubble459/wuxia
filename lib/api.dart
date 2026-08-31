@@ -8,8 +8,8 @@ import 'package:wuxia/gen/rumgap/v1/user.pb.dart';
 
 // const _defaultHost = '10.0.2.2';
 // const _defaultPort = 8000;
-const _defaultHost = '31.21.216.97';
-const _defaultPort = 5909;
+const _defaultHost = String.fromEnvironment('API_HOST', defaultValue: 'localhost');
+const _defaultPort = 443;
 
 // extension PooPoo on GrpcError {}
 
@@ -74,7 +74,9 @@ class API {
     _channel = GrpcOrGrpcWebClientChannel.toSingleEndpoint(
       host: host,
       port: port,
-      transportSecure: false,
+      // Custom hosts entered via ChangeAPIDialog are typically plain HTTP
+      // (local/dev servers); only assume TLS on the conventional HTTPS port.
+      transportSecure: port == 443,
     );
   }
 

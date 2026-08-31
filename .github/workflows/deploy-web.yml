@@ -1,0 +1,40 @@
+name: Deploy Web
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  deploy-web:
+    runs-on: ubuntu-latest
+    environment: main
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: "stable"
+          cache: true
+
+      - run: flutter build web --release --pub --suppress-analytics --dart-define=API_HOST=${{ vars.API_HOST }}
+
+      - name: Set up WireGuard
+        run: |
+          sudo apt-get update && sudo apt-get install -y wireguard-tools
+          umask 077
+          echo "${{ secrets.WIREGUARD_CONFIG }}" > /tmp/wg0.conf
+          sudo wg-quick up /tmp/wg0.conf
+
+      - name: Deploy build/web over rsync
+        run: |
+          mkdir -p ~/.ssh
+          umask 077
+          echo "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/deploy_key
+          rsync -avz --delete \
+            -e "ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=accept-new" \
+            build/web/ \
+            "${{ vars.DEPLOY_SSH_USER }}@${{ vars.DEPLOY_SSH_HOST }}:/opt/rumgap/wuxia-web/"
+
+      - name: Tear down WireGuard
+        if: always()
+        run: sudo wg-quick down /tmp/wg0.conf
