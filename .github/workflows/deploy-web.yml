@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: main
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - run: echo "GITHUB_TOKEN=${{ secrets.GH_TOKEN }}" > .env
 

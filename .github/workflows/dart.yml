@@ -13,8 +13,8 @@ jobs:
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: rymndhng/release-on-push-action@master
+      - uses: actions/checkout@v7
+      - uses: rymndhng/release-on-push-action@v0.28.0
         id: push_release
         with:
           bump_version_scheme: patch
@@ -36,7 +36,7 @@ jobs:
           tag: ${{ steps.push_release.outputs.tag_name }}
 
       - name: Upload Release Asset
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v3
         with:
           files: ./build/app/outputs/flutter-apk/app-release.apk
           tag_name: ${{ steps.push_release.outputs.tag_name }}
@@ -47,7 +47,7 @@ jobs:
     needs: build
     environment: main
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - run: echo "GITHUB_TOKEN=${{ secrets.GH_TOKEN }}" > .env
 
@@ -73,7 +73,7 @@ jobs:
         run: tar -czf wuxia-linux.tar.gz -C build/linux/x64/release/bundle .
 
       - name: Upload Linux build to release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v3
         with:
           files: wuxia-linux.tar.gz
           tag_name: ${{ needs.build.outputs.tag_name }}
