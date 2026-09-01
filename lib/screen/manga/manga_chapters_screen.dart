@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
+import 'package:grpc/grpc.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:wuxia/api.dart';
 import 'package:wuxia/gen/rumgap/v1/chapter.pb.dart';
@@ -120,11 +121,17 @@ class _MangaChaptersScreenState extends State<MangaChaptersScreen> {
                   manga: widget.manga,
                   refreshParent: (progress) async {
                     widget.manga.readingProgress = progress;
-                    await api.reading.update(ReadingPatchRequest(
-                      mangaId: widget.manga.id,
-                      progress: widget.manga.readingProgress,
-                      chapterId: chapter.id,
-                    ));
+                    try {
+                      await api.reading.update(ReadingPatchRequest(
+                        mangaId: widget.manga.id,
+                        progress: widget.manga.readingProgress,
+                        chapterId: chapter.id,
+                      ));
+                    } on GrpcError catch (e) {
+                      // TODO: build a UI for LinkChapter/UnlinkChapter so this is fixable
+                      // in-app instead of just silently swallowed.
+                      if (e.code != StatusCode.failedPrecondition) rethrow;
+                    }
                     if (!context.mounted) return;
                     await Navigator.of(context).push(
                       MaterialPageRoute(

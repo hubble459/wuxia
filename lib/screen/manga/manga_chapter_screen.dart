@@ -186,6 +186,7 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
     _pageController.dispose();
     _focusNode.removeListener(_reclaimFocus);
     _focusNode.dispose();
+    PaintingBinding.instance.imageCache.clearLiveImages();
     super.dispose();
   }
 
@@ -219,11 +220,17 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
       }
 
       widget.manga.readingProgress = newChapter.index.toInt();
-      await api.reading.update(ReadingPatchRequest(
-        mangaId: widget.manga.id,
-        progress: widget.manga.readingProgress,
-        chapterId: newChapter.id,
-      ));
+      try {
+        await api.reading.update(ReadingPatchRequest(
+          mangaId: widget.manga.id,
+          progress: widget.manga.readingProgress,
+          chapterId: newChapter.id,
+        ));
+      } on GrpcError catch (e) {
+        // TODO: build a UI for LinkChapter/UnlinkChapter so this is fixable
+        // in-app instead of just silently swallowed.
+        if (e.code != StatusCode.failedPrecondition) rethrow;
+      }
 
       // Mutate the shared source object in place so the change is reflected
       // back up in whichever screen (MangaScreen, MangaChaptersScreen, ...)
@@ -351,7 +358,7 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
                 ] else ...[
                   IconButton(
                     onPressed: () async {
-                      itemScrollController.jumpTo(index: 10000);
+                      itemScrollController.jumpTo(index: (_images?.length ?? 1) - 1);
                     },
                     tooltip: FlutterI18n.translate(context, 'chapter.goto_bottom'),
                     icon: const Icon(Icons.arrow_downward),
@@ -557,7 +564,7 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
         );
       } else {
         itemScrollController.scrollTo(
-          index: _chapter.offset.page,
+          index: _chapter.offset.page.clamp(0, links.length - 1),
           alignment: _chapter.offset.pixels / 100,
           duration: Duration(seconds: 3),
           opacityAnimationWeights: [20, 20, 60],
@@ -674,13 +681,19 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
         index: widget.manga.readingProgress,
       ),
     );
-    await api.reading.update(
-      ReadingPatchRequest(
-        mangaId: widget.manga.id,
-        progress: widget.manga.readingProgress,
-        chapterId: chapter.id,
-      ),
-    );
+    try {
+      await api.reading.update(
+        ReadingPatchRequest(
+          mangaId: widget.manga.id,
+          progress: widget.manga.readingProgress,
+          chapterId: chapter.id,
+        ),
+      );
+    } on GrpcError catch (e) {
+      // TODO: build a UI for LinkChapter/UnlinkChapter so this is fixable
+      // in-app instead of just silently swallowed.
+      if (e.code != StatusCode.failedPrecondition) rethrow;
+    }
     await _goToChapter(chapter);
   }
 

@@ -648,7 +648,7 @@ class _ChapterSelectorState extends State<_ChapterSelector> {
     var page = max((from / _pageSize).floor(), (till / _pageSize).floor());
     final items = widget.manga.countChapters - (page * _pageSize);
     if (items < _pageSize) {
-      page -= 1;
+      page = max(page - 1, 0);
       _pageSize *= 2;
     }
 
