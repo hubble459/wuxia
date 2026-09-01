@@ -647,10 +647,14 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
               child: Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
             ),
             placeholder: null,
-            errorWidget: (context, url, error) => SizedBox.fromSize(
-              size: const Size.fromHeight(500),
-              child: const Center(child: Icon(Icons.error)),
-            ),
+            errorWidget: (context, url, error) {
+              // ignore: avoid_print
+              print('Image failed to load: $url: $error');
+              return SizedBox.fromSize(
+                size: const Size.fromHeight(500),
+                child: const Center(child: Icon(Icons.error)),
+              );
+            },
           );
 
     if (paged) return SizedBox.expand(child: image);

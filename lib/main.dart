@@ -57,6 +57,8 @@ void main() async {
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   }
   WidgetsFlutterBinding.ensureInitialized();
+  PaintingBinding.instance.imageCache.maximumSize = 1000;
+  PaintingBinding.instance.imageCache.maximumSizeBytes = 300 << 20;
   final store = await Store.init();
   await Jiffy.setLocale(store.getLanguage() ?? 'en');
 
