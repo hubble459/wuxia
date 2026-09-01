@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart' show kIsWeb;
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -634,22 +633,28 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
             width: double.infinity,
             height: paged ? double.infinity : null,
           )
-        : CachedNetworkImage(
-            imageUrl: page.url,
+        : Image.network(
+            page.url,
             alignment: paged ? Alignment.center : Alignment.topCenter,
-            fadeOutDuration: const Duration(microseconds: 1),
             filterQuality: FilterQuality.high,
             fit: paged ? BoxFit.contain : BoxFit.fitWidth,
             width: double.infinity,
             height: paged ? double.infinity : null,
-            progressIndicatorBuilder: (context, url, downloadProgress) => SizedBox.fromSize(
-              size: const Size.fromHeight(500),
-              child: Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
-            ),
-            placeholder: null,
-            errorWidget: (context, url, error) {
+            loadingBuilder: (context, child, loadingProgress) {
+              if (loadingProgress == null) return child;
+              final total = loadingProgress.expectedTotalBytes;
+              return SizedBox.fromSize(
+                size: const Size.fromHeight(500),
+                child: Center(
+                  child: CircularProgressIndicator(
+                    value: total != null ? loadingProgress.cumulativeBytesLoaded / total : null,
+                  ),
+                ),
+              );
+            },
+            errorBuilder: (context, error, stackTrace) {
               // ignore: avoid_print
-              print('Image failed to load: $url: $error');
+              print('Image failed to load: ${page.url}: $error');
               return SizedBox.fromSize(
                 size: const Size.fromHeight(500),
                 child: const Center(child: Icon(Icons.error)),
