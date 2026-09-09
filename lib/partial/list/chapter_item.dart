@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:wuxia/gen/rumgap/v1/chapter.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
+import 'package:wuxia/util/tools.dart';
 
 class ChapterItem extends StatelessWidget {
   final ChaptersReply chapters;
@@ -11,17 +12,6 @@ class ChapterItem extends StatelessWidget {
 
   ChapterItem({super.key, required this.chapters, required this.manga, required int index, required this.refreshParent})
       : chapter = chapters.items[index];
-
-  /// `chapter.index` is a purely per-source position and `readingProgress` is a canonical
-  /// rank - the two only coincidentally lined up before multi-source existed. Ordinal is the
-  /// one scale genuinely comparable across sources; fall back to the old index comparison
-  /// only when ordinal data isn't available (e.g. a manually-unlinked chapter).
-  bool get _isRead {
-    if (manga.hasProgressOrdinal() && chapter.hasOrdinal()) {
-      return manga.progressOrdinal >= chapter.ordinal;
-    }
-    return manga.readingProgress >= chapter.index.toInt();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +26,7 @@ class ChapterItem extends StatelessWidget {
         child: Text(chapter.hasPosted() ? Jiffy.parseFromMillisecondsSinceEpoch(chapter.posted.toInt()).fromNow() : ''),
       ),
       leading: Visibility(
-        visible: manga.hasReadingProgress() && _isRead,
+        visible: manga.hasReadingProgress() && isChapterRead(manga, chapter),
         child: const ColoredBox(
           color: Colors.green,
           child: SizedBox(

@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:wuxia/firebase_options.dart';
 import 'package:jiffy/jiffy.dart';
 
@@ -42,6 +43,27 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   print('Handling a background message: ${message.messageId}');
 }
 
+/// Entry point for the isolate `flutter_foreground_task` spins up to host its
+/// foreground-service notification while a manga download runs -- the actual
+/// download loop stays on the main isolate (see `_downloadManga` in
+/// manga_screen.dart), so this handler does nothing beyond keeping the
+/// service alive.
+@pragma('vm:entry-point')
+void downloadForegroundTaskCallback() {
+  FlutterForegroundTask.setTaskHandler(_DownloadForegroundTaskHandler());
+}
+
+class _DownloadForegroundTaskHandler extends TaskHandler {
+  @override
+  Future<void> onStart(DateTime timestamp, TaskStarter starter) async {}
+
+  @override
+  void onRepeatEvent(DateTime timestamp) {}
+
+  @override
+  Future<void> onDestroy(DateTime timestamp, bool isTimeout) async {}
+}
+
 GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
@@ -55,6 +77,21 @@ void main() async {
       options: DefaultFirebaseOptions.currentPlatform,
     );
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  }
+  if (!kIsWeb && Platform.isAndroid) {
+    FlutterForegroundTask.init(
+      androidNotificationOptions: AndroidNotificationOptions(
+        channelId: 'manga_download',
+        channelName: 'Manga download',
+        channelDescription: 'Shown while a manga is downloading for offline reading.',
+        onlyAlertOnce: true,
+      ),
+      iosNotificationOptions: const IOSNotificationOptions(showNotification: false, playSound: false),
+      foregroundTaskOptions: ForegroundTaskOptions(
+        eventAction: ForegroundTaskEventAction.nothing(),
+        allowAutoRestart: false,
+      ),
+    );
   }
   WidgetsFlutterBinding.ensureInitialized();
   PaintingBinding.instance.imageCache.maximumSize = 1000;

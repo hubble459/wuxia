@@ -3,18 +3,17 @@ import 'dart:async';
 import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
-import 'package:grpc/grpc.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:wuxia/api.dart';
 import 'package:wuxia/gen/rumgap/v1/chapter.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/paginate.pb.dart';
-import 'package:wuxia/gen/rumgap/v1/reading.pb.dart';
 import 'package:wuxia/partial/list/chapter_item.dart';
 import 'package:wuxia/partial/list_error_indicator.dart';
 import 'package:wuxia/partial/responsive_content.dart';
 import 'package:wuxia/screen/manga/manga_chapter_screen.dart';
 import 'package:wuxia/util/app_routes.dart';
+import 'package:wuxia/util/tools.dart';
 
 class MangaChaptersScreen extends StatefulWidget {
   final MangaReply manga;
@@ -47,6 +46,11 @@ class _MangaChaptersScreenState extends State<MangaChaptersScreen> {
   late ChaptersReply _result;
   final _scrollController = ScrollController();
   var _jumping = false;
+
+  // Cached in `_downloadManga`'s saved order (reversed: false, i.e.
+  // newest-first) the first time an offline fallback is needed -- see
+  // `_offlineChaptersOrdered`.
+  List<ChapterReply>? _offlineChapters;
 
   Future<void> _jumpToEnd({required bool reversed}) async {
     if (_jumping) return;
@@ -121,17 +125,7 @@ class _MangaChaptersScreenState extends State<MangaChaptersScreen> {
                   manga: widget.manga,
                   refreshParent: (progress) async {
                     widget.manga.readingProgress = progress;
-                    try {
-                      await api.reading.update(ReadingPatchRequest(
-                        mangaId: widget.manga.id,
-                        progress: widget.manga.readingProgress,
-                        chapterId: chapter.id,
-                      ));
-                    } on GrpcError catch (e) {
-                      // TODO: build a UI for LinkChapter/UnlinkChapter so this is fixable
-                      // in-app instead of just silently swallowed.
-                      if (e.code != StatusCode.failedPrecondition) rethrow;
-                    }
+                    await syncReadingProgress(widget.manga, progress: progress, chapterId: chapter.id);
                     if (!context.mounted) return;
                     await Navigator.of(context).push(
                       MaterialPageRoute(
@@ -190,13 +184,36 @@ class _MangaChaptersScreenState extends State<MangaChaptersScreen> {
   }
 
   Future<List<ChapterReply>> _fetchPage(int page) async {
-    _result = await api.chapter.index(PaginateChapterQuery(
-        mangaSourceId: widget.source.id,
-        reversed: _reversed,
-        paginateQuery: PaginateQuery(
-          page: Int64(page),
-          perPage: Int64(_pageSize),
-        )));
-    return _result.items;
+    try {
+      _result = await api.chapter.index(PaginateChapterQuery(
+          mangaSourceId: widget.source.id,
+          reversed: _reversed,
+          paginateQuery: PaginateQuery(
+            page: Int64(page),
+            perPage: Int64(_pageSize),
+          )));
+      return _result.items;
+    } catch (e) {
+      final offline = await _offlineChaptersOrdered();
+      if (offline == null) rethrow;
+
+      final start = page * _pageSize;
+      if (start >= offline.length) return [];
+      final items = offline.sublist(start, (start + _pageSize).clamp(0, offline.length));
+
+      _result = ChaptersReply(items: items);
+      return items;
+    }
+  }
+
+  /// Caches the full chapter list from `loadOfflineChapters` (in `reversed:
+  /// false` / newest-first order), then returns it flipped to match the
+  /// current `_reversed` sort. `null` if there's no usable local copy.
+  Future<List<ChapterReply>?> _offlineChaptersOrdered() async {
+    _offlineChapters ??= await loadOfflineChapters(widget.manga.id);
+    final offline = _offlineChapters;
+    if (offline == null) return null;
+
+    return _reversed ? offline.reversed.toList() : offline;
   }
 }

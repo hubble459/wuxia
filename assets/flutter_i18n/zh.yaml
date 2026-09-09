@@ -35,6 +35,7 @@ manga:
   switch_source: 切换来源
   download: 下载
   download-complete: 下载完成
+  download-failed: 下载失败
   force-rescrape: 强制重新抓取
   expected-update: 预计更新 {date}
   will-update: 更新{date}
@@ -61,10 +62,12 @@ chapter:
   more_options: 更多选项
   previous: 上一个
   next: 下一个
+  not-downloaded: 此章节未下载以供离线阅读
 basic:
   refresh: 刷新
   confirm: 对
   cancel: 不对
+  retry: 重试
   add: 添加
   save: 节省
   reset: 重置

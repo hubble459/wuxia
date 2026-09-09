@@ -1,21 +1,14 @@
 import 'dart:io';
-import 'dart:math';
 
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:collection/collection.dart';
-import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:grpc/grpc.dart';
-import 'package:http/http.dart' as http;
-import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:wuxia/api.dart';
-import 'package:wuxia/gen/rumgap/v1/chapter.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
-import 'package:wuxia/gen/rumgap/v1/paginate.pb.dart';
-import 'package:wuxia/gen/rumgap/v1/reading.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/scrape_error.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/v1.pb.dart';
 import 'package:wuxia/partial/action/open_url_action.dart';
@@ -25,11 +18,9 @@ import 'package:wuxia/partial/list/manga_item.dart';
 import 'package:wuxia/partial/manga_details.dart';
 import 'package:wuxia/partial/dialog/add_manga_dialog.dart';
 import 'package:wuxia/partial/responsive_content.dart';
-import 'package:wuxia/partial/simple_future_builder.dart';
-import 'package:wuxia/screen/manga/manga_chapter_screen.dart';
-import 'package:wuxia/screen/manga/manga_chapters_screen.dart';
+import 'package:wuxia/screen/manga/manga_bottom_bar.dart';
+import 'package:wuxia/screen/manga/manga_downloader.dart';
 import 'package:wuxia/screen/search_screen.dart';
-import 'package:wuxia/util/app_routes.dart';
 import 'package:wuxia/util/tools.dart';
 
 enum _MangaMenuAction { addSource, addSourceFromUrl, download, forceRescrape }
@@ -122,8 +113,29 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
         case _RefreshMode.forceRescrape:
           _manga = await api.manga.update(UpdateMangaRequest(id: _manga.id, force: true));
       }
+      if (!kIsWeb) {
+        // A chapter read while offline couldn't sync its progress to the
+        // server (see `syncReadingProgress`) -- now that a fetch just
+        // succeeded, retry it.
+        await flushPendingProgress(_manga);
+      }
       _syncSelectedSource();
     } catch (e) {
+      if (!kIsWeb && mode == _RefreshMode.cached) {
+        final localDir = await findDownloadedMangaDir(_manga.id);
+        if (localDir != null) {
+          try {
+            final bytes = await File('${localDir.path}/manga.pb').readAsBytes();
+            _manga = MangaReply.fromBuffer(bytes);
+            _syncSelectedSource();
+            return;
+          } catch (_) {
+            // Fall through to the normal online-error handling below --
+            // corrupt/unreadable local copy shouldn't hide the real error.
+          }
+        }
+      }
+
       print('error');
       print(e);
 
@@ -176,90 +188,6 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
       // Stop loading animation
       _animationController.reset();
       setState(() {});
-    }
-  }
-
-  Future<void> _downloadManga() async {
-    if (kIsWeb) return;
-
-    final totalChapters = _manga.countChapters.toInt();
-    if (totalChapters == 0) {
-      Fluttertoast.showToast(msg: FlutterI18n.translate(context, 'manga.no-chapters')).ignore();
-      return;
-    }
-
-    final progress = ValueNotifier<int>(0);
-    var cancelled = false;
-
-    if (!mounted) return;
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (ctx) => AlertDialog(
-        title: Text(FlutterI18n.translate(ctx, 'manga.download')),
-        content: ValueListenableBuilder<int>(
-          valueListenable: progress,
-          builder: (_, downloaded, __) => Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              LinearProgressIndicator(value: downloaded / totalChapters),
-              const SizedBox(height: 8),
-              Text('$downloaded / $totalChapters'),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              cancelled = true;
-              Navigator.of(ctx).pop();
-            },
-            child: Text(FlutterI18n.translate(ctx, 'basic.cancel')),
-          ),
-        ],
-      ),
-    );
-
-    try {
-      final dir = await getDownloadDirectory();
-      final safeName = _manga.title.replaceAll(RegExp(r'[^\w\s\-]'), '_');
-      final mangaDir = Directory('${dir.path}/$safeName');
-
-      final chapters = await api.chapter.index(PaginateChapterQuery(
-        mangaSourceId: _selectedSource.id,
-        reversed: false,
-        paginateQuery: PaginateQuery(page: Int64(0), perPage: Int64(totalChapters)),
-      ));
-
-      await mangaDir.create(recursive: true);
-      await File('${mangaDir.path}/manga.pb').writeAsBytes(_manga.writeToBuffer());
-      await File('${mangaDir.path}/chapters.pb').writeAsBytes(chapters.writeToBuffer());
-
-      for (final chapter in chapters.items) {
-        if (cancelled) break;
-
-        final chapterDir = Directory('${mangaDir.path}/${chapter.number.toStringAsFixed(1).replaceAll('.0', '')}');
-        await chapterDir.create(recursive: true);
-
-        final images = await api.chapter.images(ChapterImagesRequest(chapterId: chapter.id));
-        for (var i = 0; i < images.items.length; i++) {
-          if (cancelled) break;
-          final url = images.items[i].url;
-          final response = await http.get(Uri.parse(url));
-          final ext = url.split('.').last.split('?').first;
-          await File('${chapterDir.path}/$i.$ext').writeAsBytes(response.bodyBytes);
-        }
-
-        progress.value++;
-      }
-    } catch (e) {
-      Fluttertoast.showToast(msg: e.toString()).ignore();
-    } finally {
-      progress.dispose();
-      if (mounted && !cancelled) {
-        Navigator.of(context).pop();
-        Fluttertoast.showToast(msg: FlutterI18n.translate(context, 'manga.download-complete')).ignore();
-      }
     }
   }
 
@@ -338,7 +266,7 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
               });
             }
           } else if (action == _MangaMenuAction.download) {
-            _downloadManga();
+            MangaDownloader(manga: _manga, source: _selectedSource).download(context);
           } else if (action == _MangaMenuAction.forceRescrape) {
             loadManga(mode: _RefreshMode.forceRescrape);
           }
@@ -505,14 +433,14 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
               : SizedBox(
                   width: double.infinity,
                   child: _manga.hasReadingProgress()
-                      ? _ChapterSelector(
+                      ? ChapterSelector(
                           manga: _manga,
                           source: _selectedSource,
                           refreshParent: () {
                             setState(() {});
                           },
                         )
-                      : _NewMangaOptions(
+                      : NewMangaOptions(
                           manga: _manga,
                           refreshParent: () {
                             setState(() {});
@@ -531,226 +459,3 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
   }
 }
 
-class _NewMangaOptions extends StatelessWidget {
-  final MangaReply manga;
-  final Function() refreshParent;
-
-  const _NewMangaOptions({required this.manga, required this.refreshParent});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialButton(
-      minWidth: double.infinity,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-      color: Theme.of(context).colorScheme.primary,
-      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-      onPressed: () async {
-        final m = await api.reading.create(ReadingPostRequest(mangaId: manga.id));
-        manga.clear();
-        manga.mergeFromMessage(m);
-        refreshParent();
-      },
-      child: I18nText('manga.add'),
-    );
-  }
-}
-
-mixin ReadingManga on MangaReply {
-  double get progressPercentage {
-    final count = countChapters.toInt();
-    if (count.isNaN || count == 0) {
-      return 0.0;
-    }
-    return 100 / count * readingProgress;
-  }
-}
-
-class _ChapterSelector extends StatefulWidget {
-  final MangaReply manga;
-  final MangaSourceReply source;
-  final Function() refreshParent;
-
-  const _ChapterSelector({required this.manga, required this.source, required this.refreshParent});
-
-  @override
-  State<_ChapterSelector> createState() => _ChapterSelectorState();
-}
-
-class _ChapterSelectorState extends State<_ChapterSelector> {
-  final _scrollController = ItemScrollController();
-  final _itemPositionListener = ItemPositionsListener.create();
-  // rumgap clamps per_page to 50 server-side (chapter.rs) -- requesting more
-  // just gets silently downgraded, which used to throw off the client's own
-  // page-offset math (and thus initialScrollIndex below). Request exactly
-  // what will be honored instead.
-  static const _pageSize = 50;
-  // Local (0-based) position of the current chapter within the fetched
-  // window. Derived from the reply's own `pagination.page`/`perPage` --
-  // which reflect whatever the server actually clamped/used -- rather than
-  // from `_pageSize` directly, so it stays correct even if the server's cap
-  // ever changes.
-  var _windowLocalIndex = 0;
-
-  Future<void> openChapters() async {
-    await Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => MangaChaptersScreen(manga: widget.manga, source: widget.source),
-      ),
-    );
-    refresh();
-  }
-
-  Future<void> continueReading() async {
-    if (widget.manga.readingProgress == 0) {
-      widget.manga.readingProgress = 1;
-      await api.reading.update(ReadingPatchRequest(
-        mangaId: widget.manga.id,
-        progress: widget.manga.readingProgress,
-      ));
-    }
-    final chapter = await api.chapter.get(ChapterRequest(
-      mangaSourceId: widget.source.id,
-      index: widget.manga.readingProgress,
-    ));
-    if (!mounted) return;
-    await Navigator.of(context)
-        .push(
-          MaterialPageRoute(
-            settings: RouteSettings(name: chapterRouteNameFor(mangaId: widget.manga.id, chapter: chapter)),
-            builder: (context) => MangaChapterScreen(
-              manga: widget.manga,
-              chapter: chapter,
-              source: widget.source,
-            ),
-          ),
-        )
-        .then((value) => refresh());
-  }
-
-  Future<void> gotoChapter(ChapterReply chapter) async {
-    widget.manga.readingProgress = chapter.index.toInt();
-    await api.reading.update(ReadingPatchRequest(
-      mangaId: widget.manga.id,
-      progress: widget.manga.readingProgress,
-      chapterId: chapter.id,
-    ));
-
-    if (!mounted) return;
-
-    await Navigator.of(context)
-        .push(
-          MaterialPageRoute(
-            settings: RouteSettings(name: chapterRouteNameFor(mangaId: widget.manga.id, chapter: chapter)),
-            builder: (context) => MangaChapterScreen(
-              manga: widget.manga,
-              chapter: chapter,
-              source: widget.source,
-            ),
-          ),
-        )
-        .then((value) => refresh());
-  }
-
-  /// `chapter.index` is a purely per-source position and `readingProgress` is a canonical
-  /// rank - the two only coincidentally lined up before multi-source existed. Ordinal is the
-  /// one scale genuinely comparable across sources; fall back to the old index comparison
-  /// only when ordinal data isn't available (e.g. a manually-unlinked chapter, or no
-  /// progress recorded yet).
-  bool _isChapterRead(ChapterReply chapter) {
-    if (widget.manga.hasProgressOrdinal() && chapter.hasOrdinal()) {
-      return widget.manga.progressOrdinal >= chapter.ordinal;
-    }
-    return widget.manga.readingProgress >= chapter.index.toInt();
-  }
-
-  Future<ChaptersReply> getChapters() async {
-    // TODO 26/11/2023: Keep this in memory (inside manga object?)
-    // `readingProgress`/`chapter.index` are 1-based (see `_isChapterRead`), so
-    // subtract 1 before dividing to land on the page that actually contains it.
-    final till = widget.manga.readingProgress;
-    final page = max(((till - 1) / _pageSize).floor(), 0);
-    final result = await api.chapter.index(PaginateChapterQuery(
-      mangaSourceId: widget.source.id,
-      reversed: true,
-      paginateQuery: PaginateQuery(page: Int64(page), perPage: Int64(_pageSize)),
-    ));
-
-    final actualPage = result.pagination.page.toInt();
-    final actualPerPage = result.pagination.perPage.toInt();
-    _windowLocalIndex = (till - 1 - actualPage * actualPerPage).clamp(0, max(result.items.length - 1, 0));
-    return result;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        // Chapter button
-        IconButton(onPressed: widget.manga.countChapters == 0 ? null : openChapters, icon: Icon(Icons.list_alt)),
-
-        ...(widget.manga.countChapters == 0
-            ? [
-                Text(
-                  FlutterI18n.translate(context, 'manga.no-chapters'),
-                  style: TextStyle(color: Colors.red),
-                )
-              ]
-            : [
-                // Chapters -- the two arrows are pinned outside the scrollable
-                // list (not items within it), so they stay put at the row's
-                // edges instead of scrolling out of view along with the
-                // chapter buttons once there are enough of them to overflow.
-                MaterialButton(onPressed: openChapters, minWidth: 0, child: const Icon(Icons.arrow_left)),
-                Expanded(
-                  child: SizedBox(
-                    height: 40,
-                    child: Center(
-                      child: SimpleFutureBuilder(
-                        future: getChapters(),
-                        onLoadedBuilder: (context, ChaptersReply chapters) {
-                          return ScrollablePositionedList.builder(
-                            initialScrollIndex: _windowLocalIndex,
-                            itemScrollController: _scrollController,
-                            itemPositionsListener: _itemPositionListener,
-                            physics: const BouncingScrollPhysics(),
-                            scrollDirection: Axis.horizontal,
-                            itemCount: chapters.items.length,
-                            itemBuilder: (context, index) {
-                              final chapter = chapters.items[index];
-                              return MaterialButton(
-                                color: _isChapterRead(chapter) ? Colors.grey.withValues(alpha: 0.2) : null,
-                                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                minWidth: 0,
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-                                onPressed: () => gotoChapter(chapter),
-                                child: Text(chapter.number.toStringAsFixed(1).replaceAll('.0', '')),
-                              );
-                            },
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                ),
-                MaterialButton(onPressed: openChapters, minWidth: 0, child: const Icon(Icons.arrow_right)),
-                // Continue
-                MaterialButton(
-                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  height: 50,
-                  color: Theme.of(context).colorScheme.secondary,
-                  splashColor: Theme.of(context).primaryColorLight,
-                  minWidth: 0,
-                  onPressed: continueReading,
-                  child: I18nText('manga.continue'),
-                ),
-              ]),
-      ],
-    );
-  }
-
-  void refresh() {
-    setState(() {});
-    widget.refreshParent();
-  }
-}

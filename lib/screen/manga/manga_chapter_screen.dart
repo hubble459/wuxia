@@ -201,12 +201,18 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
   }
 
   Future<void> updateOffset({required int chapterId, required int page, required int pixels}) async {
-    await api.reading.updateChapterOffset(UpdateChapterOffsetRequest(
-      chapterId: chapterId,
-      page: page,
-      pixels: pixels,
-      fraction: pixels / 100.0,
-    ));
+    try {
+      await api.reading.updateChapterOffset(UpdateChapterOffsetRequest(
+        chapterId: chapterId,
+        page: page,
+        pixels: pixels,
+        fraction: pixels / 100.0,
+      ));
+    } catch (_) {
+      // Best-effort -- this fires fire-and-forget on a scroll debounce, so
+      // offline (or any other server error) must not surface as an
+      // unhandled exception.
+    }
   }
 
   Future<void> _switchSource() async {
@@ -709,35 +715,38 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
 
   Future<void> previous() async {
     --widget.manga.readingProgress;
-    await _goToProgress();
+    if (!await _goToProgress()) ++widget.manga.readingProgress;
   }
 
   Future<void> next() async {
     ++widget.manga.readingProgress;
-    await _goToProgress();
+    if (!await _goToProgress()) --widget.manga.readingProgress;
   }
 
-  Future<void> _goToProgress() async {
-    final chapter = await api.chapter.get(
-      ChapterRequest(
-        mangaSourceId: widget.source.id,
-        index: widget.manga.readingProgress,
-      ),
-    );
+  /// Returns false (and reverts nothing itself -- see `previous`/`next`,
+  /// which already bumped `readingProgress` before calling this) if the
+  /// target chapter isn't reachable at all: offline and not downloaded.
+  Future<bool> _goToProgress() async {
+    ChapterReply chapter;
     try {
-      await api.reading.update(
-        ReadingPatchRequest(
-          mangaId: widget.manga.id,
-          progress: widget.manga.readingProgress,
-          chapterId: chapter.id,
+      chapter = await api.chapter.get(
+        ChapterRequest(
+          mangaSourceId: widget.source.id,
+          index: widget.manga.readingProgress,
         ),
       );
-    } on GrpcError catch (e) {
-      // TODO: build a UI for LinkChapter/UnlinkChapter so this is fixable
-      // in-app instead of just silently swallowed.
-      if (e.code != StatusCode.failedPrecondition) rethrow;
+    } catch (e) {
+      final offline = await loadOfflineChapters(widget.manga.id);
+      final found = offline?.firstWhereOrNull((c) => c.index.toInt() == widget.manga.readingProgress);
+      if (found == null) {
+        if (mounted) Fluttertoast.showToast(msg: FlutterI18n.translate(context, 'chapter.not-downloaded')).ignore();
+        return false;
+      }
+      chapter = found;
     }
+    await syncReadingProgress(widget.manga, progress: widget.manga.readingProgress, chapterId: chapter.id);
     await _goToChapter(chapter);
+    return true;
   }
 
   /// Replaces this screen with the reader for [chapter], keeping the browser

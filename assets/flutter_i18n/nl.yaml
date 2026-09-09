@@ -3,6 +3,7 @@ basic:
   cancel: Annuleren
   confirm: Bevestigen
   refresh: Vernieuwen
+  retry: Opnieuw proberen
   save: Redden
   reset: Herstellen
   url: URL
@@ -16,6 +17,7 @@ chapter:
   more_options: Meer opties
   next: Volgende
   previous: Vorig
+  not-downloaded: Dit hoofdstuk is niet gedownload voor offline lezen
 dead_provider:
   message: |-
     Helaas wordt de provider van deze manga niet langer ondersteund. 
@@ -76,6 +78,7 @@ manga:
   switch_source: Bron wisselen
   download: Downloaden
   download-complete: Download voltooid
+  download-failed: Download mislukt
   force-rescrape: Forceer herscrapen
   similar: Vergelijkbaar
   will-update: Wordt op {date} bijgewerkt

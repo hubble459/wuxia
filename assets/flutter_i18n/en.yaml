@@ -37,6 +37,7 @@ manga:
   switch_source: Switch Source
   download: Download
   download-complete: Download complete
+  download-failed: Download failed
   force-rescrape: Force Rescrape
 details:
   authors: Authors
@@ -61,10 +62,12 @@ chapter:
   more_options: More options
   previous: Previous
   next: Next
+  not-downloaded: This chapter is not downloaded for offline reading
 basic:
   refresh: Refresh
   confirm: Confirm
   cancel: Cancel
+  retry: Retry
   url: URL
   add: Add
   save: Save

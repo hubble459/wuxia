@@ -15,6 +15,8 @@ class Store {
   static const String downloadDirKey = 'download_dir';
   static const String readingModeKey = 'reading_mode';
   static const String mangaReadingModeKeyPrefix = 'reading_mode_manga_';
+  static const String pendingProgressKeyPrefix = 'pending_progress_manga_';
+  static const String pendingProgressChapterKeyPrefix = 'pending_progress_chapter_manga_';
 
   static late final Store _instance;
 
@@ -132,5 +134,30 @@ class Store {
 
   Future<void> setMangaReadingMode(int mangaId, String mode) async {
     await _publicStorage.setString('$mangaReadingModeKeyPrefix$mangaId', mode);
+  }
+
+  /// A reading-progress update that failed to reach the server (offline)
+  /// and still needs syncing -- overwritten by each newer attempt, so this
+  /// only ever holds the single latest value per manga, not a history.
+  int? getPendingProgress(int mangaId) {
+    return _publicStorage.getInt('$pendingProgressKeyPrefix$mangaId');
+  }
+
+  int? getPendingProgressChapterId(int mangaId) {
+    return _publicStorage.getInt('$pendingProgressChapterKeyPrefix$mangaId');
+  }
+
+  Future<void> setPendingProgress(int mangaId, {required int progress, int? chapterId}) async {
+    await _publicStorage.setInt('$pendingProgressKeyPrefix$mangaId', progress);
+    if (chapterId != null) {
+      await _publicStorage.setInt('$pendingProgressChapterKeyPrefix$mangaId', chapterId);
+    } else {
+      await _publicStorage.remove('$pendingProgressChapterKeyPrefix$mangaId');
+    }
+  }
+
+  Future<void> clearPendingProgress(int mangaId) async {
+    await _publicStorage.remove('$pendingProgressKeyPrefix$mangaId');
+    await _publicStorage.remove('$pendingProgressChapterKeyPrefix$mangaId');
   }
 }
