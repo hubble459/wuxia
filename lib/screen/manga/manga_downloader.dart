@@ -29,7 +29,37 @@ class MangaDownloader {
   /// fresh download doesn't open dozens of connections at once, but high
   /// enough that a slow/high-latency connection isn't paying full
   /// round-trip cost for every page in sequence.
-  static const _downloadConcurrency = 4;
+  static const _downloadConcurrency = 8;
+
+  /// How many chapters to process at once. Chapter N+1's image list (and
+  /// thus its first image requests, which are what actually trigger
+  /// rumgap's scrape-and-cache work for a not-yet-cached page) doesn't have
+  /// to wait for chapter N's images to fully finish downloading first.
+  static const _chapterConcurrency = 2;
+
+  /// rumgap clamps `per_page` to 50 server-side (chapter.rs) regardless of
+  /// what's requested, so one call with `perPage: totalChapters` silently
+  /// only ever returns the first page -- paginate through as many pages as
+  /// it takes to actually collect every chapter.
+  Future<List<ChapterReply>> _fetchAllChapters(int totalChapters) async {
+    final allChapters = <ChapterReply>[];
+    for (var page = 0; allChapters.length < totalChapters; page++) {
+      final result = await api.chapter.index(PaginateChapterQuery(
+        mangaSourceId: source.id,
+        reversed: false,
+        paginateQuery: PaginateQuery(page: Int64(page), perPage: Int64(totalChapters)),
+      ));
+      if (result.items.isEmpty) break;
+      allChapters.addAll(result.items);
+    }
+    return allChapters;
+  }
+
+  String _formatEta(Duration eta) {
+    if (eta.inHours > 0) return '${eta.inHours}h ${eta.inMinutes.remainder(60)}m';
+    if (eta.inMinutes > 0) return '${eta.inMinutes}m';
+    return '${eta.inSeconds}s';
+  }
 
   Future<void> download(BuildContext context) async {
     if (kIsWeb) return;
@@ -42,6 +72,21 @@ class MangaDownloader {
 
     final progress = ValueNotifier<int>(0);
     var cancelled = false;
+    // Elapsed real time / chapters-so-far gives an average per-chapter rate
+    // to extrapolate an ETA from. Only chapters that actually needed a
+    // network fetch count here -- chapters skipped almost instantly because
+    // they're already downloaded (see `_downloadChapterImage`) would
+    // otherwise drag the average down and make the ETA look far faster than
+    // the real download rate once it runs out of already-downloaded
+    // chapters to fly through. Kept running across retries (not reset
+    // alongside `progress`) so a transient failure doesn't throw it off.
+    //
+    // A single continuous stopwatch (started once real downloading begins),
+    // not one timer per chapter summed together -- chapters download
+    // `_chapterConcurrency` at a time, so per-chapter timers would overlap
+    // and double-count the same wall-clock time, understating throughput.
+    var ratedChapters = 0;
+    Stopwatch? ratedStopwatch;
 
     if (!context.mounted) return;
     showDialog(
@@ -51,14 +96,26 @@ class MangaDownloader {
         title: Text(FlutterI18n.translate(ctx, 'manga.download')),
         content: ValueListenableBuilder<int>(
           valueListenable: progress,
-          builder: (_, downloaded, __) => Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              LinearProgressIndicator(value: downloaded / totalChapters),
-              const SizedBox(height: 8),
-              Text('$downloaded / $totalChapters'),
-            ],
-          ),
+          builder: (_, downloaded, __) {
+            final remaining = totalChapters - downloaded;
+            final rateStopwatch = ratedStopwatch;
+            final eta = ratedChapters > 0 && remaining > 0 && rateStopwatch != null
+                ? _formatEta(rateStopwatch.elapsed * (remaining / ratedChapters))
+                : null;
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                LinearProgressIndicator(value: downloaded / totalChapters),
+                const SizedBox(height: 8),
+                Text('$downloaded / $totalChapters'),
+                if (eta != null)
+                  Text(
+                    FlutterI18n.translate(ctx, 'manga.download-eta', translationParams: {'eta': eta}),
+                    style: Theme.of(ctx).textTheme.bodySmall?.copyWith(color: Colors.grey),
+                  ),
+              ],
+            );
+          },
         ),
         actions: [
           TextButton(
@@ -89,32 +146,41 @@ class MangaDownloader {
           final safeName = manga.title.replaceAll(RegExp(r'[^\w\s\-]'), '_');
           final mangaDir = Directory('${dir.path}/$safeName');
 
-          final chapters = await api.chapter.index(PaginateChapterQuery(
-            mangaSourceId: source.id,
-            reversed: false,
-            paginateQuery: PaginateQuery(page: Int64(0), perPage: Int64(totalChapters)),
-          ));
+          final chapters = ChaptersReply(items: await _fetchAllChapters(totalChapters));
 
           await mangaDir.create(recursive: true);
           await File('${mangaDir.path}/manga.pb').writeAsBytes(manga.writeToBuffer());
           await File('${mangaDir.path}/chapters.pb').writeAsBytes(chapters.writeToBuffer());
 
-          for (final chapter in chapters.items) {
-            if (cancelled) break;
-
+          Future<bool> downloadChapter(ChapterReply chapter) async {
             final chapterDir = Directory('${mangaDir.path}/${chapter.number.toStringAsFixed(1).replaceAll('.0', '')}');
             await chapterDir.create(recursive: true);
 
             final images = await api.chapter.images(ChapterImagesRequest(chapterId: chapter.id));
+            var chapterDownloaded = false;
             for (var start = 0; start < images.items.length; start += _downloadConcurrency) {
               if (cancelled) break;
               final batch = images.items.skip(start).take(_downloadConcurrency).toList();
-              await Future.wait(batch.mapIndexed(
+              final results = await Future.wait(batch.mapIndexed(
                 (offset, image) => _downloadChapterImage(client, image.url, chapterDir, start + offset),
               ));
+              if (results.contains(true)) chapterDownloaded = true;
             }
+            return chapterDownloaded;
+          }
 
-            progress.value++;
+          for (var start = 0; start < chapters.items.length; start += _chapterConcurrency) {
+            if (cancelled) break;
+
+            final batch = chapters.items.skip(start).take(_chapterConcurrency).toList();
+            final results = await Future.wait(batch.map(downloadChapter));
+            for (final chapterDownloaded in results) {
+              if (chapterDownloaded) {
+                ratedChapters++;
+                ratedStopwatch ??= Stopwatch()..start();
+              }
+              progress.value++;
+            }
           }
           break;
         } catch (e, st) {
@@ -200,13 +266,16 @@ class MangaDownloader {
   /// Skips the request entirely if the page is already on disk, so
   /// re-running a download over a chapter that's already complete costs
   /// only a metadata call and local existence checks, not a re-fetch of
-  /// every page's bytes.
-  Future<void> _downloadChapterImage(http.Client client, String url, Directory chapterDir, int index) async {
+  /// every page's bytes. Returns whether a fetch actually happened (`false`
+  /// for a skip), so callers can tell real download work apart from a
+  /// near-instant skip -- see the ETA rate-tracking in `download`.
+  Future<bool> _downloadChapterImage(http.Client client, String url, Directory chapterDir, int index) async {
     final file = File('${chapterDir.path}/$index.${_imageExtension(url)}');
-    if (await file.exists()) return;
+    if (await file.exists()) return false;
 
     final response = await client.get(Uri.parse(url));
     await file.writeAsBytes(response.bodyBytes);
+    return true;
   }
 
   /// Some source sites serve images from paths with no extension on the

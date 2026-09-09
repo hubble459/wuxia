@@ -9,6 +9,7 @@ import 'package:wuxia/gen/rumgap/v1/reading.pb.dart';
 import 'package:wuxia/partial/dialog/confirm_dialog.dart';
 import 'package:wuxia/screen/manga/manga_screen.dart';
 import 'package:wuxia/util/app_routes.dart';
+import 'package:wuxia/util/tools.dart';
 
 typedef ReloadParent = Function(MangaReply manga, bool deleted);
 
@@ -143,7 +144,19 @@ class _MangaItemState extends State<MangaItem> {
         }
       },
       onLongPress: () async {
-        if (isReading) {
+        if (widget.type == HeroScreenType.downloads) {
+          final confirmed = await showDialog<bool>(
+            context: context,
+            builder: (context) => ConfirmDialog(
+              message:
+                  FlutterI18n.translate(context, 'dialog.confirm.delete_download', translationParams: {'title': _manga.title}),
+            ),
+          );
+          if (confirmed == true) {
+            await deleteDownloadedManga(_manga.id);
+            widget.reloadParent(_manga, true);
+          }
+        } else if (isReading) {
           final confirmed = await showDialog<bool>(
             context: context,
             builder: (context) => ConfirmDialog(

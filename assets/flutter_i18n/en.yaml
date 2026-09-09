@@ -38,6 +38,7 @@ manga:
   download: Download
   download-complete: Download complete
   download-failed: Download failed
+  download-eta: '{eta} remaining'
   force-rescrape: Force Rescrape
 details:
   authors: Authors
@@ -137,6 +138,7 @@ dialog:
   confirm:
     title: Confirm
     delete: Are you sure you want to delete "{title}"
+    delete_download: Are you sure you want to delete the downloaded files for "{title}"
     'no': 'No'
     'yes': 'Yes'
 splash:

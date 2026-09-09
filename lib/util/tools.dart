@@ -47,6 +47,17 @@ Future<Directory?> findDownloadedMangaDir(int mangaId) async {
   return null;
 }
 
+/// Deletes a manga's entire downloaded folder -- its `manga.pb`/
+/// `chapters.pb` snapshots and every downloaded chapter's images. No-op if
+/// it isn't downloaded.
+Future<void> deleteDownloadedManga(int mangaId) async {
+  if (kIsWeb) return;
+
+  final dir = await findDownloadedMangaDir(mangaId);
+  if (dir == null) return;
+  await dir.delete(recursive: true);
+}
+
 /// The full chapter list `_downloadManga` saved to `chapters.pb`, in its
 /// stored order (reversed: false / newest-first) -- callers reverse as
 /// needed to match whatever order they're after. `null` if there's no usable

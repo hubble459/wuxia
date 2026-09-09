@@ -36,6 +36,7 @@ manga:
   download: 下载
   download-complete: 下载完成
   download-failed: 下载失败
+  download-eta: '还剩 {eta}'
   force-rescrape: 强制重新抓取
   expected-update: 预计更新 {date}
   will-update: 更新{date}
@@ -136,6 +137,7 @@ dialog:
     open_release_page: 在浏览器中打开
   confirm:
     delete: 您确定要删除“{title}”吗
+    delete_download: 您确定要删除“{title}”的已下载文件吗
     'no': 不
     title: 确认
     'yes': 是的

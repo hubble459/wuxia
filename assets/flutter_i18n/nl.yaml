@@ -39,6 +39,7 @@ details:
 dialog:
   confirm:
     delete: Weet je zeker dat je "{title}" wilt verwijderen
+    delete_download: Weet je zeker dat je de gedownloade bestanden van "{title}" wilt verwijderen
     "no": Nee
     title: Bevestigen
     "yes": Ja
@@ -79,6 +80,7 @@ manga:
   download: Downloaden
   download-complete: Download voltooid
   download-failed: Download mislukt
+  download-eta: '{eta} resterend'
   force-rescrape: Forceer herscrapen
   similar: Vergelijkbaar
   will-update: Wordt op {date} bijgewerkt
