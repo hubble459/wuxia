@@ -52,6 +52,17 @@ class _ReaderPage {
   const _ReaderPage(this.url, {this.width, this.height});
 }
 
+// Only Flutter Web's CanvasKit renderer hits the GPU texture-size ceiling on
+// long-strip pages (it ignores cacheWidth/cacheHeight for network images) --
+// native platforms never had that problem, so they get the original bytes
+// untouched, full quality. Data-saver's cap is already well under that
+// ceiling, so it doesn't need combining with it.
+String _pageUrl(String url, {required bool dataSaver}) {
+  if (dataSaver) return '$url?maxdim=1280&quality=70';
+  if (kIsWeb) return '$url?maxdim=4096&quality=92';
+  return url;
+}
+
 class _MangaChapterScreenState extends State<MangaChapterScreen> {
   final ItemScrollController itemScrollController = ItemScrollController();
   final ItemPositionsListener itemPositionsListener = ItemPositionsListener.create();
@@ -141,7 +152,7 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
     setState(() {
       _images = reply.items
           .map((page) => _ReaderPage(
-                dataSaver ? '${page.url}?ds=true' : page.url,
+                _pageUrl(page.url, dataSaver: dataSaver),
                 width: page.hasWidth() ? page.width : null,
                 height: page.hasHeight() ? page.height : null,
               ))
@@ -618,6 +629,16 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
     );
   }
 
+  // GPU texture size ceiling for the web/CanvasKit renderer -- some mobile
+  // GPUs reject anything past this in texImage2D. Bounded via
+  // ResizeImagePolicy.fit (not cacheWidth/cacheHeight) because that's the
+  // only policy that caps both dimensions off the image's *real* intrinsic
+  // size without needing (possibly-missing) server-reported page
+  // width/height, and without distorting the aspect ratio or upscaling
+  // past the source (which would turn data-saver's already-downscaled
+  // images into a blocky mosaic).
+  static const _maxTextureDimension = 4096.0;
+
   Widget _buildPage(_ReaderPage page, {bool paged = false}) {
     // Webtoon items reserve their own height and grow with the image
     // (fitWidth), so the reader can scroll past them. A paged page instead
@@ -633,8 +654,13 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
             width: double.infinity,
             height: paged ? double.infinity : null,
           )
-        : Image.network(
-            page.url,
+        : Image(
+            image: ResizeImage(
+              NetworkImage(page.url),
+              width: (MediaQuery.sizeOf(context).width.clamp(0, 900) * MediaQuery.devicePixelRatioOf(context)).round(),
+              height: _maxTextureDimension.round(),
+              policy: ResizeImagePolicy.fit,
+            ),
             alignment: paged ? Alignment.center : Alignment.topCenter,
             filterQuality: FilterQuality.high,
             fit: paged ? BoxFit.contain : BoxFit.fitWidth,
