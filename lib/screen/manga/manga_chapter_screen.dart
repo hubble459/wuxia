@@ -333,54 +333,70 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
                       child: Icon(Icons.wifi_off),
                     ),
                   ),
-                IconButton(
-                  onPressed: widget.manga.sources.length > 1 ? _switchSource : null,
-                  tooltip: FlutterI18n.translate(context, 'manga.switch_source'),
-                  icon: const Icon(Icons.swap_horiz),
-                ),
-                IconButton(
-                  onPressed: () {
-                    setState(() => _isPagedMode = !_isPagedMode);
-                    Store.getStoreInstance().setMangaReadingMode(widget.manga.id, _isPagedMode ? 'paged' : 'webtoon');
+                PopupMenuButton<String>(
+                  tooltip: FlutterI18n.translate(context, 'chapter.more_options'),
+                  icon: const Icon(Icons.more_vert),
+                  onSelected: (value) {
+                    switch (value) {
+                      case 'switch_source':
+                        _switchSource();
+                        break;
+                      case 'toggle_mode':
+                        setState(() => _isPagedMode = !_isPagedMode);
+                        Store.getStoreInstance().setMangaReadingMode(widget.manga.id, _isPagedMode ? 'paged' : 'webtoon');
+                        break;
+                      case 'goto_top':
+                        if (_isPagedMode) {
+                          if (_pageController.hasClients) {
+                            _pageController.jumpToPage(0);
+                          }
+                        } else {
+                          itemScrollController.jumpTo(index: 0);
+                        }
+                        break;
+                      case 'goto_bottom':
+                        if (_isPagedMode) {
+                          if (_pageController.hasClients) {
+                            _pageController.jumpToPage((_images?.length ?? 1) - 1);
+                          }
+                        } else {
+                          itemScrollController.jumpTo(index: (_images?.length ?? 1) - 1);
+                        }
+                        break;
+                    }
                   },
-                  tooltip: FlutterI18n.translate(context, _isPagedMode ? 'chapter.mode_paged' : 'chapter.mode_webtoon'),
-                  icon: Icon(_isPagedMode ? Icons.menu_book : Icons.view_day),
+                  itemBuilder: (context) => [
+                    PopupMenuItem(
+                      value: 'switch_source',
+                      enabled: widget.manga.sources.length > 1,
+                      child: ListTile(
+                        leading: const Icon(Icons.swap_horiz),
+                        title: Text(FlutterI18n.translate(context, 'manga.switch_source')),
+                      ),
+                    ),
+                    PopupMenuItem(
+                      value: 'toggle_mode',
+                      child: ListTile(
+                        leading: Icon(_isPagedMode ? Icons.menu_book : Icons.view_day),
+                        title: Text(FlutterI18n.translate(context, _isPagedMode ? 'chapter.mode_paged' : 'chapter.mode_webtoon')),
+                      ),
+                    ),
+                    PopupMenuItem(
+                      value: 'goto_top',
+                      child: ListTile(
+                        leading: const Icon(Icons.arrow_upward),
+                        title: Text(FlutterI18n.translate(context, _isPagedMode ? 'chapter.goto_first_page' : 'chapter.goto_top')),
+                      ),
+                    ),
+                    PopupMenuItem(
+                      value: 'goto_bottom',
+                      child: ListTile(
+                        leading: const Icon(Icons.arrow_downward),
+                        title: Text(FlutterI18n.translate(context, _isPagedMode ? 'chapter.goto_last_page' : 'chapter.goto_bottom')),
+                      ),
+                    ),
+                  ],
                 ),
-                if (_isPagedMode) ...[
-                  IconButton(
-                    onPressed: () {
-                      if (_pageController.hasClients) {
-                        _pageController.jumpToPage((_images?.length ?? 1) - 1);
-                      }
-                    },
-                    tooltip: FlutterI18n.translate(context, 'chapter.goto_last_page'),
-                    icon: const Icon(Icons.last_page),
-                  ),
-                  IconButton(
-                    onPressed: () {
-                      if (_pageController.hasClients) {
-                        _pageController.jumpToPage(0);
-                      }
-                    },
-                    tooltip: FlutterI18n.translate(context, 'chapter.goto_first_page'),
-                    icon: const Icon(Icons.first_page),
-                  ),
-                ] else ...[
-                  IconButton(
-                    onPressed: () async {
-                      itemScrollController.jumpTo(index: (_images?.length ?? 1) - 1);
-                    },
-                    tooltip: FlutterI18n.translate(context, 'chapter.goto_bottom'),
-                    icon: const Icon(Icons.arrow_downward),
-                  ),
-                  IconButton(
-                    onPressed: () {
-                      itemScrollController.jumpTo(index: 0);
-                    },
-                    tooltip: FlutterI18n.translate(context, 'chapter.goto_top'),
-                    icon: const Icon(Icons.arrow_upward),
-                  ),
-                ],
                 OpenURLAction(url: _chapter.url),
               ],
             ),
@@ -629,22 +645,19 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
     );
   }
 
-  // GPU texture size ceiling for the web/CanvasKit renderer -- some mobile
-  // GPUs reject anything past this in texImage2D. Bounded via
-  // ResizeImagePolicy.fit (not cacheWidth/cacheHeight) because that's the
-  // only policy that caps both dimensions off the image's *real* intrinsic
-  // size without needing (possibly-missing) server-reported page
-  // width/height, and without distorting the aspect ratio or upscaling
-  // past the source (which would turn data-saver's already-downscaled
-  // images into a blocky mosaic).
-  static const _maxTextureDimension = 4096.0;
-
   Widget _buildPage(_ReaderPage page, {bool paged = false}) {
     // Webtoon items reserve their own height and grow with the image
     // (fitWidth), so the reader can scroll past them. A paged page instead
     // gets a fixed-size slot from PageView -- fitWidth there would overflow
     // vertically and clip, so it needs `contain` to always show the whole
     // page, centered, letterboxed if its aspect ratio doesn't match.
+    //
+    // No cacheWidth/cacheHeight/ResizeImage here: on web/CanvasKit those are
+    // ignored for network images anyway (the actual GPU-texture-size cap is
+    // handled server-side, see _pageUrl), and on native they're honored --
+    // which previously meant this was silently downsampling every native
+    // image to viewport width for no reason, since native never had the
+    // texture-size problem to begin with.
     final Widget image = _isOffline
         ? Image.file(
             File(page.url),
@@ -654,13 +667,8 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
             width: double.infinity,
             height: paged ? double.infinity : null,
           )
-        : Image(
-            image: ResizeImage(
-              NetworkImage(page.url),
-              width: (MediaQuery.sizeOf(context).width.clamp(0, 900) * MediaQuery.devicePixelRatioOf(context)).round(),
-              height: _maxTextureDimension.round(),
-              policy: ResizeImagePolicy.fit,
-            ),
+        : Image.network(
+            page.url,
             alignment: paged ? Alignment.center : Alignment.topCenter,
             filterQuality: FilterQuality.high,
             fit: paged ? BoxFit.contain : BoxFit.fitWidth,

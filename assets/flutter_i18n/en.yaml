@@ -58,6 +58,7 @@ chapter:
   goto_last_page: Last page
   mode_webtoon: Switch to paged mode
   mode_paged: Switch to webtoon mode
+  more_options: More options
   previous: Previous
   next: Next
 basic:

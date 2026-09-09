@@ -579,7 +579,17 @@ class _ChapterSelector extends StatefulWidget {
 class _ChapterSelectorState extends State<_ChapterSelector> {
   final _scrollController = ItemScrollController();
   final _itemPositionListener = ItemPositionsListener.create();
-  var _pageSize = 100;
+  // rumgap clamps per_page to 50 server-side (chapter.rs) -- requesting more
+  // just gets silently downgraded, which used to throw off the client's own
+  // page-offset math (and thus initialScrollIndex below). Request exactly
+  // what will be honored instead.
+  static const _pageSize = 50;
+  // Local (0-based) position of the current chapter within the fetched
+  // window. Derived from the reply's own `pagination.page`/`perPage` --
+  // which reflect whatever the server actually clamped/used -- rather than
+  // from `_pageSize` directly, so it stays correct even if the server's cap
+  // ever changes.
+  var _windowLocalIndex = 0;
 
   Future<void> openChapters() async {
     await Navigator.of(context).push(
@@ -641,23 +651,6 @@ class _ChapterSelectorState extends State<_ChapterSelector> {
         .then((value) => refresh());
   }
 
-  PaginateQuery get paginateQuery {
-    final progress = widget.manga.readingProgress;
-    final till = progress;
-    final from = max(till - _pageSize, 0);
-    var page = max((from / _pageSize).floor(), (till / _pageSize).floor());
-    final items = widget.manga.countChapters - (page * _pageSize);
-    if (items < _pageSize) {
-      page = max(page - 1, 0);
-      _pageSize *= 2;
-    }
-
-    return PaginateQuery(
-      page: Int64(page),
-      perPage: Int64(_pageSize),
-    );
-  }
-
   /// `chapter.index` is a purely per-source position and `readingProgress` is a canonical
   /// rank - the two only coincidentally lined up before multi-source existed. Ordinal is the
   /// one scale genuinely comparable across sources; fall back to the old index comparison
@@ -672,11 +665,20 @@ class _ChapterSelectorState extends State<_ChapterSelector> {
 
   Future<ChaptersReply> getChapters() async {
     // TODO 26/11/2023: Keep this in memory (inside manga object?)
-    return api.chapter.index(PaginateChapterQuery(
+    // `readingProgress`/`chapter.index` are 1-based (see `_isChapterRead`), so
+    // subtract 1 before dividing to land on the page that actually contains it.
+    final till = widget.manga.readingProgress;
+    final page = max(((till - 1) / _pageSize).floor(), 0);
+    final result = await api.chapter.index(PaginateChapterQuery(
       mangaSourceId: widget.source.id,
       reversed: true,
-      paginateQuery: paginateQuery,
+      paginateQuery: PaginateQuery(page: Int64(page), perPage: Int64(_pageSize)),
     ));
+
+    final actualPage = result.pagination.page.toInt();
+    final actualPerPage = result.pagination.perPage.toInt();
+    _windowLocalIndex = (till - 1 - actualPage * actualPerPage).clamp(0, max(result.items.length - 1, 0));
+    return result;
   }
 
   @override
@@ -708,7 +710,7 @@ class _ChapterSelectorState extends State<_ChapterSelector> {
                         future: getChapters(),
                         onLoadedBuilder: (context, ChaptersReply chapters) {
                           return ScrollablePositionedList.builder(
-                            initialScrollIndex: widget.manga.readingProgress % _pageSize,
+                            initialScrollIndex: _windowLocalIndex,
                             itemScrollController: _scrollController,
                             itemPositionsListener: _itemPositionListener,
                             physics: const BouncingScrollPhysics(),
