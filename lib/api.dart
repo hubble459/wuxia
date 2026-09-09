@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:grpc/grpc.dart';
 import 'package:grpc/grpc_connection_interface.dart' show ClientChannelBase;
 import 'package:grpc/grpc_or_grpcweb.dart';
@@ -9,7 +10,12 @@ import 'package:wuxia/gen/rumgap/v1/user.pb.dart';
 // const _defaultHost = '10.0.2.2';
 // const _defaultPort = 8000;
 const _defaultHost = String.fromEnvironment('API_HOST', defaultValue: 'localhost');
-const _defaultPort = 443;
+// Web goes through Zoraxy on 443 as gRPC-Web (fine with any HTTP version/proxy
+// hop). Native platforms need a real raw-gRPC HTTP/2 connection end-to-end,
+// which Zoraxy's proxy can't relay correctly (drops trailers on real
+// responses) - so native connects directly to nginx's dedicated port instead,
+// bypassing Zoraxy entirely.
+const _defaultPort = kIsWeb ? 443 : 5909;
 
 // extension PooPoo on GrpcError {}
 
@@ -75,8 +81,8 @@ class API {
       host: host,
       port: port,
       // Custom hosts entered via ChangeAPIDialog are typically plain HTTP
-      // (local/dev servers); only assume TLS on the conventional HTTPS port.
-      transportSecure: port == 443,
+      // (local/dev servers); only assume TLS on our known HTTPS ports.
+      transportSecure: port == 443 || port == 5909,
     );
   }
 
