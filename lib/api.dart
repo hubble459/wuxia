@@ -6,16 +6,17 @@ import 'package:grpc/grpc_connection_interface.dart' show ClientChannelBase;
 import 'package:grpc/grpc_or_grpcweb.dart';
 import 'package:wuxia/gen/rumgap/v1/v1.pbgrpc.dart';
 import 'package:wuxia/gen/rumgap/v1/user.pb.dart';
+import 'package:wuxia/util/validator_builder.dart';
 
-// const _defaultHost = '10.0.2.2';
-// const _defaultPort = 8000;
-const _defaultHost = String.fromEnvironment('API_HOST', defaultValue: 'localhost');
-// Web goes through Zoraxy on 443 as gRPC-Web (fine with any HTTP version/proxy
-// hop). Native platforms need a real raw-gRPC HTTP/2 connection end-to-end,
-// which Zoraxy's proxy can't relay correctly (drops trailers on real
-// responses) - so native connects directly to nginx's dedicated port instead,
-// bypassing Zoraxy entirely.
-const _defaultPort = kIsWeb ? 443 : 5909;
+// The rumgap API's URL, reached over grpc-web (web) or raw grpc (native).
+const _rawApiHost = String.fromEnvironment('API_HOST', defaultValue: 'localhost');
+
+// API_HOST has historically been a bare hostname (still how it's set in CI),
+// completed here with this platform's default port/scheme; a full URL (e.g.
+// `https://host:port`, needed to reach a self-hosted server on a non-standard
+// port) is used as-is.
+final String _defaultApiUrl =
+    _rawApiHost.contains('://') ? _rawApiHost : (kIsWeb ? 'https://$_rawApiHost' : 'https://$_rawApiHost:5909');
 
 // extension PooPoo on GrpcError {}
 
@@ -30,8 +31,7 @@ extension UserPermissionsX on UserFullReply {
 class API {
   static String? _token;
   static late UserFullReply loggedIn;
-  final String host;
-  final int port;
+  final String url;
   late final ClientChannelBase _channel;
   late final UserClient user = UserClient(_channel, options: options);
   late final MangaClient manga = MangaClient(_channel, options: options);
@@ -48,8 +48,8 @@ class API {
     }
   }
 
-  static Future<bool> test(String host, int port) async {
-    var test = API(host, port);
+  static Future<bool> test(String url) async {
+    var test = API(url);
 
     try {
       await test.user.me(Empty()).timeout(const Duration(seconds: 2));
@@ -66,23 +66,22 @@ class API {
   }
 
   String getApiURL() {
-    return '$host:$port';
+    return url;
   }
 
   void reset() {
-    api = API(_defaultHost, _defaultPort);
+    api = API(_defaultApiUrl);
   }
 
-  API(this.host, this.port) {
+  API(this.url) {
+    final parsed = parseApiUrl(url)!;
     // Uses raw gRPC (HTTP/2 sockets) everywhere except web, where it falls
     // back to gRPC-Web (XHR) since browsers can't open raw sockets. The
     // server must speak both protocols on this host/port for web to work.
     _channel = GrpcOrGrpcWebClientChannel.toSingleEndpoint(
-      host: host,
-      port: port,
-      // Custom hosts entered via ChangeAPIDialog are typically plain HTTP
-      // (local/dev servers); only assume TLS on our known HTTPS ports.
-      transportSecure: port == 443 || port == 5909,
+      host: parsed.host,
+      port: parsed.port,
+      transportSecure: parsed.secure,
     );
   }
 
@@ -99,4 +98,4 @@ class API {
   );
 }
 
-API api = API(_defaultHost, _defaultPort);
+API api = API(_defaultApiUrl);

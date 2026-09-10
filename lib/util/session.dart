@@ -25,8 +25,7 @@ Future<void> _restoreSession() async {
   final store = Store.getStoreInstance();
   final apiURL = store.getApiHost();
   if (apiURL != null && api.getApiURL() != apiURL) {
-    final parts = apiURL.split(':');
-    api = API(parts[0], int.parse(parts[1]));
+    api = API(apiURL);
   }
 
   final token = await store.readToken();

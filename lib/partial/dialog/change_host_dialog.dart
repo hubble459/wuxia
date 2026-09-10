@@ -92,8 +92,7 @@ class _ChangeAPIDialogState extends State<ChangeAPIDialog> {
             });
 
             if (fkUrl.currentState?.validate() == true) {
-              final parsed = parseHostAndPort(_urlController.text)!;
-              tested = await API.test(parsed.host, parsed.port);
+              tested = await API.test(_urlController.text);
               if (tested) {
                 setState(() {});
                 return;
@@ -113,8 +112,7 @@ class _ChangeAPIDialogState extends State<ChangeAPIDialog> {
           onPressed: tested
               ? () async {
                   if (fkUrl.currentState?.validate() == true) {
-                    final parsed = parseHostAndPort(_urlController.text)!;
-                    api = API(parsed.host, parsed.port);
+                    api = API(_urlController.text);
                     await Store.getStoreInstance().setApiHost(api.getApiURL());
                     if (context.mounted) {
                       Navigator.of(context).pop();

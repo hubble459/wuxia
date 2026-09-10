@@ -4,23 +4,25 @@ import 'package:flutter_i18n/flutter_i18n.dart';
 final emailRegex = RegExp(r'^[^\s@]+@([^\s@.,]+\.)+[^\s@.,]{2,}$');
 
 /// Parses either a bare `host:port` (IP or hostname, no scheme -- e.g.
-/// `192.168.1.54:8000` or `localhost:8000`) or a full `scheme://host[:port]`
-/// URL (e.g. `https://api.manga.quentincorreia.nl`, port defaulted from the
-/// scheme). A bare hostname:port parses via [Uri.tryParse] as a bogus
-/// `scheme:opaque-path` URI (empty host), which is why that case is
-/// distinguished by checking `uri.host.isNotEmpty` rather than by whether
-/// parsing itself succeeded.
-({String host, int port})? parseHostAndPort(String value) {
+/// `192.168.1.54:8000` or `localhost:8000`, assumed plain/insecure -- typical
+/// for a local/self-hosted server reached directly, no reverse-proxy TLS) or
+/// a full `scheme://host[:port]` URL (e.g. `https://api.manga.quentincorreia.nl`
+/// or `https://self-hosted.example:3921`, port defaulted from the scheme when
+/// omitted, secure iff the scheme is `https`). A bare hostname:port parses via
+/// [Uri.tryParse] as a bogus `scheme:opaque-path` URI (empty host), which is
+/// why that case is distinguished by checking `uri.host.isNotEmpty` rather
+/// than by whether parsing itself succeeded.
+({String host, int port, bool secure})? parseApiUrl(String value) {
   final uri = Uri.tryParse(value);
   if (uri != null && uri.host.isNotEmpty) {
-    return (host: uri.host, port: uri.port);
+    return (host: uri.host, port: uri.port, secure: uri.scheme == 'https');
   }
 
   final parts = value.split(':');
   if (parts.length != 2 || parts[0].isEmpty) return null;
   final port = int.tryParse(parts[1]);
   if (port == null) return null;
-  return (host: parts[0], port: port);
+  return (host: parts[0], port: port, secure: false);
 }
 
 typedef Validator = String? Function(String? value);
@@ -128,7 +130,7 @@ class ValidatorBuilder {
   }
 
   String? _isHostWithPortUrl(String? value) {
-    return parseHostAndPort(value!) != null ? null : _t('validator.url');
+    return parseApiUrl(value!) != null ? null : _t('validator.url');
   }
 
   String _t(String key, [Map<String, String>? params]) {
