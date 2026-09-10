@@ -61,7 +61,7 @@ class MangaDownloader {
     for (var page = 0; allChapters.length < totalChapters; page++) {
       final result = await api.chapter.index(PaginateChapterQuery(
         mangaSourceId: source.id,
-        reversed: false,
+        reversed: true,
         paginateQuery: PaginateQuery(page: Int64(page), perPage: Int64(totalChapters)),
       ));
       if (result.items.isEmpty) break;
