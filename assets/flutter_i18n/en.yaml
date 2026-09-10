@@ -30,6 +30,7 @@ manga:
   similar: Similar
   expected-update: Expected update {date}
   will-update: Updates {date}
+  last-updated: Last updated {date}
   no-chapters: Failed to load chapters...
   search-alternatives: Search Alternatives
   add-source: Add Source
@@ -143,8 +144,6 @@ dialog:
     copy: Copy
     open: Open
   update:
-    title: Update App
-    update: Update
     open_release_page: Open in browser
   confirm:
     title: Confirm

@@ -13,6 +13,8 @@ import 'package:wuxia/util/store.dart';
 /// download directory.
 bool get downloadsSupported => !kIsWeb;
 
+const githubWuxiaReleasesUrl = 'https://github.com/hubble459/wuxia/releases';
+
 Future<Directory> getDownloadDirectory() async {
   if (kIsWeb) {
     throw UnsupportedError('Downloads are not supported on web');

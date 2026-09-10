@@ -2,11 +2,10 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 import 'package:wuxia/api.dart';
-import 'package:wuxia/partial/dialog/update_dialog.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:wuxia/util/store.dart';
 import 'package:file_selector/file_selector.dart';
@@ -195,18 +194,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
               if (!kIsWeb)
                 ListTile(
-                  enabled: dotenv.env['GITHUB_TOKEN'] != null,
                   title: I18nText('settings.check_update'),
-                  onTap: () async {
-                    final info = await PackageInfo.fromPlatform();
-
-                    if (context.mounted) {
-                      showDialog(
-                        context: context,
-                        builder: (context) => UpdateDialog(packageInfo: info),
-                      );
-                    }
-                  },
+                  onTap: () => launchUrlString(githubWuxiaReleasesUrl),
                 ),
               if (!kIsWeb) ...[
                 const Divider(),

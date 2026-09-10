@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - run: echo "GITHUB_TOKEN=${{ secrets.GH_TOKEN }}" > .env
+      - run: echo "VAPID_KEY=${{ secrets.VAPID_KEY }}" > .env # bundled as a Flutter asset -- the build fails if it's missing entirely
 
       - uses: subosito/flutter-action@v2
         with:

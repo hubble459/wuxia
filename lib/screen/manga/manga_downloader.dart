@@ -289,7 +289,22 @@ class MangaDownloader {
               final index = nextChapter;
               if (index >= chapters.items.length) return;
               nextChapter++;
-              final chapterDownloaded = await downloadChapter(chapters.items[index]);
+              bool chapterDownloaded;
+              try {
+                chapterDownloaded = await downloadChapter(chapters.items[index]);
+              } catch (_) {
+                // An uncaught error here would otherwise just end this one
+                // worker silently -- Future.wait still waits for the other
+                // `_chapterConcurrency - 1` workers to run the remaining
+                // chapters before surfacing it, so concurrency would quietly
+                // shrink by one per failure instead of the retry dialog
+                // showing up promptly. Stop every worker as soon as any one
+                // of them hits an unrecoverable error, matching the
+                // fail-fast-and-offer-retry design the rest of `download`
+                // already relies on.
+                cancelled = true;
+                rethrow;
+              }
               if (chapterDownloaded) {
                 ratedChapters++;
                 ratedStopwatch ??= Stopwatch()..start();

@@ -57,14 +57,17 @@ class MangaDetails extends StatelessWidget {
           children: [
             Icon(manga.isOngoing ? Icons.update : Icons.update_disabled),
             Text('${manga.isOngoing ? 'Ongoing' : manga.status};'),
-            manga.hasNext()
+            manga.isOngoing && manga.hasNext()
                 ? Text(
                     FlutterI18n.translate(
                         context, nextUpdate.isBefore(Jiffy.now()) ? 'manga.expected-update' : 'manga.will-update',
                         translationParams: {'date': nextUpdate.fromNow()}),
                     style: nextUpdate.isBefore(Jiffy.now()) ? const TextStyle(color: Colors.red) : null,
                   )
-                : Container()
+                : manga.hasLast()
+                    ? Text(FlutterI18n.translate(context, 'manga.last-updated',
+                        translationParams: {'date': Jiffy.parseFromMillisecondsSinceEpoch(manga.last.toInt()).fromNow()}))
+                    : Container()
           ],
         ),
         Wrap(

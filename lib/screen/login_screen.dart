@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:grpc/grpc.dart';
-import 'package:package_info_plus/package_info_plus.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 import 'package:wuxia/api.dart';
 import 'package:wuxia/constant.dart';
 import 'package:wuxia/gen/rumgap/v1/user.pb.dart';
 import 'package:wuxia/partial/dialog/change_host_dialog.dart';
-import 'package:wuxia/partial/dialog/update_dialog.dart';
 import 'package:wuxia/partial/responsive_content.dart';
 import 'package:wuxia/util/store.dart';
+import 'package:wuxia/util/tools.dart';
 import 'package:wuxia/util/validator_builder.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -110,17 +109,8 @@ class _LoginScreenState extends State<LoginScreen> {
           actions: [
             IconButton(
               icon: const Icon(Icons.update),
-              onPressed: dotenv.env['GITHUB_TOKEN'] != null
-                  ? () async {
-                      final info = await PackageInfo.fromPlatform();
-                      if (context.mounted) {
-                        showDialog(
-                          context: context,
-                          builder: (context) => UpdateDialog(packageInfo: info),
-                        );
-                      }
-                    }
-                  : null,
+              tooltip: FlutterI18n.translate(context, 'dialog.update.open_release_page'),
+              onPressed: () => launchUrlString(githubWuxiaReleasesUrl),
             ),
             IconButton(
               icon: const Icon(Icons.api),

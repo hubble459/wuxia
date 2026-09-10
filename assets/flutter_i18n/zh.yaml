@@ -50,6 +50,7 @@ manga:
   source-count: '{amount} 个来源'
   expected-update: 预计更新 {date}
   will-update: 更新{date}
+  last-updated: 最后更新于 {date}
 details:
   authors: 作者
   read: 看了
@@ -143,8 +144,6 @@ dialog:
     open: 打开
     title: 打开网址
   update:
-    title: 更新应用程序
-    update: 更新
     open_release_page: 在浏览器中打开
   confirm:
     delete: 您确定要删除“{title}”吗

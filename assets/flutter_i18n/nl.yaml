@@ -50,8 +50,6 @@ dialog:
     title: URL openen
   update:
     open_release_page: Openen in browser
-    title: App bijwerken
-    update: Update
 empty: Geen artikelen gevonden
 error: "Fout: {error}"
 login:
@@ -72,6 +70,7 @@ manga:
   expected-update: Verwachte update {date}
   first: Eerst
   last: Laatst
+  last-updated: Laatst bijgewerkt {date}
   no-chapters: Kan hoofdstukken niet laden...
   search-alternatives: Zoek alternatieven
   add-source: Bron toevoegen

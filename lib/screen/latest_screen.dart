@@ -25,7 +25,9 @@ class _LatestScreenState extends State<LatestScreen> with AutomaticKeepAliveClie
   late final _pagingController = PagingController<int, MangaReply>(
     getNextPageKey: (state) {
       if (state.status != PagingStatus.loadingFirstPage && state.pages!.last.length < _pageSize) return null;
-      return state.nextIntPageKey;
+      // Not state.nextIntPageKey - that getter is (lastKey ?? 0) + 1, i.e. 1-indexed
+      // pagination, which skips rumgap's actual first page (0-indexed) on every fetch.
+      return (state.keys?.lastOrNull ?? -1) + 1;
     },
     fetchPage: (pageKey) => _fetchPage(pageKey),
   );
