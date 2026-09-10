@@ -485,6 +485,25 @@ class MangaClient extends $grpc.Client {
     return $createUnaryCall(_$setPrimarySource, request, options: options);
   }
 
+  /// Admin-only. Folds every source of source_manga_id into target_manga_id (reading
+  /// progress reconciled, canonical chapters relinked), then deletes source_manga_id.
+  $grpc.ResponseFuture<$4.MangaReply> mergeManga(
+    $4.MergeMangaRequest request, {
+    $grpc.CallOptions? options,
+  }) {
+    return $createUnaryCall(_$mergeManga, request, options: options);
+  }
+
+  /// Admin-only. Moves a single source onto a different manga. If that empties out its
+  /// old manga, behaves like MergeManga for that one manga (reading progress folded in,
+  /// old manga deleted).
+  $grpc.ResponseFuture<$4.MangaReply> moveSource(
+    $4.MoveSourceRequest request, {
+    $grpc.CallOptions? options,
+  }) {
+    return $createUnaryCall(_$moveSource, request, options: options);
+  }
+
   /// Kicks off (or resumes) a throttled background walk that downloads every
   /// not-yet-`done` page of every chapter of that source.
   $grpc.ResponseFuture<$2.Empty> backfillImages(
@@ -553,6 +572,16 @@ class MangaClient extends $grpc.Client {
       $grpc.ClientMethod<$4.SetPrimarySourceRequest, $4.MangaReply>(
           '/rumgap.v1.Manga/SetPrimarySource',
           ($4.SetPrimarySourceRequest value) => value.writeToBuffer(),
+          $4.MangaReply.fromBuffer);
+  static final _$mergeManga =
+      $grpc.ClientMethod<$4.MergeMangaRequest, $4.MangaReply>(
+          '/rumgap.v1.Manga/MergeManga',
+          ($4.MergeMangaRequest value) => value.writeToBuffer(),
+          $4.MangaReply.fromBuffer);
+  static final _$moveSource =
+      $grpc.ClientMethod<$4.MoveSourceRequest, $4.MangaReply>(
+          '/rumgap.v1.Manga/MoveSource',
+          ($4.MoveSourceRequest value) => value.writeToBuffer(),
           $4.MangaReply.fromBuffer);
   static final _$backfillImages =
       $grpc.ClientMethod<$4.BackfillImagesRequest, $2.Empty>(
@@ -645,6 +674,20 @@ abstract class MangaServiceBase extends $grpc.Service {
         false,
         ($core.List<$core.int> value) =>
             $4.SetPrimarySourceRequest.fromBuffer(value),
+        ($4.MangaReply value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$4.MergeMangaRequest, $4.MangaReply>(
+        'MergeManga',
+        mergeManga_Pre,
+        false,
+        false,
+        ($core.List<$core.int> value) => $4.MergeMangaRequest.fromBuffer(value),
+        ($4.MangaReply value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$4.MoveSourceRequest, $4.MangaReply>(
+        'MoveSource',
+        moveSource_Pre,
+        false,
+        false,
+        ($core.List<$core.int> value) => $4.MoveSourceRequest.fromBuffer(value),
         ($4.MangaReply value) => value.writeToBuffer()));
     $addMethod($grpc.ServiceMethod<$4.BackfillImagesRequest, $2.Empty>(
         'BackfillImages',
@@ -744,6 +787,22 @@ abstract class MangaServiceBase extends $grpc.Service {
 
   $async.Future<$4.MangaReply> setPrimarySource(
       $grpc.ServiceCall call, $4.SetPrimarySourceRequest request);
+
+  $async.Future<$4.MangaReply> mergeManga_Pre($grpc.ServiceCall $call,
+      $async.Future<$4.MergeMangaRequest> $request) async {
+    return mergeManga($call, await $request);
+  }
+
+  $async.Future<$4.MangaReply> mergeManga(
+      $grpc.ServiceCall call, $4.MergeMangaRequest request);
+
+  $async.Future<$4.MangaReply> moveSource_Pre($grpc.ServiceCall $call,
+      $async.Future<$4.MoveSourceRequest> $request) async {
+    return moveSource($call, await $request);
+  }
+
+  $async.Future<$4.MangaReply> moveSource(
+      $grpc.ServiceCall call, $4.MoveSourceRequest request);
 
   $async.Future<$2.Empty> backfillImages_Pre($grpc.ServiceCall $call,
       $async.Future<$4.BackfillImagesRequest> $request) async {

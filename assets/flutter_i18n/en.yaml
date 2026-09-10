@@ -40,6 +40,15 @@ manga:
   download-failed: Download failed
   download-eta: '{eta} remaining'
   force-rescrape: Force Rescrape
+  merge-into: Merge into another manga
+  merge-from: Merge another manga into this
+  move-source-out: Move a source to another manga
+  move-source-in: Move a source from another manga
+  merge-confirm-title: Merge manga?
+  merge-confirm-body: "The manga marked \"deleted\" below is removed entirely - its sources, chapters and reading progress all move onto the other one. This can't be undone."
+  merge-deleted: Deleted
+  merge-survives: Survives
+  source-count: '{amount} source(s)'
 details:
   authors: Authors
   genres: Genres

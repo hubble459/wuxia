@@ -82,6 +82,15 @@ manga:
   download-failed: Download mislukt
   download-eta: '{eta} resterend'
   force-rescrape: Forceer herscrapen
+  merge-into: Samenvoegen met een andere manga
+  merge-from: Andere manga samenvoegen met deze
+  move-source-out: Bron verplaatsen naar andere manga
+  move-source-in: Bron verplaatsen vanuit andere manga
+  merge-confirm-title: Manga samenvoegen?
+  merge-confirm-body: "De manga hieronder gemarkeerd als \"verwijderd\" wordt volledig verwijderd - alle bronnen, hoofdstukken en leesvoortgang verhuizen naar de andere. Dit kan niet ongedaan worden gemaakt."
+  merge-deleted: Verwijderd
+  merge-survives: Blijft bestaan
+  source-count: '{amount} bron(nen)'
   similar: Vergelijkbaar
   will-update: Wordt op {date} bijgewerkt
 nav:

@@ -784,6 +784,140 @@ class SetPrimarySourceRequest extends $pb.GeneratedMessage {
   void clearMangaSourceId() => $_clearField(1);
 }
 
+class MergeMangaRequest extends $pb.GeneratedMessage {
+  factory MergeMangaRequest({
+    $core.int? sourceMangaId,
+    $core.int? targetMangaId,
+  }) {
+    final result = create();
+    if (sourceMangaId != null) result.sourceMangaId = sourceMangaId;
+    if (targetMangaId != null) result.targetMangaId = targetMangaId;
+    return result;
+  }
+
+  MergeMangaRequest._();
+
+  factory MergeMangaRequest.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory MergeMangaRequest.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'MergeMangaRequest',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'rumgap.v1'),
+      createEmptyInstance: create)
+    ..aI(1, _omitFieldNames ? '' : 'sourceMangaId')
+    ..aI(2, _omitFieldNames ? '' : 'targetMangaId')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  MergeMangaRequest clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  MergeMangaRequest copyWith(void Function(MergeMangaRequest) updates) =>
+      super.copyWith((message) => updates(message as MergeMangaRequest))
+          as MergeMangaRequest;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static MergeMangaRequest create() => MergeMangaRequest._();
+  @$core.override
+  MergeMangaRequest createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static MergeMangaRequest getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<MergeMangaRequest>(create);
+  static MergeMangaRequest? _defaultInstance;
+
+  /// Absorbed into target_manga_id, then deleted.
+  @$pb.TagNumber(1)
+  $core.int get sourceMangaId => $_getIZ(0);
+  @$pb.TagNumber(1)
+  set sourceMangaId($core.int value) => $_setSignedInt32(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasSourceMangaId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearSourceMangaId() => $_clearField(1);
+
+  /// Survives the merge.
+  @$pb.TagNumber(2)
+  $core.int get targetMangaId => $_getIZ(1);
+  @$pb.TagNumber(2)
+  set targetMangaId($core.int value) => $_setSignedInt32(1, value);
+  @$pb.TagNumber(2)
+  $core.bool hasTargetMangaId() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearTargetMangaId() => $_clearField(2);
+}
+
+class MoveSourceRequest extends $pb.GeneratedMessage {
+  factory MoveSourceRequest({
+    $core.int? mangaSourceId,
+    $core.int? targetMangaId,
+  }) {
+    final result = create();
+    if (mangaSourceId != null) result.mangaSourceId = mangaSourceId;
+    if (targetMangaId != null) result.targetMangaId = targetMangaId;
+    return result;
+  }
+
+  MoveSourceRequest._();
+
+  factory MoveSourceRequest.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory MoveSourceRequest.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'MoveSourceRequest',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'rumgap.v1'),
+      createEmptyInstance: create)
+    ..aI(1, _omitFieldNames ? '' : 'mangaSourceId')
+    ..aI(2, _omitFieldNames ? '' : 'targetMangaId')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  MoveSourceRequest clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  MoveSourceRequest copyWith(void Function(MoveSourceRequest) updates) =>
+      super.copyWith((message) => updates(message as MoveSourceRequest))
+          as MoveSourceRequest;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static MoveSourceRequest create() => MoveSourceRequest._();
+  @$core.override
+  MoveSourceRequest createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static MoveSourceRequest getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<MoveSourceRequest>(create);
+  static MoveSourceRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.int get mangaSourceId => $_getIZ(0);
+  @$pb.TagNumber(1)
+  set mangaSourceId($core.int value) => $_setSignedInt32(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasMangaSourceId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearMangaSourceId() => $_clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.int get targetMangaId => $_getIZ(1);
+  @$pb.TagNumber(2)
+  set targetMangaId($core.int value) => $_setSignedInt32(1, value);
+  @$pb.TagNumber(2)
+  $core.bool hasTargetMangaId() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearTargetMangaId() => $_clearField(2);
+}
+
 class GetMangaRequest extends $pb.GeneratedMessage {
   factory GetMangaRequest({
     $core.int? id,

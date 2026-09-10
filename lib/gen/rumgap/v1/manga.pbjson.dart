@@ -219,6 +219,34 @@ final $typed_data.Uint8List setPrimarySourceRequestDescriptor =
         'ChdTZXRQcmltYXJ5U291cmNlUmVxdWVzdBImCg9tYW5nYV9zb3VyY2VfaWQYASABKAVSDW1hbm'
         'dhU291cmNlSWQ=');
 
+@$core.Deprecated('Use mergeMangaRequestDescriptor instead')
+const MergeMangaRequest$json = {
+  '1': 'MergeMangaRequest',
+  '2': [
+    {'1': 'source_manga_id', '3': 1, '4': 1, '5': 5, '10': 'sourceMangaId'},
+    {'1': 'target_manga_id', '3': 2, '4': 1, '5': 5, '10': 'targetMangaId'},
+  ],
+};
+
+/// Descriptor for `MergeMangaRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List mergeMangaRequestDescriptor = $convert.base64Decode(
+    'ChFNZXJnZU1hbmdhUmVxdWVzdBImCg9zb3VyY2VfbWFuZ2FfaWQYASABKAVSDXNvdXJjZU1hbm'
+    'dhSWQSJgoPdGFyZ2V0X21hbmdhX2lkGAIgASgFUg10YXJnZXRNYW5nYUlk');
+
+@$core.Deprecated('Use moveSourceRequestDescriptor instead')
+const MoveSourceRequest$json = {
+  '1': 'MoveSourceRequest',
+  '2': [
+    {'1': 'manga_source_id', '3': 1, '4': 1, '5': 5, '10': 'mangaSourceId'},
+    {'1': 'target_manga_id', '3': 2, '4': 1, '5': 5, '10': 'targetMangaId'},
+  ],
+};
+
+/// Descriptor for `MoveSourceRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List moveSourceRequestDescriptor = $convert.base64Decode(
+    'ChFNb3ZlU291cmNlUmVxdWVzdBImCg9tYW5nYV9zb3VyY2VfaWQYASABKAVSDW1hbmdhU291cm'
+    'NlSWQSJgoPdGFyZ2V0X21hbmdhX2lkGAIgASgFUg10YXJnZXRNYW5nYUlk');
+
 @$core.Deprecated('Use getMangaRequestDescriptor instead')
 const GetMangaRequest$json = {
   '1': 'GetMangaRequest',

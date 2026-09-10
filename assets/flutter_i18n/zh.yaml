@@ -38,6 +38,15 @@ manga:
   download-failed: 下载失败
   download-eta: '还剩 {eta}'
   force-rescrape: 强制重新抓取
+  merge-into: 合并到另一部漫画
+  merge-from: 将另一部漫画合并到此
+  move-source-out: 将来源移动到另一部漫画
+  move-source-in: 从另一部漫画移动来源
+  merge-confirm-title: 合并漫画？
+  merge-confirm-body: 下方标记为"已删除"的漫画将被完全删除——其所有来源、章节和阅读进度都会转移到另一部。此操作无法撤销。
+  merge-deleted: 已删除
+  merge-survives: 保留
+  source-count: '{amount} 个来源'
   expected-update: 预计更新 {date}
   will-update: 更新{date}
 details:

@@ -13,6 +13,8 @@ import 'package:wuxia/gen/rumgap/v1/scrape_error.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/v1.pb.dart';
 import 'package:wuxia/partial/action/open_url_action.dart';
 import 'package:wuxia/partial/dialog/dead_provider_dialog.dart';
+import 'package:wuxia/partial/dialog/manga_picker_dialog.dart';
+import 'package:wuxia/partial/dialog/merge_confirm_dialog.dart';
 import 'package:wuxia/partial/dialog/source_picker_dialog.dart';
 import 'package:wuxia/partial/list/manga_item.dart';
 import 'package:wuxia/partial/manga_details.dart';
@@ -23,7 +25,16 @@ import 'package:wuxia/screen/manga/manga_downloader.dart';
 import 'package:wuxia/screen/search_screen.dart';
 import 'package:wuxia/util/tools.dart';
 
-enum _MangaMenuAction { addSource, addSourceFromUrl, download, forceRescrape }
+enum _MangaMenuAction {
+  addSource,
+  addSourceFromUrl,
+  download,
+  forceRescrape,
+  mergeInto,
+  mergeFrom,
+  moveSourceOut,
+  moveSourceIn,
+}
 
 /// The three ways manga data can be refreshed, cheapest first:
 /// - [cached]: plain read from rumgap's own store, no scraping.
@@ -94,6 +105,88 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
         _selectedSource.clear();
         _selectedSource.mergeFromMessage(selected);
       });
+    }
+  }
+
+  /// Merges this manga into another (admin-only, irreversible) - this manga is deleted,
+  /// all its sources/chapters/reading progress move onto the picked one.
+  Future<void> _mergeInto() async {
+    final target = await showMangaPickerDialog(context, excludeMangaId: _manga.id);
+    if (target == null || !mounted) return;
+
+    if (!await showMergeConfirmDialog(context, source: _manga, target: target) || !mounted) return;
+
+    try {
+      await api.manga.mergeManga(MergeMangaRequest(sourceMangaId: _manga.id, targetMangaId: target.id));
+      if (mounted) Navigator.of(context).pop();
+    } catch (e) {
+      if (mounted) Fluttertoast.showToast(msg: e.toString());
+    }
+  }
+
+  /// Merges another manga into this one (admin-only, irreversible) - the picked manga is
+  /// deleted, its sources/chapters/reading progress move onto this one.
+  Future<void> _mergeFrom() async {
+    final source = await showMangaPickerDialog(context, excludeMangaId: _manga.id);
+    if (source == null || !mounted) return;
+
+    if (!await showMergeConfirmDialog(context, source: source, target: _manga) || !mounted) return;
+
+    try {
+      final result = await api.manga.mergeManga(MergeMangaRequest(sourceMangaId: source.id, targetMangaId: _manga.id));
+      if (mounted) {
+        setState(() {
+          _manga = result;
+          _syncSelectedSource();
+        });
+      }
+    } catch (e) {
+      if (mounted) Fluttertoast.showToast(msg: e.toString());
+    }
+  }
+
+  /// Moves one of this manga's sources onto another manga (admin-only). If it was this
+  /// manga's only source, this manga is now gone too (see MoveSource on the server).
+  Future<void> _moveSourceOut() async {
+    final source = await showSourcePickerDialog(context, _manga.sources.toList());
+    if (source == null || !mounted) return;
+
+    final target = await showMangaPickerDialog(context, excludeMangaId: _manga.id);
+    if (target == null || !mounted) return;
+
+    final wasOnlySource = _manga.sources.length == 1;
+    try {
+      await api.manga.moveSource(MoveSourceRequest(mangaSourceId: source.id, targetMangaId: target.id));
+      if (!mounted) return;
+      if (wasOnlySource) {
+        Navigator.of(context).pop();
+      } else {
+        loadManga();
+      }
+    } catch (e) {
+      if (mounted) Fluttertoast.showToast(msg: e.toString());
+    }
+  }
+
+  /// Pulls a source from another manga onto this one (admin-only) - the mirror of
+  /// _moveSourceOut, for when you're already on the manga that should keep it.
+  Future<void> _moveSourceIn() async {
+    final other = await showMangaPickerDialog(context, excludeMangaId: _manga.id);
+    if (other == null || !mounted || other.sources.isEmpty) return;
+
+    final source = await showSourcePickerDialog(context, other.sources.toList());
+    if (source == null || !mounted) return;
+
+    try {
+      final result = await api.manga.moveSource(MoveSourceRequest(mangaSourceId: source.id, targetMangaId: _manga.id));
+      if (mounted) {
+        setState(() {
+          _manga = result;
+          _syncSelectedSource();
+        });
+      }
+    } catch (e) {
+      if (mounted) Fluttertoast.showToast(msg: e.toString());
     }
   }
 
@@ -269,6 +362,14 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
             MangaDownloader(manga: _manga, source: _selectedSource).download(context);
           } else if (action == _MangaMenuAction.forceRescrape) {
             loadManga(mode: _RefreshMode.forceRescrape);
+          } else if (action == _MangaMenuAction.mergeInto) {
+            _mergeInto();
+          } else if (action == _MangaMenuAction.mergeFrom) {
+            _mergeFrom();
+          } else if (action == _MangaMenuAction.moveSourceOut) {
+            _moveSourceOut();
+          } else if (action == _MangaMenuAction.moveSourceIn) {
+            _moveSourceIn();
           }
         },
         itemBuilder: (_) => [
@@ -289,6 +390,26 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
             PopupMenuItem(
               value: _MangaMenuAction.forceRescrape,
               child: Text(FlutterI18n.translate(context, 'manga.force-rescrape')),
+            ),
+          if (API.loggedIn.isAdmin)
+            PopupMenuItem(
+              value: _MangaMenuAction.mergeInto,
+              child: Text(FlutterI18n.translate(context, 'manga.merge-into')),
+            ),
+          if (API.loggedIn.isAdmin)
+            PopupMenuItem(
+              value: _MangaMenuAction.mergeFrom,
+              child: Text(FlutterI18n.translate(context, 'manga.merge-from')),
+            ),
+          if (API.loggedIn.isAdmin && _manga.sources.isNotEmpty)
+            PopupMenuItem(
+              value: _MangaMenuAction.moveSourceOut,
+              child: Text(FlutterI18n.translate(context, 'manga.move-source-out')),
+            ),
+          if (API.loggedIn.isAdmin)
+            PopupMenuItem(
+              value: _MangaMenuAction.moveSourceIn,
+              child: Text(FlutterI18n.translate(context, 'manga.move-source-in')),
             ),
         ],
       ),
@@ -427,7 +548,7 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
       },
       child: SafeArea(
         child: Scaffold(
-          body: isWide ? _buildWideBody(context) : _buildNarrowBody(context),
+          body: SelectionArea(child: isWide ? _buildWideBody(context) : _buildNarrowBody(context)),
           bottomNavigationBar: _animationController.isAnimating
               ? null
               : SizedBox(
