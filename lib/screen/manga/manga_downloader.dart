@@ -25,17 +25,19 @@ class MangaDownloader {
   final MangaReply manga;
   final MangaSourceReply source;
 
-  /// How many page images to fetch at once per chapter -- bounded so a
-  /// fresh download doesn't open dozens of connections at once, but high
-  /// enough that a slow/high-latency connection isn't paying full
-  /// round-trip cost for every page in sequence.
-  static const _downloadConcurrency = 8;
+  /// How many page images to fetch at once per chapter -- kept low since
+  /// it multiplies with `_chapterConcurrency` for the total number of
+  /// in-flight connections (currently 2 * 8 = 16), bounded so a fresh
+  /// download doesn't open dozens of connections at once.
+  static const _downloadConcurrency = 2;
 
   /// How many chapters to process at once. Chapter N+1's image list (and
   /// thus its first image requests, which are what actually trigger
   /// rumgap's scrape-and-cache work for a not-yet-cached page) doesn't have
   /// to wait for chapter N's images to fully finish downloading first.
-  static const _chapterConcurrency = 2;
+  /// Weighted higher than `_downloadConcurrency` so more chapters start
+  /// scraping sooner, rather than a few chapters each fetching pages fast.
+  static const _chapterConcurrency = 8;
 
   /// rumgap clamps `per_page` to 50 server-side (chapter.rs) regardless of
   /// what's requested, so one call with `perPage: totalChapters` silently
