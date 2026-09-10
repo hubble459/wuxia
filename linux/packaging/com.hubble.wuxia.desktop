@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Wuxia
+Comment=Manga reading app based on rumgap
+Exec=/opt/wuxia/wuxia
+Icon=com.hubble.wuxia
+Categories=Graphics;Viewer;
+Terminal=false

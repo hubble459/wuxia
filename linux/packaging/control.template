@@ -1,0 +1,8 @@
+Package: wuxia
+Version: ${VERSION}
+Section: graphics
+Priority: optional
+Architecture: amd64
+Depends: ${DEPENDS}
+Maintainer: hubble459
+Description: Manga reading app based on rumgap.
