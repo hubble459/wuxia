@@ -607,13 +607,17 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
 
     return ResponsiveContent(
       maxWidth: 900,
-      child: ScrollablePositionedList.builder(
-        itemScrollController: itemScrollController,
-        itemPositionsListener: itemPositionsListener,
-        padding: EdgeInsets.zero,
-        itemCount: links.length,
-        physics: const BouncingScrollPhysics(),
-        itemBuilder: (context, index) => _buildPage(links[index]),
+      child: Scrollbar(
+        radius: const Radius.circular(4.0),
+        thickness: 6.0,
+        child: ScrollablePositionedList.builder(
+          itemScrollController: itemScrollController,
+          itemPositionsListener: itemPositionsListener,
+          padding: EdgeInsets.zero,
+          itemCount: links.length,
+          physics: const BouncingScrollPhysics(),
+          itemBuilder: (context, index) => _buildPage(links[index]),
+        ),
       ),
     );
   }

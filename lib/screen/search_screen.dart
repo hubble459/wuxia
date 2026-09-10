@@ -26,6 +26,7 @@ class SearchScreen extends StatefulWidget {
 
 class _SearchScreenState extends State<SearchScreen> with AutomaticKeepAliveClientMixin<SearchScreen> {
   final TextEditingController controller = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
   Future<SearchReply> _searchResults = Future.value(SearchReply.create());
   String _keyword = '';
 
@@ -124,12 +125,18 @@ class _SearchScreenState extends State<SearchScreen> with AutomaticKeepAliveClie
                     );
                   }
                   return Expanded(
-                    child: ListView.builder(
-                      itemCount: results.length,
-                      itemBuilder: (context, index) => SearchMangaItem(
-                        searchManga: results[index],
-                        index: index,
-                        existingMangaId: widget.existingMangaId,
+                    child: Scrollbar(
+                      controller: _scrollController,
+                      radius: const Radius.circular(4.0),
+                      thickness: 6.0,
+                      child: ListView.builder(
+                        controller: _scrollController,
+                        itemCount: results.length,
+                        itemBuilder: (context, index) => SearchMangaItem(
+                          searchManga: results[index],
+                          index: index,
+                          existingMangaId: widget.existingMangaId,
+                        ),
                       ),
                     ),
                   );
@@ -150,6 +157,12 @@ class _SearchScreenState extends State<SearchScreen> with AutomaticKeepAliveClie
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override

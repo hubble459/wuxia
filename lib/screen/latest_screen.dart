@@ -30,6 +30,7 @@ class _LatestScreenState extends State<LatestScreen> with AutomaticKeepAliveClie
     fetchPage: (pageKey) => _fetchPage(pageKey),
   );
   final _searchController = TextEditingController();
+  final _scrollController = ScrollController();
   final _pageSize = 20;
   String? _orderBy;
 
@@ -124,23 +125,29 @@ class _LatestScreenState extends State<LatestScreen> with AutomaticKeepAliveClie
               onRefresh: () async => _pagingController.refresh(),
               child: PagingListener<int, MangaReply>(
                 controller: _pagingController,
-                builder: (context, state, fetchNextPage) => PagedListView<int, MangaReply>(
-                  state: state,
-                  fetchNextPage: fetchNextPage,
-                  builderDelegate: PagedChildBuilderDelegate<MangaReply>(
-                    firstPageErrorIndicatorBuilder: (context) => ListErrorIndicator(pagingController: _pagingController),
-                    noItemsFoundIndicatorBuilder: (context) => Center(
-                      child: I18nText('empty'),
-                    ),
-                    itemBuilder: (context, manga, index) => MangaItem(
-                      key: Key(manga.id.toString()),
-                      manga: manga,
-                      type: HeroScreenType.latest,
-                      reloadParent: (updated, deleted) {
-                        manga.clear();
-                        manga.mergeFromMessage(updated);
-                        setState(() {});
-                      },
+                builder: (context, state, fetchNextPage) => Scrollbar(
+                  controller: _scrollController,
+                  radius: const Radius.circular(4.0),
+                  thickness: 6.0,
+                  child: PagedListView<int, MangaReply>(
+                    scrollController: _scrollController,
+                    state: state,
+                    fetchNextPage: fetchNextPage,
+                    builderDelegate: PagedChildBuilderDelegate<MangaReply>(
+                      firstPageErrorIndicatorBuilder: (context) => ListErrorIndicator(pagingController: _pagingController),
+                      noItemsFoundIndicatorBuilder: (context) => Center(
+                        child: I18nText('empty'),
+                      ),
+                      itemBuilder: (context, manga, index) => MangaItem(
+                        key: Key(manga.id.toString()),
+                        manga: manga,
+                        type: HeroScreenType.latest,
+                        reloadParent: (updated, deleted) {
+                          manga.clear();
+                          manga.mergeFromMessage(updated);
+                          setState(() {});
+                        },
+                      ),
                     ),
                   ),
                 ),
@@ -178,6 +185,7 @@ class _LatestScreenState extends State<LatestScreen> with AutomaticKeepAliveClie
   void dispose() {
     _pagingController.dispose();
     _searchController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
