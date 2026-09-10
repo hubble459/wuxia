@@ -126,6 +126,7 @@ settings:
   reading_mode_webtoon: Webtoon
   reading_mode_paged: Pagina's
   remove_account: Account verwijderen
+  version: 'v{version} ({build})'
   scraper_status:
     close: Sluiten
     empty: Nog geen scrape-pogingen geregistreerd

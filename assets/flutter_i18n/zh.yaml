@@ -116,6 +116,7 @@ settings:
   misc: 各种各样的
   remove_account: 删除帐户
   check_update: 检查更新
+  version: 'v{version} ({build})'
 reading:
   delete: 删除阅读
   delete_content: 确定要删除“{title}”吗？

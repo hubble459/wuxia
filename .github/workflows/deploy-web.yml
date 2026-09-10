@@ -22,7 +22,7 @@ jobs:
           channel: "stable"
           cache: true
 
-      - run: flutter build web --release --pub --suppress-analytics --dart-define=API_HOST=${{ vars.API_HOST }}
+      - run: flutter build web --release --pub --suppress-analytics --dart-define=API_HOST=${{ vars.API_HOST }} --build-number=${GITHUB_SHA:0:7}
 
       - uses: docker/setup-buildx-action@v4
 

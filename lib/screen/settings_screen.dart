@@ -27,6 +27,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   String? _locale;
   String? _downloadDir;
   String? _downloadSize;
+  PackageInfo? _packageInfo;
 
   // A web deep link can land here directly, skipping SplashScreen/RootNavScreen
   // -- the places credentials normally get restored before this screen reads
@@ -50,6 +51,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     setState(() => _ready = true);
     if (!kIsWeb) _loadDownloadInfo();
+
+    final info = await PackageInfo.fromPlatform();
+    if (mounted) setState(() => _packageInfo = info);
   }
 
   Future<void> _loadDownloadInfo() async {
@@ -279,6 +283,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 onTap: () {},
               ),
+              if (_packageInfo != null)
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Center(
+                    child: Text(
+                      FlutterI18n.translate(context, 'settings.version', translationParams: {
+                        'version': _packageInfo!.version,
+                        'build': _packageInfo!.buildNumber,
+                      }),
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey),
+                    ),
+                  ),
+                ),
             ],
           ),
         ),
