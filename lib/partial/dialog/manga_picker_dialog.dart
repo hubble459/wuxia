@@ -5,6 +5,7 @@ import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:wuxia/api.dart';
 import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/paginate.pb.dart';
+import 'package:wuxia/partial/image_error_placeholder.dart';
 
 /// Search-and-pick over the local library (via Manga.Index) - unlike SearchScreen (which
 /// searches external sites and creates/attaches sources from a scraped URL), this returns
@@ -85,6 +86,7 @@ class _MangaPickerScreenState extends State<_MangaPickerScreen> {
                         imageUrl: manga.cover,
                         fit: BoxFit.cover,
                         width: 40,
+                        errorWidget: (context, url, error) => const ImageErrorPlaceholder(),
                       )
                     : null,
                 title: Text(manga.title.replaceAll('\n', ' '), maxLines: 2, overflow: TextOverflow.ellipsis),

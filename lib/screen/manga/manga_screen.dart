@@ -16,6 +16,7 @@ import 'package:wuxia/partial/dialog/dead_provider_dialog.dart';
 import 'package:wuxia/partial/dialog/manga_picker_dialog.dart';
 import 'package:wuxia/partial/dialog/merge_confirm_dialog.dart';
 import 'package:wuxia/partial/dialog/source_picker_dialog.dart';
+import 'package:wuxia/partial/image_error_placeholder.dart';
 import 'package:wuxia/partial/list/manga_item.dart';
 import 'package:wuxia/partial/manga_details.dart';
 import 'package:wuxia/partial/dialog/add_manga_dialog.dart';
@@ -435,6 +436,7 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
         child: CachedNetworkImage(
           imageUrl: _manga.cover,
           fit: fit,
+          errorWidget: (context, url, error) => const ImageErrorPlaceholder(),
         ),
       ),
     );

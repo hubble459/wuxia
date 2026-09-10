@@ -4,6 +4,7 @@ import 'package:jiffy/jiffy.dart';
 import 'package:wuxia/api.dart';
 import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/search.pb.dart';
+import 'package:wuxia/partial/image_error_placeholder.dart';
 import 'package:wuxia/partial/list/manga_item.dart';
 import 'package:wuxia/screen/manga/manga_screen.dart';
 import 'package:wuxia/util/app_routes.dart';
@@ -52,6 +53,7 @@ class _SearchMangaItemState extends State<SearchMangaItem> {
                 fit: BoxFit.cover,
                 useOldImageOnUrlChange: true,
                 width: 40,
+                errorWidget: (context, url, error) => const ImageErrorPlaceholder(),
               ),
             )
           : null,

@@ -17,6 +17,7 @@ import 'package:wuxia/gen/rumgap/v1/reading.pb.dart';
 import 'package:wuxia/main.dart';
 import 'package:wuxia/partial/action/open_url_action.dart';
 import 'package:wuxia/partial/dialog/source_picker_dialog.dart';
+import 'package:wuxia/partial/image_error_placeholder.dart';
 import 'package:wuxia/partial/responsive_content.dart';
 import 'package:wuxia/util/app_routes.dart';
 import 'package:wuxia/util/store.dart';
@@ -701,7 +702,7 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
               print('Image failed to load: ${page.url}: $error');
               return SizedBox.fromSize(
                 size: const Size.fromHeight(500),
-                child: const Center(child: Icon(Icons.error)),
+                child: const ImageErrorPlaceholder(),
               );
             },
           );
