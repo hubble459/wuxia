@@ -51,6 +51,10 @@ manga:
   merge-deleted: Deleted
   merge-survives: Survives
   source-count: '{amount} source(s)'
+  set-primary-source: Set primary
+  remove-source: Remove
+  remove-source-confirm-title: Remove source?
+  remove-source-confirm-body: "This removes {hostname} as a source for this manga. If it's the last remaining source, the manga itself (including reading progress) is deleted too. This can't be undone."
 details:
   authors: Authors
   genres: Genres

@@ -97,10 +97,20 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
     _selectedSourceInitialized = true;
   }
 
-  Future<void> _switchSource() async {
-    if (_manga.sources.length <= 1) return;
+  // Normally pointless to open with a single source (nothing to switch to), but an
+  // admin still needs it open to long-press that one source and remove it - the only
+  // way to fully delete a manga, since there's no dedicated DeleteManga RPC.
+  bool get _canOpenSourceSwitcher => _manga.sources.length > 1 || API.loggedIn.isAdmin;
 
-    final selected = await showSourcePickerDialog(context, _manga.sources.toList());
+  Future<void> _switchSource() async {
+    if (!_canOpenSourceSwitcher) return;
+
+    final selected = await showSourcePickerDialog(
+      context,
+      _manga.sources.toList(),
+      allowAdminActions: true,
+      onSourcesChanged: loadManga,
+    );
     if (selected != null && mounted) {
       setState(() {
         _selectedSource.clear();
@@ -303,7 +313,7 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
     return [
       OpenURLAction(url: _selectedSource.url),
       IconButton(
-        onPressed: _manga.sources.length > 1 ? _switchSource : null,
+        onPressed: _canOpenSourceSwitcher ? _switchSource : null,
         tooltip: FlutterI18n.translate(context, 'manga.switch_source'),
         icon: const Icon(Icons.swap_horiz),
       ),

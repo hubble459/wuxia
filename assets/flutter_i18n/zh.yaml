@@ -48,6 +48,10 @@ manga:
   merge-deleted: 已删除
   merge-survives: 保留
   source-count: '{amount} 个来源'
+  set-primary-source: 设为主要来源
+  remove-source: 移除
+  remove-source-confirm-title: 移除来源？
+  remove-source-confirm-body: 这将移除 {hostname} 作为此漫画的来源。如果这是最后一个剩余来源，该漫画（包括阅读进度）也将被删除。此操作无法撤销。
   expected-update: 预计更新 {date}
   will-update: 更新{date}
   last-updated: 最后更新于 {date}

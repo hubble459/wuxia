@@ -91,6 +91,10 @@ manga:
   merge-deleted: Verwijderd
   merge-survives: Blijft bestaan
   source-count: '{amount} bron(nen)'
+  set-primary-source: Als primair instellen
+  remove-source: Verwijderen
+  remove-source-confirm-title: Bron verwijderen?
+  remove-source-confirm-body: "Dit verwijdert {hostname} als bron voor deze manga. Als dit de laatste overgebleven bron is, wordt de manga zelf (inclusief leesvoortgang) ook verwijderd. Dit kan niet ongedaan worden gemaakt."
   similar: Vergelijkbaar
   will-update: Wordt op {date} bijgewerkt
 nav:
