@@ -250,20 +250,11 @@ class _RootNavScreenState extends State<RootNavScreen> {
                 ),
               if (isWide) const VerticalDivider(width: 1),
               Expanded(
-                // The tabs stay mounted (AutomaticKeepAliveClientMixin) to
-                // preserve scroll position across switches, so more than one
-                // is in the tree at once with only the active one actually
-                // laid out. The app-wide SelectionArea tries to sort every
-                // selectable across all of them by screen position, which
-                // crashes on the ones that were never laid out -- opt this
-                // whole area out of selection to avoid it.
-                child: SelectionContainer.disabled(
-                  child: PageView(
-                    key: Key(stateChange.toString()),
-                    controller: _pageController,
-                    physics: const NeverScrollableScrollPhysics(),
-                    children: routes.map((e) => e.widget).toList(),
-                  ),
+                child: PageView(
+                  key: Key(stateChange.toString()),
+                  controller: _pageController,
+                  physics: const NeverScrollableScrollPhysics(),
+                  children: routes.map((e) => e.widget).toList(),
                 ),
               ),
             ],

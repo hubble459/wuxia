@@ -183,18 +183,7 @@ class _WuxiaAppState extends State<WuxiaApp> {
         GlobalWidgetsLocalizations.delegate
       ],
       locale: Locale(store.getLanguage() ?? 'en'),
-      // MaterialApp.builder's `child` already contains the Navigator (and its
-      // Overlay), so SelectionArea would sit as the Navigator's *parent* --
-      // an Overlay ancestor of its own is required, hence the nested Overlay.
-      builder: (context, child) => Overlay(
-        initialEntries: [
-          OverlayEntry(
-            builder: (context) => SelectionArea(
-              child: FlutterI18n.rootAppBuilder()(context, child),
-            ),
-          ),
-        ],
-      ),
+      builder: (context, child) => FlutterI18n.rootAppBuilder()(context, child),
       routes: namedRoutes,
       onGenerateRoute: generateDynamicRoute,
       // A page refresh or deep link landing directly on a manga/chapter page
@@ -215,14 +204,7 @@ class _WuxiaAppState extends State<WuxiaApp> {
 
         final rootRoute = MaterialPageRoute(
           settings: const RouteSettings(name: 'root_nav'),
-          // This instance is seeded offstage from frame one (it's never the
-          // visible route) so its text never actually gets laid out --
-          // opt it out of the app-wide SelectionArea, which otherwise
-          // crashes trying to compute a selection order over an unlaid-out
-          // RenderParagraph. The normal in-app RootNavScreen (reached via
-          // Splash) is visible before ever being buried, so it doesn't hit
-          // this and keeps working as a normal SelectionArea participant.
-          builder: (context) => const SelectionContainer.disabled(child: RootNavScreen()),
+          builder: (context) => const RootNavScreen(),
         );
         final targetRoute = generateDynamicRoute(RouteSettings(name: initialRouteName));
 
