@@ -78,6 +78,7 @@ manga:
   add-source-url: Bron toevoegen via URL
   switch_source: Bron wisselen
   download: Downloaden
+  downloading: Downloaden
   download-complete: Download voltooid
   download-failed: Download mislukt
   download-eta: '{eta} resterend'

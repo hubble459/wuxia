@@ -7,14 +7,27 @@ import 'package:flutter/material.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:grpc/grpc.dart';
 import 'package:http/http.dart' as http;
 import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:wuxia/api.dart';
 import 'package:wuxia/gen/rumgap/v1/chapter.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/paginate.pb.dart';
+import 'package:wuxia/gen/rumgap/v1/scrape_error.pb.dart';
 import 'package:wuxia/main.dart';
 import 'package:wuxia/util/tools.dart';
+
+/// One chapter currently inside `_chapterConcurrency`'s active batch, with
+/// its own page-download progress so the dialog can show each concurrently
+/// downloading chapter's progress alongside the overall one.
+class _ActiveChapterProgress {
+  _ActiveChapterProgress(this.chapter, this.total);
+
+  final ChapterReply chapter;
+  final int total;
+  final ValueNotifier<int> downloaded = ValueNotifier<int>(0);
+}
 
 /// Downloads every chapter of a manga for offline reading, showing a
 /// progress dialog and (on Android) keeping the device/app alive via a
@@ -57,6 +70,38 @@ class MangaDownloader {
     return allChapters;
   }
 
+  /// Chapter number formatted for both the download folder name and the
+  /// per-chapter progress row, so the two always agree.
+  String _chapterLabel(ChapterReply chapter) => chapter.number.toStringAsFixed(1).replaceAll('.0', '');
+
+  /// Whether a `GrpcError` from a chapter scrape is worth one retry:
+  /// `ReqwestError` (a transient HTTP failure on rumgap's side -- e.g. the
+  /// source site returning a 520) or `CloudflareIUAM` (the source site's
+  /// challenge page, which sometimes clears within a few seconds). Anything
+  /// else (a selector/parsing error, an unsupported website, ...) won't be
+  /// fixed by retrying, so it's left to propagate and trigger the "retry
+  /// whole download" dialog instead of silently eating time on every batch.
+  bool _isRetryableScrapeError(GrpcError e) {
+    final details = e.details;
+    if (details == null || details.isEmpty) return false;
+    final error = ScrapeError.fromBuffer((details[0] as dynamic).value);
+    return error.type == ScrapeErrorType.ReqwestError || error.type == ScrapeErrorType.CloudflareIUAM;
+  }
+
+  /// Fetches a chapter's page list, retrying once (after a short pause) on
+  /// a transient scrape failure -- see `_isRetryableScrapeError`. Otherwise
+  /// a single flaky chapter fails the whole batch it's downloading
+  /// alongside and pops the "retry entire download" dialog.
+  Future<ImagesReply> _fetchChapterImages(ChapterReply chapter) async {
+    try {
+      return await api.chapter.images(ChapterImagesRequest(chapterId: chapter.id));
+    } on GrpcError catch (e) {
+      if (!_isRetryableScrapeError(e)) rethrow;
+      await Future.delayed(const Duration(seconds: 2));
+      return await api.chapter.images(ChapterImagesRequest(chapterId: chapter.id));
+    }
+  }
+
   String _formatEta(Duration eta) {
     if (eta.inHours > 0) return '${eta.inHours}h ${eta.inMinutes.remainder(60)}m';
     if (eta.inMinutes > 0) return '${eta.inMinutes}m';
@@ -73,6 +118,8 @@ class MangaDownloader {
     }
 
     final progress = ValueNotifier<int>(0);
+    final started = ValueNotifier<bool>(false);
+    final activeChapters = ValueNotifier<List<_ActiveChapterProgress>>([]);
     var cancelled = false;
     // Elapsed real time / chapters-so-far gives an average per-chapter rate
     // to extrapolate an ETA from. Only chapters that actually needed a
@@ -95,7 +142,16 @@ class MangaDownloader {
       context: context,
       barrierDismissible: false,
       builder: (ctx) => AlertDialog(
-        title: Text(FlutterI18n.translate(ctx, 'manga.download')),
+        title: ValueListenableBuilder<bool>(
+          valueListenable: started,
+          builder: (_, isDownloading, __) => SizedBox(
+            width: double.infinity,
+            child: Text(
+              FlutterI18n.translate(ctx, isDownloading ? 'manga.downloading' : 'manga.download'),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ),
         content: ValueListenableBuilder<int>(
           valueListenable: progress,
           builder: (_, downloaded, __) {
@@ -115,6 +171,39 @@ class MangaDownloader {
                     FlutterI18n.translate(ctx, 'manga.download-eta', translationParams: {'eta': eta}),
                     style: Theme.of(ctx).textTheme.bodySmall?.copyWith(color: Colors.grey),
                   ),
+                ValueListenableBuilder<List<_ActiveChapterProgress>>(
+                  valueListenable: activeChapters,
+                  builder: (_, active, __) {
+                    if (active.isEmpty) return const SizedBox.shrink();
+                    return Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const SizedBox(height: 12),
+                        for (final chapter in active)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 2),
+                            child: Row(
+                              children: [
+                                SizedBox(
+                                  width: 36,
+                                  child: Text(_chapterLabel(chapter.chapter), style: Theme.of(ctx).textTheme.bodySmall),
+                                ),
+                                Expanded(
+                                  child: ValueListenableBuilder<int>(
+                                    valueListenable: chapter.downloaded,
+                                    builder: (_, pages, __) => LinearProgressIndicator(
+                                      value: chapter.total == 0 ? null : pages / chapter.total,
+                                      minHeight: 4,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                      ],
+                    );
+                  },
+                ),
               ],
             );
           },
@@ -155,28 +244,52 @@ class MangaDownloader {
           await File('${mangaDir.path}/chapters.pb').writeAsBytes(chapters.writeToBuffer());
 
           Future<bool> downloadChapter(ChapterReply chapter) async {
-            final chapterDir = Directory('${mangaDir.path}/${chapter.number.toStringAsFixed(1).replaceAll('.0', '')}');
+            final chapterDir = Directory('${mangaDir.path}/${_chapterLabel(chapter)}');
             await chapterDir.create(recursive: true);
 
-            final images = await api.chapter.images(ChapterImagesRequest(chapterId: chapter.id));
-            var chapterDownloaded = false;
-            for (var start = 0; start < images.items.length; start += _downloadConcurrency) {
-              if (cancelled) break;
-              final batch = images.items.skip(start).take(_downloadConcurrency).toList();
-              final results = await Future.wait(batch.mapIndexed(
-                (offset, image) => _downloadChapterImage(client, image.url, chapterDir, start + offset),
-              ));
-              if (results.contains(true)) chapterDownloaded = true;
+            final images = await _fetchChapterImages(chapter);
+            final active = _ActiveChapterProgress(chapter, images.items.length);
+            activeChapters.value = [...activeChapters.value, active];
+            try {
+              var chapterDownloaded = false;
+              // A worker pool, not batches -- a batch would wait for all
+              // `_downloadConcurrency` pages to finish before starting the
+              // next group, so one slow page stalls slots that already
+              // finished. Each worker instead pulls the next page off the
+              // shared `nextPage` cursor as soon as it's free.
+              var nextPage = 0;
+              Future<void> pageWorker() async {
+                while (!cancelled) {
+                  final index = nextPage;
+                  if (index >= images.items.length) return;
+                  nextPage++;
+                  final fetched = await _downloadChapterImage(client, images.items[index].url, chapterDir, index);
+                  if (fetched) chapterDownloaded = true;
+                  active.downloaded.value++;
+                }
+              }
+
+              await Future.wait(List.generate(_downloadConcurrency, (_) => pageWorker()));
+              return chapterDownloaded;
+            } finally {
+              activeChapters.value = activeChapters.value.where((c) => c != active).toList();
+              active.downloaded.dispose();
             }
-            return chapterDownloaded;
           }
 
-          for (var start = 0; start < chapters.items.length; start += _chapterConcurrency) {
-            if (cancelled) break;
-
-            final batch = chapters.items.skip(start).take(_chapterConcurrency).toList();
-            final results = await Future.wait(batch.map(downloadChapter));
-            for (final chapterDownloaded in results) {
+          started.value = true;
+          // Same worker-pool reasoning as `pageWorker` above, one level up:
+          // `_chapterConcurrency` workers each pull the next chapter off the
+          // shared `nextChapter` cursor as soon as they finish their current
+          // one, instead of waiting for a whole batch of 8 to finish before
+          // starting the next 8.
+          var nextChapter = 0;
+          Future<void> chapterWorker() async {
+            while (!cancelled) {
+              final index = nextChapter;
+              if (index >= chapters.items.length) return;
+              nextChapter++;
+              final chapterDownloaded = await downloadChapter(chapters.items[index]);
               if (chapterDownloaded) {
                 ratedChapters++;
                 ratedStopwatch ??= Stopwatch()..start();
@@ -184,6 +297,8 @@ class MangaDownloader {
               progress.value++;
             }
           }
+
+          await Future.wait(List.generate(_chapterConcurrency, (_) => chapterWorker()));
           break;
         } catch (e, st) {
           print('download error: $e\n$st');
@@ -200,6 +315,8 @@ class MangaDownloader {
       await WakelockPlus.disable();
       await _stopDownloadForegroundService();
       progress.dispose();
+      started.dispose();
+      activeChapters.dispose();
       if (context.mounted && !cancelled) {
         Navigator.of(context).pop();
         if (!failed) {
@@ -265,6 +382,15 @@ class MangaDownloader {
     }
   }
 
+  /// Worth one immediate retry: any 5xx (a transient origin/proxy hiccup)
+  /// or Cloudflare's IUAM ("I'm Under Attack Mode") challenge response,
+  /// which Cloudflare marks with a `cf-mitigated: challenge` header even
+  /// when the status itself isn't a 5xx.
+  bool _isTransientError(http.Response response) {
+    if (response.statusCode >= 500 && response.statusCode < 600) return true;
+    return response.headers['cf-mitigated']?.toLowerCase() == 'challenge';
+  }
+
   /// Skips the request entirely if the page is already on disk, so
   /// re-running a download over a chapter that's already complete costs
   /// only a metadata call and local existence checks, not a re-fetch of
@@ -275,7 +401,12 @@ class MangaDownloader {
     final file = File('${chapterDir.path}/$index.${_imageExtension(url)}');
     if (await file.exists()) return false;
 
-    final response = await client.get(Uri.parse(url));
+    final uri = Uri.parse(url);
+    var response = await client.get(uri);
+    if (_isTransientError(response)) {
+      await Future.delayed(const Duration(seconds: 1));
+      response = await client.get(uri);
+    }
     await file.writeAsBytes(response.bodyBytes);
     return true;
   }

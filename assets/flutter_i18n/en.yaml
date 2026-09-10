@@ -36,6 +36,7 @@ manga:
   add-source-url: Add Source from URL
   switch_source: Switch Source
   download: Download
+  downloading: Downloading
   download-complete: Download complete
   download-failed: Download failed
   download-eta: '{eta} remaining'
