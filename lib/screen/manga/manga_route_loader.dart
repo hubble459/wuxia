@@ -1,6 +1,9 @@
+import 'package:collection/collection.dart';
+import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
 import 'package:wuxia/api.dart';
 import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
+import 'package:wuxia/gen/rumgap/v1/paginate.pb.dart';
 import 'package:wuxia/partial/list/manga_item.dart';
 import 'package:wuxia/screen/manga/manga_screen.dart';
 import 'package:wuxia/util/session.dart';
@@ -8,6 +11,12 @@ import 'package:wuxia/util/session.dart';
 /// Resolves the `manga/<id>` route -- reached on a page refresh or deep link
 /// that never went through the normal in-app navigation flow, which passes
 /// an already-loaded MangaReply directly instead of fetching by id here.
+///
+/// Fetches via `index` (search: `id:<id>`) rather than `get` -- `get` refreshes
+/// the primary source inline when its data is stale, which throws for a dead
+/// source before any manga data is returned at all. `index` never scrapes, so
+/// this always has real data to hand MangaScreen even when its own
+/// loadManga() then fails the same way and shows DeadProviderDialog.
 class MangaRouteLoader extends StatefulWidget {
   final int mangaId;
 
@@ -25,7 +34,12 @@ class _MangaRouteLoaderState extends State<MangaRouteLoader> {
     if (!API.isLoggedIn) {
       throw StateError('not logged in');
     }
-    return api.manga.get(GetMangaRequest(id: widget.mangaId));
+    final result = await api.manga.index(PaginateSearchQuery(search: 'id:${widget.mangaId}', perPage: Int64(1)));
+    final manga = result.items.firstOrNull;
+    if (manga == null) {
+      throw StateError('manga not found');
+    }
+    return manga;
   }
 
   @override
