@@ -45,6 +45,14 @@ class _MangaItemState extends State<MangaItem> {
     super.initState();
   }
 
+  @override
+  void didUpdateWidget(MangaItem oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.manga.id != _manga.id) {
+      _manga = widget.manga;
+    }
+  }
+
   bool get isReading {
     return _manga.hasReadingProgress();
   }

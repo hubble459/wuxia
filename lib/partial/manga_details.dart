@@ -101,8 +101,12 @@ class MangaDetails extends StatelessWidget {
                   ListView.builder(
                     shrinkWrap: true,
                     itemCount: similar.items.length,
-                    itemBuilder: (context, index) =>
-                        MangaItem(manga: similar.items[index], type: HeroScreenType.latest, reloadParent: (manga, _) {}),
+                    itemBuilder: (context, index) => MangaItem(
+                      key: Key(similar.items[index].id.toString()),
+                      manga: similar.items[index],
+                      type: HeroScreenType.latest,
+                      reloadParent: (manga, _) {},
+                    ),
                   ),
                 ],
               ),
