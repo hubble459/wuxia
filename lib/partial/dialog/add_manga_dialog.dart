@@ -87,10 +87,13 @@ class _AddMangaDialogState extends State<AddMangaDialog> {
             try {
               final existingMangaId = widget.existingMangaId;
               if (existingMangaId != null) {
-                final manga = await api.manga.addSource(AddSourceRequest(
-                  mangaId: existingMangaId,
-                  url: _urlController.text,
-                ));
+                final manga = await api.manga.addSource(
+                  AddSourceRequest(
+                    mangaId: existingMangaId,
+                    url: _urlController.text,
+                  ),
+                  options: API.longRunningOptions,
+                );
 
                 if (context.mounted) {
                   Navigator.of(context).pop(manga);
@@ -98,9 +101,10 @@ class _AddMangaDialogState extends State<AddMangaDialog> {
                 return;
               }
 
-              final manga = await api.manga.findOrCreate(MangaRequest(
-                url: _urlController.text,
-              ));
+              final manga = await api.manga.findOrCreate(
+                MangaRequest(url: _urlController.text),
+                options: API.longRunningOptions,
+              );
               final reading = await api.reading.create(ReadingPostRequest(mangaId: manga.id));
 
               if (context.mounted) {

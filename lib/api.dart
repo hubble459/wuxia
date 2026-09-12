@@ -96,6 +96,13 @@ class API {
     compression: const GzipCodec(),
     timeout: Duration(seconds: 12),
   );
+
+  /// Override for RPCs that scrape and persist a manga's full chapter list
+  /// server-side (adding a source, creating a manga from a URL) - a huge manga can
+  /// take well past the blanket 12s call deadline above, which is tuned for normal
+  /// calls. Passed as `options:` on the call itself; merging keeps the auth provider
+  /// and compression from `options` above and only overrides the timeout.
+  static final longRunningOptions = CallOptions(timeout: const Duration(minutes: 5));
 }
 
 API api = API(_defaultApiUrl);

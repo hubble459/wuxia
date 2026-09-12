@@ -72,7 +72,10 @@ class _SearchMangaItemState extends State<SearchMangaItem> {
         try {
           final existingMangaId = widget.existingMangaId;
           if (existingMangaId != null) {
-            final manga = await api.manga.addSource(AddSourceRequest(mangaId: existingMangaId, url: searchManga.url));
+            final manga = await api.manga.addSource(
+              AddSourceRequest(mangaId: existingMangaId, url: searchManga.url),
+              options: API.longRunningOptions,
+            );
 
             if (!context.mounted) {
               return;
@@ -82,7 +85,10 @@ class _SearchMangaItemState extends State<SearchMangaItem> {
             return;
           }
 
-          final manga = await api.manga.findOrCreate(MangaRequest(url: searchManga.url));
+          final manga = await api.manga.findOrCreate(
+            MangaRequest(url: searchManga.url),
+            options: API.longRunningOptions,
+          );
           searchManga.mangaId = manga.id;
 
           if (!context.mounted) {
