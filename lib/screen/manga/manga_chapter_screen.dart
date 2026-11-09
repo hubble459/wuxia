@@ -28,9 +28,6 @@ class MangaChapterScreen extends StatefulWidget {
   final ChapterReply chapter;
   final MangaSourceReply source;
 
-  /// 0.0-1.0 target scroll position, used instead of `chapter.offset`'s raw
-  /// page/pixels when landing here from a cross-source switch (B5) -- the new
-  /// chapter almost certainly has a different page count.
   final double? initialFraction;
 
   const MangaChapterScreen({
@@ -53,14 +50,8 @@ class _ReaderPage {
   const _ReaderPage(this.url, {this.width, this.height});
 }
 
-// Only Flutter Web's CanvasKit renderer hits the GPU texture-size ceiling on
-// long-strip pages (it ignores cacheWidth/cacheHeight for network images) --
-// native platforms never had that problem, so they get the original bytes
-// untouched, full quality. Data-saver's cap is already well under that
-// ceiling, so it doesn't need combining with it.
 String _pageUrl(String url, {required bool dataSaver}) {
   if (dataSaver) return '$url?maxdim=1280&quality=70';
-  if (kIsWeb) return '$url?maxdim=4096&quality=92';
   return url;
 }
 
@@ -95,14 +86,6 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
     super.initState();
   }
 
-  // A plain (non-dragging) tap inside the reader -- e.g. on the page image --
-  // ends up unfocusing this node entirely (nothing else claims it), which
-  // silently kills WASD/arrow handling until something else requests focus.
-  // Tapping-and-dragging avoids it because the drag gesture itself requests
-  // focus for the scrollable, which still bubbles key events up here fine.
-  // Rather than chase the exact pointer phase responsible, just take focus
-  // back immediately whenever it's lost -- unless a dialog/other route is on
-  // top, in which case that route should keep it.
   void _reclaimFocus() {
     if (_focusNode.hasFocus || !mounted) return;
     final route = ModalRoute.of(context);
@@ -140,8 +123,6 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
     final local = await _localImagePaths();
     if (local != null) {
       setState(() {
-        // No stored dimensions for offline-downloaded pages -- reader falls
-        // back to the fixed-height placeholder for these, same as before.
         _images = local.map((path) => _ReaderPage(path)).toList();
         _isOffline = true;
       });
@@ -175,11 +156,6 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
     });
   }
 
-  // Debounces reading-progress persistence so we're not hitting the API on
-  // every scroll tick / page turn -- shared by both webtoon (item position
-  // listener) and paged (PageView.onPageChanged) modes, and also doubles as
-  // the "current position" used to re-target the reader when the user
-  // toggles between modes mid-chapter.
   void _recordOffset(int page, int pixels) {
     if (page == _lastOffsetPage && pixels == _lastOffsetPixels) return;
     _lastOffsetPage = page;
@@ -209,11 +185,7 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
         pixels: pixels,
         fraction: pixels / 100.0,
       ));
-    } catch (_) {
-      // Best-effort -- this fires fire-and-forget on a scroll debounce, so
-      // offline (or any other server error) must not surface as an
-      // unhandled exception.
-    }
+    } catch (_) {}
   }
 
   Future<void> _switchSource() async {
@@ -231,10 +203,7 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
         final crossOffset =
             await api.reading.getCrossSourceOffset(GetCrossSourceOffsetRequest(canonicalChapterId: _chapter.canonicalChapterId));
         fraction = crossOffset.fraction;
-      } catch (_) {
-        // No recorded cross-source position (e.g. first time reading this chapter
-        // on any source) -- just land at the top instead of failing the switch.
-      }
+      } catch (_) {}
 
       widget.manga.readingProgress = newChapter.index.toInt();
       try {
@@ -249,9 +218,6 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
         if (e.code != StatusCode.failedPrecondition) rethrow;
       }
 
-      // Mutate the shared source object in place so the change is reflected
-      // back up in whichever screen (MangaScreen, MangaChaptersScreen, ...)
-      // is holding the same reference once we pop back to it.
       widget.source.clear();
       widget.source.mergeFromMessage(selected);
 
@@ -259,8 +225,6 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
     } catch (e) {
       if (e is GrpcError && e.code == StatusCode.notFound) {
         Fluttertoast.showToast(msg: 'This source doesn\'t have this chapter').ignore();
-        // Switch the active source anyway; next navigation from this source
-        // will fall back to wherever its own reading progress implies.
         widget.source.clear();
         widget.source.mergeFromMessage(selected);
         setState(() {});
@@ -285,19 +249,10 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
           Navigator.of(context).pop(result);
         }
       },
-      // Wraps the whole Scaffold (not just the page list) so key events
-      // still bubble up here after a button in the app bar or bottom bar
-      // takes focus -- Focus.onKeyEvent only fires for ancestors of
-      // whichever node currently holds it.
       child: Focus(
         focusNode: _focusNode,
         autofocus: true,
         onKeyEvent: _handleKeyEvent,
-        // Interacting with a scrollable (dragging the page list, swiping in
-        // the PageView) makes Flutter hand it keyboard focus automatically,
-        // which silently steals focus away from this Focus node -- reclaim
-        // it on every tap so WASD/arrow keys keep working after clicking
-        // into the reader.
         child: Listener(
           onPointerDown: (_) => _focusNode.requestFocus(),
           child: Scaffold(
@@ -479,12 +434,6 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
   static const _keyScrollStep = 80.0;
   static const _keyScrollStepFast = 400.0;
 
-  /// Nudges the reader by [deltaPixels] (positive = down) using the same
-  /// leading-edge/alignment math ScrollablePositionedList itself uses to
-  /// compute a pixel-accurate scroll target -- see [_startScroll] in the
-  /// package source: it resolves `alignment` straight to a raw scroll
-  /// offset, so passing a value outside [0, 1] is safe and simply lands
-  /// past the reference item's edge.
   void _scrollByKeyboard(double deltaPixels) {
     if (!itemScrollController.isAttached) return;
 
@@ -657,18 +606,6 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
   }
 
   Widget _buildPage(_ReaderPage page, {bool paged = false}) {
-    // Webtoon items reserve their own height and grow with the image
-    // (fitWidth), so the reader can scroll past them. A paged page instead
-    // gets a fixed-size slot from PageView -- fitWidth there would overflow
-    // vertically and clip, so it needs `contain` to always show the whole
-    // page, centered, letterboxed if its aspect ratio doesn't match.
-    //
-    // No cacheWidth/cacheHeight/ResizeImage here: on web/CanvasKit those are
-    // ignored for network images anyway (the actual GPU-texture-size cap is
-    // handled server-side, see _pageUrl), and on native they're honored --
-    // which previously meant this was silently downsampling every native
-    // image to viewport width for no reason, since native never had the
-    // texture-size problem to begin with.
     final Widget image = _isOffline
         ? Image.file(
             File(page.url),
@@ -680,6 +617,7 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
           )
         : Image.network(
             page.url,
+            webHtmlElementStrategy: WebHtmlElementStrategy.prefer,
             alignment: paged ? Alignment.center : Alignment.topCenter,
             filterQuality: FilterQuality.high,
             fit: paged ? BoxFit.contain : BoxFit.fitWidth,
@@ -709,9 +647,6 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
 
     if (paged) return SizedBox.expand(child: image);
 
-    // Known dimensions let the list item reserve the correct height up
-    // front (matching what BoxFit.fitWidth will render at), so swapping the
-    // loading placeholder for the real image never relayouts the list.
     if (page.width == null || page.height == null || page.width! <= 0 || page.height! <= 0) {
       return image;
     }
@@ -728,9 +663,6 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
     if (!await _goToProgress()) --widget.manga.readingProgress;
   }
 
-  /// Returns false (and reverts nothing itself -- see `previous`/`next`,
-  /// which already bumped `readingProgress` before calling this) if the
-  /// target chapter isn't reachable at all: offline and not downloaded.
   Future<bool> _goToProgress() async {
     ChapterReply chapter;
     try {
@@ -754,10 +686,6 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
     return true;
   }
 
-  /// Replaces this screen with the reader for [chapter], keeping the browser
-  /// URL in sync (so a refresh lands back on the same chapter) without the
-  /// slide transition a normal push would show -- this should feel like the
-  /// same continuous reading session, not a navigation to a new screen.
   Future<void> _goToChapter(ChapterReply chapter, {double? initialFraction}) async {
     if (!mounted) return;
 
