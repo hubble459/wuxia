@@ -16,6 +16,7 @@ import 'dart:core' as $core;
 import 'package:grpc/service_api.dart' as $grpc;
 import 'package:protobuf/protobuf.dart' as $pb;
 
+import 'admin.pb.dart' as $10;
 import 'chapter.pb.dart' as $5;
 import 'friend.pb.dart' as $3;
 import 'manga.pb.dart' as $4;
@@ -41,6 +42,7 @@ class UserClient extends $grpc.Client {
 
   UserClient(super.channel, {super.options, super.interceptors});
 
+  /// Always denied; accounts are created through Admin.CreateUser.
   $grpc.ResponseFuture<$0.UserTokenReply> register(
     $0.UserRegisterRequest request, {
     $grpc.CallOptions? options,
@@ -1419,4 +1421,113 @@ abstract class ScraperServiceBase extends $grpc.Service {
 
   $async.Future<$9.ScraperStatusReply> status(
       $grpc.ServiceCall call, $9.ScraperStatusRequest request);
+}
+
+/// Admin-only: user management.
+@$pb.GrpcServiceName('rumgap.v1.Admin')
+class AdminClient extends $grpc.Client {
+  /// The hostname for this service.
+  static const $core.String defaultHost = '';
+
+  /// OAuth scopes needed for the client.
+  static const $core.List<$core.String> oauthScopes = [
+    '',
+  ];
+
+  AdminClient(super.channel, {super.options, super.interceptors});
+
+  $grpc.ResponseFuture<$0.UserReply> createUser(
+    $10.AdminCreateUserRequest request, {
+    $grpc.CallOptions? options,
+  }) {
+    return $createUnaryCall(_$createUser, request, options: options);
+  }
+
+  $grpc.ResponseFuture<$2.Empty> deleteUser(
+    $10.AdminDeleteUserRequest request, {
+    $grpc.CallOptions? options,
+  }) {
+    return $createUnaryCall(_$deleteUser, request, options: options);
+  }
+
+  $grpc.ResponseFuture<$2.Empty> setPassword(
+    $10.AdminSetPasswordRequest request, {
+    $grpc.CallOptions? options,
+  }) {
+    return $createUnaryCall(_$setPassword, request, options: options);
+  }
+
+  // method descriptors
+
+  static final _$createUser =
+      $grpc.ClientMethod<$10.AdminCreateUserRequest, $0.UserReply>(
+          '/rumgap.v1.Admin/CreateUser',
+          ($10.AdminCreateUserRequest value) => value.writeToBuffer(),
+          $0.UserReply.fromBuffer);
+  static final _$deleteUser =
+      $grpc.ClientMethod<$10.AdminDeleteUserRequest, $2.Empty>(
+          '/rumgap.v1.Admin/DeleteUser',
+          ($10.AdminDeleteUserRequest value) => value.writeToBuffer(),
+          $2.Empty.fromBuffer);
+  static final _$setPassword =
+      $grpc.ClientMethod<$10.AdminSetPasswordRequest, $2.Empty>(
+          '/rumgap.v1.Admin/SetPassword',
+          ($10.AdminSetPasswordRequest value) => value.writeToBuffer(),
+          $2.Empty.fromBuffer);
+}
+
+@$pb.GrpcServiceName('rumgap.v1.Admin')
+abstract class AdminServiceBase extends $grpc.Service {
+  $core.String get $name => 'rumgap.v1.Admin';
+
+  AdminServiceBase() {
+    $addMethod($grpc.ServiceMethod<$10.AdminCreateUserRequest, $0.UserReply>(
+        'CreateUser',
+        createUser_Pre,
+        false,
+        false,
+        ($core.List<$core.int> value) =>
+            $10.AdminCreateUserRequest.fromBuffer(value),
+        ($0.UserReply value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$10.AdminDeleteUserRequest, $2.Empty>(
+        'DeleteUser',
+        deleteUser_Pre,
+        false,
+        false,
+        ($core.List<$core.int> value) =>
+            $10.AdminDeleteUserRequest.fromBuffer(value),
+        ($2.Empty value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$10.AdminSetPasswordRequest, $2.Empty>(
+        'SetPassword',
+        setPassword_Pre,
+        false,
+        false,
+        ($core.List<$core.int> value) =>
+            $10.AdminSetPasswordRequest.fromBuffer(value),
+        ($2.Empty value) => value.writeToBuffer()));
+  }
+
+  $async.Future<$0.UserReply> createUser_Pre($grpc.ServiceCall $call,
+      $async.Future<$10.AdminCreateUserRequest> $request) async {
+    return createUser($call, await $request);
+  }
+
+  $async.Future<$0.UserReply> createUser(
+      $grpc.ServiceCall call, $10.AdminCreateUserRequest request);
+
+  $async.Future<$2.Empty> deleteUser_Pre($grpc.ServiceCall $call,
+      $async.Future<$10.AdminDeleteUserRequest> $request) async {
+    return deleteUser($call, await $request);
+  }
+
+  $async.Future<$2.Empty> deleteUser(
+      $grpc.ServiceCall call, $10.AdminDeleteUserRequest request);
+
+  $async.Future<$2.Empty> setPassword_Pre($grpc.ServiceCall $call,
+      $async.Future<$10.AdminSetPasswordRequest> $request) async {
+    return setPassword($call, await $request);
+  }
+
+  $async.Future<$2.Empty> setPassword(
+      $grpc.ServiceCall call, $10.AdminSetPasswordRequest request);
 }

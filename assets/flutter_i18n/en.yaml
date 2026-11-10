@@ -9,7 +9,8 @@ login:
   title: Login
   password: Password
   forgot_password: Forgot password
-  sign_up: Sign up
+  request_account: Request an account
+  request_account_subject: Wuxia account request
   username: Username
   welcome: Welcome
   confirm_password: Confirm Password
@@ -113,6 +114,17 @@ settings:
     stats_24h: '{attempts} attempts / {failures} failures (24h)'
     no_recent_errors: No recent errors
     close: Close
+  users:
+    title: Users
+    create: Create User
+    admin: Admin
+    reset_password: Reset Password
+    delete: Delete User
+    delete_confirm: 'Are you sure you want to delete "{username}"? Their reading progress is deleted too.'
+    created: 'Created "{username}"'
+    password_reset: 'Updated the password of "{username}"'
+    deleted: 'Deleted "{username}"'
+    you: (you)
   misc: Miscellaneous
   download: Download
   download_directory: Download Directory

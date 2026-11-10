@@ -8,7 +8,8 @@ nav:
 login:
   title: 登录
   password: 密码
-  sign_up: 注册
+  request_account: 申请账户
+  request_account_subject: 申请 Wuxia 账户
   forgot_password: 忘记密码
   username: 用户名
   welcome: 你好
@@ -113,6 +114,17 @@ settings:
     stats_24h: '{attempts} 次尝试 / {failures} 次失败（24小时）'
     no_recent_errors: 没有最近的错误
     close: 关闭
+  users:
+    title: 用户
+    create: 创建用户
+    admin: 管理员
+    reset_password: 重置密码
+    delete: 删除用户
+    delete_confirm: '确定要删除“{username}”吗？其阅读进度也会被删除。'
+    created: '已创建“{username}”'
+    password_reset: '已更新“{username}”的密码'
+    deleted: '已删除“{username}”'
+    you: （你）
   account: 帐户
   download: 下载
   download_clear: 清除下载

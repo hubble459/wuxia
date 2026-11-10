@@ -24,6 +24,7 @@ bool isNetworkError(Object? error) {
 }
 
 const githubWuxiaReleasesUrl = 'https://github.com/hubble459/wuxia/releases';
+const accountRequestEmail = 'geraldd459@gmail.com';
 
 /// Download folder name for a manga, relative to the download root.
 String mangaFolderName(String title) => title.replaceAll(RegExp(r'[^\w\s\-]'), '_');

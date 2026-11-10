@@ -17,6 +17,7 @@ import 'package:wuxia/screen/manga/manga_chapter_route_loader.dart';
 import 'package:wuxia/screen/manga/manga_route_loader.dart';
 import 'package:wuxia/screen/root_nav_screen.dart' hide Route;
 import 'package:wuxia/screen/setting/scraper_status_screen.dart';
+import 'package:wuxia/screen/setting/users_screen.dart';
 import 'package:wuxia/screen/setting/statistics_screen.dart';
 import 'package:wuxia/screen/settings_screen.dart';
 import 'package:wuxia/screen/splash_screen.dart';
@@ -102,6 +103,8 @@ void main() async {
   runApp(const WuxiaApp());
 }
 
+const _settingsRoutes = {'settings', 'statistics', 'scraper_status', 'users'};
+
 class WuxiaApp extends StatefulWidget {
   const WuxiaApp({super.key});
 
@@ -124,6 +127,7 @@ class _WuxiaAppState extends State<WuxiaApp> {
       'settings': (context) => const SettingsScreen(),
       'statistics': (context) => const StatisticsScreen(),
       'scraper_status': (context) => const ScraperStatusScreen(),
+      'users': (context) => const UsersScreen(),
     };
 
     // Reconstructs the manga detail / chapter reader screens from just a
@@ -191,6 +195,14 @@ class _WuxiaAppState extends State<WuxiaApp> {
       // stranding the user with no way back. Seed root_nav underneath it so
       // back navigation (and the in-app back arrow) has somewhere to go.
       onGenerateInitialRoutes: (initialRouteName) {
+        // Same for the settings screens, which normally sit on top of root_nav -> settings.
+        if (_settingsRoutes.contains(initialRouteName)) {
+          return [
+            for (final name in ['root_nav', 'settings', if (initialRouteName != 'settings') initialRouteName])
+              MaterialPageRoute(settings: RouteSettings(name: name), builder: namedRoutes[name]!),
+          ];
+        }
+
         final isDeepLink = matchMangaRoute(initialRouteName) != null || matchChapterRoute(initialRouteName) != null;
         if (!isDeepLink) {
           final builder = initialRouteName == Navigator.defaultRouteName

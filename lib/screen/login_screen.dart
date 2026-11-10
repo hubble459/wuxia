@@ -21,26 +21,21 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final fkLogin = GlobalKey<FormState>();
   final uController = TextEditingController();
-  final eController = TextEditingController();
   final pController = TextEditingController();
-  bool isLogin = true;
 
   String? error;
 
   @override
   void initState() {
-    if (isLogin) {
-      final store = Store.getStoreInstance();
-      final uname = store.getUsername();
-      uController.text = uname ?? '';
-    }
+    final store = Store.getStoreInstance();
+    final uname = store.getUsername();
+    uController.text = uname ?? '';
     super.initState();
   }
 
   @override
   void dispose() {
     uController.dispose();
-    eController.dispose();
     pController.dispose();
     super.dispose();
   }
@@ -54,12 +49,7 @@ class _LoginScreenState extends State<LoginScreen> {
     }
 
     try {
-      UserTokenReply user;
-      if (isLogin) {
-        user = await login();
-      } else {
-        user = await register();
-      }
+      final user = await login();
 
       API.token = user.token;
       API.loggedIn = user.user;
@@ -90,12 +80,9 @@ class _LoginScreenState extends State<LoginScreen> {
     ));
   }
 
-  ResponseFuture<UserTokenReply> register() {
-    return api.user.register(UserRegisterRequest(
-      username: uController.text,
-      email: eController.text,
-      password: pController.text,
-    ));
+  void requestAccount() {
+    final subject = Uri.encodeComponent(FlutterI18n.translate(context, 'login.request_account_subject'));
+    launchUrlString('mailto:$accountRequestEmail?subject=$subject');
   }
 
   @override
@@ -136,7 +123,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       Text(
-                        FlutterI18n.translate(context, isLogin ? 'login.welcome' : 'login.sign_up'),
+                        FlutterI18n.translate(context, 'login.welcome'),
                         style: Theme.of(context).textTheme.headlineMedium,
                       ),
                       ...(error != null
@@ -166,22 +153,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                 label: I18nText('login.username'),
                               ),
                             ),
-                            ...(isLogin
-                                ? []
-                                : [
-                                    const SizedBox(
-                                      height: Constants.padding,
-                                    ),
-                                    TextFormField(
-                                      validator: ValidatorBuilder.translate(context, 'login.email').required().isEmail().build(),
-                                      controller: eController,
-                                      keyboardType: TextInputType.emailAddress,
-                                      textInputAction: TextInputAction.next,
-                                      decoration: InputDecoration(
-                                        label: I18nText('login.email'),
-                                      ),
-                                    ),
-                                  ]),
                             const SizedBox(height: Constants.padding),
                             TextFormField(
                               obscureText: true,
@@ -194,32 +165,13 @@ class _LoginScreenState extends State<LoginScreen> {
                                   .hasUppercase()
                                   .hasLowercase()
                                   .build(),
-                              textInputAction: isLogin ? TextInputAction.done : TextInputAction.next,
+                              textInputAction: TextInputAction.done,
                               onFieldSubmitted: (password) => submit(),
                               controller: pController,
                               decoration: InputDecoration(
                                 label: I18nText('login.password'),
                               ),
                             ),
-                            ...(isLogin
-                                ? []
-                                : [
-                                    const SizedBox(height: Constants.padding),
-                                    TextFormField(
-                                      validator: ValidatorBuilder.translate(context, 'login.confirm_password')
-                                          .required()
-                                          .custom((value) => value == pController.text
-                                              ? null
-                                              : FlutterI18n.translate(context, 'validator.password_not_match'))
-                                          .build(),
-                                      obscureText: true,
-                                      textInputAction: TextInputAction.done,
-                                      onFieldSubmitted: (password) => submit(),
-                                      decoration: InputDecoration(
-                                        label: I18nText('login.confirm_password'),
-                                      ),
-                                    )
-                                  ]),
                             const SizedBox(height: 20),
                             Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -227,7 +179,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    FlutterI18n.translate(context, isLogin ? 'login.title' : 'login.sign_up'),
+                                    FlutterI18n.translate(context, 'login.title'),
                                     style: Theme.of(context).textTheme.titleLarge,
                                   ),
                                   CircleAvatar(
@@ -248,13 +200,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       Center(
                         child: TextButton(
-                          onPressed: () => setState(() {
-                            error = null;
-                            isLogin = !isLogin;
-                          }),
+                          onPressed: requestAccount,
                           style: const ButtonStyle(),
                           child: Text(
-                            FlutterI18n.translate(context, isLogin ? 'login.sign_up' : 'login.title'),
+                            FlutterI18n.translate(context, 'login.request_account'),
                             textAlign: TextAlign.left,
                             style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                                   decoration: TextDecoration.underline,

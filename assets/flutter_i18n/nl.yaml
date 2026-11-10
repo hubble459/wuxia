@@ -58,7 +58,8 @@ login:
   email: E-mail
   forgot_password: Wachtwoord vergeten
   password: Wachtwoord
-  sign_up: Schrijf je in
+  request_account: Account aanvragen
+  request_account_subject: Wuxia-account aanvragen
   test_connection: Verbinding testen
   title: Login
   username: Gebruikersnaam
@@ -149,6 +150,17 @@ settings:
     seconds: seconden
     title: Statistieken
   title: Instellingen
+  users:
+    admin: Beheerder
+    create: Gebruiker aanmaken
+    created: 'Gebruiker "{username}" aangemaakt'
+    delete: Gebruiker verwijderen
+    delete_confirm: 'Weet je zeker dat je "{username}" wilt verwijderen? Hun leesvoortgang wordt ook verwijderd.'
+    deleted: '"{username}" verwijderd'
+    password_reset: 'Wachtwoord van "{username}" bijgewerkt'
+    reset_password: Wachtwoord resetten
+    title: Gebruikers
+    you: (jij)
 splash:
   connecting: Verbinding maken met server...
 title: 漫画

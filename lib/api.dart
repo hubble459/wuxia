@@ -27,6 +27,10 @@ extension UserPermissionsX on UserFullReply {
   bool get isAdmin => permissions & _adminPermissionBit != 0;
 }
 
+extension UserReplyPermissionsX on UserReply {
+  bool get isAdmin => permissions & _adminPermissionBit != 0;
+}
+
 // gRCP
 class API {
   static String? _token;
@@ -41,6 +45,7 @@ class API {
   late final SearchClient search = SearchClient(_channel, options: options);
   late final MetaClient meta = MetaClient(_channel, options: options);
   late final ScraperClient scraper = ScraperClient(_channel, options: options);
+  late final AdminClient admin = AdminClient(_channel, options: options);
 
   static void authProvider(Map<String, String> metadata, uri) {
     if (_token != null) {

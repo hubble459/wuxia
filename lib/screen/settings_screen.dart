@@ -184,6 +184,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     Navigator.of(context).pushNamed('scraper_status');
                   },
                 ),
+              if (API.loggedIn.isAdmin)
+                ListTile(
+                  title: I18nText('settings.users.title'),
+                  onTap: () {
+                    Navigator.of(context).pushNamed('users');
+                  },
+                ),
               if (!kIsWeb)
                 ListTile(
                   title: I18nText('settings.check_update'),
