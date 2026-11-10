@@ -103,11 +103,21 @@ const UserUpdateRequest$json = {
       '10': 'preferredHostnames'
     },
     {'1': 'device_ids', '3': 5, '4': 3, '5': 9, '10': 'deviceIds'},
+    {
+      '1': 'current_password',
+      '3': 6,
+      '4': 1,
+      '5': 9,
+      '9': 3,
+      '10': 'currentPassword',
+      '17': true
+    },
   ],
   '8': [
     {'1': '_password'},
     {'1': '_username'},
     {'1': '_email'},
+    {'1': '_current_password'},
   ],
 };
 
@@ -116,8 +126,9 @@ final $typed_data.Uint8List userUpdateRequestDescriptor = $convert.base64Decode(
     'ChFVc2VyVXBkYXRlUmVxdWVzdBIfCghwYXNzd29yZBgBIAEoCUgAUghwYXNzd29yZIgBARIfCg'
     'h1c2VybmFtZRgCIAEoCUgBUgh1c2VybmFtZYgBARIZCgVlbWFpbBgDIAEoCUgCUgVlbWFpbIgB'
     'ARIvChNwcmVmZXJyZWRfaG9zdG5hbWVzGAQgAygJUhJwcmVmZXJyZWRIb3N0bmFtZXMSHQoKZG'
-    'V2aWNlX2lkcxgFIAMoCVIJZGV2aWNlSWRzQgsKCV9wYXNzd29yZEILCglfdXNlcm5hbWVCCAoG'
-    'X2VtYWls');
+    'V2aWNlX2lkcxgFIAMoCVIJZGV2aWNlSWRzEi4KEGN1cnJlbnRfcGFzc3dvcmQYBiABKAlIA1IP'
+    'Y3VycmVudFBhc3N3b3JkiAEBQgsKCV9wYXNzd29yZEILCglfdXNlcm5hbWVCCAoGX2VtYWlsQh'
+    'MKEV9jdXJyZW50X3Bhc3N3b3Jk');
 
 @$core.Deprecated('Use userReplyDescriptor instead')
 const UserReply$json = {

@@ -133,6 +133,11 @@ settings:
   account: Account
   remove_account: Remove Account
   edit_account: Edit Account
+  change_password:
+    title: Change Password
+    current: Current Password
+    new: New Password
+    changed: Password changed
   version: 'v{version} ({build})'
   check_update: Check for updates
 reading:

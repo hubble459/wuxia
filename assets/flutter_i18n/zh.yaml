@@ -132,6 +132,11 @@ settings:
   download_directory: 下载目录
   edit_account: 编辑帐户
   misc: 各种各样的
+  change_password:
+    title: 修改密码
+    current: 当前密码
+    new: 新密码
+    changed: 密码已修改
   remove_account: 删除帐户
   check_update: 检查更新
   version: 'v{version} ({build})'

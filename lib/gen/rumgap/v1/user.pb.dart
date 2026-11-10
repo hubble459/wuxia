@@ -307,6 +307,7 @@ class UserUpdateRequest extends $pb.GeneratedMessage {
     $core.String? email,
     $core.Iterable<$core.String>? preferredHostnames,
     $core.Iterable<$core.String>? deviceIds,
+    $core.String? currentPassword,
   }) {
     final result = create();
     if (password != null) result.password = password;
@@ -315,6 +316,7 @@ class UserUpdateRequest extends $pb.GeneratedMessage {
     if (preferredHostnames != null)
       result.preferredHostnames.addAll(preferredHostnames);
     if (deviceIds != null) result.deviceIds.addAll(deviceIds);
+    if (currentPassword != null) result.currentPassword = currentPassword;
     return result;
   }
 
@@ -336,6 +338,7 @@ class UserUpdateRequest extends $pb.GeneratedMessage {
     ..aOS(3, _omitFieldNames ? '' : 'email')
     ..pPS(4, _omitFieldNames ? '' : 'preferredHostnames')
     ..pPS(5, _omitFieldNames ? '' : 'deviceIds')
+    ..aOS(6, _omitFieldNames ? '' : 'currentPassword')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -389,6 +392,16 @@ class UserUpdateRequest extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(5)
   $pb.PbList<$core.String> get deviceIds => $_getList(4);
+
+  /// Required when changing password
+  @$pb.TagNumber(6)
+  $core.String get currentPassword => $_getSZ(5);
+  @$pb.TagNumber(6)
+  set currentPassword($core.String value) => $_setString(5, value);
+  @$pb.TagNumber(6)
+  $core.bool hasCurrentPassword() => $_has(5);
+  @$pb.TagNumber(6)
+  void clearCurrentPassword() => $_clearField(6);
 }
 
 class UserReply extends $pb.GeneratedMessage {

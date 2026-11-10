@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher_string.dart';
 import 'package:wuxia/api.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:wuxia/util/store.dart';
+import 'package:wuxia/partial/dialog/change_password_dialog.dart';
 import 'package:wuxia/partial/download_reconnect.dart';
 import 'package:wuxia/util/download_storage/download_storage.dart';
 import 'package:wuxia/partial/responsive_content.dart';
@@ -263,6 +264,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ListTile(
                 title: I18nText('settings.edit_account'),
                 onTap: () {},
+              ),
+              ListTile(
+                title: I18nText('settings.change_password.title'),
+                onTap: () async {
+                  final changed = await showDialog<bool>(
+                    context: context,
+                    builder: (context) => const ChangePasswordDialog(),
+                  );
+                  if (changed != true || !context.mounted) return;
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: I18nText('settings.change_password.changed')),
+                  );
+                },
               ),
               ListTile(
                 title: Text(

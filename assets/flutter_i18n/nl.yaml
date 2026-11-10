@@ -117,6 +117,11 @@ search:
   search_reading: Zoek Lezen
 settings:
   account: Rekening
+  change_password:
+    changed: Wachtwoord gewijzigd
+    current: Huidig wachtwoord
+    new: Nieuw wachtwoord
+    title: Wachtwoord wijzigen
   check_update: Controleer op updates
   data_saver: Gegevensbesparing
   download: Downloaden
