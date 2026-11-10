@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
@@ -8,7 +6,8 @@ import 'package:url_launcher/url_launcher_string.dart';
 import 'package:wuxia/api.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:wuxia/util/store.dart';
-import 'package:file_selector/file_selector.dart';
+import 'package:wuxia/partial/download_reconnect.dart';
+import 'package:wuxia/util/download_storage/download_storage.dart';
 import 'package:wuxia/partial/responsive_content.dart';
 import 'package:wuxia/util/session.dart';
 import 'package:wuxia/util/tools.dart';
@@ -25,6 +24,7 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   String? _locale;
   String? _downloadDir;
+  DownloadStorageStatus? _downloadStatus;
   String? _downloadSize;
   PackageInfo? _packageInfo;
 
@@ -49,28 +49,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
 
     setState(() => _ready = true);
-    if (!kIsWeb) _loadDownloadInfo();
+    if (downloadsSupported) _loadDownloadInfo();
 
     final info = await PackageInfo.fromPlatform();
     if (mounted) setState(() => _packageInfo = info);
   }
 
   Future<void> _loadDownloadInfo() async {
-    final dir = await getDownloadDirectory();
+    final status = await downloadStorage.status();
+    final location = await downloadStorage.location();
     if (!mounted) return;
-    setState(() => _downloadDir = dir.path);
+    setState(() {
+      _downloadStatus = status;
+      _downloadDir = location ?? FlutterI18n.translate(context, 'downloads.browser_storage');
+      _downloadSize = null;
+    });
+    if (status != DownloadStorageStatus.ready) return;
 
-    final size = await _calcSize(dir);
+    final size = await downloadStorage.totalSize();
     if (!mounted) return;
     setState(() => _downloadSize = _formatBytes(size));
-  }
-
-  Future<int> _calcSize(Directory dir) async {
-    int total = 0;
-    await for (final entry in dir.list(recursive: true)) {
-      if (entry is File) total += await entry.length();
-    }
-    return total;
   }
 
   String _formatBytes(int bytes) {
@@ -96,13 +94,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
     if (confirmed != true) return;
 
-    final dir = await getDownloadDirectory();
-    await for (final entry in dir.list()) {
-      if (entry is Directory) {
-        final hasManga = await File('${entry.path}/manga.pb').exists();
-        if (hasManga) await entry.delete(recursive: true);
-      }
-    }
+    await deleteAllDownloads();
     _loadDownloadInfo();
   }
 
@@ -197,7 +189,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   title: I18nText('settings.check_update'),
                   onTap: () => launchUrlString(githubWuxiaReleasesUrl),
                 ),
-              if (!kIsWeb) ...[
+              if (downloadsSupported) ...[
                 const Divider(),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -205,16 +197,31 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 ListTile(
                   title: I18nText('settings.download_directory'),
-                  subtitle: Text(_downloadDir ?? '…'),
-                  trailing: const Icon(Icons.folder_open),
-                  onTap: () async {
-                    final path = await getDirectoryPath();
-                    if (path == null) return;
-                    await Store.getStoreInstance().setDownloadDir(path);
-                    _loadDownloadInfo();
-                  },
+                  subtitle: Text(switch (_downloadStatus) {
+                    DownloadStorageStatus.needsPermission => FlutterI18n.translate(
+                        context, 'downloads.reconnect_message',
+                        translationParams: {'folder': _downloadDir ?? ''}),
+                    _ when downloadStorage.isPrivate =>
+                      '${_downloadDir ?? '…'}\n${FlutterI18n.translate(context, 'downloads.browser_storage_hint')}',
+                    _ => _downloadDir ?? '…',
+                  }),
+                  trailing: _downloadStatus == DownloadStorageStatus.needsPermission
+                      ? TextButton(
+                          onPressed: () async {
+                            if (await reconnectDownloads(context)) _loadDownloadInfo();
+                          },
+                          child: Text(FlutterI18n.translate(context, 'downloads.reconnect')),
+                        )
+                      : downloadStorage.canPickLocation
+                          ? const Icon(Icons.folder_open)
+                          : null,
+                  onTap: downloadStorage.canPickLocation
+                      ? () async {
+                          if (await downloadStorage.pickLocation()) _loadDownloadInfo();
+                        }
+                      : null,
                   onLongPress: () async {
-                    await Store.getStoreInstance().clearDownloadDir();
+                    await downloadStorage.resetLocation();
                     _loadDownloadInfo();
                   },
                 ),

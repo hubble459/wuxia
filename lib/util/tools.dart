@@ -1,77 +1,98 @@
-import 'dart:io';
-
-import 'package:flutter/foundation.dart' show kIsWeb;
-import 'package:path_provider/path_provider.dart';
+import 'package:grpc/grpc.dart';
 import 'package:wuxia/api.dart';
 import 'package:wuxia/gen/rumgap/v1/chapter.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/reading.pb.dart';
+import 'package:wuxia/util/download_storage/download_storage.dart';
 import 'package:wuxia/util/store.dart';
 
-/// Offline manga downloads rely on local filesystem access, which isn't
-/// available on web -- callers must check this before touching the
-/// download directory.
-bool get downloadsSupported => !kIsWeb;
+/// Whether this platform can store offline downloads at all -- callers must
+/// check this before showing download UI.
+bool get downloadsSupported => downloadStorage.supported;
+
+/// Whether [error] means the server couldn't be reached at all (offline,
+/// server down), as opposed to the server answering with an error.
+bool isNetworkError(Object? error) {
+  if (error is GrpcError) {
+    if (error.code == StatusCode.unavailable || error.code == StatusCode.deadlineExceeded) return true;
+    // grpc-web reports a failed XHR (no connection) as UNKNOWN with no status.
+    final message = error.message ?? '';
+    return error.code == StatusCode.unknown && (message.contains('without a status') || message.contains('XMLHttpRequest'));
+  }
+  final text = error.toString();
+  return text.contains('SocketException') || text.contains('ClientException') || text.contains('Failed to fetch');
+}
 
 const githubWuxiaReleasesUrl = 'https://github.com/hubble459/wuxia/releases';
 
-Future<Directory> getDownloadDirectory() async {
-  if (kIsWeb) {
-    throw UnsupportedError('Downloads are not supported on web');
-  }
-  final custom = Store.getStoreInstance().getDownloadDir();
-  final dir = custom != null ? Directory(custom) : await getApplicationDocumentsDirectory();
-  // Nothing guarantees this exists yet (e.g. a completely fresh install) --
-  // every caller below assumes it does, some via `.list()`, which throws
-  // outright on a missing directory. `create` is a no-op if it already
-  // exists, so this is safe to call unconditionally.
-  await dir.create(recursive: true);
-  return dir;
+/// Download folder name for a manga, relative to the download root.
+String mangaFolderName(String title) => title.replaceAll(RegExp(r'[^\w\s\-]'), '_');
+
+/// Download folder name for a chapter, relative to its manga's folder.
+String chapterFolderName(double number) => number.toStringAsFixed(1).replaceAll('.0', '');
+
+/// Every downloaded manga, keyed by its folder name. Empty when the storage
+/// isn't accessible (e.g. web folder access still needs to be re-granted).
+Future<Map<String, MangaReply>> listDownloadedManga() async {
+  final result = <String, MangaReply>{};
+  try {
+    for (final folder in await downloadStorage.listDirs()) {
+      final bytes = await downloadStorage.read('$folder/manga.pb');
+      if (bytes == null) continue;
+      try {
+        result[folder] = MangaReply.fromBuffer(bytes);
+      } catch (_) {}
+    }
+  } catch (_) {}
+  return result;
 }
 
 /// Downloaded manga folders are keyed by a sanitized title, not id (see
-/// `_downloadManga` in `manga_screen.dart`), so finding "is manga [mangaId]
-/// downloaded" means scanning every folder's `manga.pb` rather than building
-/// a path directly -- same approach `DownloadsScreen` uses for its listing.
-Future<Directory?> findDownloadedMangaDir(int mangaId) async {
-  if (kIsWeb) return null;
-
-  final dir = await getDownloadDirectory();
-  await for (final entry in dir.list()) {
-    if (entry is! Directory) continue;
-    final pbFile = File('${entry.path}/manga.pb');
-    if (!await pbFile.exists()) continue;
-    try {
-      final manga = MangaReply.fromBuffer(await pbFile.readAsBytes());
-      if (manga.id == mangaId) return entry;
-    } catch (_) {}
+/// `MangaDownloader`), so finding "is manga [mangaId] downloaded" means
+/// scanning every folder's `manga.pb` rather than building a path directly.
+Future<String?> findDownloadedMangaDir(int mangaId) async {
+  final downloaded = await listDownloadedManga();
+  for (final entry in downloaded.entries) {
+    if (entry.value.id == mangaId) return entry.key;
   }
   return null;
+}
+
+/// The `manga.pb` snapshot saved at download time, or `null` if this manga
+/// isn't downloaded.
+Future<MangaReply?> loadOfflineManga(int mangaId) async {
+  final downloaded = await listDownloadedManga();
+  return downloaded.values.where((m) => m.id == mangaId).firstOrNull;
 }
 
 /// Deletes a manga's entire downloaded folder -- its `manga.pb`/
 /// `chapters.pb` snapshots and every downloaded chapter's images. No-op if
 /// it isn't downloaded.
 Future<void> deleteDownloadedManga(int mangaId) async {
-  if (kIsWeb) return;
-
   final dir = await findDownloadedMangaDir(mangaId);
   if (dir == null) return;
-  await dir.delete(recursive: true);
+  await downloadStorage.deleteDir(dir);
 }
 
-/// The full chapter list `_downloadManga` saved to `chapters.pb`, in its
+/// Deletes every downloaded manga folder (anything with a `manga.pb`),
+/// leaving unrelated files in the download root alone.
+Future<void> deleteAllDownloads() async {
+  for (final dir in (await listDownloadedManga()).keys) {
+    await downloadStorage.deleteDir(dir);
+  }
+}
+
+/// The full chapter list `MangaDownloader` saved to `chapters.pb`, in its
 /// stored order (reversed: false / newest-first) -- callers reverse as
 /// needed to match whatever order they're after. `null` if there's no usable
-/// local copy: never downloaded, web (no filesystem access), or a corrupt/
+/// local copy: never downloaded, storage not accessible, or a corrupt/
 /// missing `chapters.pb`.
 Future<List<ChapterReply>?> loadOfflineChapters(int mangaId) async {
-  if (kIsWeb) return null;
-
   final dir = await findDownloadedMangaDir(mangaId);
   if (dir == null) return null;
   try {
-    final bytes = await File('${dir.path}/chapters.pb').readAsBytes();
+    final bytes = await downloadStorage.read('$dir/chapters.pb');
+    if (bytes == null) return null;
     return ChaptersReply.fromBuffer(bytes).items;
   } catch (_) {
     return null;
@@ -96,14 +117,12 @@ bool isChapterRead(MangaReply manga, ChapterReply chapter) {
 /// so offline-only readers (`DownloadsScreen`, and the various offline
 /// fallbacks) show current progress instead of whatever was true at
 /// download time -- that file is otherwise never touched again after
-/// `_downloadManga` first writes it. No-op if the manga isn't downloaded.
+/// `MangaDownloader` first writes it. No-op if the manga isn't downloaded.
 Future<void> updateOfflineMangaSnapshot(MangaReply manga) async {
-  if (kIsWeb) return;
-
   final dir = await findDownloadedMangaDir(manga.id);
   if (dir == null) return;
   try {
-    await File('${dir.path}/manga.pb').writeAsBytes(manga.writeToBuffer());
+    await downloadStorage.write('$dir/manga.pb', manga.writeToBuffer());
   } catch (_) {}
 }
 

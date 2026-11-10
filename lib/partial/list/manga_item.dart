@@ -6,6 +6,7 @@ import 'package:jiffy/jiffy.dart';
 import 'package:wuxia/api.dart';
 import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/reading.pb.dart';
+import 'package:wuxia/partial/action/export_cbz_action.dart';
 import 'package:wuxia/partial/dialog/confirm_dialog.dart';
 import 'package:wuxia/partial/image_error_placeholder.dart';
 import 'package:wuxia/screen/manga/manga_screen.dart';
@@ -63,6 +64,32 @@ class _MangaItemState extends State<MangaItem> {
   String get _hostname {
     final source = _manga.sources.firstWhereOrNull((s) => s.isPrimary) ?? _manga.sources.firstOrNull;
     return source?.hostname ?? '';
+  }
+
+  /// Offers exporting next to deleting. Returns whether delete was chosen.
+  Future<bool> _downloadMenu() async {
+    final action = await showModalBottomSheet<String>(
+      context: context,
+      builder: (ctx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.archive),
+              title: Text(FlutterI18n.translate(ctx, 'downloads.export_cbz')),
+              onTap: () => Navigator.of(ctx).pop('export'),
+            ),
+            ListTile(
+              leading: const Icon(Icons.delete, color: Colors.red),
+              title: Text(FlutterI18n.translate(ctx, 'downloads.delete'), style: const TextStyle(color: Colors.red)),
+              onTap: () => Navigator.of(ctx).pop('delete'),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (action == 'export' && mounted) await exportMangaCbz(context, _manga.id);
+    return action == 'delete';
   }
 
   @override
@@ -154,6 +181,8 @@ class _MangaItemState extends State<MangaItem> {
       },
       onLongPress: () async {
         if (widget.type == HeroScreenType.downloads) {
+          if (!await _downloadMenu()) return;
+          if (!context.mounted) return;
           final confirmed = await showDialog<bool>(
             context: context,
             builder: (context) => ConfirmDialog(

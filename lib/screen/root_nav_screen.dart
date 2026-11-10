@@ -11,6 +11,8 @@ import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/user.pb.dart';
 import 'package:wuxia/main.dart';
 import 'package:wuxia/partial/dialog/add_manga_dialog.dart';
+import 'package:wuxia/partial/download_reconnect.dart';
+import 'package:wuxia/partial/offline_notice.dart';
 import 'package:wuxia/partial/list/manga_item.dart';
 import 'package:wuxia/screen/downloads_screen.dart';
 import 'package:wuxia/screen/latest_screen.dart';
@@ -19,6 +21,7 @@ import 'package:wuxia/screen/reading_screen.dart';
 import 'package:wuxia/screen/search_screen.dart';
 import 'package:wuxia/util/app_routes.dart';
 import 'package:wuxia/util/session.dart';
+import 'package:wuxia/util/tools.dart';
 
 class Route {
   final IconData icon;
@@ -55,8 +58,20 @@ class _RootNavScreenState extends State<RootNavScreen> {
       return;
     }
 
-    setState(() => _ready = true);
+    final openDownloads = downloadsSupported &&
+        (sessionOffline || ModalRoute.of(context)?.settings.arguments == rootNavDownloadsArgument);
+    setState(() {
+      _ready = true;
+      // Downloads is always the last tab.
+      if (openDownloads) _selected = 3;
+    });
+    if (openDownloads) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (_pageController.hasClients) _pageController.jumpToPage(_selected);
+      });
+    }
     _initNotificationHandler();
+    promptDownloadReconnectIfNeeded(context);
   }
 
   Future<void> _handleNotificationInForeground(RemoteMessage message) async {
@@ -168,7 +183,7 @@ class _RootNavScreenState extends State<RootNavScreen> {
       Route(label: FlutterI18n.translate(context, 'nav.reading'), icon: Icons.my_library_books, widget: const ReadingScreen()),
       Route(label: FlutterI18n.translate(context, 'nav.latest'), icon: Icons.whatshot, widget: const LatestScreen()),
       Route(label: FlutterI18n.translate(context, 'nav.search'), icon: Icons.search, widget: const SearchScreen()),
-      if (!kIsWeb)
+      if (downloadsSupported)
         Route(label: FlutterI18n.translate(context, 'nav.downloads'), icon: Icons.download, widget: const DownloadsScreen()),
     ];
     final isWide = MediaQuery.sizeOf(context).width >= _wideBreakpoint;

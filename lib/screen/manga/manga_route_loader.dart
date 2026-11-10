@@ -6,7 +6,9 @@ import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/paginate.pb.dart';
 import 'package:wuxia/partial/list/manga_item.dart';
 import 'package:wuxia/screen/manga/manga_screen.dart';
+import 'package:wuxia/partial/offline_notice.dart';
 import 'package:wuxia/util/session.dart';
+import 'package:wuxia/util/tools.dart';
 
 /// Resolves the `manga/<id>` route -- reached on a page refresh or deep link
 /// that never went through the normal in-app navigation flow, which passes
@@ -34,8 +36,16 @@ class _MangaRouteLoaderState extends State<MangaRouteLoader> {
     if (!API.isLoggedIn) {
       throw StateError('not logged in');
     }
-    final result = await api.manga.index(PaginateSearchQuery(search: 'id:${widget.mangaId}', perPage: Int64(1)));
-    final manga = result.items.firstOrNull;
+    final MangaReply? manga;
+    try {
+      final result = await api.manga.index(PaginateSearchQuery(search: 'id:${widget.mangaId}', perPage: Int64(1)));
+      manga = result.items.firstOrNull;
+    } catch (e) {
+      if (!isNetworkError(e)) rethrow;
+      final offline = await loadOfflineManga(widget.mangaId);
+      if (offline == null) rethrow;
+      return offline;
+    }
     if (manga == null) {
       throw StateError('manga not found');
     }
@@ -57,6 +67,7 @@ class _MangaRouteLoaderState extends State<MangaRouteLoader> {
             });
             return const Scaffold(body: SizedBox.shrink());
           }
+          if (isNetworkError(snapshot.error)) return const Scaffold(body: OfflineNotice());
           return Scaffold(body: Center(child: Text(snapshot.error.toString())));
         }
         return MangaScreen(manga: snapshot.requireData, type: HeroScreenType.latest);

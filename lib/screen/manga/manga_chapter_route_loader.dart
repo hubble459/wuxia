@@ -3,7 +3,9 @@ import 'package:wuxia/api.dart';
 import 'package:wuxia/gen/rumgap/v1/chapter.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
 import 'package:wuxia/screen/manga/manga_chapter_screen.dart';
+import 'package:wuxia/partial/offline_notice.dart';
 import 'package:wuxia/util/session.dart';
+import 'package:wuxia/util/tools.dart';
 
 class _ChapterRouteData {
   final MangaReply manga;
@@ -35,10 +37,27 @@ class _MangaChapterRouteLoaderState extends State<MangaChapterRouteLoader> {
       throw StateError('not logged in');
     }
 
-    final manga = await api.manga.get(GetMangaRequest(id: widget.mangaId));
-    final source = manga.sources.firstWhere((s) => s.id == widget.sourceId);
-    final chapter = await api.chapter.get(ChapterRequest(mangaSourceId: widget.sourceId, index: widget.chapterIndex));
+    try {
+      final manga = await api.manga.get(GetMangaRequest(id: widget.mangaId));
+      final source = manga.sources.firstWhere((s) => s.id == widget.sourceId);
+      final chapter = await api.chapter.get(ChapterRequest(mangaSourceId: widget.sourceId, index: widget.chapterIndex));
+      return _ChapterRouteData(manga: manga, source: source, chapter: chapter);
+    } catch (e) {
+      if (!isNetworkError(e)) rethrow;
+      final offline = await _loadOffline();
+      if (offline == null) rethrow;
+      return offline;
+    }
+  }
 
+  Future<_ChapterRouteData?> _loadOffline() async {
+    final manga = await loadOfflineManga(widget.mangaId);
+    if (manga == null) return null;
+    final source = manga.sources.where((s) => s.id == widget.sourceId).firstOrNull;
+    final chapter = (await loadOfflineChapters(widget.mangaId))
+        ?.where((c) => c.mangaSourceId == widget.sourceId && c.index.toInt() == widget.chapterIndex)
+        .firstOrNull;
+    if (source == null || chapter == null) return null;
     return _ChapterRouteData(manga: manga, source: source, chapter: chapter);
   }
 
@@ -57,6 +76,7 @@ class _MangaChapterRouteLoaderState extends State<MangaChapterRouteLoader> {
             });
             return const Scaffold(body: SizedBox.shrink());
           }
+          if (isNetworkError(snapshot.error)) return const Scaffold(body: OfflineNotice());
           return Scaffold(body: Center(child: Text(snapshot.error.toString())));
         }
         final data = snapshot.requireData;

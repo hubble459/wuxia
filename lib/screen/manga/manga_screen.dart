@@ -1,6 +1,4 @@
-import 'dart:io';
 
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +9,7 @@ import 'package:wuxia/api.dart';
 import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/scrape_error.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/v1.pb.dart';
+import 'package:wuxia/partial/action/export_cbz_action.dart';
 import 'package:wuxia/partial/action/open_url_action.dart';
 import 'package:wuxia/partial/dialog/dead_provider_dialog.dart';
 import 'package:wuxia/partial/dialog/manga_picker_dialog.dart';
@@ -30,6 +29,7 @@ enum _MangaMenuAction {
   addSource,
   addSourceFromUrl,
   download,
+  exportCbz,
   forceRescrape,
   mergeInto,
   mergeFrom,
@@ -217,7 +217,7 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
         case _RefreshMode.forceRescrape:
           _manga = await api.manga.update(UpdateMangaRequest(id: _manga.id, force: true));
       }
-      if (!kIsWeb) {
+      if (downloadsSupported) {
         // A chapter read while offline couldn't sync its progress to the
         // server (see `syncReadingProgress`) -- now that a fetch just
         // succeeded, retry it.
@@ -225,18 +225,12 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
       }
       _syncSelectedSource();
     } catch (e) {
-      if (!kIsWeb && mode == _RefreshMode.cached) {
-        final localDir = await findDownloadedMangaDir(_manga.id);
-        if (localDir != null) {
-          try {
-            final bytes = await File('${localDir.path}/manga.pb').readAsBytes();
-            _manga = MangaReply.fromBuffer(bytes);
-            _syncSelectedSource();
-            return;
-          } catch (_) {
-            // Fall through to the normal online-error handling below --
-            // corrupt/unreadable local copy shouldn't hide the real error.
-          }
+      if (downloadsSupported && mode == _RefreshMode.cached) {
+        final offline = await loadOfflineManga(_manga.id);
+        if (offline != null) {
+          _manga = offline;
+          _syncSelectedSource();
+          return;
         }
       }
 
@@ -297,12 +291,22 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
 
   final _imageHeight = 400.0;
 
+  /// Whether this manga has a download to export.
+  bool _isDownloaded = false;
+
+  Future<void> _refreshDownloaded() async {
+    if (!downloadsSupported) return;
+    final downloaded = await findDownloadedMangaDir(_manga.id) != null;
+    if (mounted && downloaded != _isDownloaded) setState(() => _isDownloaded = downloaded);
+  }
+
   @override
   void initState() {
     _manga = widget.manga;
     _syncSelectedSource();
 
     loadManga();
+    _refreshDownloaded();
 
     super.initState();
   }
@@ -370,7 +374,9 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
               });
             }
           } else if (action == _MangaMenuAction.download) {
-            MangaDownloader(manga: _manga, source: _selectedSource).download(context);
+            MangaDownloader(manga: _manga, source: _selectedSource).download(context).then((_) => _refreshDownloaded());
+          } else if (action == _MangaMenuAction.exportCbz) {
+            exportMangaCbz(context, _manga.id);
           } else if (action == _MangaMenuAction.forceRescrape) {
             loadManga(mode: _RefreshMode.forceRescrape);
           } else if (action == _MangaMenuAction.mergeInto) {
@@ -392,10 +398,15 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
             value: _MangaMenuAction.addSourceFromUrl,
             child: Text(FlutterI18n.translate(context, 'manga.add-source-url')),
           ),
-          if (!kIsWeb)
+          if (downloadsSupported)
             PopupMenuItem(
               value: _MangaMenuAction.download,
               child: Text(FlutterI18n.translate(context, 'manga.download')),
+            ),
+          if (_isDownloaded)
+            PopupMenuItem(
+              value: _MangaMenuAction.exportCbz,
+              child: Text(FlutterI18n.translate(context, 'downloads.export_cbz')),
             ),
           if (API.loggedIn.isAdmin)
             PopupMenuItem(

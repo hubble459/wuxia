@@ -6,6 +6,10 @@ import 'package:wuxia/util/store.dart';
 
 Future<void>? _restoreFuture;
 
+/// Set when the last session restore couldn't reach the server -- the app
+/// then starts on the Downloads tab.
+bool sessionOffline = false;
+
 /// Restores the persisted API host + auth token into [api]/[API].
 ///
 /// On web, a deep link (or a page refresh) can land the app directly on a
@@ -34,6 +38,7 @@ Future<void> _restoreSession() async {
   API.token = token;
   try {
     API.loggedIn = await api.user.me(Empty());
+    sessionOffline = false;
   } catch (e) {
     if (e is GrpcError && e.code == StatusCode.unauthenticated) {
       await store.removeToken();
@@ -41,6 +46,7 @@ Future<void> _restoreSession() async {
     } else {
       // Network error -- continue offline with empty user.
       API.loggedIn = UserFullReply();
+      sessionOffline = true;
     }
   }
 }

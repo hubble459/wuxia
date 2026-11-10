@@ -61,6 +61,7 @@ dependencies:
   file_selector: ^1.1.0
   wakelock_plus: ^1.8.0
   flutter_foreground_task: ^11.0.0
+  web: ^1.1.2
 
 dev_dependencies:
   flutter_test:

@@ -1,8 +1,7 @@
-import 'dart:io';
-
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
+import 'package:wuxia/partial/download_reconnect.dart';
+import 'package:wuxia/util/download_storage/download_storage.dart';
 import 'package:wuxia/util/tools.dart';
 import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
 import 'package:wuxia/partial/list/manga_item.dart';
@@ -24,24 +23,52 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
     _future = _loadDownloaded();
   }
 
+  bool _needsPermission = false;
+
   Future<List<MangaReply>> _loadDownloaded() async {
-    if (kIsWeb) return [];
+    final needsPermission = await downloadStorage.status() == DownloadStorageStatus.needsPermission;
+    if (mounted && needsPermission != _needsPermission) setState(() => _needsPermission = needsPermission);
+    if (needsPermission) return [];
 
-    final dir = await getDownloadDirectory();
-    final results = <MangaReply>[];
-
-    await for (final entry in dir.list()) {
-      if (entry is! Directory) continue;
-      final pbFile = File('${entry.path}/manga.pb');
-      if (!await pbFile.exists()) continue;
-      try {
-        final bytes = await pbFile.readAsBytes();
-        results.add(MangaReply.fromBuffer(bytes));
-      } catch (_) {}
-    }
-
+    final results = (await listDownloadedManga()).values.toList();
     results.sort((a, b) => a.title.compareTo(b.title));
     return results;
+  }
+
+  void _reload() {
+    setState(() {
+      _future = _loadDownloaded();
+    });
+  }
+
+  Widget _reconnectPrompt() {
+    return FutureBuilder<String?>(
+      future: downloadStorage.location(),
+      builder: (context, snapshot) => Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.folder_off, size: 48),
+              const SizedBox(height: 12),
+              Text(
+                FlutterI18n.translate(context, 'downloads.reconnect_message',
+                    translationParams: {'folder': snapshot.data ?? ''}),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 12),
+              FilledButton(
+                onPressed: () async {
+                  if (await reconnectDownloads(context)) _reload();
+                },
+                child: Text(FlutterI18n.translate(context, 'downloads.reconnect')),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -53,16 +80,13 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
           if (snapshot.connectionState != ConnectionState.done) {
             return const Center(child: CircularProgressIndicator());
           }
+          if (_needsPermission) return _reconnectPrompt();
           final items = snapshot.data ?? [];
           if (items.isEmpty) {
             return Center(child: Text(FlutterI18n.translate(context, 'empty')));
           }
           return RefreshIndicator(
-            onRefresh: () async {
-              setState(() {
-                _future = _loadDownloaded();
-              });
-            },
+            onRefresh: () async => _reload(),
             child: ListView.builder(
               itemCount: items.length,
               itemBuilder: (context, index) {
@@ -71,11 +95,7 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
                   key: Key('dl_${manga.id}'),
                   manga: manga,
                   type: HeroScreenType.downloads,
-                  reloadParent: (_, __) {
-                    setState(() {
-                      _future = _loadDownloaded();
-                    });
-                  },
+                  reloadParent: (_, __) => _reload(),
                 );
               },
             ),

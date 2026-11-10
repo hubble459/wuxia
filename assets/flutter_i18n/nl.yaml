@@ -166,3 +166,18 @@ validator:
   regex: "{name} moet overeenkomen met het volgende: {regex}"
   required: "{name} is vereist"
   url: "{name} moet een geldige URL zijn"
+downloads:
+  reconnect_message: 'Toegang tot je downloadmap "{folder}" moet opnieuw worden verleend'
+  reconnect: Opnieuw verbinden
+  reconnect_failed: Toegang tot de downloadmap is niet verleend
+  browser_storage: Browseropslag
+  browser_storage_hint: Bestanden blijven in de browser; gebruik "Exporteren als CBZ" om een kopie op te slaan
+  export_cbz: Exporteren als CBZ
+  exported: 'Geëxporteerd naar {path}'
+  export_failed: 'Exporteren mislukt: {error}'
+  delete: Download verwijderen
+offline:
+  title: Je bent offline
+  message: De server is nu niet bereikbaar.
+  message_downloads: De server is nu niet bereikbaar. Je gedownloade manga zijn nog beschikbaar.
+  go_to_downloads: Naar downloads

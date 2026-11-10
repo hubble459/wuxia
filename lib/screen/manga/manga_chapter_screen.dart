@@ -1,7 +1,5 @@
 import 'dart:async';
-import 'dart:io';
 
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -18,6 +16,7 @@ import 'package:wuxia/main.dart';
 import 'package:wuxia/partial/action/open_url_action.dart';
 import 'package:wuxia/partial/dialog/source_picker_dialog.dart';
 import 'package:wuxia/partial/image_error_placeholder.dart';
+import 'package:wuxia/util/download_storage/download_storage.dart';
 import 'package:wuxia/partial/responsive_content.dart';
 import 'package:wuxia/util/app_routes.dart';
 import 'package:wuxia/util/store.dart';
@@ -63,6 +62,7 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
   late ChapterReply _chapter;
   List<_ReaderPage>? _images;
   bool _isOffline = false;
+  List<String>? _offlineSources;
   late bool _isPagedMode;
   late int _currentPage;
 
@@ -95,35 +95,35 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
     });
   }
 
-  Future<List<String>?> _localImagePaths() async {
-    if (kIsWeb) return null;
+  Future<List<String>?> _localPageSources() async {
+    if (!downloadsSupported) return null;
+    try {
+      return await downloadStorage
+          .loadPageSources('${mangaFolderName(widget.manga.title)}/${chapterFolderName(_chapter.number)}');
+    } catch (_) {
+      return null;
+    }
+  }
 
-    final dir = await getDownloadDirectory();
-    final safeName = widget.manga.title.replaceAll(RegExp(r'[^\w\s\-]'), '_');
-    final chapterNum = _chapter.number.toStringAsFixed(1).replaceAll('.0', '');
-    final chapterDir = Directory('${dir.path}/$safeName/$chapterNum');
-
-    if (!await chapterDir.exists()) return null;
-
-    final files = (await chapterDir.list().toList()).whereType<File>().toList();
-    if (files.isEmpty) return null;
-
-    files.sort((a, b) {
-      final aNum = int.tryParse(a.uri.pathSegments.last.split('.').first) ?? 0;
-      final bNum = int.tryParse(b.uri.pathSegments.last.split('.').first) ?? 0;
-      return aNum.compareTo(bNum);
-    });
-
-    return files.map((f) => f.path).toList();
+  void _releaseOfflineSources() {
+    final sources = _offlineSources;
+    if (sources != null) downloadStorage.releasePageSources(sources);
+    _offlineSources = null;
   }
 
   Future<void> _loadImages() async {
     setState(() => _images = null);
 
-    final local = await _localImagePaths();
+    _releaseOfflineSources();
+    final local = await _localPageSources();
     if (local != null) {
+      if (!mounted) {
+        downloadStorage.releasePageSources(local);
+        return;
+      }
+      _offlineSources = local;
       setState(() {
-        _images = local.map((path) => _ReaderPage(path)).toList();
+        _images = local.map((source) => _ReaderPage(source)).toList();
         _isOffline = true;
       });
       return;
@@ -174,6 +174,7 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
     _focusNode.removeListener(_reclaimFocus);
     _focusNode.dispose();
     PaintingBinding.instance.imageCache.clearLiveImages();
+    _releaseOfflineSources();
     super.dispose();
   }
 
@@ -607,12 +608,10 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
 
   Widget _buildPage(_ReaderPage page, {bool paged = false}) {
     final Widget image = _isOffline
-        ? Image.file(
-            File(page.url),
+        ? downloadStorage.pageImage(
+            page.url,
             alignment: paged ? Alignment.center : Alignment.topCenter,
-            filterQuality: FilterQuality.high,
             fit: paged ? BoxFit.contain : BoxFit.fitWidth,
-            width: double.infinity,
             height: paged ? double.infinity : null,
           )
         : Image.network(

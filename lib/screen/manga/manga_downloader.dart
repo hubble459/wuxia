@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:io' show Platform;
 
 import 'package:collection/collection.dart';
 import 'package:fixnum/fixnum.dart';
@@ -16,6 +16,7 @@ import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/paginate.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/scrape_error.pb.dart';
 import 'package:wuxia/main.dart';
+import 'package:wuxia/util/download_storage/download_storage.dart';
 import 'package:wuxia/util/tools.dart';
 
 /// One chapter currently inside `_chapterConcurrency`'s active batch, with
@@ -72,7 +73,7 @@ class MangaDownloader {
 
   /// Chapter number formatted for both the download folder name and the
   /// per-chapter progress row, so the two always agree.
-  String _chapterLabel(ChapterReply chapter) => chapter.number.toStringAsFixed(1).replaceAll('.0', '');
+  String _chapterLabel(ChapterReply chapter) => chapterFolderName(chapter.number);
 
   /// Whether a `GrpcError` from a chapter scrape is worth one retry:
   /// `ReqwestError` (a transient HTTP failure on rumgap's side -- e.g. the
@@ -109,7 +110,12 @@ class MangaDownloader {
   }
 
   Future<void> download(BuildContext context) async {
-    if (kIsWeb) return;
+    if (!downloadsSupported) return;
+    if (await downloadStorage.status() == DownloadStorageStatus.needsPermission &&
+        !await downloadStorage.requestPermission()) {
+      return;
+    }
+    if (!context.mounted) return;
 
     final totalChapters = manga.countChapters.toInt();
     if (totalChapters == 0) {
@@ -233,19 +239,15 @@ class MangaDownloader {
       while (true) {
         progress.value = 0;
         try {
-          final dir = await getDownloadDirectory();
-          final safeName = manga.title.replaceAll(RegExp(r'[^\w\s\-]'), '_');
-          final mangaDir = Directory('${dir.path}/$safeName');
+          final mangaDir = mangaFolderName(manga.title);
 
           final chapters = ChaptersReply(items: await _fetchAllChapters(totalChapters));
 
-          await mangaDir.create(recursive: true);
-          await File('${mangaDir.path}/manga.pb').writeAsBytes(manga.writeToBuffer());
-          await File('${mangaDir.path}/chapters.pb').writeAsBytes(chapters.writeToBuffer());
+          await downloadStorage.write('$mangaDir/manga.pb', manga.writeToBuffer());
+          await downloadStorage.write('$mangaDir/chapters.pb', chapters.writeToBuffer());
 
           Future<bool> downloadChapter(ChapterReply chapter) async {
-            final chapterDir = Directory('${mangaDir.path}/${_chapterLabel(chapter)}');
-            await chapterDir.create(recursive: true);
+            final chapterDir = '$mangaDir/${_chapterLabel(chapter)}';
 
             final images = await _fetchChapterImages(chapter);
             final active = _ActiveChapterProgress(chapter, images.items.length);
@@ -370,7 +372,7 @@ class MangaDownloader {
   /// alone only keeps the screen from sleeping, it doesn't survive that.
   /// Android-only; iOS has no equivalent mechanism.
   Future<void> _startDownloadForegroundService(int totalChapters) async {
-    if (!Platform.isAndroid) return;
+    if (kIsWeb || !Platform.isAndroid) return;
 
     if (await FlutterForegroundTask.checkNotificationPermission() != NotificationPermission.granted) {
       await FlutterForegroundTask.requestNotificationPermission();
@@ -386,12 +388,12 @@ class MangaDownloader {
   }
 
   void _updateDownloadForegroundService(int downloaded, int totalChapters) {
-    if (!Platform.isAndroid) return;
+    if (kIsWeb || !Platform.isAndroid) return;
     FlutterForegroundTask.updateService(notificationText: '$downloaded / $totalChapters');
   }
 
   Future<void> _stopDownloadForegroundService() async {
-    if (!Platform.isAndroid) return;
+    if (kIsWeb || !Platform.isAndroid) return;
     if (await FlutterForegroundTask.isRunningService) {
       await FlutterForegroundTask.stopService();
     }
@@ -412,9 +414,9 @@ class MangaDownloader {
   /// every page's bytes. Returns whether a fetch actually happened (`false`
   /// for a skip), so callers can tell real download work apart from a
   /// near-instant skip -- see the ETA rate-tracking in `download`.
-  Future<bool> _downloadChapterImage(http.Client client, String url, Directory chapterDir, int index) async {
-    final file = File('${chapterDir.path}/$index.${_imageExtension(url)}');
-    if (await file.exists()) return false;
+  Future<bool> _downloadChapterImage(http.Client client, String url, String chapterDir, int index) async {
+    final path = '$chapterDir/$index.${_imageExtension(url)}';
+    if (await downloadStorage.exists(path)) return false;
 
     final uri = Uri.parse(url);
     var response = await client.get(uri);
@@ -422,7 +424,7 @@ class MangaDownloader {
       await Future.delayed(const Duration(seconds: 1));
       response = await client.get(uri);
     }
-    await file.writeAsBytes(response.bodyBytes);
+    await downloadStorage.write(path, response.bodyBytes);
     return true;
   }
 

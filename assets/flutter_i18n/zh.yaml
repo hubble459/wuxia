@@ -166,3 +166,18 @@ dead_provider:
 notification:
   new_chapter: 新章节可在{title}中找到
   push_unavailable: 无法启用推送通知
+downloads:
+  reconnect_message: 需要重新授予对下载文件夹“{folder}”的访问权限
+  reconnect: 重新连接
+  reconnect_failed: 未授予下载文件夹的访问权限
+  browser_storage: 浏览器存储
+  browser_storage_hint: 文件保存在浏览器中；使用“导出为 CBZ”保存副本
+  export_cbz: 导出为 CBZ
+  exported: 已导出到 {path}
+  export_failed: 导出失败：{error}
+  delete: 删除下载
+offline:
+  title: 您已离线
+  message: 目前无法连接到服务器。
+  message_downloads: 目前无法连接到服务器。您下载的漫画仍然可用。
+  go_to_downloads: 前往下载

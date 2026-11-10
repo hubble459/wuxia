@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:wuxia/partial/offline_notice.dart';
+import 'package:wuxia/util/tools.dart';
 
 typedef ErrorBuilder = Widget Function(BuildContext context, Object? error);
 
 Widget defaultErrorBuilder(BuildContext context, Object? error) {
+  if (isNetworkError(error)) return const OfflineNotice();
   return Center(
     child: Column(
       children: [
