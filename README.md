@@ -79,33 +79,5 @@ Run this whenever rumgap's proto/**/*.proto files change.
 - Dark Mode
 
 ## Roadmap
-- [ ] Social 
-    - [ ] Friends
-    - [ ] Profile Page
-        - [ ] Recent Activity (like in MAL)
-    - [ ] Custom Avatar
-    - [ ] Ratings
-    - [ ] Comments
-- [ ] Download
-- [ ] Groups
-- [ ] MAL Integration
-- [ ] Optional Email
-    - [ ] Forgot password flow
-- [x] Add from url
-- [x] Open manga in browser
-- [x] Open chapter in browser
-- [x] Search alternatives
-- [ ] Notifications 
-    - [ ] Background manga updater
-        - [ ] Priority calculator
-- [x] Progress per chapter
-    - [ ] Daily activity chart
-- [ ] Outage report/ handling
-    - [ ] Like when a website is down, make the items red or inactive
-    - [x] Advise to choose alternatives
-- [x] Update app from within settings
-- [ ] Tests
-- [ ] Periodic Backups
-- [ ] Paged Image View
-    - [ ] LTR, RTL, Top-Down
-- [ ] gRPC SSL
+
+See [rumgap's ROADMAP.md](https://github.com/hubble459/rumgap/blob/main/ROADMAP.md), which covers both the backend and this client.
