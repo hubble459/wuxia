@@ -67,8 +67,8 @@ class _ChapterSelectorState extends State<ChapterSelector> {
   // ever changes.
   var _windowLocalIndex = 0;
 
-  // Cached in `loadOfflineChapters`'s stored order (reversed: false, i.e.
-  // newest-first) the first time an offline fallback is needed.
+  // Cached in `loadOfflineChapters`'s order (oldest first) the first time an
+  // offline fallback is needed.
   List<ChapterReply>? _offlineChapters;
 
   Future<void> openChapters() async {
@@ -149,21 +149,31 @@ class _ChapterSelectorState extends State<ChapterSelector> {
         paginateQuery: PaginateQuery(page: Int64(page), perPage: Int64(_pageSize)),
       ));
 
+      if (result.items.isEmpty) {
+        final offline = await _offlineWindow(till);
+        if (offline != null) return offline;
+      }
+
       final actualPage = result.pagination.page.toInt();
       final actualPerPage = result.pagination.perPage.toInt();
       _windowLocalIndex = (till - 1 - actualPage * actualPerPage).clamp(0, max(result.items.length - 1, 0));
       return result;
     } catch (e) {
-      _offlineChapters ??= await loadOfflineChapters(widget.manga.id);
-      final offline = _offlineChapters;
+      final offline = await _offlineWindow(till);
       if (offline == null) rethrow;
-
-      // Stored newest-first, but the online query above always fetches
-      // oldest-first (reversed: true) -- flip to match.
-      final oldestFirst = offline.reversed.toList();
-      _windowLocalIndex = (till - 1).clamp(0, max(oldestFirst.length - 1, 0));
-      return ChaptersReply(items: oldestFirst);
+      return offline;
     }
+  }
+
+  /// The downloaded chapter list, for when the server can't be reached or
+  /// has no chapters for this source (e.g. its scraper is failing). `null`
+  /// if nothing is downloaded.
+  Future<ChaptersReply?> _offlineWindow(int till) async {
+    _offlineChapters ??= await loadOfflineChapters(widget.manga.id);
+    final offline = _offlineChapters;
+    if (offline == null || offline.isEmpty) return null;
+    _windowLocalIndex = (till - 1).clamp(0, max(offline.length - 1, 0));
+    return ChaptersReply(items: offline);
   }
 
   @override

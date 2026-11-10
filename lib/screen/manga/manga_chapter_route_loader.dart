@@ -43,7 +43,8 @@ class _MangaChapterRouteLoaderState extends State<MangaChapterRouteLoader> {
       final chapter = await api.chapter.get(ChapterRequest(mangaSourceId: widget.sourceId, index: widget.chapterIndex));
       return _ChapterRouteData(manga: manga, source: source, chapter: chapter);
     } catch (e) {
-      if (!isNetworkError(e)) rethrow;
+      // Offline, a server error, or not found -- a downloaded copy is still
+      // readable.
       final offline = await _loadOffline();
       if (offline == null) rethrow;
       return offline;

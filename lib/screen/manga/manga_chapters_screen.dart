@@ -47,9 +47,8 @@ class _MangaChaptersScreenState extends State<MangaChaptersScreen> {
   final _scrollController = ScrollController();
   var _jumping = false;
 
-  // Cached in `_downloadManga`'s saved order (reversed: false, i.e.
-  // newest-first) the first time an offline fallback is needed -- see
-  // `_offlineChaptersOrdered`.
+  // Cached in `loadOfflineChapters`'s order (oldest first) the first time an
+  // offline fallback is needed -- see `_offlineChaptersOrdered`.
   List<ChapterReply>? _offlineChapters;
 
   Future<void> _jumpToEnd({required bool reversed}) async {
@@ -192,28 +191,37 @@ class _MangaChaptersScreenState extends State<MangaChaptersScreen> {
             page: Int64(page),
             perPage: Int64(_pageSize),
           )));
+      if (page == 0 && _result.items.isEmpty) {
+        // Server has no chapters for this source (e.g. its scraper is
+        // failing) -- the downloaded copy is still readable.
+        final offline = await _offlineChaptersOrdered();
+        if (offline != null && offline.isNotEmpty) return _offlinePage(offline, page);
+      }
       return _result.items;
     } catch (e) {
       final offline = await _offlineChaptersOrdered();
       if (offline == null) rethrow;
-
-      final start = page * _pageSize;
-      if (start >= offline.length) return [];
-      final items = offline.sublist(start, (start + _pageSize).clamp(0, offline.length));
-
-      _result = ChaptersReply(items: items);
-      return items;
+      return _offlinePage(offline, page);
     }
   }
 
-  /// Caches the full chapter list from `loadOfflineChapters` (in `reversed:
-  /// false` / newest-first order), then returns it flipped to match the
-  /// current `_reversed` sort. `null` if there's no usable local copy.
+  List<ChapterReply> _offlinePage(List<ChapterReply> offline, int page) {
+    final start = page * _pageSize;
+    if (start >= offline.length) return [];
+    final items = offline.sublist(start, (start + _pageSize).clamp(0, offline.length));
+    _result = ChaptersReply(items: items);
+    return items;
+  }
+
+  /// Caches the full chapter list from `loadOfflineChapters` (oldest first),
+  /// then returns it in the current `_reversed` sort. `null` if there's no
+  /// usable local copy.
   Future<List<ChapterReply>?> _offlineChaptersOrdered() async {
     _offlineChapters ??= await loadOfflineChapters(widget.manga.id);
     final offline = _offlineChapters;
     if (offline == null) return null;
 
-    return _reversed ? offline.reversed.toList() : offline;
+    // `_reversed` = chapter 1 first, matching the stored order.
+    return _reversed ? offline : offline.reversed.toList();
   }
 }

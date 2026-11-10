@@ -36,20 +36,19 @@ class _MangaRouteLoaderState extends State<MangaRouteLoader> {
     if (!API.isLoggedIn) {
       throw StateError('not logged in');
     }
-    final MangaReply? manga;
+    // Offline, a server error, or not found (e.g. merged away) -- a
+    // downloaded copy is still readable.
+    MangaReply? manga;
+    Object? error;
     try {
       final result = await api.manga.index(PaginateSearchQuery(search: 'id:${widget.mangaId}', perPage: Int64(1)));
       manga = result.items.firstOrNull;
     } catch (e) {
-      if (!isNetworkError(e)) rethrow;
-      final offline = await loadOfflineManga(widget.mangaId);
-      if (offline == null) rethrow;
-      return offline;
+      error = e;
     }
-    if (manga == null) {
-      throw StateError('manga not found');
-    }
-    return manga;
+    manga ??= await loadOfflineManga(widget.mangaId);
+    if (manga != null) return manga;
+    throw error ?? StateError('manga not found');
   }
 
   @override

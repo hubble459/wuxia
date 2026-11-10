@@ -82,18 +82,17 @@ Future<void> deleteAllDownloads() async {
   }
 }
 
-/// The full chapter list `MangaDownloader` saved to `chapters.pb`, in its
-/// stored order (reversed: false / newest-first) -- callers reverse as
-/// needed to match whatever order they're after. `null` if there's no usable
-/// local copy: never downloaded, storage not accessible, or a corrupt/
-/// missing `chapters.pb`.
+/// The full chapter list `MangaDownloader` saved to `chapters.pb`, oldest
+/// first (ascending `index`) -- callers reverse as needed to match whatever
+/// order they're after. `null` if there's no usable local copy: never
+/// downloaded, storage not accessible, or a corrupt/missing `chapters.pb`.
 Future<List<ChapterReply>?> loadOfflineChapters(int mangaId) async {
   final dir = await findDownloadedMangaDir(mangaId);
   if (dir == null) return null;
   try {
     final bytes = await downloadStorage.read('$dir/chapters.pb');
     if (bytes == null) return null;
-    return ChaptersReply.fromBuffer(bytes).items;
+    return ChaptersReply.fromBuffer(bytes).items.toList()..sort((a, b) => a.index.compareTo(b.index));
   } catch (_) {
     return null;
   }
