@@ -38,6 +38,7 @@ jobs:
         with:
           context: .
           file: Dockerfile.web
+          build-args: APK_UPGRADE_CACHE_BUST=${{ github.sha }}
           push: true
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:main
           cache-from: type=gha
