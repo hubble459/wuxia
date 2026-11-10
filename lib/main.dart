@@ -70,13 +70,9 @@ GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 void main() async {
   await dotenv.load(fileName: '.env');
   if (kIsWeb) {
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
+    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   } else if (Platform.isAndroid || Platform.isIOS) {
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
+    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   }
   if (!kIsWeb && Platform.isAndroid) {
@@ -88,10 +84,7 @@ void main() async {
         onlyAlertOnce: true,
       ),
       iosNotificationOptions: const IOSNotificationOptions(showNotification: false, playSound: false),
-      foregroundTaskOptions: ForegroundTaskOptions(
-        eventAction: ForegroundTaskEventAction.nothing(),
-        allowAutoRestart: false,
-      ),
+      foregroundTaskOptions: ForegroundTaskOptions(eventAction: ForegroundTaskEventAction.nothing(), allowAutoRestart: false),
     );
   }
   WidgetsFlutterBinding.ensureInitialized();
@@ -184,7 +177,7 @@ class _WuxiaAppState extends State<WuxiaApp> {
           },
         ),
         GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate
+        GlobalWidgetsLocalizations.delegate,
       ],
       locale: Locale(store.getLanguage() ?? 'en'),
       builder: (context, child) => FlutterI18n.rootAppBuilder()(context, child),
@@ -199,7 +192,10 @@ class _WuxiaAppState extends State<WuxiaApp> {
         if (_settingsRoutes.contains(initialRouteName)) {
           return [
             for (final name in ['root_nav', 'settings', if (initialRouteName != 'settings') initialRouteName])
-              MaterialPageRoute(settings: RouteSettings(name: name), builder: namedRoutes[name]!),
+              MaterialPageRoute(
+                settings: RouteSettings(name: name),
+                builder: namedRoutes[name]!,
+              ),
           ];
         }
 
@@ -209,8 +205,9 @@ class _WuxiaAppState extends State<WuxiaApp> {
               ? (BuildContext context) => const SplashScreen()
               : namedRoutes[initialRouteName];
           final settings = RouteSettings(name: initialRouteName);
-          final route =
-              builder != null ? MaterialPageRoute(settings: settings, builder: builder) : generateDynamicRoute(settings);
+          final route = builder != null
+              ? MaterialPageRoute(settings: settings, builder: builder)
+              : generateDynamicRoute(settings);
           return [?route];
         }
 

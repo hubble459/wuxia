@@ -36,10 +36,7 @@ class _ReadingScreenState extends State<ReadingScreen> with AutomaticKeepAliveCl
   final _pageSize = 20;
   String? _orderBy;
 
-  void _filter({
-    String? keyword,
-    String? orderBy,
-  }) {
+  void _filter({String? keyword, String? orderBy}) {
     bool refresh = false;
     if (keyword != null) {
       refresh = true;
@@ -63,9 +60,7 @@ class _ReadingScreenState extends State<ReadingScreen> with AutomaticKeepAliveCl
             controller: _searchController,
             textInputAction: TextInputAction.search,
             onEditingComplete: () {
-              _filter(
-                keyword: _searchController.text,
-              );
+              _filter(keyword: _searchController.text);
             },
             decoration: InputDecoration(
               suffixIcon: Row(
@@ -75,9 +70,7 @@ class _ReadingScreenState extends State<ReadingScreen> with AutomaticKeepAliveCl
                   IconButton(
                     onPressed: () {
                       _searchController.clear();
-                      _filter(
-                        keyword: _searchController.text,
-                      );
+                      _filter(keyword: _searchController.text);
                     },
                     icon: const Icon(Icons.clear),
                   ),
@@ -86,18 +79,13 @@ class _ReadingScreenState extends State<ReadingScreen> with AutomaticKeepAliveCl
                     onPressed: () async {
                       final order = await showMaterialModalBottomSheet<String>(
                         context: context,
-                        builder: (context) => OrderManga(
-                          filterType: FilterType.reading,
-                          defaultValue: _orderBy ?? 'title:ASC',
-                        ),
+                        builder: (context) => OrderManga(filterType: FilterType.reading, defaultValue: _orderBy ?? 'title:ASC'),
                         animationCurve: Curves.easeIn,
                         duration: const Duration(milliseconds: 500),
                         barrierColor: const Color(0x50696969),
                       );
 
-                      _filter(
-                        orderBy: order,
-                      );
+                      _filter(orderBy: order);
                     },
                   ),
                   IconButton(
@@ -105,17 +93,12 @@ class _ReadingScreenState extends State<ReadingScreen> with AutomaticKeepAliveCl
                     onPressed: () async {
                       final keyword = await Navigator.of(context).push<FilterMap>(
                         MaterialPageRoute(
-                          builder: (context) => FilterManga(
-                            filterType: FilterType.reading,
-                            defaultValue: _searchController.text,
-                          ),
+                          builder: (context) => FilterManga(filterType: FilterType.reading, defaultValue: _searchController.text),
                         ),
                       );
                       if (keyword != null) {
                         _searchController.text = keyword.toString();
-                        _filter(
-                          keyword: _searchController.text,
-                        );
+                        _filter(keyword: _searchController.text);
                       }
                     },
                   ),
@@ -144,9 +127,7 @@ class _ReadingScreenState extends State<ReadingScreen> with AutomaticKeepAliveCl
                     fetchNextPage: fetchNextPage,
                     builderDelegate: PagedChildBuilderDelegate(
                       firstPageErrorIndicatorBuilder: (context) => ListErrorIndicator(pagingController: _pagingController),
-                      noItemsFoundIndicatorBuilder: (context) => Center(
-                        child: I18nText('empty'),
-                      ),
+                      noItemsFoundIndicatorBuilder: (context) => Center(child: I18nText('empty')),
                       itemBuilder: (context, manga, index) => MangaItem(
                         key: Key(manga.id.toString()),
                         manga: manga,
@@ -182,13 +163,8 @@ class _ReadingScreenState extends State<ReadingScreen> with AutomaticKeepAliveCl
     if (_pagingController.value.status == PagingStatus.subsequentPageError) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text(
-            'Something went wrong while fetching a new page.',
-          ),
-          action: SnackBarAction(
-            label: 'Retry',
-            onPressed: () => _pagingController.fetchNextPage(),
-          ),
+          content: const Text('Something went wrong while fetching a new page.'),
+          action: SnackBarAction(label: 'Retry', onPressed: () => _pagingController.fetchNextPage()),
         ),
       );
     }
@@ -205,12 +181,14 @@ class _ReadingScreenState extends State<ReadingScreen> with AutomaticKeepAliveCl
   Future<List<MangaReply>> _fetchPage(int page) async {
     _orderBy ??= Store.getStoreInstance().getReadingOrder() ?? 'title:ASC';
 
-    final result = await api.manga.index(PaginateSearchQuery(
-      page: Int64(page),
-      perPage: Int64(_pageSize),
-      search: 'reading:>=0 ${_searchController.text}',
-      order: _orderBy,
-    ));
+    final result = await api.manga.index(
+      PaginateSearchQuery(
+        page: Int64(page),
+        perPage: Int64(_pageSize),
+        search: 'reading:>=0 ${_searchController.text}',
+        order: _orderBy,
+      ),
+    );
 
     return result.items;
   }

@@ -29,10 +29,7 @@ class DeadProviderDialog extends StatelessWidget {
     return SimpleDialog(
       titlePadding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 2.0),
       contentPadding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 16.0),
-      title: Text(
-        FlutterI18n.translate(context, 'dead_provider.title'),
-        textAlign: TextAlign.center,
-      ),
+      title: Text(FlutterI18n.translate(context, 'dead_provider.title'), textAlign: TextAlign.center),
       children: [
         Text(FlutterI18n.translate(context, 'dead_provider.message')),
         const SizedBox(height: 12.0),
@@ -68,10 +65,7 @@ class DeadProviderDialog extends StatelessWidget {
           },
           child: Text(FlutterI18n.translate(context, 'dead_provider.search_alternatives')),
         ),
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: const Text('OK'),
-        ),
+        TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('OK')),
       ],
     );
   }

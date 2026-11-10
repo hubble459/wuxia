@@ -30,10 +30,7 @@ class _SearchScreenState extends State<SearchScreen> with AutomaticKeepAliveClie
   Future<SearchReply> _searchResults = Future.value(SearchReply.create());
   String _keyword = '';
 
-  void _filter({
-    String? keyword,
-    List<String>? hostnames,
-  }) async {
+  void _filter({String? keyword, List<String>? hostnames}) async {
     bool refresh = false;
 
     if (keyword != null && keyword != _keyword) {
@@ -42,16 +39,13 @@ class _SearchScreenState extends State<SearchScreen> with AutomaticKeepAliveClie
     }
     if (hostnames != null && !eq(hostnames, API.loggedIn.preferredHostnames)) {
       // Asynchronously update user's preferred hostnames
-      (() async => API.loggedIn = await api.user.update(UserUpdateRequest(
-            preferredHostnames: hostnames,
-          )))();
+      (() async => API.loggedIn = await api.user.update(UserUpdateRequest(preferredHostnames: hostnames)))();
       refresh = true;
     }
     if (refresh) {
-      _searchResults = api.search.manga(SearchRequest(
-        keyword: _keyword,
-        hostnames: hostnames ?? API.loggedIn.preferredHostnames,
-      ));
+      _searchResults = api.search.manga(
+        SearchRequest(keyword: _keyword, hostnames: hostnames ?? API.loggedIn.preferredHostnames),
+      );
       setState(() {});
     }
   }
@@ -118,11 +112,7 @@ class _SearchScreenState extends State<SearchScreen> with AutomaticKeepAliveClie
                 if (snapshot.hasData) {
                   final results = snapshot.requireData.items;
                   if (results.isEmpty) {
-                    return Expanded(
-                      child: Center(
-                        child: I18nText('search.no_results'),
-                      ),
-                    );
+                    return Expanded(child: Center(child: I18nText('search.no_results')));
                   }
                   return Expanded(
                     child: Scrollbar(
@@ -132,28 +122,19 @@ class _SearchScreenState extends State<SearchScreen> with AutomaticKeepAliveClie
                       child: ListView.builder(
                         controller: _scrollController,
                         itemCount: results.length,
-                        itemBuilder: (context, index) => SearchMangaItem(
-                          searchManga: results[index],
-                          index: index,
-                          existingMangaId: widget.existingMangaId,
-                        ),
+                        itemBuilder: (context, index) =>
+                            SearchMangaItem(searchManga: results[index], index: index, existingMangaId: widget.existingMangaId),
                       ),
                     ),
                   );
                 } else {
-                  return Center(
-                    child: Text(snapshot.hasError ? snapshot.error.toString() : 'Error'),
-                  );
+                  return Center(child: Text(snapshot.hasError ? snapshot.error.toString() : 'Error'));
                 }
               } else {
-                return const Expanded(
-                  child: Center(
-                    child: CircularProgressIndicator(),
-                  ),
-                );
+                return const Expanded(child: Center(child: CircularProgressIndicator()));
               }
             },
-          )
+          ),
         ],
       ),
     );

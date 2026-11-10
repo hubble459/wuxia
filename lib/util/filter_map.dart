@@ -6,9 +6,7 @@ class FilterOptions {
   final List<String> included;
   final List<String> excluded;
 
-  FilterOptions({List<String>? included, List<String>? excluded})
-      : included = included ?? [],
-        excluded = included ?? [];
+  FilterOptions({List<String>? included, List<String>? excluded}) : included = included ?? [], excluded = included ?? [];
 
   String intoString(String type) {
     String str = '';
@@ -29,12 +27,7 @@ class _Field {
   final String value;
   final String? name;
 
-  const _Field({
-    required this.name,
-    required this.value,
-    required this.exact,
-    required this.exclude,
-  });
+  const _Field({required this.name, required this.value, required this.exact, required this.exclude});
 
   @override
   String toString() {
@@ -93,12 +86,7 @@ class FilterMap {
       if (char == ' ') {
         if (!inside) {
           if (value.isNotEmpty) {
-            fields.add(_Field(
-              exclude: exclude,
-              name: name,
-              value: value,
-              exact: exact,
-            ));
+            fields.add(_Field(exclude: exclude, name: name, value: value, exact: exact));
           }
 
           name = null;
@@ -130,12 +118,7 @@ class FilterMap {
     }
 
     if (value.isNotEmpty) {
-      fields.add(_Field(
-        exclude: exclude,
-        name: name,
-        value: value,
-        exact: exact,
-      ));
+      fields.add(_Field(exclude: exclude, name: name, value: value, exact: exact));
     }
 
     for (final field in fields) {

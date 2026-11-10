@@ -5,11 +5,7 @@ import 'package:wuxia/gen/rumgap/v1/meta.pb.dart';
 import 'package:wuxia/partial/simple_future_builder.dart';
 import 'package:wuxia/util/filter_map.dart';
 
-enum FilterType {
-  reading,
-  manga,
-  online,
-}
+enum FilterType { reading, manga, online }
 
 class FilterManga extends StatefulWidget {
   final FilterType filterType;
@@ -44,8 +40,8 @@ class _FilterMangaState extends State<FilterManga> {
         option: widget.filterType == FilterType.manga
             ? MetaHostnamesOption.HostnamesManga
             : widget.filterType == FilterType.reading
-                ? MetaHostnamesOption.HostnamesReading
-                : MetaHostnamesOption.HostnamesOnline,
+            ? MetaHostnamesOption.HostnamesReading
+            : MetaHostnamesOption.HostnamesOnline,
       ),
     );
     _globalFieldController.text = filterMap.global ?? '';
@@ -69,9 +65,7 @@ class _FilterMangaState extends State<FilterManga> {
         }
       },
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Search Filter'),
-        ),
+        appBar: AppBar(title: const Text('Search Filter')),
         body: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
@@ -85,10 +79,7 @@ class _FilterMangaState extends State<FilterManga> {
                             onChanged: (value) => filterMap.global = value,
                             keyboardType: TextInputType.text,
                             textInputAction: TextInputAction.done,
-                            decoration: const InputDecoration(
-                              label: Text('Global Keywords'),
-                              border: OutlineInputBorder(),
-                            ),
+                            decoration: const InputDecoration(label: Text('Global Keywords'), border: OutlineInputBorder()),
                           ),
                           const SizedBox(height: 10),
                           TextField(
@@ -96,10 +87,7 @@ class _FilterMangaState extends State<FilterManga> {
                             onChanged: (value) => filterMap.title = value,
                             keyboardType: TextInputType.text,
                             textInputAction: TextInputAction.done,
-                            decoration: const InputDecoration(
-                              label: Text('Title Keywords'),
-                              border: OutlineInputBorder(),
-                            ),
+                            decoration: const InputDecoration(label: Text('Title Keywords'), border: OutlineInputBorder()),
                           ),
                           const SizedBox(height: 10),
                           TextField(
@@ -107,17 +95,11 @@ class _FilterMangaState extends State<FilterManga> {
                             onChanged: (value) => filterMap.description = value,
                             keyboardType: TextInputType.text,
                             textInputAction: TextInputAction.done,
-                            decoration: const InputDecoration(
-                              label: Text('Description Keywords'),
-                              border: OutlineInputBorder(),
-                            ),
+                            decoration: const InputDecoration(label: Text('Description Keywords'), border: OutlineInputBorder()),
                           ),
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 8.0),
-                            child: Text(
-                              'Genres',
-                              style: Theme.of(context).textTheme.titleMedium,
-                            ),
+                            child: Text('Genres', style: Theme.of(context).textTheme.titleMedium),
                           ),
                           SimpleFutureBuilder<MetaReply>(
                             future: tags,
@@ -147,11 +129,9 @@ class _FilterMangaState extends State<FilterManga> {
                                           color: filterMap.genres.included.contains(item)
                                               ? selectedColor
                                               : filterMap.genres.excluded.contains(item)
-                                                  ? excludeColor
-                                                  : unselectedColor,
-                                          borderRadius: const BorderRadius.all(
-                                            Radius.circular(5.0),
-                                          ),
+                                              ? excludeColor
+                                              : unselectedColor,
+                                          borderRadius: const BorderRadius.all(Radius.circular(5.0)),
                                         ),
                                         child: Text(item),
                                       ),
@@ -165,10 +145,7 @@ class _FilterMangaState extends State<FilterManga> {
                       : []),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: Text(
-                      'Hosts',
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
+                    child: Text('Hosts', style: Theme.of(context).textTheme.titleMedium),
                   ),
                   SimpleFutureBuilder<MetaReply>(
                     future: hosts,
@@ -204,11 +181,9 @@ class _FilterMangaState extends State<FilterManga> {
                                   color: filterMap.hosts.included.contains(item)
                                       ? selectedColor
                                       : filterMap.hosts.excluded.contains(item)
-                                          ? excludeColor
-                                          : unselectedColor,
-                                  borderRadius: const BorderRadius.all(
-                                    Radius.circular(5.0),
-                                  ),
+                                      ? excludeColor
+                                      : unselectedColor,
+                                  borderRadius: const BorderRadius.all(Radius.circular(5.0)),
                                 ),
                                 child: Text(item),
                               ),

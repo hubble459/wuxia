@@ -11,11 +11,8 @@ import 'package:wuxia/partial/image_error_placeholder.dart';
 /// searches external sites and creates/attaches sources from a scraped URL), this returns
 /// an already-tracked manga, for admin merge/move-source flows that need an existing target.
 Future<MangaReply?> showMangaPickerDialog(BuildContext context, {required int excludeMangaId}) {
-  return Navigator.of(context).push<MangaReply>(
-    MaterialPageRoute(
-      builder: (context) => _MangaPickerScreen(excludeMangaId: excludeMangaId),
-    ),
-  );
+  return Navigator.of(context)
+      .push<MangaReply>(MaterialPageRoute(builder: (context) => _MangaPickerScreen(excludeMangaId: excludeMangaId)));
 }
 
 class _MangaPickerScreen extends StatefulWidget {
@@ -58,10 +55,7 @@ class _MangaPickerScreenState extends State<_MangaPickerScreen> {
           autofocus: true,
           textInputAction: TextInputAction.search,
           onSubmitted: _search,
-          decoration: InputDecoration(
-            hintText: FlutterI18n.translate(context, 'search.search_manga'),
-            border: InputBorder.none,
-          ),
+          decoration: InputDecoration(hintText: FlutterI18n.translate(context, 'search.search_manga'), border: InputBorder.none),
         ),
       ),
       body: FutureBuilder<List<MangaReply>>(

@@ -27,14 +27,10 @@ class NewPasswordField extends StatelessWidget {
       obscureText: true,
       textInputAction: textInputAction,
       onFieldSubmitted: (_) => onSubmitted?.call(),
-      validator: ValidatorBuilder.translate(context, labelKey)
-          .required()
-          .minLength(8)
-          .maxLength(255)
-          .hasNumber()
-          .hasSpecialCharacter()
-          .hasUppercase()
-          .build(),
+      validator: ValidatorBuilder.translate(
+        context,
+        labelKey,
+      ).required().minLength(8).maxLength(255).hasNumber().hasSpecialCharacter().hasUppercase().build(),
       decoration: InputDecoration(label: I18nText(labelKey)),
     );
   }

@@ -3,24 +3,11 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:wuxia/partial/filter_manga.dart';
 import 'package:wuxia/util/store.dart';
 
-const mangaOrderBy = [
-  'title',
-  'description',
-  'last',
-  'next',
-  'chapters',
-  'url',
-];
+const mangaOrderBy = ['title', 'description', 'last', 'next', 'chapters', 'url'];
 
-const readingOrderBy = [
-  'progress',
-  'last_read',
-];
+const readingOrderBy = ['progress', 'last_read'];
 
-const orderBy = [
-  'ASC',
-  'DESC',
-];
+const orderBy = ['ASC', 'DESC'];
 
 class OrderManga extends StatefulWidget {
   final FilterType filterType;
@@ -79,10 +66,7 @@ class _OrderMangaState extends State<OrderManga> {
                   },
                   items: mangaOrderBy
                       .followedBy(widget.filterType == FilterType.reading ? readingOrderBy : [])
-                      .map((value) => DropdownMenuItem(
-                            value: value,
-                            child: Text(value),
-                          ))
+                      .map((value) => DropdownMenuItem(value: value, child: Text(value)))
                       .toList(),
                 ),
               ),
@@ -96,14 +80,8 @@ class _OrderMangaState extends State<OrderManga> {
                   },
                   value: _selectedOrderType,
                   items: const [
-                    DropdownMenuItem(
-                      value: 'ASC',
-                      child: Text('Ascending'),
-                    ),
-                    DropdownMenuItem(
-                      value: 'DESC',
-                      child: Text('Descending'),
-                    ),
+                    DropdownMenuItem(value: 'ASC', child: Text('Ascending')),
+                    DropdownMenuItem(value: 'DESC', child: Text('Descending')),
                   ],
                 ),
               ),

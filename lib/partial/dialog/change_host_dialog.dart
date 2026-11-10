@@ -40,10 +40,7 @@ class _ChangeAPIDialogState extends State<ChangeAPIDialog> {
   @override
   Widget build(BuildContext context) {
     return SimpleDialog(
-      title: Text(
-        FlutterI18n.translate(context, 'login.change_host'),
-        textAlign: TextAlign.center,
-      ),
+      title: Text(FlutterI18n.translate(context, 'login.change_host'), textAlign: TextAlign.center),
       titlePadding: const EdgeInsets.symmetric(vertical: 4.0),
       contentPadding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 16.0),
       children: [
@@ -53,9 +50,7 @@ class _ChangeAPIDialogState extends State<ChangeAPIDialog> {
             padding: const EdgeInsets.only(bottom: 8.0),
             child: Text(
               _error ?? '',
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.error,
-              ),
+              style: TextStyle(color: Theme.of(context).colorScheme.error),
               textAlign: TextAlign.center,
             ),
           ),
@@ -73,16 +68,17 @@ class _ChangeAPIDialogState extends State<ChangeAPIDialog> {
               _error = null;
             }),
             decoration: InputDecoration(
-                label: I18nText('basic.url'),
-                isDense: true,
-                suffixIcon: IconButton(
-                  icon: const Icon(Icons.restore),
-                  onPressed: () async {
-                    api.reset();
-                    await Store.getStoreInstance().setApiHost(api.getApiURL());
-                    _urlController.text = api.getApiURL();
-                  },
-                )),
+              label: I18nText('basic.url'),
+              isDense: true,
+              suffixIcon: IconButton(
+                icon: const Icon(Icons.restore),
+                onPressed: () async {
+                  api.reset();
+                  await Store.getStoreInstance().setApiHost(api.getApiURL());
+                  _urlController.text = api.getApiURL();
+                },
+              ),
+            ),
           ),
         ),
         ElevatedButton(
@@ -106,9 +102,7 @@ class _ChangeAPIDialogState extends State<ChangeAPIDialog> {
           child: I18nText('login.test_connection'),
         ),
         ElevatedButton(
-          style: ButtonStyle(
-            backgroundColor: WidgetStatePropertyAll(Theme.of(context).colorScheme.secondary),
-          ),
+          style: ButtonStyle(backgroundColor: WidgetStatePropertyAll(Theme.of(context).colorScheme.secondary)),
           onPressed: tested
               ? () async {
                   if (fkUrl.currentState?.validate() == true) {

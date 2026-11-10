@@ -29,13 +29,7 @@ class MangaChapterScreen extends StatefulWidget {
 
   final double? initialFraction;
 
-  const MangaChapterScreen({
-    super.key,
-    required this.manga,
-    required this.chapter,
-    required this.source,
-    this.initialFraction,
-  });
+  const MangaChapterScreen({super.key, required this.manga, required this.chapter, required this.source, this.initialFraction});
 
   @override
   State<MangaChapterScreen> createState() => _MangaChapterScreenState();
@@ -98,8 +92,9 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
   Future<List<String>?> _localPageSources() async {
     if (!downloadsSupported) return null;
     try {
-      return await downloadStorage
-          .loadPageSources('${mangaFolderName(widget.manga.title)}/${chapterFolderName(_chapter.number)}');
+      return await downloadStorage.loadPageSources(
+        '${mangaFolderName(widget.manga.title)}/${chapterFolderName(_chapter.number)}',
+      );
     } catch (_) {
       return null;
     }
@@ -133,11 +128,13 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
     final dataSaver = Store.getStoreInstance().getDataSaver() ?? false;
     setState(() {
       _images = reply.items
-          .map((page) => _ReaderPage(
-                _pageUrl(page.url, dataSaver: dataSaver),
-                width: page.hasWidth() ? page.width : null,
-                height: page.hasHeight() ? page.height : null,
-              ))
+          .map(
+            (page) => _ReaderPage(
+              _pageUrl(page.url, dataSaver: dataSaver),
+              width: page.hasWidth() ? page.width : null,
+              height: page.hasHeight() ? page.height : null,
+            ),
+          )
           .toList();
       _isOffline = false;
     });
@@ -180,12 +177,9 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
 
   Future<void> updateOffset({required int chapterId, required int page, required int pixels}) async {
     try {
-      await api.reading.updateChapterOffset(UpdateChapterOffsetRequest(
-        chapterId: chapterId,
-        page: page,
-        pixels: pixels,
-        fraction: pixels / 100.0,
-      ));
+      await api.reading.updateChapterOffset(
+        UpdateChapterOffsetRequest(chapterId: chapterId, page: page, pixels: pixels, fraction: pixels / 100.0),
+      );
     } catch (_) {}
   }
 
@@ -194,25 +188,23 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
     if (selected == null || !mounted) return;
 
     try {
-      final newChapter = await api.chapter.findEquivalent(FindEquivalentRequest(
-        canonicalChapterId: _chapter.canonicalChapterId,
-        mangaSourceId: selected.id,
-      ));
+      final newChapter = await api.chapter.findEquivalent(
+        FindEquivalentRequest(canonicalChapterId: _chapter.canonicalChapterId, mangaSourceId: selected.id),
+      );
 
       double fraction = 0.0;
       try {
-        final crossOffset =
-            await api.reading.getCrossSourceOffset(GetCrossSourceOffsetRequest(canonicalChapterId: _chapter.canonicalChapterId));
+        final crossOffset = await api.reading.getCrossSourceOffset(
+          GetCrossSourceOffsetRequest(canonicalChapterId: _chapter.canonicalChapterId),
+        );
         fraction = crossOffset.fraction;
       } catch (_) {}
 
       widget.manga.readingProgress = newChapter.index.toInt();
       try {
-        await api.reading.update(ReadingPatchRequest(
-          mangaId: widget.manga.id,
-          progress: widget.manga.readingProgress,
-          chapterId: newChapter.id,
-        ));
+        await api.reading.update(
+          ReadingPatchRequest(mangaId: widget.manga.id, progress: widget.manga.readingProgress, chapterId: newChapter.id),
+        );
       } on GrpcError catch (e) {
         // TODO: build a UI for LinkChapter/UnlinkChapter so this is fixable
         // in-app instead of just silently swallowed.
@@ -242,11 +234,7 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
       onPopInvokedWithResult: (didPop, result) {
         if (!didPop) {
           _offsetDebounce?.cancel();
-          updateOffset(
-            chapterId: _chapter.id,
-            page: _lastOffsetPage,
-            pixels: _lastOffsetPixels,
-          );
+          updateOffset(chapterId: _chapter.id, page: _lastOffsetPage, pixels: _lastOffsetPixels);
           Navigator.of(context).pop(result);
         }
       },
@@ -262,10 +250,12 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Tooltip(
-                    message:
-                        _chapter.title.isEmpty ? 'Chapter ${_chapter.number.toString().replaceFirst('.0', '')}' : _chapter.title,
+                    message: _chapter.title.isEmpty
+                        ? 'Chapter ${_chapter.number.toString().replaceFirst('.0', '')}'
+                        : _chapter.title,
                     child: Text(
-                        _chapter.title.isEmpty ? 'Chapter ${_chapter.number.toString().replaceFirst('.0', '')}' : _chapter.title),
+                      _chapter.title.isEmpty ? 'Chapter ${_chapter.number.toString().replaceFirst('.0', '')}' : _chapter.title,
+                    ),
                   ),
                   Text(
                     _chapter.hasPosted()
@@ -291,10 +281,7 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
                 if (_isOffline)
                   const Tooltip(
                     message: 'Offline',
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 8),
-                      child: Icon(Icons.wifi_off),
-                    ),
+                    child: Padding(padding: EdgeInsets.symmetric(horizontal: 8), child: Icon(Icons.wifi_off)),
                   ),
                 PopupMenuButton<String>(
                   tooltip: FlutterI18n.translate(context, 'chapter.more_options'),
@@ -348,14 +335,18 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
                       value: 'goto_top',
                       child: ListTile(
                         leading: const Icon(Icons.arrow_upward),
-                        title: Text(FlutterI18n.translate(context, _isPagedMode ? 'chapter.goto_first_page' : 'chapter.goto_top')),
+                        title: Text(
+                          FlutterI18n.translate(context, _isPagedMode ? 'chapter.goto_first_page' : 'chapter.goto_top'),
+                        ),
                       ),
                     ),
                     PopupMenuItem(
                       value: 'goto_bottom',
                       child: ListTile(
                         leading: const Icon(Icons.arrow_downward),
-                        title: Text(FlutterI18n.translate(context, _isPagedMode ? 'chapter.goto_last_page' : 'chapter.goto_bottom')),
+                        title: Text(
+                          FlutterI18n.translate(context, _isPagedMode ? 'chapter.goto_last_page' : 'chapter.goto_bottom'),
+                        ),
                       ),
                     ),
                   ],
@@ -393,9 +384,10 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Visibility(
-                                    visible: widget.manga.readingProgress > 1,
-                                    child: Text((widget.manga.readingProgress - 1).toString())),
-                                const Icon(Icons.navigate_before)
+                                  visible: widget.manga.readingProgress > 1,
+                                  child: Text((widget.manga.readingProgress - 1).toString()),
+                                ),
+                                const Icon(Icons.navigate_before),
                               ],
                             ),
                           ),
@@ -414,8 +406,9 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
                               children: [
                                 const Icon(Icons.navigate_next),
                                 Visibility(
-                                    visible: widget.manga.readingProgress < widget.manga.countChapters.toInt(),
-                                    child: Text((widget.manga.readingProgress + 1).toString()))
+                                  visible: widget.manga.readingProgress < widget.manga.countChapters.toInt(),
+                                  child: Text((widget.manga.readingProgress + 1).toString()),
+                                ),
                               ],
                             ),
                           ),
@@ -628,19 +621,14 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
               return SizedBox.fromSize(
                 size: const Size.fromHeight(500),
                 child: Center(
-                  child: CircularProgressIndicator(
-                    value: total != null ? loadingProgress.cumulativeBytesLoaded / total : null,
-                  ),
+                  child: CircularProgressIndicator(value: total != null ? loadingProgress.cumulativeBytesLoaded / total : null),
                 ),
               );
             },
             errorBuilder: (context, error, stackTrace) {
               // ignore: avoid_print
               print('Image failed to load: ${page.url}: $error');
-              return SizedBox.fromSize(
-                size: const Size.fromHeight(500),
-                child: const ImageErrorPlaceholder(),
-              );
+              return SizedBox.fromSize(size: const Size.fromHeight(500), child: const ImageErrorPlaceholder());
             },
           );
 
@@ -665,12 +653,7 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
   Future<bool> _goToProgress() async {
     ChapterReply chapter;
     try {
-      chapter = await api.chapter.get(
-        ChapterRequest(
-          mangaSourceId: widget.source.id,
-          index: widget.manga.readingProgress,
-        ),
-      );
+      chapter = await api.chapter.get(ChapterRequest(mangaSourceId: widget.source.id, index: widget.manga.readingProgress));
     } catch (e) {
       final offline = await loadOfflineChapters(widget.manga.id);
       final found = offline?.firstWhereOrNull((c) => c.index.toInt() == widget.manga.readingProgress);
@@ -694,15 +677,13 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
 
     await Navigator.of(context).pushReplacement(
       PageRouteBuilder(
-        settings: RouteSettings(name: chapterRouteNameFor(mangaId: widget.manga.id, chapter: chapter)),
+        settings: RouteSettings(
+          name: chapterRouteNameFor(mangaId: widget.manga.id, chapter: chapter),
+        ),
         transitionDuration: Duration.zero,
         reverseTransitionDuration: Duration.zero,
-        pageBuilder: (context, _, _) => MangaChapterScreen(
-          manga: widget.manga,
-          chapter: chapter,
-          source: widget.source,
-          initialFraction: initialFraction,
-        ),
+        pageBuilder: (context, _, _) =>
+            MangaChapterScreen(manga: widget.manga, chapter: chapter, source: widget.source, initialFraction: initialFraction),
       ),
     );
   }

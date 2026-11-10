@@ -109,19 +109,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _locale ??= FlutterI18n.currentLocale(context)?.languageCode;
 
     return Scaffold(
-      appBar: AppBar(
-        title: I18nText('settings.title'),
-      ),
+      appBar: AppBar(title: I18nText('settings.title')),
       body: ResponsiveContent(
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: I18nText('settings.misc'),
-              ),
+              Padding(padding: const EdgeInsets.all(8.0), child: I18nText('settings.misc')),
               SwitchListTile(
                 value: store.getDataSaver() ?? false,
                 onChanged: (v) {
@@ -133,44 +128,45 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ListTile(
                 title: I18nText('settings.language'),
                 trailing: DropdownButton<String>(
-                    value: _locale,
-                    items: languages
-                        .map(
-                          (locale) => DropdownMenuItem<String>(
-                            value: locale.languageCode,
-                            child: Text(locale.languageCode),
-                          ),
-                        )
-                        .toList(),
-                    onChanged: (locale) async {
-                      if (FlutterI18n.currentLocale(context)?.languageCode != locale) {
-                        _locale = locale;
+                  value: _locale,
+                  items: languages
+                      .map((locale) => DropdownMenuItem<String>(value: locale.languageCode, child: Text(locale.languageCode)))
+                      .toList(),
+                  onChanged: (locale) async {
+                    if (FlutterI18n.currentLocale(context)?.languageCode != locale) {
+                      _locale = locale;
 
-                        await store.setLanguage(locale!);
-                        if (context.mounted) {
-                          await FlutterI18n.refresh(context, Locale(locale));
-                          await Jiffy.setLocale(locale);
+                      await store.setLanguage(locale!);
+                      if (context.mounted) {
+                        await FlutterI18n.refresh(context, Locale(locale));
+                        await Jiffy.setLocale(locale);
 
-                          setState(() {});
-                        }
+                        setState(() {});
                       }
-                    }),
+                    }
+                  },
+                ),
               ),
               ListTile(
                 title: I18nText('settings.reading_mode'),
                 trailing: DropdownButton<String>(
-                    value: store.getReadingMode(),
-                    items: [
-                      DropdownMenuItem<String>(
-                          value: 'webtoon', child: Text(FlutterI18n.translate(context, 'settings.reading_mode_webtoon'))),
-                      DropdownMenuItem<String>(
-                          value: 'paged', child: Text(FlutterI18n.translate(context, 'settings.reading_mode_paged'))),
-                    ],
-                    onChanged: (mode) async {
-                      if (mode == null) return;
-                      await store.setReadingMode(mode);
-                      setState(() {});
-                    }),
+                  value: store.getReadingMode(),
+                  items: [
+                    DropdownMenuItem<String>(
+                      value: 'webtoon',
+                      child: Text(FlutterI18n.translate(context, 'settings.reading_mode_webtoon')),
+                    ),
+                    DropdownMenuItem<String>(
+                      value: 'paged',
+                      child: Text(FlutterI18n.translate(context, 'settings.reading_mode_paged')),
+                    ),
+                  ],
+                  onChanged: (mode) async {
+                    if (mode == null) return;
+                    await store.setReadingMode(mode);
+                    setState(() {});
+                  },
+                ),
               ),
               ListTile(
                 title: I18nText('settings.statistics.title'),
@@ -193,22 +189,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   },
                 ),
               if (!kIsWeb)
-                ListTile(
-                  title: I18nText('settings.check_update'),
-                  onTap: () => launchUrlString(githubWuxiaReleasesUrl),
-                ),
+                ListTile(title: I18nText('settings.check_update'), onTap: () => launchUrlString(githubWuxiaReleasesUrl)),
               if (downloadsSupported) ...[
                 const Divider(),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: I18nText('settings.download'),
-                ),
+                Padding(padding: const EdgeInsets.all(8.0), child: I18nText('settings.download')),
                 ListTile(
                   title: I18nText('settings.download_directory'),
                   subtitle: Text(switch (_downloadStatus) {
                     DownloadStorageStatus.needsPermission => FlutterI18n.translate(
-                        context, 'downloads.reconnect_message',
-                        translationParams: {'folder': _downloadDir ?? ''}),
+                      context,
+                      'downloads.reconnect_message',
+                      translationParams: {'folder': _downloadDir ?? ''},
+                    ),
                     _ when downloadStorage.isPrivate =>
                       '${_downloadDir ?? '…'}\n${FlutterI18n.translate(context, 'downloads.browser_storage_hint')}',
                     _ => _downloadDir ?? '…',
@@ -221,8 +213,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           child: Text(FlutterI18n.translate(context, 'downloads.reconnect')),
                         )
                       : downloadStorage.canPickLocation
-                          ? const Icon(Icons.folder_open)
-                          : null,
+                      ? const Icon(Icons.folder_open)
+                      : null,
                   onTap: downloadStorage.canPickLocation
                       ? () async {
                           if (await downloadStorage.pickLocation()) _loadDownloadInfo();
@@ -253,36 +245,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text(API.loggedIn.username),
-                        Text(API.loggedIn.email),
-                      ],
+                      children: [Text(API.loggedIn.username), Text(API.loggedIn.email)],
                     ),
                   ],
                 ),
               ),
-              ListTile(
-                title: I18nText('settings.edit_account'),
-                onTap: () {},
-              ),
+              ListTile(title: I18nText('settings.edit_account'), onTap: () {}),
               ListTile(
                 title: I18nText('settings.change_password.title'),
                 onTap: () async {
-                  final changed = await showDialog<bool>(
-                    context: context,
-                    builder: (context) => const ChangePasswordDialog(),
-                  );
+                  final changed = await showDialog<bool>(context: context, builder: (context) => const ChangePasswordDialog());
                   if (changed != true || !context.mounted) return;
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: I18nText('settings.change_password.changed')),
-                  );
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: I18nText('settings.change_password.changed')));
                 },
               ),
               ListTile(
-                title: Text(
-                  FlutterI18n.translate(context, 'settings.logout'),
-                  style: const TextStyle(color: Colors.red),
-                ),
+                title: Text(FlutterI18n.translate(context, 'settings.logout'), style: const TextStyle(color: Colors.red)),
                 onTap: () async {
                   Store.getStoreInstance().removeToken();
                   API.token = null;
@@ -294,10 +272,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 },
               ),
               ListTile(
-                title: Text(
-                  FlutterI18n.translate(context, 'settings.remove_account'),
-                  style: const TextStyle(color: Colors.red),
-                ),
+                title: Text(FlutterI18n.translate(context, 'settings.remove_account'), style: const TextStyle(color: Colors.red)),
                 onTap: () {},
               ),
               if (_packageInfo != null)
@@ -305,10 +280,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   padding: const EdgeInsets.all(8.0),
                   child: Center(
                     child: Text(
-                      FlutterI18n.translate(context, 'settings.version', translationParams: {
-                        'version': _packageInfo!.version,
-                        'build': _packageInfo!.buildNumber,
-                      }),
+                      FlutterI18n.translate(
+                        context,
+                        'settings.version',
+                        translationParams: {'version': _packageInfo!.version, 'build': _packageInfo!.buildNumber},
+                      ),
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey),
                     ),
                   ),

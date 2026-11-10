@@ -60,11 +60,13 @@ class MangaDownloader {
   Future<List<ChapterReply>> _fetchAllChapters(int totalChapters) async {
     final allChapters = <ChapterReply>[];
     for (var page = 0; allChapters.length < totalChapters; page++) {
-      final result = await api.chapter.index(PaginateChapterQuery(
-        mangaSourceId: source.id,
-        reversed: true,
-        paginateQuery: PaginateQuery(page: Int64(page), perPage: Int64(totalChapters)),
-      ));
+      final result = await api.chapter.index(
+        PaginateChapterQuery(
+          mangaSourceId: source.id,
+          reversed: true,
+          paginateQuery: PaginateQuery(page: Int64(page), perPage: Int64(totalChapters)),
+        ),
+      );
       if (result.items.isEmpty) break;
       allChapters.addAll(result.items);
     }
@@ -111,8 +113,7 @@ class MangaDownloader {
 
   Future<void> download(BuildContext context) async {
     if (!downloadsSupported) return;
-    if (await downloadStorage.status() == DownloadStorageStatus.needsPermission &&
-        !await downloadStorage.requestPermission()) {
+    if (await downloadStorage.status() == DownloadStorageStatus.needsPermission && !await downloadStorage.requestPermission()) {
       return;
     }
     if (!context.mounted) return;
@@ -352,14 +353,8 @@ class MangaDownloader {
             title: Text(FlutterI18n.translate(ctx, 'manga.download-failed')),
             content: Text(error.toString()),
             actions: [
-              TextButton(
-                onPressed: () => Navigator.of(ctx).pop(false),
-                child: Text(FlutterI18n.translate(ctx, 'basic.cancel')),
-              ),
-              TextButton(
-                onPressed: () => Navigator.of(ctx).pop(true),
-                child: Text(FlutterI18n.translate(ctx, 'basic.retry')),
-              ),
+              TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: Text(FlutterI18n.translate(ctx, 'basic.cancel'))),
+              TextButton(onPressed: () => Navigator.of(ctx).pop(true), child: Text(FlutterI18n.translate(ctx, 'basic.retry'))),
             ],
           ),
         ) ??

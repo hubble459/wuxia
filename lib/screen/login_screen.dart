@@ -74,10 +74,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   ResponseFuture<UserTokenReply> login() {
-    return api.user.login(UserRequest(
-      username: uController.text,
-      password: pController.text,
-    ));
+    return api.user.login(UserRequest(username: uController.text, password: pController.text));
   }
 
   void requestAccount() {
@@ -102,10 +99,7 @@ class _LoginScreenState extends State<LoginScreen> {
             IconButton(
               icon: const Icon(Icons.api),
               onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (context) => const ChangeAPIDialog(),
-                );
+                showDialog(context: context, builder: (context) => const ChangeAPIDialog());
               },
             ),
           ],
@@ -122,19 +116,13 @@ class _LoginScreenState extends State<LoginScreen> {
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      Text(
-                        FlutterI18n.translate(context, 'login.welcome'),
-                        style: Theme.of(context).textTheme.headlineMedium,
-                      ),
+                      Text(FlutterI18n.translate(context, 'login.welcome'), style: Theme.of(context).textTheme.headlineMedium),
                       ...(error != null
                           ? [
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                                  error!,
-                                  style: const TextStyle(color: Colors.red),
-                                ),
-                              )
+                                child: Text(error!, style: const TextStyle(color: Colors.red)),
+                              ),
                             ]
                           : []),
                       Form(
@@ -142,16 +130,13 @@ class _LoginScreenState extends State<LoginScreen> {
                         child: Column(
                           children: [
                             TextFormField(
-                              validator: ValidatorBuilder.translate(context, 'login.username')
-                                  .required()
-                                  .minLength(3)
-                                  .maxLength(20)
-                                  .build(),
+                              validator: ValidatorBuilder.translate(
+                                context,
+                                'login.username',
+                              ).required().minLength(3).maxLength(20).build(),
                               controller: uController,
                               textInputAction: TextInputAction.next,
-                              decoration: InputDecoration(
-                                label: I18nText('login.username'),
-                              ),
+                              decoration: InputDecoration(label: I18nText('login.username')),
                             ),
                             const SizedBox(height: Constants.padding),
                             TextFormField(
@@ -168,9 +153,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               textInputAction: TextInputAction.done,
                               onFieldSubmitted: (password) => submit(),
                               controller: pController,
-                              decoration: InputDecoration(
-                                label: I18nText('login.password'),
-                              ),
+                              decoration: InputDecoration(label: I18nText('login.password')),
                             ),
                             const SizedBox(height: 20),
                             Padding(
@@ -187,9 +170,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     child: IconButton(
                                       color: Colors.white,
                                       onPressed: submit,
-                                      icon: const Icon(
-                                        Icons.arrow_forward,
-                                      ),
+                                      icon: const Icon(Icons.arrow_forward),
                                     ),
                                   ),
                                 ],
@@ -205,16 +186,14 @@ class _LoginScreenState extends State<LoginScreen> {
                           child: Text(
                             FlutterI18n.translate(context, 'login.request_account'),
                             textAlign: TextAlign.left,
-                            style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                                  decoration: TextDecoration.underline,
-                                ),
+                            style: Theme.of(context).textTheme.bodyLarge!.copyWith(decoration: TextDecoration.underline),
                           ),
                         ),
                       ),
                     ],
                   ),
                 ),
-              )
+              ),
             ],
           ),
         ),

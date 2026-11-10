@@ -1,4 +1,3 @@
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
@@ -339,10 +338,7 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
               builder: (ctx) => SimpleDialog(
                 title: Text(FlutterI18n.translate(ctx, 'manga.search-alternatives')),
                 children: titles
-                    .map((t) => SimpleDialogOption(
-                          onPressed: () => Navigator.of(ctx).pop(t),
-                          child: Text(t),
-                        ))
+                    .map((t) => SimpleDialogOption(onPressed: () => Navigator.of(ctx).pop(t), child: Text(t)))
                     .toList(),
               ),
             );
@@ -390,39 +386,24 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
           }
         },
         itemBuilder: (_) => [
-          PopupMenuItem(
-            value: _MangaMenuAction.addSource,
-            child: Text(FlutterI18n.translate(context, 'manga.add-source')),
-          ),
+          PopupMenuItem(value: _MangaMenuAction.addSource, child: Text(FlutterI18n.translate(context, 'manga.add-source'))),
           PopupMenuItem(
             value: _MangaMenuAction.addSourceFromUrl,
             child: Text(FlutterI18n.translate(context, 'manga.add-source-url')),
           ),
           if (downloadsSupported)
-            PopupMenuItem(
-              value: _MangaMenuAction.download,
-              child: Text(FlutterI18n.translate(context, 'manga.download')),
-            ),
+            PopupMenuItem(value: _MangaMenuAction.download, child: Text(FlutterI18n.translate(context, 'manga.download'))),
           if (_isDownloaded)
-            PopupMenuItem(
-              value: _MangaMenuAction.exportCbz,
-              child: Text(FlutterI18n.translate(context, 'downloads.export_cbz')),
-            ),
+            PopupMenuItem(value: _MangaMenuAction.exportCbz, child: Text(FlutterI18n.translate(context, 'downloads.export_cbz'))),
           if (API.loggedIn.isAdmin)
             PopupMenuItem(
               value: _MangaMenuAction.forceRescrape,
               child: Text(FlutterI18n.translate(context, 'manga.force-rescrape')),
             ),
           if (API.loggedIn.isAdmin)
-            PopupMenuItem(
-              value: _MangaMenuAction.mergeInto,
-              child: Text(FlutterI18n.translate(context, 'manga.merge-into')),
-            ),
+            PopupMenuItem(value: _MangaMenuAction.mergeInto, child: Text(FlutterI18n.translate(context, 'manga.merge-into'))),
           if (API.loggedIn.isAdmin)
-            PopupMenuItem(
-              value: _MangaMenuAction.mergeFrom,
-              child: Text(FlutterI18n.translate(context, 'manga.merge-from')),
-            ),
+            PopupMenuItem(value: _MangaMenuAction.mergeFrom, child: Text(FlutterI18n.translate(context, 'manga.merge-from'))),
           if (API.loggedIn.isAdmin && _manga.sources.isNotEmpty)
             PopupMenuItem(
               value: _MangaMenuAction.moveSourceOut,
@@ -441,11 +422,7 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
   Widget _sourceSwitcher(BuildContext context, {TextStyle? style}) {
     return GestureDetector(
       onTap: _switchSource,
-      child: Text(
-        _selectedSource.hostname,
-        style: style,
-        overflow: TextOverflow.ellipsis,
-      ),
+      child: Text(_selectedSource.hostname, style: style, overflow: TextOverflow.ellipsis),
     );
   }
 
@@ -484,16 +461,9 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
         SliverPadding(
           padding: const EdgeInsets.all(8.0),
           sliver: SliverList.list(
-            children: [
-              ResponsiveContent(
-                maxWidth: 800,
-                child: MangaDetails(
-                  manga: _manga,
-                ),
-              ),
-            ],
+            children: [ResponsiveContent(maxWidth: 800, child: MangaDetails(manga: _manga))],
           ),
-        )
+        ),
       ],
     );
   }
@@ -519,10 +489,7 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            _manga.title.replaceAll('\n', ' '),
-                            style: Theme.of(context).textTheme.headlineSmall,
-                          ),
+                          Text(_manga.title.replaceAll('\n', ' '), style: Theme.of(context).textTheme.headlineSmall),
                           if (_manga.altTitles.isNotEmpty)
                             Padding(
                               padding: const EdgeInsets.only(top: 4.0),
@@ -545,9 +512,7 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
                       ),
                     ),
                     const SizedBox(width: 24),
-                    Expanded(
-                      child: MangaDetails(manga: _manga, showTitle: false),
-                    ),
+                    Expanded(child: MangaDetails(manga: _manga, showTitle: false)),
                   ],
                 ),
               ),
@@ -602,4 +567,3 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
     super.dispose();
   }
 }
-

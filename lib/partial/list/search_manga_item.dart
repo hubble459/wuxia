@@ -29,19 +29,12 @@ class _SearchMangaItemState extends State<SearchMangaItem> {
   Widget build(BuildContext context) {
     final searchManga = widget.searchManga;
     return ListTile(
-      title: Text(
-        searchManga.title,
-        maxLines: 2,
-        overflow: TextOverflow.ellipsis,
-      ),
+      title: Text(searchManga.title, maxLines: 2, overflow: TextOverflow.ellipsis),
       subtitle: Row(
         children: [
           Expanded(child: Text(Uri.parse(searchManga.url).host)),
           if (searchManga.hasSuggestedMangaId())
-            const Tooltip(
-              message: 'Might already be a source for a manga you have',
-              child: Icon(Icons.merge_type, size: 16),
-            ),
+            const Tooltip(message: 'Might already be a source for a manga you have', child: Icon(Icons.merge_type, size: 16)),
         ],
       ),
       leading: searchManga.hasCover()
@@ -57,16 +50,15 @@ class _SearchMangaItemState extends State<SearchMangaItem> {
               ),
             )
           : null,
-      trailing:
-          searchManga.hasPosted() ? Text(Jiffy.parseFromMillisecondsSinceEpoch(searchManga.posted.toInt()).fromNow()) : null,
+      trailing: searchManga.hasPosted()
+          ? Text(Jiffy.parseFromMillisecondsSinceEpoch(searchManga.posted.toInt()).fromNow())
+          : null,
       onTap: () async {
         showDialog(
           context: context,
           barrierDismissible: false,
           useSafeArea: true,
-          builder: (context) => const Center(
-            child: CircularProgressIndicator(),
-          ),
+          builder: (context) => const Center(child: CircularProgressIndicator()),
         );
 
         try {
@@ -85,10 +77,7 @@ class _SearchMangaItemState extends State<SearchMangaItem> {
             return;
           }
 
-          final manga = await api.manga.findOrCreate(
-            MangaRequest(url: searchManga.url),
-            options: API.longRunningOptions,
-          );
+          final manga = await api.manga.findOrCreate(MangaRequest(url: searchManga.url), options: API.longRunningOptions);
           searchManga.mangaId = manga.id;
 
           if (!context.mounted) {

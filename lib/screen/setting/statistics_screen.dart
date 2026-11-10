@@ -51,10 +51,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             I18nText('settings.statistics.title'),
-            Text(
-              API.loggedIn.username,
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
+            Text(API.loggedIn.username, style: Theme.of(context).textTheme.bodySmall),
           ],
         ),
       ),
@@ -72,7 +69,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
               total: data.countTotalChapters.toInt(),
               progress: data.countChapters.toInt(),
             ),
-            _AverageReadingTime(totalChaptersRead: data.countChapters.toInt())
+            _AverageReadingTime(totalChaptersRead: data.countChapters.toInt()),
           ],
         ),
       ),
@@ -101,22 +98,24 @@ class __AverageStateReadingTime extends State<_AverageReadingTime> {
       columnPadding: EdgeInsets.zero,
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       textStyle: Theme.of(context).textTheme.bodyLarge,
-      adapter: NumberPickerAdapter(data: [
-        NumberPickerColumn(
-          begin: 0,
-          end: 30,
-          suffix: I18nText('settings.statistics.minutes'),
-          jump: 1,
-          initValue: _averageChapterReadTime.inMinutes,
-        ),
-        NumberPickerColumn(
-          begin: 0,
-          end: 50,
-          suffix: I18nText('settings.statistics.seconds'),
-          jump: 10,
-          initValue: _averageChapterReadTime.inSeconds.remainder(60),
-        ),
-      ]),
+      adapter: NumberPickerAdapter(
+        data: [
+          NumberPickerColumn(
+            begin: 0,
+            end: 30,
+            suffix: I18nText('settings.statistics.minutes'),
+            jump: 1,
+            initValue: _averageChapterReadTime.inMinutes,
+          ),
+          NumberPickerColumn(
+            begin: 0,
+            end: 50,
+            suffix: I18nText('settings.statistics.seconds'),
+            jump: 10,
+            initValue: _averageChapterReadTime.inSeconds.remainder(60),
+          ),
+        ],
+      ),
       hideHeader: true,
       onSelect: (picker, index, selected) {
         timer?.cancel();
@@ -127,10 +126,7 @@ class __AverageStateReadingTime extends State<_AverageReadingTime> {
           final mins = 1 * m;
           final seconds = 10 * s;
           setState(() {
-            _averageChapterReadTime = Duration(
-              minutes: mins,
-              seconds: seconds,
-            );
+            _averageChapterReadTime = Duration(minutes: mins, seconds: seconds);
           });
         });
       },
@@ -147,14 +143,8 @@ class __AverageStateReadingTime extends State<_AverageReadingTime> {
           ),
         ),
         _picker.makePicker(),
-        Text(
-          _printDuration(_averageChapterReadTime * widget.totalChaptersRead),
-          style: Theme.of(context).textTheme.bodyLarge,
-        ),
-        Text(
-          'DD:HH:MM:SS',
-          style: Theme.of(context).textTheme.bodyMedium,
-        ),
+        Text(_printDuration(_averageChapterReadTime * widget.totalChaptersRead), style: Theme.of(context).textTheme.bodyLarge),
+        Text('DD:HH:MM:SS', style: Theme.of(context).textTheme.bodyMedium),
       ],
     );
   }
@@ -174,11 +164,7 @@ class _Progress extends StatelessWidget {
   final int total;
   final int progress;
 
-  const _Progress({
-    required this.name,
-    required this.total,
-    required this.progress,
-  });
+  const _Progress({required this.name, required this.total, required this.progress});
 
   @override
   Widget build(BuildContext context) {
@@ -189,10 +175,7 @@ class _Progress extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-            child: Text(
-              name,
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
+            child: Text(name, style: Theme.of(context).textTheme.titleLarge),
           ),
           Column(
             mainAxisSize: MainAxisSize.max,
@@ -200,29 +183,24 @@ class _Progress extends StatelessWidget {
               Row(
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(progress.toString()),
-                  Text((total - progress).toString()),
-                ],
+                children: [Text(progress.toString()), Text((total - progress).toString())],
               ),
-              Stack(children: [
-                LinearProgressIndicator(
-                  backgroundColor: Theme.of(context).colorScheme.secondary,
-                  minHeight: 12,
-                  value: percentage(),
-                ),
-                Center(
-                  child: Text(
-                    total.toString(),
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      inherit: true,
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
+              Stack(
+                children: [
+                  LinearProgressIndicator(
+                    backgroundColor: Theme.of(context).colorScheme.secondary,
+                    minHeight: 12,
+                    value: percentage(),
+                  ),
+                  Center(
+                    child: Text(
+                      total.toString(),
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(inherit: true, fontSize: 10, fontWeight: FontWeight.bold),
                     ),
                   ),
-                ),
-              ])
+                ],
+              ),
             ],
           ),
         ],

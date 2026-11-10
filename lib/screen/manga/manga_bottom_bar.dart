@@ -88,10 +88,7 @@ class _ChapterSelectorState extends State<ChapterSelector> {
 
     ChapterReply chapter;
     try {
-      chapter = await api.chapter.get(ChapterRequest(
-        mangaSourceId: widget.source.id,
-        index: widget.manga.readingProgress,
-      ));
+      chapter = await api.chapter.get(ChapterRequest(mangaSourceId: widget.source.id, index: widget.manga.readingProgress));
     } catch (e) {
       _offlineChapters ??= await loadOfflineChapters(widget.manga.id);
       final found = _offlineChapters?.firstWhereOrNull((c) => c.index.toInt() == widget.manga.readingProgress);
@@ -105,12 +102,10 @@ class _ChapterSelectorState extends State<ChapterSelector> {
     await Navigator.of(context)
         .push(
           MaterialPageRoute(
-            settings: RouteSettings(name: chapterRouteNameFor(mangaId: widget.manga.id, chapter: chapter)),
-            builder: (context) => MangaChapterScreen(
-              manga: widget.manga,
-              chapter: chapter,
-              source: widget.source,
+            settings: RouteSettings(
+              name: chapterRouteNameFor(mangaId: widget.manga.id, chapter: chapter),
             ),
+            builder: (context) => MangaChapterScreen(manga: widget.manga, chapter: chapter, source: widget.source),
           ),
         )
         .then((value) => refresh());
@@ -125,12 +120,10 @@ class _ChapterSelectorState extends State<ChapterSelector> {
     await Navigator.of(context)
         .push(
           MaterialPageRoute(
-            settings: RouteSettings(name: chapterRouteNameFor(mangaId: widget.manga.id, chapter: chapter)),
-            builder: (context) => MangaChapterScreen(
-              manga: widget.manga,
-              chapter: chapter,
-              source: widget.source,
+            settings: RouteSettings(
+              name: chapterRouteNameFor(mangaId: widget.manga.id, chapter: chapter),
             ),
+            builder: (context) => MangaChapterScreen(manga: widget.manga, chapter: chapter, source: widget.source),
           ),
         )
         .then((value) => refresh());
@@ -143,11 +136,13 @@ class _ChapterSelectorState extends State<ChapterSelector> {
     final till = widget.manga.readingProgress;
     final page = max(((till - 1) / _pageSize).floor(), 0);
     try {
-      final result = await api.chapter.index(PaginateChapterQuery(
-        mangaSourceId: widget.source.id,
-        reversed: true,
-        paginateQuery: PaginateQuery(page: Int64(page), perPage: Int64(_pageSize)),
-      ));
+      final result = await api.chapter.index(
+        PaginateChapterQuery(
+          mangaSourceId: widget.source.id,
+          reversed: true,
+          paginateQuery: PaginateQuery(page: Int64(page), perPage: Int64(_pageSize)),
+        ),
+      );
 
       if (result.items.isEmpty) {
         final offline = await _offlineWindow(till);
@@ -185,12 +180,7 @@ class _ChapterSelectorState extends State<ChapterSelector> {
         IconButton(onPressed: widget.manga.countChapters == 0 ? null : openChapters, icon: Icon(Icons.list_alt)),
 
         ...(widget.manga.countChapters == 0
-            ? [
-                Text(
-                  FlutterI18n.translate(context, 'manga.no-chapters'),
-                  style: TextStyle(color: Colors.red),
-                )
-              ]
+            ? [Text(FlutterI18n.translate(context, 'manga.no-chapters'), style: TextStyle(color: Colors.red))]
             : [
                 // Chapters -- the two arrows are pinned outside the scrollable
                 // list (not items within it), so they stay put at the row's

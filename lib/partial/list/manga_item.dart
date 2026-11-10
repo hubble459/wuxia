@@ -98,11 +98,7 @@ class _MangaItemState extends State<MangaItem> {
       dense: true,
       minVerticalPadding: 4.0,
       contentPadding: EdgeInsets.only(left: 8),
-      title: Text(
-        _manga.title.replaceAll('\n', ' '),
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-      ),
+      title: Text(_manga.title.replaceAll('\n', ' '), maxLines: 1, overflow: TextOverflow.ellipsis),
       subtitle: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -130,9 +126,7 @@ class _MangaItemState extends State<MangaItem> {
                 useOldImageOnUrlChange: true,
                 progressIndicatorBuilder: (context, url, progress) => Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: CircularProgressIndicator(
-                    value: progress.progress,
-                  ),
+                  child: CircularProgressIndicator(value: progress.progress),
                 ),
               ),
             )
@@ -145,18 +139,14 @@ class _MangaItemState extends State<MangaItem> {
             Center(
               child: isReading
                   ? CircularProgressIndicator(
-                      value: _manga.countChapters != 0 ? 1 / _manga.countChapters.toInt() * _manga.readingProgress : 0)
+                      value: _manga.countChapters != 0 ? 1 / _manga.countChapters.toInt() * _manga.readingProgress : 0,
+                    )
                   : Text(_manga.countChapters.toString()),
             ),
             Visibility(
               visible: isReading && _manga.countChapters - _manga.readingProgress > 0,
-              child: Center(
-                child: Text(
-                  (_manga.countChapters - _manga.readingProgress).toString(),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            )
+              child: Center(child: Text((_manga.countChapters - _manga.readingProgress).toString(), textAlign: TextAlign.center)),
+            ),
           ],
         ),
       ),
@@ -164,10 +154,7 @@ class _MangaItemState extends State<MangaItem> {
         final manga = await Navigator.of(context).push(
           MaterialPageRoute(
             settings: RouteSettings(name: mangaRouteName(_manga.id)),
-            builder: (context) => MangaScreen(
-              manga: _manga,
-              type: widget.type,
-            ),
+            builder: (context) => MangaScreen(manga: _manga, type: widget.type),
           ),
         );
         if (mounted) {
@@ -186,8 +173,11 @@ class _MangaItemState extends State<MangaItem> {
           final confirmed = await showDialog<bool>(
             context: context,
             builder: (context) => ConfirmDialog(
-              message:
-                  FlutterI18n.translate(context, 'dialog.confirm.delete_download', translationParams: {'title': _manga.title}),
+              message: FlutterI18n.translate(
+                context,
+                'dialog.confirm.delete_download',
+                translationParams: {'title': _manga.title},
+              ),
             ),
           );
           if (confirmed == true) {

@@ -25,10 +25,7 @@ class MangaDetails extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          manga.genres.join(', '),
-          style: Theme.of(context).textTheme.bodySmall,
-        ),
+        Text(manga.genres.join(', '), style: Theme.of(context).textTheme.bodySmall),
         if (showTitle) ...[
           Text(
             manga.title.replaceAll('\n', ' '),
@@ -45,10 +42,7 @@ class MangaDetails extends StatelessWidget {
         ],
         Visibility(
           visible: manga.authors.isNotEmpty,
-          child: Text(
-            'By ${manga.authors.join(', ')}',
-            style: Theme.of(context).textTheme.bodyMedium,
-          ),
+          child: Text('By ${manga.authors.join(', ')}', style: Theme.of(context).textTheme.bodyMedium),
         ),
         Divider(),
         Wrap(
@@ -60,14 +54,21 @@ class MangaDetails extends StatelessWidget {
             manga.isOngoing && manga.hasNext()
                 ? Text(
                     FlutterI18n.translate(
-                        context, nextUpdate.isBefore(Jiffy.now()) ? 'manga.expected-update' : 'manga.will-update',
-                        translationParams: {'date': nextUpdate.fromNow()}),
+                      context,
+                      nextUpdate.isBefore(Jiffy.now()) ? 'manga.expected-update' : 'manga.will-update',
+                      translationParams: {'date': nextUpdate.fromNow()},
+                    ),
                     style: nextUpdate.isBefore(Jiffy.now()) ? const TextStyle(color: Colors.red) : null,
                   )
                 : manga.hasLast()
-                    ? Text(FlutterI18n.translate(context, 'manga.last-updated',
-                        translationParams: {'date': Jiffy.parseFromMillisecondsSinceEpoch(manga.last.toInt()).fromNow()}))
-                    : Container()
+                ? Text(
+                    FlutterI18n.translate(
+                      context,
+                      'manga.last-updated',
+                      translationParams: {'date': Jiffy.parseFromMillisecondsSinceEpoch(manga.last.toInt()).fromNow()},
+                    ),
+                  )
+                : Container(),
           ],
         ),
         Wrap(
@@ -78,13 +79,10 @@ class MangaDetails extends StatelessWidget {
             Text(
               (manga.hasReadingProgress() ? '${manga.readingProgress}/' : '') +
                   FlutterI18n.translate(context, 'manga.chapters', translationParams: {'amount': manga.countChapters.toString()}),
-            )
+            ),
           ],
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: Text(manga.description),
-        ),
+        Padding(padding: const EdgeInsets.symmetric(vertical: 8.0), child: Text(manga.description)),
         SimpleFutureBuilder<MangasReply>(
           future: api.manga.similar(SimilarMangaRequest(id: manga.id)),
           onErrorBuilder: (_, _) => const SizedBox.shrink(),
@@ -95,10 +93,7 @@ class MangaDetails extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Divider(),
-                  Text(
-                    FlutterI18n.translate(context, 'manga.similar'),
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
+                  Text(FlutterI18n.translate(context, 'manga.similar'), style: Theme.of(context).textTheme.titleLarge),
                   ListView.builder(
                     shrinkWrap: true,
                     itemCount: similar.items.length,

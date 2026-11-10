@@ -11,7 +11,7 @@ class ChapterItem extends StatelessWidget {
   final void Function(int progress) refreshParent;
 
   ChapterItem({super.key, required this.chapters, required this.manga, required int index, required this.refreshParent})
-      : chapter = chapters.items[index];
+    : chapter = chapters.items[index];
 
   @override
   Widget build(BuildContext context) {
@@ -29,10 +29,7 @@ class ChapterItem extends StatelessWidget {
         visible: manga.hasReadingProgress() && isChapterRead(manga, chapter),
         child: const ColoredBox(
           color: Colors.green,
-          child: SizedBox(
-            width: 3,
-            height: double.infinity,
-          ),
+          child: SizedBox(width: 3, height: double.infinity),
         ),
       ),
       // trailing: Padding(
@@ -48,7 +45,7 @@ class ChapterItem extends StatelessWidget {
             // Text(chapter.number
             //     .toStringAsFixed(3)
             //     .replaceFirst(RegExp(r'\.?0+$'), '', chapter.number.toStringAsFixed(3).lastIndexOf('.'))),
-            Text(chapter.index.toString())
+            Text(chapter.index.toString()),
           ],
         ),
       ),

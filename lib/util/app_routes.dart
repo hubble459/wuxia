@@ -10,11 +10,8 @@ String mangaRouteName(int mangaId) => 'manga/$mangaId';
 String chapterRouteName({required int mangaId, required int sourceId, required int chapterIndex}) =>
     'manga/$mangaId/source/$sourceId/chapter/$chapterIndex';
 
-String chapterRouteNameFor({required int mangaId, required ChapterReply chapter}) => chapterRouteName(
-      mangaId: mangaId,
-      sourceId: chapter.mangaSourceId,
-      chapterIndex: chapter.index.toInt(),
-    );
+String chapterRouteNameFor({required int mangaId, required ChapterReply chapter}) =>
+    chapterRouteName(mangaId: mangaId, sourceId: chapter.mangaSourceId, chapterIndex: chapter.index.toInt());
 
 class MangaRouteMatch {
   final int mangaId;

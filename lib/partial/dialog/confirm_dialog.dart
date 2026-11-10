@@ -5,19 +5,12 @@ class ConfirmDialog extends StatelessWidget {
   final String message;
   final Color? confirmColor;
 
-  const ConfirmDialog({
-    super.key,
-    required this.message,
-    this.confirmColor,
-  });
+  const ConfirmDialog({super.key, required this.message, this.confirmColor});
 
   @override
   Widget build(BuildContext context) {
     return SimpleDialog(
-      title: Text(
-        FlutterI18n.translate(context, 'dialog.confirm.title'),
-        textAlign: TextAlign.center,
-      ),
+      title: Text(FlutterI18n.translate(context, 'dialog.confirm.title'), textAlign: TextAlign.center),
       titlePadding: const EdgeInsets.symmetric(vertical: 4.0),
       contentPadding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 16.0),
       children: [
@@ -41,7 +34,7 @@ class ConfirmDialog extends StatelessWidget {
               child: I18nText('dialog.confirm.yes'),
             ),
           ],
-        )
+        ),
       ],
     );
   }

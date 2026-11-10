@@ -38,10 +38,7 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
     });
 
     try {
-      API.loggedIn = await api.user.update(UserUpdateRequest(
-        currentPassword: _current.text,
-        password: _new.text,
-      ));
+      API.loggedIn = await api.user.update(UserUpdateRequest(currentPassword: _current.text, password: _new.text));
       if (!mounted) return;
       Navigator.of(context).pop(true);
     } catch (e) {
@@ -75,11 +72,7 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
               decoration: InputDecoration(label: I18nText('settings.change_password.current')),
             ),
             const SizedBox(height: Constants.padding),
-            NewPasswordField(
-              controller: _new,
-              labelKey: 'settings.change_password.new',
-              textInputAction: TextInputAction.next,
-            ),
+            NewPasswordField(controller: _new, labelKey: 'settings.change_password.new', textInputAction: TextInputAction.next),
             const SizedBox(height: Constants.padding),
             TextFormField(
               obscureText: true,
@@ -87,8 +80,7 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
               onFieldSubmitted: (_) => _submit(),
               validator: ValidatorBuilder.translate(context, 'login.confirm_password')
                   .required()
-                  .custom((value) =>
-                      value == _new.text ? null : FlutterI18n.translate(context, 'validator.password_not_match'))
+                  .custom((value) => value == _new.text ? null : FlutterI18n.translate(context, 'validator.password_not_match'))
                   .build(),
               decoration: InputDecoration(label: I18nText('login.confirm_password')),
             ),
@@ -96,14 +88,8 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
         ),
       ),
       actions: [
-        TextButton(
-          onPressed: _saving ? null : () => Navigator.of(context).pop(),
-          child: I18nText('basic.cancel'),
-        ),
-        TextButton(
-          onPressed: _saving ? null : _submit,
-          child: I18nText('basic.save'),
-        ),
+        TextButton(onPressed: _saving ? null : () => Navigator.of(context).pop(), child: I18nText('basic.cancel')),
+        TextButton(onPressed: _saving ? null : _submit, child: I18nText('basic.save')),
       ],
     );
   }

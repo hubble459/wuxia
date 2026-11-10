@@ -22,14 +22,16 @@ Future<void> promptDownloadReconnectIfNeeded(BuildContext context, {VoidCallback
   final folder = await downloadStorage.location() ?? '';
   if (!context.mounted) return;
 
-  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-    duration: const Duration(seconds: 15),
-    content: Text(FlutterI18n.translate(context, 'downloads.reconnect_message', translationParams: {'folder': folder})),
-    action: SnackBarAction(
-      label: FlutterI18n.translate(context, 'downloads.reconnect'),
-      onPressed: () async {
-        if (await reconnectDownloads(context)) onReconnected?.call();
-      },
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      duration: const Duration(seconds: 15),
+      content: Text(FlutterI18n.translate(context, 'downloads.reconnect_message', translationParams: {'folder': folder})),
+      action: SnackBarAction(
+        label: FlutterI18n.translate(context, 'downloads.reconnect'),
+        onPressed: () async {
+          if (await reconnectDownloads(context)) onReconnected?.call();
+        },
+      ),
     ),
-  ));
+  );
 }

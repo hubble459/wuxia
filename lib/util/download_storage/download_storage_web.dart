@@ -186,8 +186,7 @@ class WebDownloadStorage extends DownloadStorage {
   }
 
   @override
-  Future<List<String>> listDirs([String dir = '']) async =>
-      (await _list(dir, 'directory')).map((e) => e.name).toList();
+  Future<List<String>> listDirs([String dir = '']) async => (await _list(dir, 'directory')).map((e) => e.name).toList();
 
   @override
   Future<List<String>> listFiles(String dir) async => (await _list(dir, 'file')).map((e) => e.name).toList();

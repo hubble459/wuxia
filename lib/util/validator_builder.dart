@@ -87,32 +87,19 @@ class ValidatorBuilder {
 
   ValidatorBuilder minLength(int length) {
     return required().custom((String? value) {
-      return value!.length >= length
-          ? null
-          : _t('validator.min_length', {
-              'length': length.toString(),
-            });
+      return value!.length >= length ? null : _t('validator.min_length', {'length': length.toString()});
     });
   }
 
   ValidatorBuilder maxLength(int length) {
     return required().custom((String? value) {
-      return value!.length <= length
-          ? null
-          : _t('validator.max_length', {
-              'length': length.toString(),
-            });
+      return value!.length <= length ? null : _t('validator.max_length', {'length': length.toString()});
     });
   }
 
   ValidatorBuilder matches(RegExp expression, [String? message]) {
     return required().custom((String? value) {
-      return expression.hasMatch(value!)
-          ? null
-          : message ??
-              _t('validator.regex', {
-                'regex': expression.pattern,
-              });
+      return expression.hasMatch(value!) ? null : message ?? _t('validator.regex', {'regex': expression.pattern});
     });
   }
 

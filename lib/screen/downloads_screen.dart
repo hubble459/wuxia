@@ -53,8 +53,7 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
               const Icon(Icons.folder_off, size: 48),
               const SizedBox(height: 12),
               Text(
-                FlutterI18n.translate(context, 'downloads.reconnect_message',
-                    translationParams: {'folder': snapshot.data ?? ''}),
+                FlutterI18n.translate(context, 'downloads.reconnect_message', translationParams: {'folder': snapshot.data ?? ''}),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 12),

@@ -36,8 +36,9 @@ class OfflineNotice extends StatelessWidget {
               children: [
                 if (downloadsSupported)
                   FilledButton.icon(
-                    onPressed: () => Navigator.of(context)
-                        .pushNamedAndRemoveUntil('root_nav', (_) => false, arguments: rootNavDownloadsArgument),
+                    onPressed: () =>
+                        Navigator.of(context)
+                            .pushNamedAndRemoveUntil('root_nav', (_) => false, arguments: rootNavDownloadsArgument),
                     icon: const Icon(Icons.download),
                     label: Text(FlutterI18n.translate(context, 'offline.go_to_downloads')),
                   ),

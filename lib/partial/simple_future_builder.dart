@@ -9,23 +9,15 @@ Widget defaultErrorBuilder(BuildContext context, Object? error) {
   return Center(
     child: Column(
       children: [
-        Text(
-          (error ?? 'Unknown Error Occurred').toString(),
-          style: TextStyle(color: Theme.of(context).colorScheme.error),
-        ),
-        ElevatedButton(
-          onPressed: () {},
-          child: const Text('Retry'),
-        ),
+        Text((error ?? 'Unknown Error Occurred').toString(), style: TextStyle(color: Theme.of(context).colorScheme.error)),
+        ElevatedButton(onPressed: () {}, child: const Text('Retry')),
       ],
     ),
   );
 }
 
 Widget defaultLoadingBuilder(BuildContext context) {
-  return const Center(
-    child: CircularProgressIndicator(),
-  );
+  return const Center(child: CircularProgressIndicator());
 }
 
 class SimpleFutureBuilder<T> extends StatelessWidget {

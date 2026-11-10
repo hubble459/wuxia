@@ -90,8 +90,7 @@ class _ScraperStatusScreenState extends State<ScraperStatusScreen> {
             child: ListView.separated(
               itemCount: items.length,
               separatorBuilder: (_, _) => const Divider(height: 1),
-              itemBuilder: (context, index) =>
-                  _ScraperStatusTile(status: items[index]),
+              itemBuilder: (context, index) => _ScraperStatusTile(status: items[index]),
             ),
           );
         },
@@ -110,24 +109,17 @@ class _ScraperStatusTile extends StatelessWidget {
     final healthy = status.lastAttemptSuccess;
 
     return ExpansionTile(
-      leading: Icon(
-        healthy ? Icons.check_circle : Icons.error,
-        color: healthy ? Colors.green : Colors.red,
-      ),
-      title: Text(status.hostname,
-          style: const TextStyle(fontWeight: FontWeight.bold)),
+      leading: Icon(healthy ? Icons.check_circle : Icons.error, color: healthy ? Colors.green : Colors.red),
+      title: Text(status.hostname, style: const TextStyle(fontWeight: FontWeight.bold)),
       subtitle: Text(_subtitle(context)),
       children: status.recentErrors.isEmpty
           ? [
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: I18nText('settings.scraper_status.no_recent_errors'),
               ),
             ]
-          : status.recentErrors
-              .map((error) => _ScraperErrorTile(error: error))
-              .toList(),
+          : status.recentErrors.map((error) => _ScraperErrorTile(error: error)).toList(),
     );
   }
 
@@ -136,35 +128,22 @@ class _ScraperStatusTile extends StatelessWidget {
         ? FlutterI18n.translate(
             context,
             'settings.scraper_status.last_attempt',
-            translationParams: {
-              'time': Jiffy.parseFromMillisecondsSinceEpoch(
-                      status.lastAttemptAt.toInt())
-                  .fromNow()
-            },
+            translationParams: {'time': Jiffy.parseFromMillisecondsSinceEpoch(status.lastAttemptAt.toInt()).fromNow()},
           )
-        : FlutterI18n.translate(
-            context, 'settings.scraper_status.never_attempted');
+        : FlutterI18n.translate(context, 'settings.scraper_status.never_attempted');
 
     final lastSuccess = status.hasLastSuccessAt()
         ? FlutterI18n.translate(
             context,
             'settings.scraper_status.last_success',
-            translationParams: {
-              'time': Jiffy.parseFromMillisecondsSinceEpoch(
-                      status.lastSuccessAt.toInt())
-                  .fromNow()
-            },
+            translationParams: {'time': Jiffy.parseFromMillisecondsSinceEpoch(status.lastSuccessAt.toInt()).fromNow()},
           )
-        : FlutterI18n.translate(
-            context, 'settings.scraper_status.never_succeeded');
+        : FlutterI18n.translate(context, 'settings.scraper_status.never_succeeded');
 
     final stats24h = FlutterI18n.translate(
       context,
       'settings.scraper_status.stats_24h',
-      translationParams: {
-        'attempts': status.attempts24h.toString(),
-        'failures': status.failures24h.toString(),
-      },
+      translationParams: {'attempts': status.attempts24h.toString(), 'failures': status.failures24h.toString()},
     );
 
     return '$lastAttempt\n$lastSuccess · $stats24h';
@@ -192,18 +171,13 @@ class _ScraperErrorTile extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
-              children: [
-                SelectableText(error.url),
-                const SizedBox(height: 8),
-                SelectableText(error.message),
-              ],
+              children: [SelectableText(error.url), const SizedBox(height: 8), SelectableText(error.message)],
             ),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text(FlutterI18n.translate(
-                  context, 'settings.scraper_status.close')),
+              child: Text(FlutterI18n.translate(context, 'settings.scraper_status.close')),
             ),
           ],
         ),

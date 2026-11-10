@@ -38,20 +38,11 @@ class _SplashScreenState extends State<SplashScreen> {
               FlutterI18n.translate(context, 'title'),
               style: const TextStyle(
                 fontWeight: FontWeight.w800,
-                shadows: [
-                  Shadow(
-                    offset: Offset(5.0, 5.0),
-                    blurRadius: 2.0,
-                    color: Colors.grey,
-                  ),
-                ],
+                shadows: [Shadow(offset: Offset(5.0, 5.0), blurRadius: 2.0, color: Colors.grey)],
                 fontSize: 50,
               ),
             ),
-            Visibility(
-              visible: _connecting,
-              child: I18nText('splash.connecting'),
-            )
+            Visibility(visible: _connecting, child: I18nText('splash.connecting')),
           ],
         ),
       ),

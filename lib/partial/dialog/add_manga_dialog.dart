@@ -44,10 +44,7 @@ class _AddMangaDialogState extends State<AddMangaDialog> {
   @override
   Widget build(BuildContext context) {
     return SimpleDialog(
-      title: Text(
-        FlutterI18n.translate(context, 'reading.add_from_url'),
-        textAlign: TextAlign.center,
-      ),
+      title: Text(FlutterI18n.translate(context, 'reading.add_from_url'), textAlign: TextAlign.center),
       titlePadding: const EdgeInsets.symmetric(vertical: 4.0),
       contentPadding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 16.0),
       children: [
@@ -57,9 +54,7 @@ class _AddMangaDialogState extends State<AddMangaDialog> {
             padding: const EdgeInsets.only(bottom: 8.0),
             child: Text(
               _error ?? '',
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.error,
-              ),
+              style: TextStyle(color: Theme.of(context).colorScheme.error),
               textAlign: TextAlign.center,
             ),
           ),
@@ -71,15 +66,16 @@ class _AddMangaDialogState extends State<AddMangaDialog> {
           keyboardType: TextInputType.url,
           textInputAction: TextInputAction.done,
           decoration: InputDecoration(
-              label: I18nText('basic.url'),
-              isDense: true,
-              suffixIcon: IconButton(
-                icon: const Icon(Icons.paste),
-                onPressed: () async {
-                  final data = await Clipboard.getData(Clipboard.kTextPlain);
-                  _setUrl(data);
-                },
-              )),
+            label: I18nText('basic.url'),
+            isDense: true,
+            suffixIcon: IconButton(
+              icon: const Icon(Icons.paste),
+              onPressed: () async {
+                final data = await Clipboard.getData(Clipboard.kTextPlain);
+                _setUrl(data);
+              },
+            ),
+          ),
         ),
         ElevatedButton(
           onPressed: () async {
@@ -88,10 +84,7 @@ class _AddMangaDialogState extends State<AddMangaDialog> {
               final existingMangaId = widget.existingMangaId;
               if (existingMangaId != null) {
                 final manga = await api.manga.addSource(
-                  AddSourceRequest(
-                    mangaId: existingMangaId,
-                    url: _urlController.text,
-                  ),
+                  AddSourceRequest(mangaId: existingMangaId, url: _urlController.text),
                   options: API.longRunningOptions,
                 );
 
@@ -101,10 +94,7 @@ class _AddMangaDialogState extends State<AddMangaDialog> {
                 return;
               }
 
-              final manga = await api.manga.findOrCreate(
-                MangaRequest(url: _urlController.text),
-                options: API.longRunningOptions,
-              );
+              final manga = await api.manga.findOrCreate(MangaRequest(url: _urlController.text), options: API.longRunningOptions);
               final reading = await api.reading.create(ReadingPostRequest(mangaId: manga.id));
 
               if (context.mounted) {
@@ -119,7 +109,7 @@ class _AddMangaDialogState extends State<AddMangaDialog> {
             }
           },
           child: I18nText('basic.add'),
-        )
+        ),
       ],
     );
   }

@@ -12,18 +12,11 @@ class OpenURLDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SimpleDialog(
-      title: Text(
-        FlutterI18n.translate(context, 'dialog.open_url.title'),
-        textAlign: TextAlign.center,
-      ),
+      title: Text(FlutterI18n.translate(context, 'dialog.open_url.title'), textAlign: TextAlign.center),
       titlePadding: const EdgeInsets.symmetric(vertical: 4.0),
       contentPadding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 16.0),
       children: [
-        Text(
-          url,
-          style: Theme.of(context).textTheme.bodySmall,
-          textAlign: TextAlign.center,
-        ),
+        Text(url, style: Theme.of(context).textTheme.bodySmall, textAlign: TextAlign.center),
         Row(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -52,7 +45,7 @@ class OpenURLDialog extends StatelessWidget {
               ),
             ),
           ],
-        )
+        ),
       ],
     );
   }

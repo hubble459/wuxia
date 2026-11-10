@@ -84,10 +84,7 @@ class _MangaChaptersScreenState extends State<MangaChaptersScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             I18nText('manga.chapters', translationParams: {'amount': widget.manga.countChapters.toString()}),
-            Text(
-              widget.source.hostname,
-              style: Theme.of(context).textTheme.titleSmall?.copyWith(color: Colors.white54),
-            ),
+            Text(widget.source.hostname, style: Theme.of(context).textTheme.titleSmall?.copyWith(color: Colors.white54)),
           ],
         ),
         actions: [
@@ -95,11 +92,7 @@ class _MangaChaptersScreenState extends State<MangaChaptersScreen> {
             onPressed: _jumping ? null : () => _jumpToEnd(reversed: !_reversed),
             tooltip: FlutterI18n.translate(context, _reversed ? 'chapter.goto_top' : 'chapter.goto_bottom'),
             icon: _jumping
-                ? const SizedBox(
-                    width: 16,
-                    height: 16,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
+                ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
                 : Icon(_reversed ? Icons.arrow_upward : Icons.arrow_downward),
           ),
         ],
@@ -117,9 +110,7 @@ class _MangaChaptersScreenState extends State<MangaChaptersScreen> {
               fetchNextPage: fetchNextPage,
               builderDelegate: PagedChildBuilderDelegate<ChapterReply>(
                 firstPageErrorIndicatorBuilder: (context) => ListErrorIndicator(pagingController: _pagingController),
-                noItemsFoundIndicatorBuilder: (context) => Center(
-                  child: I18nText('empty'),
-                ),
+                noItemsFoundIndicatorBuilder: (context) => Center(child: I18nText('empty')),
                 itemBuilder: (context, chapter, index) => ChapterItem(
                   manga: widget.manga,
                   refreshParent: (progress) async {
@@ -128,12 +119,10 @@ class _MangaChaptersScreenState extends State<MangaChaptersScreen> {
                     if (!context.mounted) return;
                     await Navigator.of(context).push(
                       MaterialPageRoute(
-                        settings: RouteSettings(name: chapterRouteNameFor(mangaId: widget.manga.id, chapter: chapter)),
-                        builder: (context) => MangaChapterScreen(
-                          manga: widget.manga,
-                          chapter: chapter,
-                          source: widget.source,
+                        settings: RouteSettings(
+                          name: chapterRouteNameFor(mangaId: widget.manga.id, chapter: chapter),
                         ),
+                        builder: (context) => MangaChapterScreen(manga: widget.manga, chapter: chapter, source: widget.source),
                       ),
                     );
                     setState(() {});
@@ -163,13 +152,8 @@ class _MangaChaptersScreenState extends State<MangaChaptersScreen> {
     if (_pagingController.value.status == PagingStatus.subsequentPageError) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text(
-            'Something went wrong while fetching a new page.',
-          ),
-          action: SnackBarAction(
-            label: 'Retry',
-            onPressed: () => _pagingController.fetchNextPage(),
-          ),
+          content: const Text('Something went wrong while fetching a new page.'),
+          action: SnackBarAction(label: 'Retry', onPressed: () => _pagingController.fetchNextPage()),
         ),
       );
     }
@@ -184,13 +168,13 @@ class _MangaChaptersScreenState extends State<MangaChaptersScreen> {
 
   Future<List<ChapterReply>> _fetchPage(int page) async {
     try {
-      _result = await api.chapter.index(PaginateChapterQuery(
+      _result = await api.chapter.index(
+        PaginateChapterQuery(
           mangaSourceId: widget.source.id,
           reversed: _reversed,
-          paginateQuery: PaginateQuery(
-            page: Int64(page),
-            perPage: Int64(_pageSize),
-          )));
+          paginateQuery: PaginateQuery(page: Int64(page), perPage: Int64(_pageSize)),
+        ),
+      );
       if (page == 0 && _result.items.isEmpty) {
         // Server has no chapters for this source (e.g. its scraper is
         // failing) -- the downloaded copy is still readable.

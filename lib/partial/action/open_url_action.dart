@@ -10,7 +10,10 @@ class OpenURLAction extends StatelessWidget {
   Widget build(BuildContext context) {
     return IconButton(
       onPressed: () {
-        showDialog(context: context, builder: (context) => OpenURLDialog(url: url));
+        showDialog(
+          context: context,
+          builder: (context) => OpenURLDialog(url: url),
+        );
       },
       icon: const Icon(Icons.open_in_browser),
     );

@@ -37,11 +37,7 @@ class _SourcePickerDialog extends StatefulWidget {
   final bool allowAdminActions;
   final VoidCallback? onSourcesChanged;
 
-  const _SourcePickerDialog({
-    required this.sources,
-    required this.allowAdminActions,
-    required this.onSourcesChanged,
-  });
+  const _SourcePickerDialog({required this.sources, required this.allowAdminActions, required this.onSourcesChanged});
 
   @override
   State<_SourcePickerDialog> createState() => _SourcePickerDialogState();
@@ -65,10 +61,12 @@ class _SourcePickerDialogState extends State<_SourcePickerDialog> {
   Future<void> _loadChapterCount(MangaSourceReply source) async {
     try {
       // perPage: 1 - only PaginateReply.total is actually wanted here.
-      final result = await api.chapter.index(PaginateChapterQuery(
-        mangaSourceId: source.id,
-        paginateQuery: PaginateQuery(page: Int64.ZERO, perPage: Int64.ONE),
-      ));
+      final result = await api.chapter.index(
+        PaginateChapterQuery(
+          mangaSourceId: source.id,
+          paginateQuery: PaginateQuery(page: Int64.ZERO, perPage: Int64.ONE),
+        ),
+      );
       if (mounted) setState(() => _chapterCounts[source.id] = result.pagination.total.toInt());
     } catch (_) {
       // Leave it blank - see _chapterCounts doc comment above.
@@ -91,24 +89,17 @@ class _SourcePickerDialogState extends State<_SourcePickerDialog> {
   }
 
   Future<void> _remove(MangaSourceReply source) async {
-    final confirmed = await showDialog<bool>(
+    final confirmed =
+        await showDialog<bool>(
           context: context,
           builder: (ctx) => AlertDialog(
             title: Text(FlutterI18n.translate(ctx, 'manga.remove-source-confirm-title')),
-            content: Text(FlutterI18n.translate(
-              ctx,
-              'manga.remove-source-confirm-body',
-              translationParams: {'hostname': source.hostname},
-            )),
+            content: Text(
+              FlutterI18n.translate(ctx, 'manga.remove-source-confirm-body', translationParams: {'hostname': source.hostname}),
+            ),
             actions: [
-              TextButton(
-                onPressed: () => Navigator.of(ctx).pop(false),
-                child: Text(FlutterI18n.translate(ctx, 'basic.cancel')),
-              ),
-              TextButton(
-                onPressed: () => Navigator.of(ctx).pop(true),
-                child: Text(FlutterI18n.translate(ctx, 'basic.confirm')),
-              ),
+              TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: Text(FlutterI18n.translate(ctx, 'basic.cancel'))),
+              TextButton(onPressed: () => Navigator.of(ctx).pop(true), child: Text(FlutterI18n.translate(ctx, 'basic.confirm'))),
             ],
           ),
         ) ??
@@ -184,17 +175,17 @@ class _SourcePickerDialogState extends State<_SourcePickerDialog> {
                       Text('${source.hostname} (${source.language})'),
                       if (chapterCount != null)
                         Text(
-                          FlutterI18n.translate(context, 'manga.chapters', translationParams: {'amount': chapterCount.toString()}),
+                          FlutterI18n.translate(
+                            context,
+                            'manga.chapters',
+                            translationParams: {'amount': chapterCount.toString()},
+                          ),
                           style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Colors.grey),
                         ),
                     ],
                   ),
                 ),
-                if (source.isPrimary)
-                  const Padding(
-                    padding: EdgeInsets.only(left: 4.0),
-                    child: Icon(Icons.star, size: 16),
-                  ),
+                if (source.isPrimary) const Padding(padding: EdgeInsets.only(left: 4.0), child: Icon(Icons.star, size: 16)),
               ],
             ),
           ),

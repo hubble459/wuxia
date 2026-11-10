@@ -79,16 +79,12 @@ class _UsersScreenState extends State<UsersScreen> {
 
   void _showMessage(String key, Map<String, String> params) {
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(FlutterI18n.translate(context, key, translationParams: params))),
-    );
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(FlutterI18n.translate(context, key, translationParams: params))));
   }
 
   Future<void> _create() async {
-    final request = await showDialog<AdminCreateUserRequest>(
-      context: context,
-      builder: (context) => const _CreateUserDialog(),
-    );
+    final request = await showDialog<AdminCreateUserRequest>(context: context, builder: (context) => const _CreateUserDialog());
     if (request == null) return;
 
     try {
@@ -119,11 +115,7 @@ class _UsersScreenState extends State<UsersScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => ConfirmDialog(
-        message: FlutterI18n.translate(
-          context,
-          'settings.users.delete_confirm',
-          translationParams: {'username': user.username},
-        ),
+        message: FlutterI18n.translate(context, 'settings.users.delete_confirm', translationParams: {'username': user.username}),
         confirmColor: Colors.red,
       ),
     );
@@ -184,9 +176,9 @@ class _UsersScreenState extends State<UsersScreen> {
                 final isSelf = user.id == API.loggedIn.id;
                 return ListTile(
                   leading: Icon(user.isAdmin ? Icons.admin_panel_settings : Icons.person),
-                  title: Text(isSelf
-                      ? '${user.username} ${FlutterI18n.translate(context, 'settings.users.you')}'
-                      : user.username),
+                  title: Text(
+                    isSelf ? '${user.username} ${FlutterI18n.translate(context, 'settings.users.you')}' : user.username,
+                  ),
                   subtitle: Text(user.email),
                   trailing: PopupMenuButton<String>(
                     onSelected: (action) {
@@ -198,15 +190,8 @@ class _UsersScreenState extends State<UsersScreen> {
                       }
                     },
                     itemBuilder: (context) => [
-                      PopupMenuItem(
-                        value: 'reset_password',
-                        child: I18nText('settings.users.reset_password'),
-                      ),
-                      if (!isSelf)
-                        PopupMenuItem(
-                          value: 'delete',
-                          child: I18nText('settings.users.delete'),
-                        ),
+                      PopupMenuItem(value: 'reset_password', child: I18nText('settings.users.reset_password')),
+                      if (!isSelf) PopupMenuItem(value: 'delete', child: I18nText('settings.users.delete')),
                     ],
                   ),
                 );
@@ -243,12 +228,8 @@ class _CreateUserDialogState extends State<_CreateUserDialog> {
 
   void _submit() {
     if (!_formKey.currentState!.validate()) return;
-    Navigator.of(context).pop(AdminCreateUserRequest(
-      username: _username.text,
-      email: _email.text,
-      password: _password.text,
-      admin: _admin,
-    ));
+    Navigator.of(context)
+        .pop(AdminCreateUserRequest(username: _username.text, email: _email.text, password: _password.text, admin: _admin));
   }
 
   @override
@@ -264,8 +245,7 @@ class _CreateUserDialogState extends State<_CreateUserDialog> {
               controller: _username,
               autofocus: true,
               textInputAction: TextInputAction.next,
-              validator:
-                  ValidatorBuilder.translate(context, 'login.username').required().minLength(3).maxLength(20).build(),
+              validator: ValidatorBuilder.translate(context, 'login.username').required().minLength(3).maxLength(20).build(),
               decoration: InputDecoration(label: I18nText('login.username')),
             ),
             const SizedBox(height: Constants.padding),
@@ -289,14 +269,8 @@ class _CreateUserDialogState extends State<_CreateUserDialog> {
         ),
       ),
       actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: I18nText('basic.cancel'),
-        ),
-        TextButton(
-          onPressed: _submit,
-          child: I18nText('basic.add'),
-        ),
+        TextButton(onPressed: () => Navigator.of(context).pop(), child: I18nText('basic.cancel')),
+        TextButton(onPressed: _submit, child: I18nText('basic.add')),
       ],
     );
   }
@@ -335,14 +309,8 @@ class _ResetPasswordDialogState extends State<_ResetPasswordDialog> {
         child: NewPasswordField(controller: _password, onSubmitted: _submit, autofocus: true),
       ),
       actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: I18nText('basic.cancel'),
-        ),
-        TextButton(
-          onPressed: _submit,
-          child: I18nText('basic.save'),
-        ),
+        TextButton(onPressed: () => Navigator.of(context).pop(), child: I18nText('basic.cancel')),
+        TextButton(onPressed: _submit, child: I18nText('basic.save')),
       ],
     );
   }

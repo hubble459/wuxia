@@ -15,8 +15,9 @@ const _rawApiHost = String.fromEnvironment('API_HOST', defaultValue: 'localhost'
 // completed here with this platform's default port/scheme; a full URL (e.g.
 // `https://host:port`, needed to reach a self-hosted server on a non-standard
 // port) is used as-is.
-final String _defaultApiUrl =
-    _rawApiHost.contains('://') ? _rawApiHost : (kIsWeb ? 'https://$_rawApiHost' : 'https://$_rawApiHost:5909');
+final String _defaultApiUrl = _rawApiHost.contains('://')
+    ? _rawApiHost
+    : (kIsWeb ? 'https://$_rawApiHost' : 'https://$_rawApiHost:5909');
 
 // extension PooPoo on GrpcError {}
 
@@ -83,11 +84,7 @@ class API {
     // Uses raw gRPC (HTTP/2 sockets) everywhere except web, where it falls
     // back to gRPC-Web (XHR) since browsers can't open raw sockets. The
     // server must speak both protocols on this host/port for web to work.
-    _channel = GrpcOrGrpcWebClientChannel.toSingleEndpoint(
-      host: parsed.host,
-      port: parsed.port,
-      transportSecure: parsed.secure,
-    );
+    _channel = GrpcOrGrpcWebClientChannel.toSingleEndpoint(host: parsed.host, port: parsed.port, transportSecure: parsed.secure);
   }
 
   static set token(String? token) {

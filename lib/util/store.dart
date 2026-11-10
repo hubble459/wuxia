@@ -26,9 +26,7 @@ class Store {
   Store._(this._secureStorage, this._publicStorage);
 
   static Future<Store> init() async {
-    _instance = Store._(
-        (!kIsWeb && Platform.isLinux) ? null : FlutterSecureStorage(),
-        await SharedPreferences.getInstance());
+    _instance = Store._((!kIsWeb && Platform.isLinux) ? null : FlutterSecureStorage(), await SharedPreferences.getInstance());
     return _instance;
   }
 

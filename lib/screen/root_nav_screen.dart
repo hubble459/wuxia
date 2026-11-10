@@ -58,8 +58,8 @@ class _RootNavScreenState extends State<RootNavScreen> {
       return;
     }
 
-    final openDownloads = downloadsSupported &&
-        (sessionOffline || ModalRoute.of(context)?.settings.arguments == rootNavDownloadsArgument);
+    final openDownloads =
+        downloadsSupported && (sessionOffline || ModalRoute.of(context)?.settings.arguments == rootNavDownloadsArgument);
     setState(() {
       _ready = true;
       // Downloads is always the last tab.
@@ -101,13 +101,12 @@ class _RootNavScreenState extends State<RootNavScreen> {
       final context = navigatorKey.currentState?.context;
 
       if (context?.mounted == true) {
-        Navigator.of(context!).push(MaterialPageRoute(
-          settings: RouteSettings(name: mangaRouteName(manga.id)),
-          builder: (context) => MangaScreen(
-            manga: manga,
-            type: HeroScreenType.reading,
+        Navigator.of(context!).push(
+          MaterialPageRoute(
+            settings: RouteSettings(name: mangaRouteName(manga.id)),
+            builder: (context) => MangaScreen(manga: manga, type: HeroScreenType.reading),
           ),
-        ));
+        );
       }
     }
   }
@@ -131,16 +130,18 @@ class _RootNavScreenState extends State<RootNavScreen> {
         await api.user.addDeviceToken(DeviceTokenRequest(token: token));
       }
 
-      FirebaseMessaging.instance.onTokenRefresh.listen((fcmToken) async {
-        if (!API.loggedIn.deviceIds.contains(fcmToken)) {
-          print('Updating FCM Device Token');
-          await api.user.removeDeviceToken(DeviceTokenRequest(token: token));
-          await api.user.addDeviceToken(DeviceTokenRequest(token: fcmToken));
-        }
-      }).onError((err) {
-        // UHHHHH
-        print(err);
-      });
+      FirebaseMessaging.instance.onTokenRefresh
+          .listen((fcmToken) async {
+            if (!API.loggedIn.deviceIds.contains(fcmToken)) {
+              print('Updating FCM Device Token');
+              await api.user.removeDeviceToken(DeviceTokenRequest(token: token));
+              await api.user.addDeviceToken(DeviceTokenRequest(token: fcmToken));
+            }
+          })
+          .onError((err) {
+            // UHHHHH
+            print(err);
+          });
 
       final message = await FirebaseMessaging.instance.getInitialMessage();
       if (message != null) {
@@ -210,10 +211,7 @@ class _RootNavScreenState extends State<RootNavScreen> {
                           await Navigator.of(context).push(
                             MaterialPageRoute(
                               settings: RouteSettings(name: mangaRouteName(reading.id)),
-                              builder: (context) => MangaScreen(
-                                manga: reading,
-                                type: HeroScreenType.reading,
-                              ),
+                              builder: (context) => MangaScreen(manga: reading, type: HeroScreenType.reading),
                             ),
                           );
 
@@ -257,10 +255,7 @@ class _RootNavScreenState extends State<RootNavScreen> {
                     });
                   },
                   destinations: routes
-                      .map((route) => NavigationRailDestination(
-                            icon: Icon(route.icon),
-                            label: Text(route.label),
-                          ))
+                      .map((route) => NavigationRailDestination(icon: Icon(route.icon), label: Text(route.label)))
                       .toList(),
                 ),
               if (isWide) const VerticalDivider(width: 1),
@@ -279,12 +274,7 @@ class _RootNavScreenState extends State<RootNavScreen> {
             ? null
             : BottomNavigationBar(
                 type: BottomNavigationBarType.fixed,
-                items: routes
-                    .map((route) => BottomNavigationBarItem(
-                          icon: Icon(route.icon),
-                          label: route.label,
-                        ))
-                    .toList(),
+                items: routes.map((route) => BottomNavigationBarItem(icon: Icon(route.icon), label: route.label)).toList(),
                 currentIndex: _selected,
                 onTap: (index) {
                   setState(() {
