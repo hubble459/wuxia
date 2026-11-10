@@ -62,6 +62,7 @@ dependencies:
   wakelock_plus: ^1.8.0
   flutter_foreground_task: ^11.0.0
   web: ^1.1.2
+  cupertino_icons: ^2.0.0
 
 dev_dependencies:
   flutter_test:
