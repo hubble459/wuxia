@@ -87,7 +87,7 @@ class MangaDetails extends StatelessWidget {
         ),
         SimpleFutureBuilder<MangasReply>(
           future: api.manga.similar(SimilarMangaRequest(id: manga.id)),
-          onErrorBuilder: (_, __) => const SizedBox.shrink(),
+          onErrorBuilder: (_, _) => const SizedBox.shrink(),
           onLoadedBuilder: (context, similar) {
             return Visibility(
               visible: similar.items.isNotEmpty,

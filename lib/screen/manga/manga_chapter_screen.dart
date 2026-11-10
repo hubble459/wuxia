@@ -697,7 +697,7 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
         settings: RouteSettings(name: chapterRouteNameFor(mangaId: widget.manga.id, chapter: chapter)),
         transitionDuration: Duration.zero,
         reverseTransitionDuration: Duration.zero,
-        pageBuilder: (context, __, ___) => MangaChapterScreen(
+        pageBuilder: (context, _, _) => MangaChapterScreen(
           manga: widget.manga,
           chapter: chapter,
           source: widget.source,

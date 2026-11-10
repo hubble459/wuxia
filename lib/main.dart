@@ -211,7 +211,7 @@ class _WuxiaAppState extends State<WuxiaApp> {
           final settings = RouteSettings(name: initialRouteName);
           final route =
               builder != null ? MaterialPageRoute(settings: settings, builder: builder) : generateDynamicRoute(settings);
-          return [if (route != null) route];
+          return [?route];
         }
 
         final rootRoute = MaterialPageRoute(
@@ -220,7 +220,7 @@ class _WuxiaAppState extends State<WuxiaApp> {
         );
         final targetRoute = generateDynamicRoute(RouteSettings(name: initialRouteName));
 
-        return [rootRoute, if (targetRoute != null) targetRoute];
+        return [rootRoute, ?targetRoute];
       },
       themeMode: ThemeMode.dark,
       theme: ThemeData.light(useMaterial3: true),

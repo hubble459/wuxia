@@ -95,7 +95,7 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
                   key: Key('dl_${manga.id}'),
                   manga: manga,
                   type: HeroScreenType.downloads,
-                  reloadParent: (_, __) => _reload(),
+                  reloadParent: (_, _) => _reload(),
                 );
               },
             ),

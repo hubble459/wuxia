@@ -150,7 +150,7 @@ class MangaDownloader {
       builder: (ctx) => AlertDialog(
         title: ValueListenableBuilder<bool>(
           valueListenable: started,
-          builder: (_, isDownloading, __) => SizedBox(
+          builder: (_, isDownloading, _) => SizedBox(
             width: double.infinity,
             child: Text(
               FlutterI18n.translate(ctx, isDownloading ? 'manga.downloading' : 'manga.download'),
@@ -160,7 +160,7 @@ class MangaDownloader {
         ),
         content: ValueListenableBuilder<int>(
           valueListenable: progress,
-          builder: (_, downloaded, __) {
+          builder: (_, downloaded, _) {
             final remaining = totalChapters - downloaded;
             final rateStopwatch = ratedStopwatch;
             final eta = ratedChapters > 0 && remaining > 0 && rateStopwatch != null
@@ -179,7 +179,7 @@ class MangaDownloader {
                   ),
                 ValueListenableBuilder<List<_ActiveChapterProgress>>(
                   valueListenable: activeChapters,
-                  builder: (_, active, __) {
+                  builder: (_, active, _) {
                     if (active.isEmpty) return const SizedBox.shrink();
                     return Column(
                       mainAxisSize: MainAxisSize.min,
@@ -197,7 +197,7 @@ class MangaDownloader {
                                 Expanded(
                                   child: ValueListenableBuilder<int>(
                                     valueListenable: chapter.downloaded,
-                                    builder: (_, pages, __) => LinearProgressIndicator(
+                                    builder: (_, pages, _) => LinearProgressIndicator(
                                       value: chapter.total == 0 ? null : pages / chapter.total,
                                       minHeight: 4,
                                     ),
