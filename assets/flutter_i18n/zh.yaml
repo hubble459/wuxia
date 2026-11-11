@@ -23,6 +23,7 @@ search:
   search_manga_online: 搜索漫画
   search_manga: 搜索漫画
 manga:
+  source_down: "此来源的网站目前无法加载"
   chapters: '{amount}章节'
   last: 最后
   continue: 继续

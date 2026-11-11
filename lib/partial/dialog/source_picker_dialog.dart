@@ -6,6 +6,7 @@ import 'package:wuxia/api.dart';
 import 'package:wuxia/gen/rumgap/v1/chapter.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/paginate.pb.dart';
+import 'package:wuxia/util/source_health.dart';
 
 enum _SourceAdminAction { setPrimary, remove }
 
@@ -53,6 +54,7 @@ class _SourcePickerDialogState extends State<_SourcePickerDialog> {
   @override
   void initState() {
     super.initState();
+    SourceHealth.refresh();
     for (final source in _sources) {
       _loadChapterCount(source);
     }
@@ -184,6 +186,18 @@ class _SourcePickerDialogState extends State<_SourcePickerDialog> {
                         ),
                     ],
                   ),
+                ),
+                ValueListenableBuilder<Set<String>>(
+                  valueListenable: SourceHealth.down,
+                  builder: (context, down, _) => down.contains(source.hostname)
+                      ? Padding(
+                          padding: const EdgeInsets.only(left: 4.0),
+                          child: Tooltip(
+                            message: FlutterI18n.translate(context, 'manga.source_down'),
+                            child: const Icon(Icons.cloud_off, size: 16),
+                          ),
+                        )
+                      : const SizedBox.shrink(),
                 ),
                 if (source.isPrimary) const Padding(padding: EdgeInsets.only(left: 4.0), child: Icon(Icons.star, size: 16)),
               ],

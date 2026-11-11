@@ -23,6 +23,7 @@ search:
   search_manga: Search Manga
   search_manga_online: Search Manga Online
 manga:
+  source_down: "This source's website is currently failing to load"
   chapters: '{amount} chapters'
   first: First
   continue: Continue

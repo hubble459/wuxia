@@ -78,6 +78,7 @@ login:
   username: Gebruikersnaam
   welcome: Welkom
 manga:
+  source_down: "De website van deze bron laadt momenteel niet"
   add: Toevoegen
   chapters: "{amount} hoofdstukken"
   continue: Doorgaan

@@ -11,6 +11,7 @@ import 'package:wuxia/partial/dialog/confirm_dialog.dart';
 import 'package:wuxia/partial/image_error_placeholder.dart';
 import 'package:wuxia/screen/manga/manga_screen.dart';
 import 'package:wuxia/util/app_routes.dart';
+import 'package:wuxia/util/source_health.dart';
 import 'package:wuxia/util/tools.dart';
 
 typedef ReloadParent = Function(MangaReply manga, bool deleted);
@@ -43,6 +44,7 @@ class _MangaItemState extends State<MangaItem> {
   @override
   void initState() {
     _manga = widget.manga;
+    SourceHealth.refresh();
     super.initState();
   }
 
@@ -94,6 +96,17 @@ class _MangaItemState extends State<MangaItem> {
 
   @override
   Widget build(BuildContext context) {
+    return ValueListenableBuilder<Set<String>>(
+      valueListenable: SourceHealth.down,
+      builder: (context, down, _) {
+        final unavailable = SourceHealth.allSourcesDown(_manga, down);
+        final tile = _buildTile(context, unavailable: unavailable);
+        return unavailable ? Opacity(opacity: 0.5, child: tile) : tile;
+      },
+    );
+  }
+
+  Widget _buildTile(BuildContext context, {required bool unavailable}) {
     return ListTile(
       dense: true,
       minVerticalPadding: 4.0,
@@ -103,7 +116,19 @@ class _MangaItemState extends State<MangaItem> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(_hostname),
+          Row(
+            children: [
+              if (unavailable)
+                Padding(
+                  padding: const EdgeInsets.only(right: 4),
+                  child: Tooltip(
+                    message: FlutterI18n.translate(context, 'manga.source_down'),
+                    child: const Icon(Icons.cloud_off, size: 14),
+                  ),
+                ),
+              Flexible(child: Text(_hostname, overflow: TextOverflow.ellipsis)),
+            ],
+          ),
           Visibility(
             visible: _manga.hasLast(),
             child: Text(
