@@ -8,6 +8,18 @@ basic:
   reset: Herstellen
   url: URL
 chapter:
+  link: "Koppelen aan andere bron…"
+  link_action: "Koppelen"
+  link_filter: "Hoofdstuknummer"
+  number: "Hoofdstuk {number}"
+  linked: "Gekoppeld aan hoofdstuk {number} op {source}"
+  link_failed: "Koppeling wijzigen mislukt: {error}"
+  link_both_unlinked: "Geen van beide hoofdstukken zit in een groep, dus ze kunnen niet gekoppeld worden"
+  unlink: "Hoofdstuk ontkoppelen"
+  unlinked: "Hoofdstuk ontkoppeld"
+  unlink_confirm: "Hoofdstuk {number} ontkoppelen van de andere bronnen? Wisselen van bron vindt het\
+  \ pas weer als het opnieuw gekoppeld is."
+  not_on_source: "Deze bron heeft dit hoofdstuk niet"
   goto_bottom: Scroll naar beneden
   goto_top: Scroll naar boven
   goto_first_page: Eerste pagina

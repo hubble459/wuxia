@@ -14,6 +14,8 @@ import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/reading.pb.dart';
 import 'package:wuxia/main.dart';
 import 'package:wuxia/partial/action/open_url_action.dart';
+import 'package:wuxia/partial/dialog/chapter_picker_dialog.dart';
+import 'package:wuxia/partial/dialog/confirm_dialog.dart';
 import 'package:wuxia/partial/dialog/source_picker_dialog.dart';
 import 'package:wuxia/partial/image_error_placeholder.dart';
 import 'package:wuxia/util/download_storage/download_storage.dart';
@@ -209,8 +211,6 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
           ReadingPatchRequest(mangaId: widget.manga.id, progress: widget.manga.readingProgress, chapterId: newChapter.id),
         );
       } on GrpcError catch (e) {
-        // TODO: build a UI for LinkChapter/UnlinkChapter so this is fixable
-        // in-app instead of just silently swallowed.
         if (e.code != StatusCode.failedPrecondition) rethrow;
       }
 
@@ -220,12 +220,97 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
       await _goToChapter(newChapter, initialFraction: fraction);
     } catch (e) {
       if (e is GrpcError && e.code == StatusCode.notFound) {
-        Fluttertoast.showToast(msg: 'This source doesn\'t have this chapter').ignore();
+        _showLinkSnackBar('chapter.not_on_source', source: selected);
         widget.source.clear();
         widget.source.mergeFromMessage(selected);
         setState(() {});
       } else {
         Fluttertoast.showToast(msg: e.toString()).ignore();
+      }
+    }
+  }
+
+  /// Explains why a source switch didn't find a match, with a shortcut to fix
+  /// it by linking this chapter to the right one on [source].
+  void _showLinkSnackBar(String messageKey, {required MangaSourceReply source}) {
+    if (!mounted) return;
+    final chapter = _chapter;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        duration: const Duration(seconds: 8),
+        content: Text(FlutterI18n.translate(context, messageKey)),
+        action: SnackBarAction(
+          label: FlutterI18n.translate(context, 'chapter.link_action'),
+          onPressed: () => _linkChapter(chapter: chapter, source: source),
+        ),
+      ),
+    );
+  }
+
+  /// Moves [chapter] (default: the open one) into the canonical group of a
+  /// chapter the user picks on another source, so switching between the two
+  /// sources lands on matching chapters and carries progress over.
+  Future<void> _linkChapter({ChapterReply? chapter, MangaSourceReply? source}) async {
+    final current = chapter ?? _chapter;
+    source ??= await showSourcePickerDialog(context, widget.manga.sources.where((s) => s.id != current.mangaSourceId).toList());
+    if (source == null || !mounted) return;
+
+    final picked = await showChapterPickerDialog(context, source, nearNumber: current.number);
+    if (picked == null || !mounted) return;
+
+    try {
+      if (picked.hasCanonicalChapterId()) {
+        await api.chapter.linkChapter(LinkChapterRequest(chapterId: current.id, canonicalChapterId: picked.canonicalChapterId));
+      } else if (current.hasCanonicalChapterId()) {
+        await api.chapter.linkChapter(LinkChapterRequest(chapterId: picked.id, canonicalChapterId: current.canonicalChapterId));
+      } else {
+        Fluttertoast.showToast(msg: FlutterI18n.translate(context, 'chapter.link_both_unlinked')).ignore();
+        return;
+      }
+      if (current.id == _chapter.id) {
+        final updated = await api.chapter.get(
+          ChapterRequest(mangaSourceId: _chapter.mangaSourceId, index: _chapter.index.toInt()),
+        );
+        if (mounted) setState(() => _chapter = updated);
+      }
+      if (!mounted) return;
+      Fluttertoast.showToast(
+        msg: FlutterI18n.translate(
+          context,
+          'chapter.linked',
+          translationParams: {'number': chapterFolderName(picked.number), 'source': source.hostname},
+        ),
+      ).ignore();
+    } catch (e) {
+      if (mounted) {
+        Fluttertoast.showToast(msg: FlutterI18n.translate(context, 'chapter.link_failed', translationParams: {'error': '$e'}))
+            .ignore();
+      }
+    }
+  }
+
+  Future<void> _unlinkChapter() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => ConfirmDialog(
+        message: FlutterI18n.translate(
+          context,
+          'chapter.unlink_confirm',
+          translationParams: {'number': chapterFolderName(_chapter.number)},
+        ),
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+
+    try {
+      await api.chapter.unlinkChapter(UnlinkChapterRequest(chapterId: _chapter.id));
+      if (!mounted) return;
+      setState(() => _chapter.clearCanonicalChapterId());
+      Fluttertoast.showToast(msg: FlutterI18n.translate(context, 'chapter.unlinked')).ignore();
+    } catch (e) {
+      if (mounted) {
+        Fluttertoast.showToast(msg: FlutterI18n.translate(context, 'chapter.link_failed', translationParams: {'error': '$e'}))
+            .ignore();
       }
     }
   }
@@ -294,6 +379,12 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
                       case 'switch_source':
                         _switchSource();
                         break;
+                      case 'link_chapter':
+                        _linkChapter();
+                        break;
+                      case 'unlink_chapter':
+                        _unlinkChapter();
+                        break;
                       case 'toggle_mode':
                         setState(() => _isPagedMode = !_isPagedMode);
                         _saveReadingMode();
@@ -331,6 +422,23 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
                         title: Text(FlutterI18n.translate(context, 'manga.switch_source')),
                       ),
                     ),
+                    PopupMenuItem(
+                      value: 'link_chapter',
+                      enabled: !_isOffline && widget.manga.sources.length > 1,
+                      child: ListTile(
+                        leading: const Icon(Icons.link),
+                        title: Text(FlutterI18n.translate(context, 'chapter.link')),
+                      ),
+                    ),
+                    if (_chapter.hasCanonicalChapterId())
+                      PopupMenuItem(
+                        value: 'unlink_chapter',
+                        enabled: !_isOffline,
+                        child: ListTile(
+                          leading: const Icon(Icons.link_off),
+                          title: Text(FlutterI18n.translate(context, 'chapter.unlink')),
+                        ),
+                      ),
                     PopupMenuItem(
                       value: 'toggle_mode',
                       child: ListTile(

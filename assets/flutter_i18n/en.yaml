@@ -70,6 +70,18 @@ details:
   alt_titles: Alternative Titles
 error: 'Error: {error}'
 chapter:
+  link: "Link to another source…"
+  link_action: "Link"
+  link_filter: "Chapter number"
+  number: "Chapter {number}"
+  linked: "Linked to chapter {number} on {source}"
+  link_failed: "Couldn't change the link: {error}"
+  link_both_unlinked: "Neither chapter is in a group, so they can't be linked"
+  unlink: "Unlink chapter"
+  unlinked: "Chapter unlinked"
+  unlink_confirm: "Unlink chapter {number} from the other sources? Switching sources won't find it until\
+  \ it's linked again."
+  not_on_source: "This source doesn't have this chapter"
   goto_top: Scroll to top
   goto_bottom: Scroll to bottom
   goto_first_page: First page
