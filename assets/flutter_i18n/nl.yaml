@@ -14,6 +14,7 @@ chapter:
   goto_last_page: Laatste pagina
   mode_webtoon: Overschakelen naar paginamodus
   mode_paged: Overschakelen naar webtoonmodus
+  right_to_left: "Rechts naar links"
   more_options: Meer opties
   next: Volgende
   previous: Vorig
@@ -135,6 +136,7 @@ settings:
   reading_mode: Standaard leesmodus
   reading_mode_webtoon: Webtoon
   reading_mode_paged: Pagina's
+  reading_mode_paged_rtl: "Pagina's (rechts naar links)"
   remove_account: Account verwijderen
   version: 'v{version} ({build})'
   scraper_status:

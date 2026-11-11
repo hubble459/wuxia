@@ -160,6 +160,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       value: 'paged',
                       child: Text(FlutterI18n.translate(context, 'settings.reading_mode_paged')),
                     ),
+                    DropdownMenuItem<String>(
+                      value: 'paged_rtl',
+                      child: Text(FlutterI18n.translate(context, 'settings.reading_mode_paged_rtl')),
+                    ),
                   ],
                   onChanged: (mode) async {
                     if (mode == null) return;

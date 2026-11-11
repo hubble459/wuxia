@@ -58,6 +58,7 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
   bool _isOffline = false;
   List<String>? _offlineSources;
   late bool _isPagedMode;
+  late bool _isRightToLeft;
   late int _currentPage;
 
   Timer? _offsetDebounce;
@@ -72,7 +73,9 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
     _currentPage = _lastOffsetPage;
 
     final store = Store.getStoreInstance();
-    _isPagedMode = (store.getMangaReadingMode(widget.manga.id) ?? store.getReadingMode()) == 'paged';
+    final mode = store.getMangaReadingMode(widget.manga.id) ?? store.getReadingMode();
+    _isPagedMode = mode == 'paged' || mode == 'paged_rtl';
+    _isRightToLeft = mode == 'paged_rtl';
 
     _loadImages();
     WidgetsBinding.instance.addPostFrameCallback((a) => offsetUpdater());
@@ -293,7 +296,11 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
                         break;
                       case 'toggle_mode':
                         setState(() => _isPagedMode = !_isPagedMode);
-                        Store.getStoreInstance().setMangaReadingMode(widget.manga.id, _isPagedMode ? 'paged' : 'webtoon');
+                        _saveReadingMode();
+                        break;
+                      case 'toggle_rtl':
+                        setState(() => _isRightToLeft = !_isRightToLeft);
+                        _saveReadingMode();
                         break;
                       case 'goto_top':
                         if (_isPagedMode) {
@@ -331,6 +338,12 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
                         title: Text(FlutterI18n.translate(context, _isPagedMode ? 'chapter.mode_paged' : 'chapter.mode_webtoon')),
                       ),
                     ),
+                    if (_isPagedMode)
+                      CheckedPopupMenuItem(
+                        value: 'toggle_rtl',
+                        checked: _isRightToLeft,
+                        child: Text(FlutterI18n.translate(context, 'chapter.right_to_left')),
+                      ),
                     PopupMenuItem(
                       value: 'goto_top',
                       child: ListTile(
@@ -446,6 +459,11 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
     );
   }
 
+  void _saveReadingMode() {
+    final mode = _isPagedMode ? (_isRightToLeft ? 'paged_rtl' : 'paged') : 'webtoon';
+    Store.getStoreInstance().setMangaReadingMode(widget.manga.id, mode);
+  }
+
   KeyEventResult _handleKeyEvent(FocusNode node, KeyEvent event) {
     if (event is! KeyDownEvent && event is! KeyRepeatEvent) {
       return KeyEventResult.ignored;
@@ -455,15 +473,19 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
       switch (event.logicalKey) {
         case LogicalKeyboardKey.arrowUp:
         case LogicalKeyboardKey.keyW:
-        case LogicalKeyboardKey.arrowLeft:
-        case LogicalKeyboardKey.keyA:
           _pageBackward();
           return KeyEventResult.handled;
         case LogicalKeyboardKey.arrowDown:
         case LogicalKeyboardKey.keyS:
+          _pageForward();
+          return KeyEventResult.handled;
+        case LogicalKeyboardKey.arrowLeft:
+        case LogicalKeyboardKey.keyA:
+          _isRightToLeft ? _pageForward() : _pageBackward();
+          return KeyEventResult.handled;
         case LogicalKeyboardKey.arrowRight:
         case LogicalKeyboardKey.keyD:
-          _pageForward();
+          _isRightToLeft ? _pageBackward() : _pageForward();
           return KeyEventResult.handled;
         default:
           return KeyEventResult.ignored;
@@ -589,6 +611,7 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
       maxWidth: 900,
       child: PageView.builder(
         controller: _pageController,
+        reverse: _isRightToLeft,
         itemCount: links.length,
         onPageChanged: (index) {
           _recordOffset(index, 0);
