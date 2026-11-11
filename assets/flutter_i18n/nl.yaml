@@ -17,8 +17,7 @@ chapter:
   link_both_unlinked: "Beide hoofdstukken zijn ontkoppeld, dus ze kunnen niet aan elkaar gekoppeld worden. Kies een hoofdstuk zonder het ontkoppeld-icoon."
   unlink: "Hoofdstuk ontkoppelen"
   unlinked: "Hoofdstuk ontkoppeld"
-  unlink_confirm: "Hoofdstuk {number} ontkoppelen van de andere bronnen? Wisselen van bron vindt het\
-  \ pas weer als het opnieuw gekoppeld is."
+  unlink_confirm: "Hoofdstuk {number} ontkoppelen van de andere bronnen? Wisselen van bron vindt het pas weer als het opnieuw gekoppeld is."
   not_on_source: "Deze bron heeft dit hoofdstuk niet"
   goto_bottom: Scroll naar beneden
   goto_top: Scroll naar boven

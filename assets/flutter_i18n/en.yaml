@@ -80,8 +80,7 @@ chapter:
   link_both_unlinked: "Both chapters are unlinked, so they can't be linked to each other. Pick a chapter without the unlinked icon."
   unlink: "Unlink chapter"
   unlinked: "Chapter unlinked"
-  unlink_confirm: "Unlink chapter {number} from the other sources? Switching sources won't find it until\
-  \ it's linked again."
+  unlink_confirm: "Unlink chapter {number} from the other sources? Switching sources won't find it until it's linked again."
   not_on_source: "This source doesn't have this chapter"
   goto_top: Scroll to top
   goto_bottom: Scroll to bottom
