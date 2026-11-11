@@ -55,10 +55,7 @@ class ChapterSelector extends StatefulWidget {
 class _ChapterSelectorState extends State<ChapterSelector> {
   final _scrollController = ItemScrollController();
   final _itemPositionListener = ItemPositionsListener.create();
-  // rumgap clamps per_page to 50 server-side (chapter.rs) -- requesting more
-  // just gets silently downgraded, which used to throw off the client's own
-  // page-offset math (and thus initialScrollIndex below). Request exactly
-  // what will be honored instead.
+  // rumgap clamps per_page to 50 server-side (chapter.rs).
   static const _pageSize = 50;
   // Index of the fetched window's first chapter. Derived from the reply's own
   // `pagination.page`/`perPage` -- which reflect whatever the server actually
