@@ -60,12 +60,17 @@ class _ChapterSelectorState extends State<ChapterSelector> {
   // page-offset math (and thus initialScrollIndex below). Request exactly
   // what will be honored instead.
   static const _pageSize = 50;
-  // Local (0-based) position of the current chapter within the fetched
-  // window. Derived from the reply's own `pagination.page`/`perPage` --
-  // which reflect whatever the server actually clamped/used -- rather than
-  // from `_pageSize` directly, so it stays correct even if the server's cap
-  // ever changes.
-  var _windowLocalIndex = 0;
+  // Index of the fetched window's first chapter. Derived from the reply's own
+  // `pagination.page`/`perPage` -- which reflect whatever the server actually
+  // clamped/used -- rather than from `_pageSize` directly, so it stays correct
+  // even if the server's cap ever changes.
+  var _windowStart = 0;
+  var _windowLength = 0;
+
+  // The fetched window, reused across rebuilds until the source, the window
+  // the current chapter falls in, or the chapter count changes.
+  Future<ChaptersReply>? _chapters;
+  (int, int, int)? _chaptersKey;
 
   // Cached in `loadOfflineChapters`'s order (oldest first) the first time an
   // offline fallback is needed.
@@ -129,12 +134,24 @@ class _ChapterSelectorState extends State<ChapterSelector> {
         .then((value) => refresh());
   }
 
+  // `readingProgress`/`chapter.index` are 1-based (see `isChapterRead`), so
+  // subtract 1 before dividing to land on the page that actually contains it.
+  int get _windowPage => max(((widget.manga.readingProgress - 1) / _pageSize).floor(), 0);
+
+  /// Position of the current chapter within the fetched window.
+  int get _windowLocalIndex => (widget.manga.readingProgress - 1 - _windowStart).clamp(0, max(_windowLength - 1, 0));
+
+  Future<ChaptersReply> _chaptersFuture() {
+    final key = (widget.source.id, _windowPage, widget.manga.countChapters.toInt());
+    if (_chapters == null || key != _chaptersKey) {
+      _chaptersKey = key;
+      _chapters = getChapters();
+    }
+    return _chapters!;
+  }
+
   Future<ChaptersReply> getChapters() async {
-    // TODO 26/11/2023: Keep this in memory (inside manga object?)
-    // `readingProgress`/`chapter.index` are 1-based (see `_isChapterRead`), so
-    // subtract 1 before dividing to land on the page that actually contains it.
-    final till = widget.manga.readingProgress;
-    final page = max(((till - 1) / _pageSize).floor(), 0);
+    final page = _windowPage;
     try {
       final result = await api.chapter.index(
         PaginateChapterQuery(
@@ -145,16 +162,15 @@ class _ChapterSelectorState extends State<ChapterSelector> {
       );
 
       if (result.items.isEmpty) {
-        final offline = await _offlineWindow(till);
+        final offline = await _offlineWindow();
         if (offline != null) return offline;
       }
 
-      final actualPage = result.pagination.page.toInt();
-      final actualPerPage = result.pagination.perPage.toInt();
-      _windowLocalIndex = (till - 1 - actualPage * actualPerPage).clamp(0, max(result.items.length - 1, 0));
+      _windowStart = result.pagination.page.toInt() * result.pagination.perPage.toInt();
+      _windowLength = result.items.length;
       return result;
     } catch (e) {
-      final offline = await _offlineWindow(till);
+      final offline = await _offlineWindow();
       if (offline == null) rethrow;
       return offline;
     }
@@ -163,11 +179,12 @@ class _ChapterSelectorState extends State<ChapterSelector> {
   /// The downloaded chapter list, for when the server can't be reached or
   /// has no chapters for this source (e.g. its scraper is failing). `null`
   /// if nothing is downloaded.
-  Future<ChaptersReply?> _offlineWindow(int till) async {
+  Future<ChaptersReply?> _offlineWindow() async {
     _offlineChapters ??= await loadOfflineChapters(widget.manga.id);
     final offline = _offlineChapters;
     if (offline == null || offline.isEmpty) return null;
-    _windowLocalIndex = (till - 1).clamp(0, max(offline.length - 1, 0));
+    _windowStart = 0;
+    _windowLength = offline.length;
     return ChaptersReply(items: offline);
   }
 
@@ -192,7 +209,7 @@ class _ChapterSelectorState extends State<ChapterSelector> {
                     height: 40,
                     child: Center(
                       child: SimpleFutureBuilder(
-                        future: getChapters(),
+                        future: _chaptersFuture(),
                         onLoadedBuilder: (context, ChaptersReply chapters) {
                           return ScrollablePositionedList.builder(
                             initialScrollIndex: _windowLocalIndex,
@@ -237,5 +254,10 @@ class _ChapterSelectorState extends State<ChapterSelector> {
   void refresh() {
     setState(() {});
     widget.refreshParent();
+    // Progress may have moved within the same window (no refetch), so bring
+    // the now-current chapter into view.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && _scrollController.isAttached) _scrollController.jumpTo(index: _windowLocalIndex);
+    });
   }
 }
