@@ -14,7 +14,7 @@ chapter:
   number: "Hoofdstuk {number}"
   linked: "Gekoppeld aan hoofdstuk {number} op {source}"
   link_failed: "Koppeling wijzigen mislukt: {error}"
-  link_both_unlinked: "Geen van beide hoofdstukken zit in een groep, dus ze kunnen niet gekoppeld worden"
+  link_both_unlinked: "Beide hoofdstukken zijn ontkoppeld, dus ze kunnen niet aan elkaar gekoppeld worden. Kies een hoofdstuk zonder het ontkoppeld-icoon."
   unlink: "Hoofdstuk ontkoppelen"
   unlinked: "Hoofdstuk ontkoppeld"
   unlink_confirm: "Hoofdstuk {number} ontkoppelen van de andere bronnen? Wisselen van bron vindt het\

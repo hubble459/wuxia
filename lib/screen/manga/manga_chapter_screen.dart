@@ -247,7 +247,7 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
     );
   }
 
-  /// Moves [chapter] (default: the open one) into the canonical group of a
+  /// Moves [chapter] (default: the open one) into the canonical chapter of a
   /// chapter the user picks on another source, so switching between the two
   /// sources lands on matching chapters and carries progress over.
   Future<void> _linkChapter({ChapterReply? chapter, MangaSourceReply? source}) async {
