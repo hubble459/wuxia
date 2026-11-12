@@ -268,6 +268,13 @@ class _WuxiaAppState extends State<WuxiaApp> {
           accentColor: Colors.pink,
         ),
         scaffoldBackgroundColor: Colors.black,
+        // The default selected tab colour (primary purple) is hard to read on the grey app bar.
+        tabBarTheme: const TabBarThemeData(
+          labelColor: Colors.white,
+          unselectedLabelColor: Colors.white60,
+          indicatorColor: Colors.pinkAccent,
+          labelStyle: TextStyle(fontWeight: FontWeight.w700),
+        ),
         inputDecorationTheme: const InputDecorationTheme(
           isDense: true,
           filled: true,
