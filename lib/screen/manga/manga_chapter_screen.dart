@@ -46,8 +46,9 @@ class _ReaderPage {
 }
 
 String _pageUrl(String url, {required bool dataSaver}) {
-  if (dataSaver) return '$url?maxdim=1280&quality=70';
-  return url;
+  if (!dataSaver) return url;
+  final uri = Uri.parse(url);
+  return uri.replace(queryParameters: {...uri.queryParameters, 'maxdim': '1280', 'quality': '70'}).toString();
 }
 
 class _MangaChapterScreenState extends State<MangaChapterScreen> {
