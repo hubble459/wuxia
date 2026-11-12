@@ -22,7 +22,8 @@ search:
   no_results: No search results
   search_reading: Search Reading
   search_manga: Search Manga
-  library: In your library
+  library: Library
+  show_more: Show more
   online: Online
 manga:
   source_down: "This source's website is currently failing to load"

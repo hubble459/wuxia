@@ -45,6 +45,10 @@ class _SearchScreenState extends State<SearchScreen> with AutomaticKeepAliveClie
   final _searchController = TextEditingController();
   final _scrollController = ScrollController();
   final _pageSize = 20;
+
+  /// How many library matches are shown above the online results before "show more".
+  static const _collapsedLibraryCount = 5;
+  bool _libraryExpanded = false;
   String _keyword = '';
   String? _orderBy;
   Future<SearchReply>? _onlineResults;
@@ -59,6 +63,7 @@ class _SearchScreenState extends State<SearchScreen> with AutomaticKeepAliveClie
 
   void _search(String keyword) {
     _keyword = keyword.trim();
+    _libraryExpanded = false;
     final onlineKeyword = _onlineKeyword;
     _onlineResults = onlineKeyword.isEmpty ? null : api.search.manga(SearchRequest(keyword: onlineKeyword));
     if (!_onlineOnly) {
@@ -158,30 +163,25 @@ class _SearchScreenState extends State<SearchScreen> with AutomaticKeepAliveClie
                     controller: _scrollController,
                     slivers: [
                       if (!_onlineOnly && _onlineResults != null) _sectionHeader('search.library'),
-                      if (!_onlineOnly)
+                      if (!_onlineOnly &&
+                          _onlineResults != null &&
+                          !_libraryExpanded &&
+                          (state.items?.length ?? 0) > _collapsedLibraryCount)
+                        ..._collapsedLibrary(state.items!)
+                      else if (!_onlineOnly)
                         PagedSliverList<int, MangaReply>(
                           state: state,
                           fetchNextPage: fetchNextPage,
+                          // Without this an empty or loading library fills the viewport and pushes the
+                          // online results a full screen down.
+                          shrinkWrapFirstPageIndicators: true,
                           builderDelegate: PagedChildBuilderDelegate<MangaReply>(
                             firstPageErrorIndicatorBuilder: (context) => ListErrorIndicator(pagingController: _pagingController),
                             noItemsFoundIndicatorBuilder: (context) => Padding(
                               padding: const EdgeInsets.all(16.0),
                               child: Center(child: I18nText('empty')),
                             ),
-                            itemBuilder: (context, manga, index) => MangaItem(
-                              key: Key(manga.id.toString()),
-                              manga: manga,
-                              type: HeroScreenType.latest,
-                              reloadParent: (updated, deleted) {
-                                if (deleted) {
-                                  _pagingController.items?.removeWhere((m) => m.id == updated.id);
-                                } else {
-                                  manga.clear();
-                                  manga.mergeFromMessage(updated);
-                                }
-                                setState(() {});
-                              },
-                            ),
+                            itemBuilder: (context, manga, index) => _mangaItem(manga),
                           ),
                         ),
                       if (_onlineResults != null) ...[
@@ -197,6 +197,39 @@ class _SearchScreenState extends State<SearchScreen> with AutomaticKeepAliveClie
         ],
       ),
     );
+  }
+
+  Widget _mangaItem(MangaReply manga) {
+    return MangaItem(
+      key: Key(manga.id.toString()),
+      manga: manga,
+      type: HeroScreenType.latest,
+      reloadParent: (updated, deleted) {
+        if (deleted) {
+          _pagingController.items?.removeWhere((m) => m.id == updated.id);
+        } else {
+          manga.clear();
+          manga.mergeFromMessage(updated);
+        }
+        setState(() {});
+      },
+    );
+  }
+
+  /// The first few library matches, so the online results stay in view.
+  List<Widget> _collapsedLibrary(List<MangaReply> items) {
+    return [
+      SliverList.builder(itemCount: _collapsedLibraryCount, itemBuilder: (context, index) => _mangaItem(items[index])),
+      SliverToBoxAdapter(
+        child: Center(
+          child: TextButton.icon(
+            onPressed: () => setState(() => _libraryExpanded = true),
+            icon: const Icon(Icons.expand_more),
+            label: I18nText('search.show_more'),
+          ),
+        ),
+      ),
+    ];
   }
 
   Widget _sectionHeader(String key) {

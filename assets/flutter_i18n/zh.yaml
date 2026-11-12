@@ -21,7 +21,8 @@ login:
 search:
   no_results: 没有搜索结果
   search_reading: 搜索阅读
-  library: 在你的书库中
+  library: 书库
+  show_more: 显示更多
   online: 在线
   search_manga: 搜索漫画
 manga:

@@ -140,7 +140,8 @@ reading:
 search:
   no_results: Geen zoekresultaten
   search_manga: Manga zoeken
-  library: In je bibliotheek
+  library: Bibliotheek
+  show_more: Meer tonen
   online: Online
   search_reading: Zoek Lezen
 settings:
