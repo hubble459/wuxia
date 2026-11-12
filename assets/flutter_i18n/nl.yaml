@@ -171,6 +171,29 @@ settings:
   reading_mode_paged_rtl: "Pagina's (rechts naar links)"
   remove_account: Account verwijderen
   version: 'v{version} ({build})'
+  storage:
+    title: Opslag
+    description: Schijf- en databaseruimte die de server gebruikt
+    total: Gebruikt door rumgap
+    files: '{files} bestanden op schijf · {pages} pagina''s opgeslagen'
+    volume: '{free} vrij van {total} op deze schijf'
+    breakdown: Waar het heen gaat
+    kind:
+      pages: Hoofdstukpagina's
+      resized: Verkleinde kopieën
+      covers: Covers
+      other: Overige bestanden
+      database: Database
+    pages_stored: Pagina's opgeslagen
+    pages_pending: Pagina's in de wachtrij
+    pages_failed: Pagina's mislukt
+    by_site: Per site
+    by_manga: Grootste manga
+    group_value: '{bytes} · {chapters} hfst.'
+    manga_value: '{chapters} hoofdstukken · {pages} pagina''s'
+    database: 'Database · {size}'
+    table_value: '{bytes} · {rows} rijen'
+    measured: 'Gemeten {ago}, de schijfscan duurde {ms} ms'
   scraper_status:
     close: Sluiten
     empty: Nog geen scrape-pogingen geregistreerd

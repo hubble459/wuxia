@@ -289,6 +289,29 @@ settings:
       steady:
         name: The Steady Cultivator
         description: Calm, consistent, unbothered. Your dao is balanced.
+  storage:
+    title: Storage
+    description: Disk and database space used by the server
+    total: Used by rumgap
+    files: '{files} files on disk · {pages} pages stored'
+    volume: '{free} free of {total} on this disk'
+    breakdown: Where it goes
+    kind:
+      pages: Chapter pages
+      resized: Resized copies
+      covers: Covers
+      other: Other files
+      database: Database
+    pages_stored: Pages stored
+    pages_pending: Pages waiting
+    pages_failed: Pages failed
+    by_site: By site
+    by_manga: Biggest manga
+    group_value: '{bytes} · {chapters} ch.'
+    manga_value: '{chapters} chapters · {pages} pages'
+    database: 'Database · {size}'
+    table_value: '{bytes} · {rows} rows'
+    measured: 'Measured {ago}, the disk scan took {ms} ms'
   scraper_status:
     title: Scraper Status
     empty: No scrape attempts recorded yet

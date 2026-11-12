@@ -1933,6 +1933,14 @@ class AdminClient extends $grpc.Client {
     return $createUnaryCall(_$setPassword, request, options: options);
   }
 
+  /// How much disk and database space rumgap takes up.
+  $grpc.ResponseFuture<$11.StorageReply> storage(
+    $2.Empty request, {
+    $grpc.CallOptions? options,
+  }) {
+    return $createUnaryCall(_$storage, request, options: options);
+  }
+
   // method descriptors
 
   static final _$createUser =
@@ -1950,6 +1958,10 @@ class AdminClient extends $grpc.Client {
           '/rumgap.v1.Admin/SetPassword',
           ($11.AdminSetPasswordRequest value) => value.writeToBuffer(),
           $2.Empty.fromBuffer);
+  static final _$storage = $grpc.ClientMethod<$2.Empty, $11.StorageReply>(
+      '/rumgap.v1.Admin/Storage',
+      ($2.Empty value) => value.writeToBuffer(),
+      $11.StorageReply.fromBuffer);
 }
 
 @$pb.GrpcServiceName('rumgap.v1.Admin')
@@ -1981,6 +1993,13 @@ abstract class AdminServiceBase extends $grpc.Service {
         ($core.List<$core.int> value) =>
             $11.AdminSetPasswordRequest.fromBuffer(value),
         ($2.Empty value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$2.Empty, $11.StorageReply>(
+        'Storage',
+        storage_Pre,
+        false,
+        false,
+        ($core.List<$core.int> value) => $2.Empty.fromBuffer(value),
+        ($11.StorageReply value) => value.writeToBuffer()));
   }
 
   $async.Future<$0.UserReply> createUser_Pre($grpc.ServiceCall $call,
@@ -2006,4 +2025,12 @@ abstract class AdminServiceBase extends $grpc.Service {
 
   $async.Future<$2.Empty> setPassword(
       $grpc.ServiceCall call, $11.AdminSetPasswordRequest request);
+
+  $async.Future<$11.StorageReply> storage_Pre(
+      $grpc.ServiceCall $call, $async.Future<$2.Empty> $request) async {
+    return storage($call, await $request);
+  }
+
+  $async.Future<$11.StorageReply> storage(
+      $grpc.ServiceCall call, $2.Empty request);
 }

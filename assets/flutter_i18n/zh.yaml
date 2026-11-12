@@ -289,6 +289,29 @@ settings:
       steady:
         name: 稳健修士
         description: 平静、稳定、波澜不惊。你的道很平衡。
+  storage:
+    title: 存储空间
+    description: 服务器占用的磁盘和数据库空间
+    total: rumgap 已用空间
+    files: '磁盘上 {files} 个文件 · 已存 {pages} 页'
+    volume: '此磁盘共 {total}，剩余 {free}'
+    breakdown: 空间去向
+    kind:
+      pages: 章节页面
+      resized: 缩放副本
+      covers: 封面
+      other: 其他文件
+      database: 数据库
+    pages_stored: 已存页面
+    pages_pending: 等待中的页面
+    pages_failed: 失败的页面
+    by_site: 按网站
+    by_manga: 占用最多的漫画
+    group_value: '{bytes} · {chapters} 章'
+    manga_value: '{chapters} 章 · {pages} 页'
+    database: '数据库 · {size}'
+    table_value: '{bytes} · {rows} 行'
+    measured: '{ago}测量，磁盘扫描用时 {ms} 毫秒'
   scraper_status:
     title: 抓取器状态
     empty: 尚未记录任何抓取尝试

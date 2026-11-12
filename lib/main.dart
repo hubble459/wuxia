@@ -21,6 +21,7 @@ import 'package:wuxia/screen/setting/preferred_sources_screen.dart';
 import 'package:wuxia/screen/setting/scraper_status_screen.dart';
 import 'package:wuxia/screen/setting/users_screen.dart';
 import 'package:wuxia/screen/setting/statistics_screen.dart';
+import 'package:wuxia/screen/setting/storage_screen.dart';
 import 'package:wuxia/screen/social/comments_screen.dart';
 import 'package:wuxia/screen/social/friends_screen.dart';
 import 'package:wuxia/screen/social/profile_screen.dart';
@@ -112,7 +113,7 @@ void main() async {
   runApp(const WuxiaApp());
 }
 
-const _settingsRoutes = {'settings', 'statistics', 'friends', 'preferred_sources', 'scraper_status', 'users'};
+const _settingsRoutes = {'settings', 'statistics', 'friends', 'preferred_sources', 'scraper_status', 'storage', 'users'};
 
 class WuxiaApp extends StatefulWidget {
   const WuxiaApp({super.key});
@@ -138,6 +139,7 @@ class _WuxiaAppState extends State<WuxiaApp> {
       'friends': (context) => const FriendsScreen(),
       'preferred_sources': (context) => const PreferredSourcesScreen(),
       'scraper_status': (context) => const ScraperStatusScreen(),
+      'storage': (context) => const StorageScreen(),
       'users': (context) => const UsersScreen(),
     };
 

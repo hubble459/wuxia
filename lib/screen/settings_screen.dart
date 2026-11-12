@@ -242,6 +242,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
               if (API.loggedIn.isAdmin)
                 ListTile(
+                  title: I18nText('settings.storage.title'),
+                  subtitle: I18nText('settings.storage.description'),
+                  onTap: () {
+                    Navigator.of(context).pushNamed('storage');
+                  },
+                ),
+              if (API.loggedIn.isAdmin)
+                ListTile(
                   title: I18nText('settings.users.title'),
                   onTap: () {
                     Navigator.of(context).pushNamed('users');
