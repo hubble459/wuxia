@@ -378,6 +378,7 @@ class MangaDownloader {
       serviceTypes: [ForegroundServiceTypes.dataSync],
       notificationTitle: manga.title,
       notificationText: '0 / $totalChapters',
+      notificationIcon: const NotificationIcon(metaDataName: 'io.wuxia.download_notification_icon'),
       callback: downloadForegroundTaskCallback,
     );
   }
