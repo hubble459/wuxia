@@ -99,6 +99,28 @@ class UserClient extends $grpc.Client {
     return $createUnaryCall(_$removeDeviceToken, request, options: options);
   }
 
+  /// Revoke the session this request was made with
+  $grpc.ResponseFuture<$2.Empty> logout(
+    $2.Empty request, {
+    $grpc.CallOptions? options,
+  }) {
+    return $createUnaryCall(_$logout, request, options: options);
+  }
+
+  $grpc.ResponseFuture<$0.SessionsReply> sessions(
+    $2.Empty request, {
+    $grpc.CallOptions? options,
+  }) {
+    return $createUnaryCall(_$sessions, request, options: options);
+  }
+
+  $grpc.ResponseFuture<$2.Empty> revokeSession(
+    $0.RevokeSessionRequest request, {
+    $grpc.CallOptions? options,
+  }) {
+    return $createUnaryCall(_$revokeSession, request, options: options);
+  }
+
   // method descriptors
 
   static final _$register =
@@ -136,6 +158,19 @@ class UserClient extends $grpc.Client {
       $grpc.ClientMethod<$0.DeviceTokenRequest, $2.Empty>(
           '/rumgap.v1.User/RemoveDeviceToken',
           ($0.DeviceTokenRequest value) => value.writeToBuffer(),
+          $2.Empty.fromBuffer);
+  static final _$logout = $grpc.ClientMethod<$2.Empty, $2.Empty>(
+      '/rumgap.v1.User/Logout',
+      ($2.Empty value) => value.writeToBuffer(),
+      $2.Empty.fromBuffer);
+  static final _$sessions = $grpc.ClientMethod<$2.Empty, $0.SessionsReply>(
+      '/rumgap.v1.User/Sessions',
+      ($2.Empty value) => value.writeToBuffer(),
+      $0.SessionsReply.fromBuffer);
+  static final _$revokeSession =
+      $grpc.ClientMethod<$0.RevokeSessionRequest, $2.Empty>(
+          '/rumgap.v1.User/RevokeSession',
+          ($0.RevokeSessionRequest value) => value.writeToBuffer(),
           $2.Empty.fromBuffer);
 }
 
@@ -203,6 +238,28 @@ abstract class UserServiceBase extends $grpc.Service {
         ($core.List<$core.int> value) =>
             $0.DeviceTokenRequest.fromBuffer(value),
         ($2.Empty value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$2.Empty, $2.Empty>(
+        'Logout',
+        logout_Pre,
+        false,
+        false,
+        ($core.List<$core.int> value) => $2.Empty.fromBuffer(value),
+        ($2.Empty value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$2.Empty, $0.SessionsReply>(
+        'Sessions',
+        sessions_Pre,
+        false,
+        false,
+        ($core.List<$core.int> value) => $2.Empty.fromBuffer(value),
+        ($0.SessionsReply value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$0.RevokeSessionRequest, $2.Empty>(
+        'RevokeSession',
+        revokeSession_Pre,
+        false,
+        false,
+        ($core.List<$core.int> value) =>
+            $0.RevokeSessionRequest.fromBuffer(value),
+        ($2.Empty value) => value.writeToBuffer()));
   }
 
   $async.Future<$0.UserTokenReply> register_Pre($grpc.ServiceCall $call,
@@ -267,6 +324,29 @@ abstract class UserServiceBase extends $grpc.Service {
 
   $async.Future<$2.Empty> removeDeviceToken(
       $grpc.ServiceCall call, $0.DeviceTokenRequest request);
+
+  $async.Future<$2.Empty> logout_Pre(
+      $grpc.ServiceCall $call, $async.Future<$2.Empty> $request) async {
+    return logout($call, await $request);
+  }
+
+  $async.Future<$2.Empty> logout($grpc.ServiceCall call, $2.Empty request);
+
+  $async.Future<$0.SessionsReply> sessions_Pre(
+      $grpc.ServiceCall $call, $async.Future<$2.Empty> $request) async {
+    return sessions($call, await $request);
+  }
+
+  $async.Future<$0.SessionsReply> sessions(
+      $grpc.ServiceCall call, $2.Empty request);
+
+  $async.Future<$2.Empty> revokeSession_Pre($grpc.ServiceCall $call,
+      $async.Future<$0.RevokeSessionRequest> $request) async {
+    return revokeSession($call, await $request);
+  }
+
+  $async.Future<$2.Empty> revokeSession(
+      $grpc.ServiceCall call, $0.RevokeSessionRequest request);
 }
 
 @$pb.GrpcServiceName('rumgap.v1.Friend')

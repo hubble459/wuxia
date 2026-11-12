@@ -50,6 +50,7 @@ const MangaSourceReply$json = {
     {'1': 'is_primary', '3': 5, '4': 1, '5': 8, '10': 'isPrimary'},
     {'1': 'created_at', '3': 6, '4': 1, '5': 3, '10': 'createdAt'},
     {'1': 'updated_at', '3': 7, '4': 1, '5': 3, '10': 'updatedAt'},
+    {'1': 'fully_stored', '3': 8, '4': 1, '5': 8, '10': 'fullyStored'},
   ],
 };
 
@@ -58,7 +59,8 @@ final $typed_data.Uint8List mangaSourceReplyDescriptor = $convert.base64Decode(
     'ChBNYW5nYVNvdXJjZVJlcGx5Eg4KAmlkGAEgASgFUgJpZBIQCgN1cmwYAiABKAlSA3VybBIaCg'
     'hob3N0bmFtZRgDIAEoCVIIaG9zdG5hbWUSGgoIbGFuZ3VhZ2UYBCABKAlSCGxhbmd1YWdlEh0K'
     'CmlzX3ByaW1hcnkYBSABKAhSCWlzUHJpbWFyeRIdCgpjcmVhdGVkX2F0GAYgASgDUgljcmVhdG'
-    'VkQXQSHQoKdXBkYXRlZF9hdBgHIAEoA1IJdXBkYXRlZEF0');
+    'VkQXQSHQoKdXBkYXRlZF9hdBgHIAEoA1IJdXBkYXRlZEF0EiEKDGZ1bGx5X3N0b3JlZBgIIAEo'
+    'CFILZnVsbHlTdG9yZWQ=');
 
 @$core.Deprecated('Use backfillStatusReplyDescriptor instead')
 const BackfillStatusReply$json = {

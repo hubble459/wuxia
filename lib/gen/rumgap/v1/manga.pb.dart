@@ -130,6 +130,7 @@ class MangaSourceReply extends $pb.GeneratedMessage {
     $core.bool? isPrimary,
     $fixnum.Int64? createdAt,
     $fixnum.Int64? updatedAt,
+    $core.bool? fullyStored,
   }) {
     final result = create();
     if (id != null) result.id = id;
@@ -139,6 +140,7 @@ class MangaSourceReply extends $pb.GeneratedMessage {
     if (isPrimary != null) result.isPrimary = isPrimary;
     if (createdAt != null) result.createdAt = createdAt;
     if (updatedAt != null) result.updatedAt = updatedAt;
+    if (fullyStored != null) result.fullyStored = fullyStored;
     return result;
   }
 
@@ -162,6 +164,7 @@ class MangaSourceReply extends $pb.GeneratedMessage {
     ..aOB(5, _omitFieldNames ? '' : 'isPrimary')
     ..aInt64(6, _omitFieldNames ? '' : 'createdAt')
     ..aInt64(7, _omitFieldNames ? '' : 'updatedAt')
+    ..aOB(8, _omitFieldNames ? '' : 'fullyStored')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -245,6 +248,17 @@ class MangaSourceReply extends $pb.GeneratedMessage {
   $core.bool hasUpdatedAt() => $_has(6);
   @$pb.TagNumber(7)
   void clearUpdatedAt() => $_clearField(7);
+
+  /// Every chapter of this source has all of its pages downloaded locally, so it can
+  /// still be read if the site goes away. False for a source with no chapters.
+  @$pb.TagNumber(8)
+  $core.bool get fullyStored => $_getBF(7);
+  @$pb.TagNumber(8)
+  set fullyStored($core.bool value) => $_setBool(7, value);
+  @$pb.TagNumber(8)
+  $core.bool hasFullyStored() => $_has(7);
+  @$pb.TagNumber(8)
+  void clearFullyStored() => $_clearField(8);
 }
 
 /// Progress ledger for an in-flight or completed `BackfillImages` walk.

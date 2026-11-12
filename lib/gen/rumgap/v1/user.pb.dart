@@ -813,6 +813,224 @@ class UsersReply extends $pb.GeneratedMessage {
   $pb.PbList<UserReply> get items => $_getList(1);
 }
 
+class SessionReply extends $pb.GeneratedMessage {
+  factory SessionReply({
+    $core.String? id,
+    $core.String? userAgent,
+    $fixnum.Int64? createdAt,
+    $fixnum.Int64? lastUsedAt,
+    $fixnum.Int64? expiresAt,
+    $core.bool? current,
+  }) {
+    final result = create();
+    if (id != null) result.id = id;
+    if (userAgent != null) result.userAgent = userAgent;
+    if (createdAt != null) result.createdAt = createdAt;
+    if (lastUsedAt != null) result.lastUsedAt = lastUsedAt;
+    if (expiresAt != null) result.expiresAt = expiresAt;
+    if (current != null) result.current = current;
+    return result;
+  }
+
+  SessionReply._();
+
+  factory SessionReply.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory SessionReply.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'SessionReply',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'rumgap.v1'),
+      createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'id')
+    ..aOS(2, _omitFieldNames ? '' : 'userAgent')
+    ..aInt64(3, _omitFieldNames ? '' : 'createdAt')
+    ..aInt64(4, _omitFieldNames ? '' : 'lastUsedAt')
+    ..aInt64(5, _omitFieldNames ? '' : 'expiresAt')
+    ..aOB(6, _omitFieldNames ? '' : 'current')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  SessionReply clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  SessionReply copyWith(void Function(SessionReply) updates) =>
+      super.copyWith((message) => updates(message as SessionReply))
+          as SessionReply;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static SessionReply create() => SessionReply._();
+  @$core.override
+  SessionReply createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static SessionReply getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<SessionReply>(create);
+  static SessionReply? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get id => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set id($core.String value) => $_setString(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearId() => $_clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.String get userAgent => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set userAgent($core.String value) => $_setString(1, value);
+  @$pb.TagNumber(2)
+  $core.bool hasUserAgent() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearUserAgent() => $_clearField(2);
+
+  @$pb.TagNumber(3)
+  $fixnum.Int64 get createdAt => $_getI64(2);
+  @$pb.TagNumber(3)
+  set createdAt($fixnum.Int64 value) => $_setInt64(2, value);
+  @$pb.TagNumber(3)
+  $core.bool hasCreatedAt() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearCreatedAt() => $_clearField(3);
+
+  @$pb.TagNumber(4)
+  $fixnum.Int64 get lastUsedAt => $_getI64(3);
+  @$pb.TagNumber(4)
+  set lastUsedAt($fixnum.Int64 value) => $_setInt64(3, value);
+  @$pb.TagNumber(4)
+  $core.bool hasLastUsedAt() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearLastUsedAt() => $_clearField(4);
+
+  @$pb.TagNumber(5)
+  $fixnum.Int64 get expiresAt => $_getI64(4);
+  @$pb.TagNumber(5)
+  set expiresAt($fixnum.Int64 value) => $_setInt64(4, value);
+  @$pb.TagNumber(5)
+  $core.bool hasExpiresAt() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearExpiresAt() => $_clearField(5);
+
+  /// The session this request was made with
+  @$pb.TagNumber(6)
+  $core.bool get current => $_getBF(5);
+  @$pb.TagNumber(6)
+  set current($core.bool value) => $_setBool(5, value);
+  @$pb.TagNumber(6)
+  $core.bool hasCurrent() => $_has(5);
+  @$pb.TagNumber(6)
+  void clearCurrent() => $_clearField(6);
+}
+
+class SessionsReply extends $pb.GeneratedMessage {
+  factory SessionsReply({
+    $core.Iterable<SessionReply>? items,
+  }) {
+    final result = create();
+    if (items != null) result.items.addAll(items);
+    return result;
+  }
+
+  SessionsReply._();
+
+  factory SessionsReply.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory SessionsReply.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'SessionsReply',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'rumgap.v1'),
+      createEmptyInstance: create)
+    ..pPM<SessionReply>(1, _omitFieldNames ? '' : 'items',
+        subBuilder: SessionReply.create)
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  SessionsReply clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  SessionsReply copyWith(void Function(SessionsReply) updates) =>
+      super.copyWith((message) => updates(message as SessionsReply))
+          as SessionsReply;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static SessionsReply create() => SessionsReply._();
+  @$core.override
+  SessionsReply createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static SessionsReply getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<SessionsReply>(create);
+  static SessionsReply? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $pb.PbList<SessionReply> get items => $_getList(0);
+}
+
+class RevokeSessionRequest extends $pb.GeneratedMessage {
+  factory RevokeSessionRequest({
+    $core.String? id,
+  }) {
+    final result = create();
+    if (id != null) result.id = id;
+    return result;
+  }
+
+  RevokeSessionRequest._();
+
+  factory RevokeSessionRequest.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory RevokeSessionRequest.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'RevokeSessionRequest',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'rumgap.v1'),
+      createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'id')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  RevokeSessionRequest clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  RevokeSessionRequest copyWith(void Function(RevokeSessionRequest) updates) =>
+      super.copyWith((message) => updates(message as RevokeSessionRequest))
+          as RevokeSessionRequest;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static RevokeSessionRequest create() => RevokeSessionRequest._();
+  @$core.override
+  RevokeSessionRequest createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static RevokeSessionRequest getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<RevokeSessionRequest>(create);
+  static RevokeSessionRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get id => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set id($core.String value) => $_setString(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearId() => $_clearField(1);
+}
+
 const $core.bool _omitFieldNames =
     $core.bool.fromEnvironment('protobuf.omit_field_names');
 const $core.bool _omitMessageNames =

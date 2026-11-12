@@ -241,3 +241,66 @@ final $typed_data.Uint8List usersReplyDescriptor = $convert.base64Decode(
     'CgpVc2Vyc1JlcGx5EjgKCnBhZ2luYXRpb24YASABKAsyGC5ydW1nYXAudjEuUGFnaW5hdGVSZX'
     'BseVIKcGFnaW5hdGlvbhIqCgVpdGVtcxgCIAMoCzIULnJ1bWdhcC52MS5Vc2VyUmVwbHlSBWl0'
     'ZW1z');
+
+@$core.Deprecated('Use sessionReplyDescriptor instead')
+const SessionReply$json = {
+  '1': 'SessionReply',
+  '2': [
+    {'1': 'id', '3': 1, '4': 1, '5': 9, '10': 'id'},
+    {
+      '1': 'user_agent',
+      '3': 2,
+      '4': 1,
+      '5': 9,
+      '9': 0,
+      '10': 'userAgent',
+      '17': true
+    },
+    {'1': 'created_at', '3': 3, '4': 1, '5': 3, '10': 'createdAt'},
+    {'1': 'last_used_at', '3': 4, '4': 1, '5': 3, '10': 'lastUsedAt'},
+    {'1': 'expires_at', '3': 5, '4': 1, '5': 3, '10': 'expiresAt'},
+    {'1': 'current', '3': 6, '4': 1, '5': 8, '10': 'current'},
+  ],
+  '8': [
+    {'1': '_user_agent'},
+  ],
+};
+
+/// Descriptor for `SessionReply`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List sessionReplyDescriptor = $convert.base64Decode(
+    'CgxTZXNzaW9uUmVwbHkSDgoCaWQYASABKAlSAmlkEiIKCnVzZXJfYWdlbnQYAiABKAlIAFIJdX'
+    'NlckFnZW50iAEBEh0KCmNyZWF0ZWRfYXQYAyABKANSCWNyZWF0ZWRBdBIgCgxsYXN0X3VzZWRf'
+    'YXQYBCABKANSCmxhc3RVc2VkQXQSHQoKZXhwaXJlc19hdBgFIAEoA1IJZXhwaXJlc0F0EhgKB2'
+    'N1cnJlbnQYBiABKAhSB2N1cnJlbnRCDQoLX3VzZXJfYWdlbnQ=');
+
+@$core.Deprecated('Use sessionsReplyDescriptor instead')
+const SessionsReply$json = {
+  '1': 'SessionsReply',
+  '2': [
+    {
+      '1': 'items',
+      '3': 1,
+      '4': 3,
+      '5': 11,
+      '6': '.rumgap.v1.SessionReply',
+      '10': 'items'
+    },
+  ],
+};
+
+/// Descriptor for `SessionsReply`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List sessionsReplyDescriptor = $convert.base64Decode(
+    'Cg1TZXNzaW9uc1JlcGx5Ei0KBWl0ZW1zGAEgAygLMhcucnVtZ2FwLnYxLlNlc3Npb25SZXBseV'
+    'IFaXRlbXM=');
+
+@$core.Deprecated('Use revokeSessionRequestDescriptor instead')
+const RevokeSessionRequest$json = {
+  '1': 'RevokeSessionRequest',
+  '2': [
+    {'1': 'id', '3': 1, '4': 1, '5': 9, '10': 'id'},
+  ],
+};
+
+/// Descriptor for `RevokeSessionRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List revokeSessionRequestDescriptor = $convert
+    .base64Decode('ChRSZXZva2VTZXNzaW9uUmVxdWVzdBIOCgJpZBgBIAEoCVICaWQ=');
