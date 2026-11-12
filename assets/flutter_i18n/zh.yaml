@@ -10,6 +10,7 @@ login:
   password: 密码
   request_account: 申请账户
   request_account_subject: 申请 Wuxia 账户
+  request_account_body: "你为什么喜欢漫画？\n\n\n用户名："
   forgot_password: 忘记密码
   username: 用户名
   welcome: 你好

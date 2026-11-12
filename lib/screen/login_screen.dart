@@ -81,7 +81,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void requestAccount() {
     final subject = Uri.encodeComponent(FlutterI18n.translate(context, 'login.request_account_subject'));
-    launchUrlString('mailto:$accountRequestEmail?subject=$subject');
+    final body = Uri.encodeComponent(FlutterI18n.translate(context, 'login.request_account_body'));
+    launchUrlString('mailto:$accountRequestEmail?subject=$subject&body=$body');
   }
 
   @override

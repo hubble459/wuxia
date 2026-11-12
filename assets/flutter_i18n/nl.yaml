@@ -74,6 +74,7 @@ login:
   password: Wachtwoord
   request_account: Account aanvragen
   request_account_subject: Wuxia-account aanvragen
+  request_account_body: "Waarom houd je van manga?\n\n\nGebruikersnaam: "
   test_connection: Verbinding testen
   title: Login
   username: Gebruikersnaam

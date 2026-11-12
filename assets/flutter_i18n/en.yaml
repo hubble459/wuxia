@@ -11,6 +11,7 @@ login:
   forgot_password: Forgot password
   request_account: Request an account
   request_account_subject: Wuxia account request
+  request_account_body: "Why do you like manga?\n\n\nUsername: "
   username: Username
   welcome: Welcome
   confirm_password: Confirm Password
