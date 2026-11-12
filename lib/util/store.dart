@@ -3,6 +3,7 @@ import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:wuxia/util/image_quality.dart';
 
 class Store {
   static const String orderReadingKey = 'ORDER_BY_READING';
@@ -11,6 +12,9 @@ class Store {
   static const String usernameKey = 'username';
   static const String apiHostKey = 'api_url';
   static const String languageKey = 'language';
+  static const String imageQualityKey = 'image_quality';
+
+  /// The on/off setting [imageQualityKey] replaced; only read to carry an enabled data saver over.
   static const String dataSaverKey = 'data_saver';
   static const String downloadDirKey = 'download_dir';
   static const String downloadQueueKey = 'download_queue';
@@ -101,12 +105,15 @@ class Store {
     await _publicStorage.setString(orderReadingKey, orderBy);
   }
 
-  bool? getDataSaver() {
-    return _publicStorage.getBool(dataSaverKey);
+  ImageQuality getImageQuality() {
+    final stored = ImageQuality.fromName(_publicStorage.getString(imageQualityKey));
+    if (stored != null) return stored;
+    return _publicStorage.getBool(dataSaverKey) == true ? ImageQuality.medium : ImageQuality.original;
   }
 
-  Future<void> setDataSaver(bool dataSaver) async {
-    await _publicStorage.setBool(dataSaverKey, dataSaver);
+  Future<void> setImageQuality(ImageQuality quality) async {
+    await _publicStorage.setString(imageQualityKey, quality.name);
+    await _publicStorage.remove(dataSaverKey);
   }
 
   String? getDownloadDir() {

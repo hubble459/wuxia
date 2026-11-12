@@ -156,7 +156,12 @@ settings:
     title: Voorkeursbronnen
     description: Welke bron een manga opent als je er zelf geen hebt gekozen
     keep_one: Houd minstens één bron
-  data_saver: Gegevensbesparing
+  image_quality: Beeldkwaliteit
+  image_quality_hint: Lager gebruikt minder data
+  image_quality_original: Origineel
+  image_quality_high: Hoog
+  image_quality_medium: Gemiddeld
+  image_quality_low: Laag
   show_nsfw: "18+ manga tonen"
   show_nsfw_hint: "Buiten je leeslijst"
   private_profile: 'Privéprofiel'

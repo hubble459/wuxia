@@ -13,6 +13,7 @@ import 'package:wuxia/partial/dialog/change_password_dialog.dart';
 import 'package:wuxia/partial/download_reconnect.dart';
 import 'package:wuxia/util/download_migration.dart';
 import 'package:wuxia/util/download_storage/download_storage.dart';
+import 'package:wuxia/util/image_quality.dart';
 import 'package:wuxia/partial/responsive_content.dart';
 import 'package:wuxia/util/session.dart';
 import 'package:wuxia/util/tools.dart';
@@ -121,13 +122,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Padding(padding: const EdgeInsets.all(8.0), child: I18nText('settings.misc')),
-              SwitchListTile(
-                value: store.getDataSaver() ?? false,
-                onChanged: (v) {
-                  store.setDataSaver(v);
-                  setState(() {});
-                },
-                title: I18nText('settings.data_saver'),
+              ListTile(
+                title: I18nText('settings.image_quality'),
+                subtitle: I18nText('settings.image_quality_hint'),
+                trailing: DropdownButton<ImageQuality>(
+                  value: store.getImageQuality(),
+                  items: ImageQuality.values
+                      .map(
+                        (quality) => DropdownMenuItem<ImageQuality>(
+                          value: quality,
+                          child: Text(FlutterI18n.translate(context, 'settings.image_quality_${quality.name}')),
+                        ),
+                      )
+                      .toList(),
+                  onChanged: (quality) async {
+                    if (quality == null) return;
+                    await store.setImageQuality(quality);
+                    setState(() {});
+                  },
+                ),
               ),
               SwitchListTile(
                 value: API.loggedIn.showNsfw,

@@ -47,12 +47,6 @@ class _ReaderPage {
   const _ReaderPage(this.url, {this.width, this.height});
 }
 
-String _pageUrl(String url, {required bool dataSaver}) {
-  if (!dataSaver) return url;
-  final uri = Uri.parse(url);
-  return uri.replace(queryParameters: {...uri.queryParameters, 'maxdim': '1280', 'quality': '70'}).toString();
-}
-
 class _MangaChapterScreenState extends State<MangaChapterScreen> {
   final ItemScrollController itemScrollController = ItemScrollController();
   final ItemPositionsListener itemPositionsListener = ItemPositionsListener.create();
@@ -144,12 +138,12 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
       return;
     }
     if (!mounted) return;
-    final dataSaver = Store.getStoreInstance().getDataSaver() ?? false;
+    final imageQuality = Store.getStoreInstance().getImageQuality();
     setState(() {
       _images = reply.items
           .map(
             (page) => _ReaderPage(
-              _pageUrl(page.url, dataSaver: dataSaver),
+              imageQuality.apply(page.url),
               width: page.hasWidth() ? page.width : null,
               height: page.hasHeight() ? page.height : null,
             ),

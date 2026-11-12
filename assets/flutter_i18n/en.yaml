@@ -119,7 +119,12 @@ basic:
   reset: Reset
 settings:
   title: Settings
-  data_saver: Data Saver
+  image_quality: Image quality
+  image_quality_hint: Lower uses less data
+  image_quality_original: Original
+  image_quality_high: High
+  image_quality_medium: Medium
+  image_quality_low: Low
   show_nsfw: "Show 18+ manga"
   show_nsfw_hint: "Outside your reading list"
   private_profile: 'Private profile'

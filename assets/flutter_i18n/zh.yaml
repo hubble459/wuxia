@@ -119,7 +119,12 @@ basic:
   url: 网址
 settings:
   title: 设置
-  data_saver: 数据保护程序
+  image_quality: 图片质量
+  image_quality_hint: 越低越省流量
+  image_quality_original: 原图
+  image_quality_high: 高
+  image_quality_medium: 中
+  image_quality_low: 低
   show_nsfw: "显示 18+ 漫画"
   show_nsfw_hint: "在你的阅读列表之外"
   private_profile: '私密资料'
