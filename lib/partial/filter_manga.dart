@@ -5,7 +5,7 @@ import 'package:wuxia/gen/rumgap/v1/meta.pb.dart';
 import 'package:wuxia/partial/simple_future_builder.dart';
 import 'package:wuxia/util/filter_map.dart';
 
-enum FilterType { reading, manga, online }
+enum FilterType { reading, manga }
 
 class FilterManga extends StatefulWidget {
   final FilterType filterType;
@@ -37,11 +37,7 @@ class _FilterMangaState extends State<FilterManga> {
     );
     hosts = api.meta.hostnames(
       MetaHostnamesRequest(
-        option: widget.filterType == FilterType.manga
-            ? MetaHostnamesOption.HostnamesManga
-            : widget.filterType == FilterType.reading
-            ? MetaHostnamesOption.HostnamesReading
-            : MetaHostnamesOption.HostnamesOnline,
+        option: widget.filterType == FilterType.manga ? MetaHostnamesOption.HostnamesManga : MetaHostnamesOption.HostnamesReading,
       ),
     );
     _globalFieldController.text = filterMap.global ?? '';
@@ -72,77 +68,73 @@ class _FilterMangaState extends State<FilterManga> {
             child: Center(
               child: Column(
                 children: [
-                  ...(widget.filterType != FilterType.online
-                      ? ([
-                          TextField(
-                            controller: _globalFieldController,
-                            onChanged: (value) => filterMap.global = value,
-                            keyboardType: TextInputType.text,
-                            textInputAction: TextInputAction.done,
-                            decoration: const InputDecoration(label: Text('Global Keywords'), border: OutlineInputBorder()),
-                          ),
-                          const SizedBox(height: 10),
-                          TextField(
-                            controller: _titleFieldController,
-                            onChanged: (value) => filterMap.title = value,
-                            keyboardType: TextInputType.text,
-                            textInputAction: TextInputAction.done,
-                            decoration: const InputDecoration(label: Text('Title Keywords'), border: OutlineInputBorder()),
-                          ),
-                          const SizedBox(height: 10),
-                          TextField(
-                            controller: _descriptionFieldController,
-                            onChanged: (value) => filterMap.description = value,
-                            keyboardType: TextInputType.text,
-                            textInputAction: TextInputAction.done,
-                            decoration: const InputDecoration(label: Text('Description Keywords'), border: OutlineInputBorder()),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 8.0),
-                            child: Text('Genres', style: Theme.of(context).textTheme.titleMedium),
-                          ),
-                          SimpleFutureBuilder<MetaReply>(
-                            future: tags,
-                            onLoadedBuilder: (context, data) => Wrap(
-                              direction: Axis.horizontal,
-                              alignment: WrapAlignment.center,
-                              runSpacing: 5,
-                              spacing: 10,
-                              children: data.items
-                                  .map(
-                                    (item) => InkWell(
-                                      onTap: () => setState(() {
-                                        filterMap.genres.excluded.remove(item);
-                                        if (!filterMap.genres.included.remove(item)) {
-                                          filterMap.genres.included.add(item);
-                                        }
-                                      }),
-                                      onLongPress: () => setState(() {
-                                        filterMap.genres.included.remove(item);
-                                        if (!filterMap.genres.excluded.remove(item)) {
-                                          filterMap.genres.excluded.add(item);
-                                        }
-                                      }),
-                                      child: Container(
-                                        padding: const EdgeInsets.all(8.0),
-                                        decoration: BoxDecoration(
-                                          color: filterMap.genres.included.contains(item)
-                                              ? selectedColor
-                                              : filterMap.genres.excluded.contains(item)
-                                              ? excludeColor
-                                              : unselectedColor,
-                                          borderRadius: const BorderRadius.all(Radius.circular(5.0)),
-                                        ),
-                                        child: Text(item),
-                                      ),
-                                    ),
-                                  )
-                                  .toList(),
+                  TextField(
+                    controller: _globalFieldController,
+                    onChanged: (value) => filterMap.global = value,
+                    keyboardType: TextInputType.text,
+                    textInputAction: TextInputAction.done,
+                    decoration: const InputDecoration(label: Text('Global Keywords'), border: OutlineInputBorder()),
+                  ),
+                  const SizedBox(height: 10),
+                  TextField(
+                    controller: _titleFieldController,
+                    onChanged: (value) => filterMap.title = value,
+                    keyboardType: TextInputType.text,
+                    textInputAction: TextInputAction.done,
+                    decoration: const InputDecoration(label: Text('Title Keywords'), border: OutlineInputBorder()),
+                  ),
+                  const SizedBox(height: 10),
+                  TextField(
+                    controller: _descriptionFieldController,
+                    onChanged: (value) => filterMap.description = value,
+                    keyboardType: TextInputType.text,
+                    textInputAction: TextInputAction.done,
+                    decoration: const InputDecoration(label: Text('Description Keywords'), border: OutlineInputBorder()),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Text('Genres', style: Theme.of(context).textTheme.titleMedium),
+                  ),
+                  SimpleFutureBuilder<MetaReply>(
+                    future: tags,
+                    onLoadedBuilder: (context, data) => Wrap(
+                      direction: Axis.horizontal,
+                      alignment: WrapAlignment.center,
+                      runSpacing: 5,
+                      spacing: 10,
+                      children: data.items
+                          .map(
+                            (item) => InkWell(
+                              onTap: () => setState(() {
+                                filterMap.genres.excluded.remove(item);
+                                if (!filterMap.genres.included.remove(item)) {
+                                  filterMap.genres.included.add(item);
+                                }
+                              }),
+                              onLongPress: () => setState(() {
+                                filterMap.genres.included.remove(item);
+                                if (!filterMap.genres.excluded.remove(item)) {
+                                  filterMap.genres.excluded.add(item);
+                                }
+                              }),
+                              child: Container(
+                                padding: const EdgeInsets.all(8.0),
+                                decoration: BoxDecoration(
+                                  color: filterMap.genres.included.contains(item)
+                                      ? selectedColor
+                                      : filterMap.genres.excluded.contains(item)
+                                      ? excludeColor
+                                      : unselectedColor,
+                                  borderRadius: const BorderRadius.all(Radius.circular(5.0)),
+                                ),
+                                child: Text(item),
+                              ),
                             ),
-                            onLoadingBuilder: (context) => const CircularProgressIndicator(),
-                          ),
-                        ])
-                      : []),
+                          )
+                          .toList(),
+                    ),
+                    onLoadingBuilder: (context) => const CircularProgressIndicator(),
+                  ),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: Text('Hosts', style: Theme.of(context).textTheme.titleMedium),

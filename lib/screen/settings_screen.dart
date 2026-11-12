@@ -180,6 +180,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   Navigator.of(context).pushNamed('statistics');
                 },
               ),
+              ListTile(
+                title: I18nText('settings.preferred_sources.title'),
+                subtitle: I18nText('settings.preferred_sources.description'),
+                onTap: () {
+                  Navigator.of(context).pushNamed('preferred_sources');
+                },
+              ),
               if (API.loggedIn.isAdmin)
                 ListTile(
                   title: I18nText('settings.scraper_status.title'),

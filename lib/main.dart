@@ -17,6 +17,7 @@ import 'package:wuxia/screen/login_screen.dart';
 import 'package:wuxia/screen/manga/manga_chapter_route_loader.dart';
 import 'package:wuxia/screen/manga/manga_route_loader.dart';
 import 'package:wuxia/screen/root_nav_screen.dart' hide Route;
+import 'package:wuxia/screen/setting/preferred_sources_screen.dart';
 import 'package:wuxia/screen/setting/scraper_status_screen.dart';
 import 'package:wuxia/screen/setting/users_screen.dart';
 import 'package:wuxia/screen/setting/statistics_screen.dart';
@@ -108,7 +109,7 @@ void main() async {
   runApp(const WuxiaApp());
 }
 
-const _settingsRoutes = {'settings', 'statistics', 'scraper_status', 'users'};
+const _settingsRoutes = {'settings', 'statistics', 'preferred_sources', 'scraper_status', 'users'};
 
 class WuxiaApp extends StatefulWidget {
   const WuxiaApp({super.key});
@@ -131,6 +132,7 @@ class _WuxiaAppState extends State<WuxiaApp> {
       'root_nav': (context) => const RootNavScreen(),
       'settings': (context) => const SettingsScreen(),
       'statistics': (context) => const StatisticsScreen(),
+      'preferred_sources': (context) => const PreferredSourcesScreen(),
       'scraper_status': (context) => const ScraperStatusScreen(),
       'users': (context) => const UsersScreen(),
     };

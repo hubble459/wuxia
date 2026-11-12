@@ -1,7 +1,6 @@
 title: 漫画
 empty: 未找到任何项目
 nav:
-  latest: 最新的
   downloads: 下载
   reading: 阅读
   search: 搜索
@@ -21,7 +20,8 @@ login:
 search:
   no_results: 没有搜索结果
   search_reading: 搜索阅读
-  search_manga_online: 搜索漫画
+  library: 在你的书库中
+  online: 在线
   search_manga: 搜索漫画
 manga:
   source_down: "此来源的网站目前无法加载"
@@ -161,6 +161,10 @@ settings:
     changed: 密码已修改
   remove_account: 删除帐户
   check_update: 检查更新
+  preferred_sources:
+    title: 首选来源
+    description: 未为漫画选择来源时默认打开的来源
+    keep_one: 至少保留一个来源
   version: 'v{version} ({build})'
 reading:
   delete: 删除阅读

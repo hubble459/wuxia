@@ -3,7 +3,6 @@ empty: No items found
 nav:
   reading: Reading
   search: Search
-  latest: Latest
   downloads: Downloads
 login:
   title: Login
@@ -22,7 +21,8 @@ search:
   no_results: No search results
   search_reading: Search Reading
   search_manga: Search Manga
-  search_manga_online: Search Manga Online
+  library: In your library
+  online: Online
 manga:
   source_down: "This source's website is currently failing to load"
   chapters: '{amount} chapters'
@@ -162,6 +162,10 @@ settings:
     changed: Password changed
   version: 'v{version} ({build})'
   check_update: Check for updates
+  preferred_sources:
+    title: Preferred Sources
+    description: Which source a manga opens on when you have not picked one for it
+    keep_one: Keep at least one source
 reading:
   delete: Delete Reading
   delete_content: Are you sure you want to delete "{title}"?
