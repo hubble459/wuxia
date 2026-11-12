@@ -21,7 +21,6 @@ import 'package:wuxia/screen/setting/users_screen.dart';
 import 'package:wuxia/screen/setting/statistics_screen.dart';
 import 'package:wuxia/screen/settings_screen.dart';
 import 'package:wuxia/screen/splash_screen.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:wuxia/util/app_routes.dart';
 import 'package:wuxia/util/store.dart';
 
@@ -68,7 +67,7 @@ class _DownloadForegroundTaskHandler extends TaskHandler {
 GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
-  await dotenv.load(fileName: '.env');
+  WidgetsFlutterBinding.ensureInitialized();
   if (kIsWeb) {
     await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   } else if (Platform.isAndroid || Platform.isIOS) {
@@ -87,7 +86,6 @@ void main() async {
       foregroundTaskOptions: ForegroundTaskOptions(eventAction: ForegroundTaskEventAction.nothing(), allowAutoRestart: false),
     );
   }
-  WidgetsFlutterBinding.ensureInitialized();
   PaintingBinding.instance.imageCache.maximumSize = 1000;
   PaintingBinding.instance.imageCache.maximumSizeBytes = 300 << 20;
   final store = await Store.init();

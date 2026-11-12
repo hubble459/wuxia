@@ -1,7 +1,6 @@
 import 'dart:io' show Platform;
 
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
@@ -22,6 +21,9 @@ import 'package:wuxia/screen/search_screen.dart';
 import 'package:wuxia/util/app_routes.dart';
 import 'package:wuxia/util/session.dart';
 import 'package:wuxia/util/tools.dart';
+
+// Web push key for FCM, supplied at build time via --dart-define=VAPID_KEY.
+const _vapidKey = String.fromEnvironment('VAPID_KEY');
 
 class Route {
   final IconData icon;
@@ -123,7 +125,7 @@ class _RootNavScreenState extends State<RootNavScreen> {
         return;
       }
 
-      final token = await FirebaseMessaging.instance.getToken(vapidKey: dotenv.env['VAPID_KEY']);
+      final token = await FirebaseMessaging.instance.getToken(vapidKey: _vapidKey.isEmpty ? null : _vapidKey);
 
       print('FCM Token: $token');
       if (!API.loggedIn.deviceIds.contains(token)) {
