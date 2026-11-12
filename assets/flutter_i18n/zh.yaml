@@ -422,6 +422,9 @@ offline:
   message_downloads: 目前无法连接到服务器。您下载的漫画仍然可用。
   go_to_downloads: 前往下载
 for_you:
+  filter_hint: "筛选，例如 genre:Action -host:site.com"
+  no_match: "没有更多符合此筛选的漫画"
+  clear_filter: "清除筛选"
   read: "阅读"
   nope: "不要"
   undo: "撤销"

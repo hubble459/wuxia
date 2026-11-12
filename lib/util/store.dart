@@ -15,6 +15,7 @@ class Store {
   static const String downloadDirKey = 'download_dir';
   static const String downloadQueueKey = 'download_queue';
   static const String rootNavTabKey = 'root_nav_tab_name';
+  static const String forYouFilterKey = 'for_you_filter';
   static const String readingModeKey = 'reading_mode';
   static const String mangaReadingModeKeyPrefix = 'reading_mode_manga_';
   static const String pendingProgressKeyPrefix = 'pending_progress_manga_';
@@ -184,5 +185,14 @@ class Store {
 
   Future<void> setRootNavTab(String tab) async {
     await _publicStorage.setString(rootNavTabKey, tab);
+  }
+
+  /// The For You deck's filter, as JSON.
+  String? getForYouFilter() {
+    return _publicStorage.getString(forYouFilterKey);
+  }
+
+  Future<void> setForYouFilter(String filter) async {
+    await _publicStorage.setString(forYouFilterKey, filter);
   }
 }

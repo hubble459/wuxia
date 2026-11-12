@@ -819,7 +819,7 @@ class MangaClient extends $grpc.Client {
   /// Manga the user isn't reading and hasn't dismissed lately, best match to their reading
   /// first (genres and description keywords). Ranked fresh on every call.
   $grpc.ResponseFuture<$5.MangasReply> forYou(
-    $1.PaginateQuery request, {
+    $5.ForYouRequest request, {
     $grpc.CallOptions? options,
   }) {
     return $createUnaryCall(_$forYou, request, options: options);
@@ -930,9 +930,9 @@ class MangaClient extends $grpc.Client {
           '/rumgap.v1.Manga/GetBackfillStatus',
           ($5.GetBackfillStatusRequest value) => value.writeToBuffer(),
           $5.BackfillStatusReply.fromBuffer);
-  static final _$forYou = $grpc.ClientMethod<$1.PaginateQuery, $5.MangasReply>(
+  static final _$forYou = $grpc.ClientMethod<$5.ForYouRequest, $5.MangasReply>(
       '/rumgap.v1.Manga/ForYou',
-      ($1.PaginateQuery value) => value.writeToBuffer(),
+      ($5.ForYouRequest value) => value.writeToBuffer(),
       $5.MangasReply.fromBuffer);
   static final _$dismiss = $grpc.ClientMethod<$5.DismissMangaRequest, $2.Empty>(
       '/rumgap.v1.Manga/Dismiss',
@@ -1076,12 +1076,12 @@ abstract class MangaServiceBase extends $grpc.Service {
         ($core.List<$core.int> value) =>
             $5.GetBackfillStatusRequest.fromBuffer(value),
         ($5.BackfillStatusReply value) => value.writeToBuffer()));
-    $addMethod($grpc.ServiceMethod<$1.PaginateQuery, $5.MangasReply>(
+    $addMethod($grpc.ServiceMethod<$5.ForYouRequest, $5.MangasReply>(
         'ForYou',
         forYou_Pre,
         false,
         false,
-        ($core.List<$core.int> value) => $1.PaginateQuery.fromBuffer(value),
+        ($core.List<$core.int> value) => $5.ForYouRequest.fromBuffer(value),
         ($5.MangasReply value) => value.writeToBuffer()));
     $addMethod($grpc.ServiceMethod<$5.DismissMangaRequest, $2.Empty>(
         'Dismiss',
@@ -1238,12 +1238,12 @@ abstract class MangaServiceBase extends $grpc.Service {
       $grpc.ServiceCall call, $5.GetBackfillStatusRequest request);
 
   $async.Future<$5.MangasReply> forYou_Pre(
-      $grpc.ServiceCall $call, $async.Future<$1.PaginateQuery> $request) async {
+      $grpc.ServiceCall $call, $async.Future<$5.ForYouRequest> $request) async {
     return forYou($call, await $request);
   }
 
   $async.Future<$5.MangasReply> forYou(
-      $grpc.ServiceCall call, $1.PaginateQuery request);
+      $grpc.ServiceCall call, $5.ForYouRequest request);
 
   $async.Future<$2.Empty> dismiss_Pre($grpc.ServiceCall $call,
       $async.Future<$5.DismissMangaRequest> $request) async {

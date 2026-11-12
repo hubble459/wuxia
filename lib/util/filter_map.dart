@@ -6,7 +6,7 @@ class FilterOptions {
   final List<String> included;
   final List<String> excluded;
 
-  FilterOptions({List<String>? included, List<String>? excluded}) : included = included ?? [], excluded = included ?? [];
+  FilterOptions({List<String>? included, List<String>? excluded}) : included = included ?? [], excluded = excluded ?? [];
 
   String intoString(String type) {
     String str = '';
@@ -134,7 +134,7 @@ class FilterMap {
         } else {
           map.genres.included.add(field.value);
         }
-      } else if (field.name?.toLowerCase().startsWith('url') == true) {
+      } else if (['host', 'url'].contains(field.name?.toLowerCase())) {
         if (field.exclude) {
           map.hosts.excluded.add(field.value);
         } else {

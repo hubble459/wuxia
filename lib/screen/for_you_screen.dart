@@ -9,11 +9,14 @@ import 'package:wuxia/gen/rumgap/v1/chapter.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/paginate.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/reading.pb.dart';
+import 'package:wuxia/partial/filter_manga.dart';
 import 'package:wuxia/partial/image_error_placeholder.dart';
 import 'package:wuxia/partial/list/manga_item.dart';
 import 'package:wuxia/partial/responsive_content.dart';
 import 'package:wuxia/screen/manga/manga_screen.dart';
 import 'package:wuxia/util/app_routes.dart';
+import 'package:wuxia/util/filter_map.dart';
+import 'package:wuxia/util/store.dart';
 
 enum _Swipe { read, nope }
 
@@ -41,6 +44,9 @@ class _ForYouScreenState extends State<ForYouScreen> with AutomaticKeepAliveClie
 
   /// The top card's swipe state, keyed by manga so the next card starts fresh.
   GlobalObjectKey<_SwipeCardState>? get _topCard => _deck.isEmpty ? null : GlobalObjectKey(_deck.first);
+
+  /// Same syntax as the library search, e.g. `genre:"Action" -host:"site.com"`.
+  late final _filterController = TextEditingController(text: Store.getStoreInstance().getForYouFilter() ?? '');
   bool _loading = false;
   bool _exhausted = false;
   Object? _error;
@@ -58,7 +64,10 @@ class _ForYouScreenState extends State<ForYouScreen> with AutomaticKeepAliveClie
       _error = null;
     });
     try {
-      final reply = await api.manga.forYou(PaginateQuery(page: Int64(0), perPage: Int64(_pageSize)));
+      final filter = _filterController.text.trim();
+      final reply = await api.manga.forYou(
+        ForYouRequest(page: Int64(0), perPage: Int64(_pageSize), search: filter.isEmpty ? null : filter),
+      );
       final fresh = reply.items.where((manga) => _seen.add(manga.id)).toList();
       _deck.addAll(fresh);
       _exhausted = fresh.isEmpty;
@@ -74,6 +83,27 @@ class _ForYouScreenState extends State<ForYouScreen> with AutomaticKeepAliveClie
     _history.clear();
     _exhausted = false;
     await _refill();
+  }
+
+  Future<void> _applyFilter(String filter) async {
+    _filterController.text = filter.trim();
+    await Store.getStoreInstance().setForYouFilter(_filterController.text);
+    await _reload();
+  }
+
+  Future<void> _openFilterScreen() async {
+    final filter = await Navigator.of(context).push<FilterMap>(
+      MaterialPageRoute(
+        builder: (context) => FilterManga(filterType: FilterType.manga, defaultValue: _filterController.text),
+      ),
+    );
+    if (filter != null) await _applyFilter(filter.toString());
+  }
+
+  @override
+  void dispose() {
+    _filterController.dispose();
+    super.dispose();
   }
 
   Future<void> _onSwiped(MangaReply manga, _Swipe swipe) async {
@@ -129,9 +159,29 @@ class _ForYouScreenState extends State<ForYouScreen> with AutomaticKeepAliveClie
     return ResponsiveContent(
       child: Column(
         children: [
+          _buildFilterField(context),
           Expanded(child: _buildDeck(context)),
           _buildButtons(context),
         ],
+      ),
+    );
+  }
+
+  Widget _buildFilterField(BuildContext context) {
+    return TextField(
+      controller: _filterController,
+      textInputAction: TextInputAction.search,
+      onSubmitted: _applyFilter,
+      decoration: InputDecoration(
+        hintText: FlutterI18n.translate(context, 'for_you.filter_hint'),
+        border: const UnderlineInputBorder(),
+        suffixIcon: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(onPressed: () => _applyFilter(''), icon: const Icon(Icons.clear)),
+            IconButton(onPressed: _openFilterScreen, icon: const Icon(Icons.filter_alt)),
+          ],
+        ),
       ),
     );
   }
@@ -151,6 +201,7 @@ class _ForYouScreenState extends State<ForYouScreen> with AutomaticKeepAliveClie
           ),
         );
       }
+      if (_filterController.text.isNotEmpty) return _NoMatch(onClearFilter: () => _applyFilter(''));
       return _CaughtUp(onOpenSearch: widget.onOpenSearch, onReload: _reload);
     }
 
@@ -210,6 +261,31 @@ class _ForYouScreenState extends State<ForYouScreen> with AutomaticKeepAliveClie
 
   @override
   bool get wantKeepAlive => true;
+}
+
+class _NoMatch extends StatelessWidget {
+  const _NoMatch({required this.onClearFilter});
+
+  final VoidCallback onClearFilter;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.filter_alt_off, size: 64),
+            const SizedBox(height: 16),
+            I18nText('for_you.no_match', child: const Text('', textAlign: TextAlign.center)),
+            const SizedBox(height: 16),
+            FilledButton(onPressed: onClearFilter, child: I18nText('for_you.clear_filter')),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 class _CaughtUp extends StatelessWidget {

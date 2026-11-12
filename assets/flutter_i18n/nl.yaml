@@ -422,6 +422,9 @@ offline:
   message_downloads: De server is nu niet bereikbaar. Je gedownloade manga zijn nog beschikbaar.
   go_to_downloads: Naar downloads
 for_you:
+  filter_hint: "Filter, bijv. genre:Action -host:site.com"
+  no_match: "Geen manga meer die bij dit filter passen"
+  clear_filter: "Filter wissen"
   read: "Lezen"
   nope: "Nee"
   undo: "Ongedaan maken"

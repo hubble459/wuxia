@@ -422,6 +422,9 @@ offline:
   message_downloads: "The server can't be reached right now. Your downloaded manga are still available."
   go_to_downloads: Go to Downloads
 for_you:
+  filter_hint: "Filter, e.g. genre:Action -host:site.com"
+  no_match: "No manga left that match this filter"
+  clear_filter: "Clear filter"
   read: "Read"
   nope: "Nope"
   undo: "Undo"

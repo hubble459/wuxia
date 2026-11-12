@@ -338,6 +338,35 @@ const SimilarMangaRequest$json = {
 final $typed_data.Uint8List similarMangaRequestDescriptor = $convert
     .base64Decode('ChNTaW1pbGFyTWFuZ2FSZXF1ZXN0Eg4KAmlkGAEgASgFUgJpZA==');
 
+@$core.Deprecated('Use forYouRequestDescriptor instead')
+const ForYouRequest$json = {
+  '1': 'ForYouRequest',
+  '2': [
+    {
+      '1': 'per_page',
+      '3': 1,
+      '4': 1,
+      '5': 4,
+      '9': 0,
+      '10': 'perPage',
+      '17': true
+    },
+    {'1': 'page', '3': 2, '4': 1, '5': 4, '9': 1, '10': 'page', '17': true},
+    {'1': 'search', '3': 3, '4': 1, '5': 9, '9': 2, '10': 'search', '17': true},
+  ],
+  '8': [
+    {'1': '_per_page'},
+    {'1': '_page'},
+    {'1': '_search'},
+  ],
+};
+
+/// Descriptor for `ForYouRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List forYouRequestDescriptor = $convert.base64Decode(
+    'Cg1Gb3JZb3VSZXF1ZXN0Eh4KCHBlcl9wYWdlGAEgASgESABSB3BlclBhZ2WIAQESFwoEcGFnZR'
+    'gCIAEoBEgBUgRwYWdliAEBEhsKBnNlYXJjaBgDIAEoCUgCUgZzZWFyY2iIAQFCCwoJX3Blcl9w'
+    'YWdlQgcKBV9wYWdlQgkKB19zZWFyY2g=');
+
 @$core.Deprecated('Use dismissMangaRequestDescriptor instead')
 const DismissMangaRequest$json = {
   '1': 'DismissMangaRequest',

@@ -1293,6 +1293,89 @@ class SimilarMangaRequest extends $pb.GeneratedMessage {
   void clearId() => $_clearField(1);
 }
 
+/// Paging keeps PaginateQuery's field numbers, so clients sending a PaginateQuery still work.
+class ForYouRequest extends $pb.GeneratedMessage {
+  factory ForYouRequest({
+    $fixnum.Int64? perPage,
+    $fixnum.Int64? page,
+    $core.String? search,
+  }) {
+    final result = create();
+    if (perPage != null) result.perPage = perPage;
+    if (page != null) result.page = page;
+    if (search != null) result.search = search;
+    return result;
+  }
+
+  ForYouRequest._();
+
+  factory ForYouRequest.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory ForYouRequest.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'ForYouRequest',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'rumgap.v1'),
+      createEmptyInstance: create)
+    ..a<$fixnum.Int64>(1, _omitFieldNames ? '' : 'perPage', $pb.PbFieldType.OU6,
+        defaultOrMaker: $fixnum.Int64.ZERO)
+    ..a<$fixnum.Int64>(2, _omitFieldNames ? '' : 'page', $pb.PbFieldType.OU6,
+        defaultOrMaker: $fixnum.Int64.ZERO)
+    ..aOS(3, _omitFieldNames ? '' : 'search')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  ForYouRequest clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  ForYouRequest copyWith(void Function(ForYouRequest) updates) =>
+      super.copyWith((message) => updates(message as ForYouRequest))
+          as ForYouRequest;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static ForYouRequest create() => ForYouRequest._();
+  @$core.override
+  ForYouRequest createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static ForYouRequest getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<ForYouRequest>(create);
+  static ForYouRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $fixnum.Int64 get perPage => $_getI64(0);
+  @$pb.TagNumber(1)
+  set perPage($fixnum.Int64 value) => $_setInt64(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasPerPage() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearPerPage() => $_clearField(1);
+
+  @$pb.TagNumber(2)
+  $fixnum.Int64 get page => $_getI64(1);
+  @$pb.TagNumber(2)
+  set page($fixnum.Int64 value) => $_setInt64(1, value);
+  @$pb.TagNumber(2)
+  $core.bool hasPage() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearPage() => $_clearField(2);
+
+  /// Only manga matching this filter, in the same syntax as Manga.Index's search
+  /// (e.g. `genre:"Action" -host:"hentai20.io"`).
+  @$pb.TagNumber(3)
+  $core.String get search => $_getSZ(2);
+  @$pb.TagNumber(3)
+  set search($core.String value) => $_setString(2, value);
+  @$pb.TagNumber(3)
+  $core.bool hasSearch() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearSearch() => $_clearField(3);
+}
+
 class DismissMangaRequest extends $pb.GeneratedMessage {
   factory DismissMangaRequest({
     $core.int? id,
