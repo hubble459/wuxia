@@ -134,7 +134,7 @@ class FilterMap {
         } else {
           map.genres.included.add(field.value);
         }
-      } else if (['host', 'url'].contains(field.name?.toLowerCase())) {
+      } else if (field.name?.toLowerCase() == 'host') {
         if (field.exclude) {
           map.hosts.excluded.add(field.value);
         } else {
