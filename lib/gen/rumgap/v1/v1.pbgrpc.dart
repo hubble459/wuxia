@@ -1436,6 +1436,13 @@ class MetaClient extends $grpc.Client {
     return $createUnaryCall(_$stats, request, options: options);
   }
 
+  $grpc.ResponseFuture<$8.DetailedStatsReply> detailedStats(
+    $8.DetailedStatsRequest request, {
+    $grpc.CallOptions? options,
+  }) {
+    return $createUnaryCall(_$detailedStats, request, options: options);
+  }
+
   // method descriptors
 
   static final _$hostnames =
@@ -1452,6 +1459,11 @@ class MetaClient extends $grpc.Client {
       '/rumgap.v1.Meta/Stats',
       ($2.Empty value) => value.writeToBuffer(),
       $8.StatsReply.fromBuffer);
+  static final _$detailedStats =
+      $grpc.ClientMethod<$8.DetailedStatsRequest, $8.DetailedStatsReply>(
+          '/rumgap.v1.Meta/DetailedStats',
+          ($8.DetailedStatsRequest value) => value.writeToBuffer(),
+          $8.DetailedStatsReply.fromBuffer);
 }
 
 @$pb.GrpcServiceName('rumgap.v1.Meta')
@@ -1481,6 +1493,15 @@ abstract class MetaServiceBase extends $grpc.Service {
         false,
         ($core.List<$core.int> value) => $2.Empty.fromBuffer(value),
         ($8.StatsReply value) => value.writeToBuffer()));
+    $addMethod(
+        $grpc.ServiceMethod<$8.DetailedStatsRequest, $8.DetailedStatsReply>(
+            'DetailedStats',
+            detailedStats_Pre,
+            false,
+            false,
+            ($core.List<$core.int> value) =>
+                $8.DetailedStatsRequest.fromBuffer(value),
+            ($8.DetailedStatsReply value) => value.writeToBuffer()));
   }
 
   $async.Future<$8.MetaReply> hostnames_Pre($grpc.ServiceCall $call,
@@ -1505,6 +1526,15 @@ abstract class MetaServiceBase extends $grpc.Service {
   }
 
   $async.Future<$8.StatsReply> stats($grpc.ServiceCall call, $2.Empty request);
+
+  $async.Future<$8.DetailedStatsReply> detailedStats_Pre(
+      $grpc.ServiceCall $call,
+      $async.Future<$8.DetailedStatsRequest> $request) async {
+    return detailedStats($call, await $request);
+  }
+
+  $async.Future<$8.DetailedStatsReply> detailedStats(
+      $grpc.ServiceCall call, $8.DetailedStatsRequest request);
 }
 
 /// Admin-only: per-hostname scraper health, backing an admin status page for keeping track of
