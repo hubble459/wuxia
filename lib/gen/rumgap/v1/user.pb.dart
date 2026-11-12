@@ -308,6 +308,7 @@ class UserUpdateRequest extends $pb.GeneratedMessage {
     $core.Iterable<$core.String>? preferredHostnames,
     $core.Iterable<$core.String>? deviceIds,
     $core.String? currentPassword,
+    $core.bool? showNsfw,
   }) {
     final result = create();
     if (password != null) result.password = password;
@@ -317,6 +318,7 @@ class UserUpdateRequest extends $pb.GeneratedMessage {
       result.preferredHostnames.addAll(preferredHostnames);
     if (deviceIds != null) result.deviceIds.addAll(deviceIds);
     if (currentPassword != null) result.currentPassword = currentPassword;
+    if (showNsfw != null) result.showNsfw = showNsfw;
     return result;
   }
 
@@ -339,6 +341,7 @@ class UserUpdateRequest extends $pb.GeneratedMessage {
     ..pPS(4, _omitFieldNames ? '' : 'preferredHostnames')
     ..pPS(5, _omitFieldNames ? '' : 'deviceIds')
     ..aOS(6, _omitFieldNames ? '' : 'currentPassword')
+    ..aOB(7, _omitFieldNames ? '' : 'showNsfw')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -402,6 +405,15 @@ class UserUpdateRequest extends $pb.GeneratedMessage {
   $core.bool hasCurrentPassword() => $_has(5);
   @$pb.TagNumber(6)
   void clearCurrentPassword() => $_clearField(6);
+
+  @$pb.TagNumber(7)
+  $core.bool get showNsfw => $_getBF(6);
+  @$pb.TagNumber(7)
+  set showNsfw($core.bool value) => $_setBool(6, value);
+  @$pb.TagNumber(7)
+  $core.bool hasShowNsfw() => $_has(6);
+  @$pb.TagNumber(7)
+  void clearShowNsfw() => $_clearField(7);
 }
 
 class UserReply extends $pb.GeneratedMessage {
@@ -542,6 +554,7 @@ class UserFullReply extends $pb.GeneratedMessage {
     $fixnum.Int64? countFollowers,
     $fixnum.Int64? createdAt,
     $fixnum.Int64? updatedAt,
+    $core.bool? showNsfw,
   }) {
     final result = create();
     if (id != null) result.id = id;
@@ -555,6 +568,7 @@ class UserFullReply extends $pb.GeneratedMessage {
     if (countFollowers != null) result.countFollowers = countFollowers;
     if (createdAt != null) result.createdAt = createdAt;
     if (updatedAt != null) result.updatedAt = updatedAt;
+    if (showNsfw != null) result.showNsfw = showNsfw;
     return result;
   }
 
@@ -581,6 +595,7 @@ class UserFullReply extends $pb.GeneratedMessage {
     ..aInt64(8, _omitFieldNames ? '' : 'countFollowers')
     ..aInt64(9, _omitFieldNames ? '' : 'createdAt')
     ..aInt64(10, _omitFieldNames ? '' : 'updatedAt')
+    ..aOB(11, _omitFieldNames ? '' : 'showNsfw')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -679,6 +694,16 @@ class UserFullReply extends $pb.GeneratedMessage {
   $core.bool hasUpdatedAt() => $_has(9);
   @$pb.TagNumber(10)
   void clearUpdatedAt() => $_clearField(10);
+
+  /// Whether 18+ manga show up outside the user's own reading list.
+  @$pb.TagNumber(11)
+  $core.bool get showNsfw => $_getBF(10);
+  @$pb.TagNumber(11)
+  set showNsfw($core.bool value) => $_setBool(10, value);
+  @$pb.TagNumber(11)
+  $core.bool hasShowNsfw() => $_has(10);
+  @$pb.TagNumber(11)
+  void clearShowNsfw() => $_clearField(11);
 }
 
 class UserTokenReply extends $pb.GeneratedMessage {

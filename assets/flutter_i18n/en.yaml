@@ -50,6 +50,8 @@ manga:
   force-rescrape: Force Rescrape
   merge-into: Merge into another manga
   delete: Delete manga
+  mark-nsfw: "Mark as 18+"
+  unmark-nsfw: "Unmark 18+"
   merge-from: Merge another manga into this
   move-source-out: Move a source to another manga
   move-source-in: Move a source from another manga
@@ -114,6 +116,8 @@ basic:
 settings:
   title: Settings
   data_saver: Data Saver
+  show_nsfw: "Show 18+ manga"
+  show_nsfw_hint: "Outside your reading list"
   logout: Logout
   language: Language
   reading_mode: Default Reading Mode

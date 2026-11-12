@@ -469,6 +469,7 @@ class MangaReply extends $pb.GeneratedMessage {
     $core.Iterable<MangaSourceReply>? sources,
     $core.double? progressOrdinal,
     $core.int? selectedSourceId,
+    $core.bool? nsfw,
   }) {
     final result = create();
     if (id != null) result.id = id;
@@ -489,6 +490,7 @@ class MangaReply extends $pb.GeneratedMessage {
     if (sources != null) result.sources.addAll(sources);
     if (progressOrdinal != null) result.progressOrdinal = progressOrdinal;
     if (selectedSourceId != null) result.selectedSourceId = selectedSourceId;
+    if (nsfw != null) result.nsfw = nsfw;
     return result;
   }
 
@@ -524,6 +526,7 @@ class MangaReply extends $pb.GeneratedMessage {
         subBuilder: MangaSourceReply.create)
     ..aD(18, _omitFieldNames ? '' : 'progressOrdinal')
     ..aI(19, _omitFieldNames ? '' : 'selectedSourceId')
+    ..aOB(20, _omitFieldNames ? '' : 'nsfw')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -689,6 +692,16 @@ class MangaReply extends $pb.GeneratedMessage {
   $core.bool hasSelectedSourceId() => $_has(17);
   @$pb.TagNumber(19)
   void clearSelectedSourceId() => $_clearField(19);
+
+  /// 18+. Hidden outside the reading list for users who turned off show_nsfw.
+  @$pb.TagNumber(20)
+  $core.bool get nsfw => $_getBF(18);
+  @$pb.TagNumber(20)
+  set nsfw($core.bool value) => $_setBool(18, value);
+  @$pb.TagNumber(20)
+  $core.bool hasNsfw() => $_has(18);
+  @$pb.TagNumber(20)
+  void clearNsfw() => $_clearField(20);
 }
 
 class SelectSourceRequest extends $pb.GeneratedMessage {
@@ -1332,6 +1345,72 @@ class DismissMangaRequest extends $pb.GeneratedMessage {
   $core.bool hasId() => $_has(0);
   @$pb.TagNumber(1)
   void clearId() => $_clearField(1);
+}
+
+class SetNsfwRequest extends $pb.GeneratedMessage {
+  factory SetNsfwRequest({
+    $core.int? mangaId,
+    $core.bool? nsfw,
+  }) {
+    final result = create();
+    if (mangaId != null) result.mangaId = mangaId;
+    if (nsfw != null) result.nsfw = nsfw;
+    return result;
+  }
+
+  SetNsfwRequest._();
+
+  factory SetNsfwRequest.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory SetNsfwRequest.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'SetNsfwRequest',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'rumgap.v1'),
+      createEmptyInstance: create)
+    ..aI(1, _omitFieldNames ? '' : 'mangaId')
+    ..aOB(2, _omitFieldNames ? '' : 'nsfw')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  SetNsfwRequest clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  SetNsfwRequest copyWith(void Function(SetNsfwRequest) updates) =>
+      super.copyWith((message) => updates(message as SetNsfwRequest))
+          as SetNsfwRequest;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static SetNsfwRequest create() => SetNsfwRequest._();
+  @$core.override
+  SetNsfwRequest createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static SetNsfwRequest getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<SetNsfwRequest>(create);
+  static SetNsfwRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.int get mangaId => $_getIZ(0);
+  @$pb.TagNumber(1)
+  set mangaId($core.int value) => $_setSignedInt32(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasMangaId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearMangaId() => $_clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.bool get nsfw => $_getBF(1);
+  @$pb.TagNumber(2)
+  set nsfw($core.bool value) => $_setBool(1, value);
+  @$pb.TagNumber(2)
+  $core.bool hasNsfw() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearNsfw() => $_clearField(2);
 }
 
 class BackfillImagesRequest extends $pb.GeneratedMessage {

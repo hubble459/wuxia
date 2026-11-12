@@ -4,6 +4,7 @@ import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:wuxia/api.dart';
+import 'package:wuxia/gen/rumgap/v1/user.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/v1.pb.dart' show Empty;
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:wuxia/util/store.dart';
@@ -126,6 +127,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   setState(() {});
                 },
                 title: I18nText('settings.data_saver'),
+              ),
+              SwitchListTile(
+                value: API.loggedIn.showNsfw,
+                onChanged: (show) async {
+                  try {
+                    API.loggedIn = await api.user.update(UserUpdateRequest(showNsfw: show));
+                  } catch (e) {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+                    }
+                  }
+                  if (mounted) setState(() {});
+                },
+                title: I18nText('settings.show_nsfw'),
+                subtitle: I18nText('settings.show_nsfw_hint'),
               ),
               ListTile(
                 title: I18nText('settings.language'),

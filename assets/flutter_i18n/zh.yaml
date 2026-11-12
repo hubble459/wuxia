@@ -47,6 +47,8 @@ manga:
   force-rescrape: 强制重新抓取
   merge-into: 合并到另一部漫画
   delete: 删除漫画
+  mark-nsfw: "标记为 18+"
+  unmark-nsfw: "取消 18+ 标记"
   merge-from: 将另一部漫画合并到此
   move-source-out: 将来源移动到另一部漫画
   move-source-in: 从另一部漫画移动来源
@@ -114,6 +116,8 @@ basic:
 settings:
   title: 设置
   data_saver: 数据保护程序
+  show_nsfw: "显示 18+ 漫画"
+  show_nsfw_hint: "在你的阅读列表之外"
   logout: 登出
   language: 语
   reading_mode: 默认阅读模式

@@ -164,6 +164,7 @@ const MangaReply$json = {
       '5': 5,
       '10': 'selectedSourceId'
     },
+    {'1': 'nsfw', '3': 20, '4': 1, '5': 8, '10': 'nsfw'},
   ],
   '8': [
     {'1': '_cover'},
@@ -186,8 +187,9 @@ final $typed_data.Uint8List mangaReplyDescriptor = $convert.base64Decode(
     '9ncmVzcxgPIAEoBUgDUg9yZWFkaW5nUHJvZ3Jlc3OIAQESFgoGc3RhdHVzGBAgASgJUgZzdGF0'
     'dXMSNQoHc291cmNlcxgRIAMoCzIbLnJ1bWdhcC52MS5NYW5nYVNvdXJjZVJlcGx5Ugdzb3VyY2'
     'VzEi4KEHByb2dyZXNzX29yZGluYWwYEiABKAFIBFIPcHJvZ3Jlc3NPcmRpbmFsiAEBEiwKEnNl'
-    'bGVjdGVkX3NvdXJjZV9pZBgTIAEoBVIQc2VsZWN0ZWRTb3VyY2VJZEIICgZfY292ZXJCBwoFX2'
-    '5leHRCBwoFX2xhc3RCEwoRX3JlYWRpbmdfcHJvZ3Jlc3NCEwoRX3Byb2dyZXNzX29yZGluYWw=');
+    'bGVjdGVkX3NvdXJjZV9pZBgTIAEoBVIQc2VsZWN0ZWRTb3VyY2VJZBISCgRuc2Z3GBQgASgIUg'
+    'Ruc2Z3QggKBl9jb3ZlckIHCgVfbmV4dEIHCgVfbGFzdEITChFfcmVhZGluZ19wcm9ncmVzc0IT'
+    'ChFfcHJvZ3Jlc3Nfb3JkaW5hbA==');
 
 @$core.Deprecated('Use selectSourceRequestDescriptor instead')
 const SelectSourceRequest$json = {
@@ -347,6 +349,20 @@ const DismissMangaRequest$json = {
 /// Descriptor for `DismissMangaRequest`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List dismissMangaRequestDescriptor = $convert
     .base64Decode('ChNEaXNtaXNzTWFuZ2FSZXF1ZXN0Eg4KAmlkGAEgASgFUgJpZA==');
+
+@$core.Deprecated('Use setNsfwRequestDescriptor instead')
+const SetNsfwRequest$json = {
+  '1': 'SetNsfwRequest',
+  '2': [
+    {'1': 'manga_id', '3': 1, '4': 1, '5': 5, '10': 'mangaId'},
+    {'1': 'nsfw', '3': 2, '4': 1, '5': 8, '10': 'nsfw'},
+  ],
+};
+
+/// Descriptor for `SetNsfwRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List setNsfwRequestDescriptor = $convert.base64Decode(
+    'Cg5TZXROc2Z3UmVxdWVzdBIZCghtYW5nYV9pZBgBIAEoBVIHbWFuZ2FJZBISCgRuc2Z3GAIgAS'
+    'gIUgRuc2Z3');
 
 @$core.Deprecated('Use backfillImagesRequestDescriptor instead')
 const BackfillImagesRequest$json = {

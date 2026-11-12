@@ -431,7 +431,15 @@ class _MangaCard extends StatelessWidget {
                 Wrap(
                   spacing: 6,
                   runSpacing: 6,
-                  children: manga.genres.map((genre) => Chip(label: Text(genre), visualDensity: VisualDensity.compact)).toList(),
+                  children: [
+                    if (manga.nsfw)
+                      Chip(
+                        label: const Text('18+'),
+                        visualDensity: VisualDensity.compact,
+                        backgroundColor: theme.colorScheme.errorContainer,
+                      ),
+                    ...manga.genres.map((genre) => Chip(label: Text(genre), visualDensity: VisualDensity.compact)),
+                  ],
                 ),
                 const SizedBox(height: 8),
                 Text(manga.description),

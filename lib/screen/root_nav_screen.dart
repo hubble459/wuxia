@@ -1,4 +1,5 @@
 import 'dart:io' show Platform;
+import 'dart:math' show max;
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
@@ -67,9 +68,7 @@ class _RootNavScreenState extends State<RootNavScreen> {
 
     final openDownloads =
         downloadsSupported && (sessionOffline || ModalRoute.of(context)?.settings.arguments == rootNavDownloadsArgument);
-    // Downloads is always the last tab, and only exists when downloads are supported.
-    final lastTab = downloadsSupported ? 3 : 2;
-    final selected = openDownloads ? lastTab : Store.getStoreInstance().getRootNavTab().clamp(0, lastTab);
+    final selected = _tabIndex(openDownloads ? 'downloads' : Store.getStoreInstance().getRootNavTab());
     _pageController.dispose();
     _pageController = PageController(initialPage: selected);
     setState(() {
@@ -180,12 +179,17 @@ class _RootNavScreenState extends State<RootNavScreen> {
 
   static const _wideBreakpoint = 700.0;
 
+  /// The tabs in nav order; downloads only exists when downloads are supported.
+  static List<String> get _tabs => ['reading', 'for_you', 'search', if (downloadsSupported) 'downloads'];
+
+  int _tabIndex(String? tab) => max(_tabs.indexOf(tab ?? ''), 0);
+
   void _selectTab(int index) {
     setState(() {
       _selected = index;
       _pageController.jumpToPage(_selected);
     });
-    Store.getStoreInstance().setRootNavTab(index).ignore();
+    Store.getStoreInstance().setRootNavTab(_tabs[index]).ignore();
   }
 
   Widget _routeIcon(Route route) {
@@ -211,7 +215,7 @@ class _RootNavScreenState extends State<RootNavScreen> {
       Route(
         label: FlutterI18n.translate(context, 'nav.for_you'),
         icon: Icons.style,
-        widget: ForYouScreen(onOpenSearch: () => _selectTab(2)),
+        widget: ForYouScreen(onOpenSearch: () => _selectTab(_tabIndex('search'))),
       ),
       Route(label: FlutterI18n.translate(context, 'nav.search'), icon: Icons.search, widget: const SearchScreen()),
       if (downloadsSupported)

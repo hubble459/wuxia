@@ -648,6 +648,16 @@ class MangaClient extends $grpc.Client {
     return $createUnaryCall(_$undismiss, request, options: options);
   }
 
+  /// Mod/admin-only. Marks a manga 18+ or not. A source scraped as nsfw (an adult-only
+  /// site, `nsfw: true` in its manga_parser config, or a mangadex adult rating) marks
+  /// its manga 18+ by itself.
+  $grpc.ResponseFuture<$4.MangaReply> setNsfw(
+    $4.SetNsfwRequest request, {
+    $grpc.CallOptions? options,
+  }) {
+    return $createUnaryCall(_$setNsfw, request, options: options);
+  }
+
   // method descriptors
 
   static final _$create = $grpc.ClientMethod<$4.MangaRequest, $4.MangaReply>(
@@ -740,6 +750,10 @@ class MangaClient extends $grpc.Client {
           '/rumgap.v1.Manga/Undismiss',
           ($4.DismissMangaRequest value) => value.writeToBuffer(),
           $2.Empty.fromBuffer);
+  static final _$setNsfw = $grpc.ClientMethod<$4.SetNsfwRequest, $4.MangaReply>(
+      '/rumgap.v1.Manga/SetNsfw',
+      ($4.SetNsfwRequest value) => value.writeToBuffer(),
+      $4.MangaReply.fromBuffer);
 }
 
 @$pb.GrpcServiceName('rumgap.v1.Manga')
@@ -892,6 +906,13 @@ abstract class MangaServiceBase extends $grpc.Service {
         ($core.List<$core.int> value) =>
             $4.DismissMangaRequest.fromBuffer(value),
         ($2.Empty value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$4.SetNsfwRequest, $4.MangaReply>(
+        'SetNsfw',
+        setNsfw_Pre,
+        false,
+        false,
+        ($core.List<$core.int> value) => $4.SetNsfwRequest.fromBuffer(value),
+        ($4.MangaReply value) => value.writeToBuffer()));
   }
 
   $async.Future<$4.MangaReply> create_Pre(
@@ -1046,6 +1067,14 @@ abstract class MangaServiceBase extends $grpc.Service {
 
   $async.Future<$2.Empty> undismiss(
       $grpc.ServiceCall call, $4.DismissMangaRequest request);
+
+  $async.Future<$4.MangaReply> setNsfw_Pre($grpc.ServiceCall $call,
+      $async.Future<$4.SetNsfwRequest> $request) async {
+    return setNsfw($call, await $request);
+  }
+
+  $async.Future<$4.MangaReply> setNsfw(
+      $grpc.ServiceCall call, $4.SetNsfwRequest request);
 }
 
 @$pb.GrpcServiceName('rumgap.v1.Chapter')

@@ -38,6 +38,7 @@ enum _MangaMenuAction {
   manageSources,
   moveSourceOut,
   moveSourceIn,
+  toggleNsfw,
   deleteManga,
 }
 
@@ -149,6 +150,16 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
     try {
       await api.manga.delete(DeleteMangaRequest(id: _manga.id));
       if (mounted) Navigator.of(context).pop();
+    } catch (e) {
+      if (mounted) Fluttertoast.showToast(msg: e.toString());
+    }
+  }
+
+  /// Marks this manga 18+ or not (mod/admin-only).
+  Future<void> _toggleNsfw() async {
+    try {
+      final result = await api.manga.setNsfw(SetNsfwRequest(mangaId: _manga.id, nsfw: !_manga.nsfw));
+      if (mounted) setState(() => _manga.nsfw = result.nsfw);
     } catch (e) {
       if (mounted) Fluttertoast.showToast(msg: e.toString());
     }
@@ -445,6 +456,8 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
             _moveSourceOut();
           } else if (action == _MangaMenuAction.moveSourceIn) {
             _moveSourceIn();
+          } else if (action == _MangaMenuAction.toggleNsfw) {
+            _toggleNsfw();
           } else if (action == _MangaMenuAction.deleteManga) {
             _deleteManga();
           }
@@ -481,6 +494,11 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
             PopupMenuItem(
               value: _MangaMenuAction.moveSourceIn,
               child: Text(FlutterI18n.translate(context, 'manga.move-source-in')),
+            ),
+          if (API.loggedIn.isModOrAdmin)
+            PopupMenuItem(
+              value: _MangaMenuAction.toggleNsfw,
+              child: Text(FlutterI18n.translate(context, _manga.nsfw ? 'manga.unmark-nsfw' : 'manga.mark-nsfw')),
             ),
           if (API.loggedIn.isModOrAdmin)
             PopupMenuItem(

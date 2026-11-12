@@ -14,7 +14,7 @@ class Store {
   static const String dataSaverKey = 'data_saver';
   static const String downloadDirKey = 'download_dir';
   static const String downloadQueueKey = 'download_queue';
-  static const String rootNavTabKey = 'root_nav_tab';
+  static const String rootNavTabKey = 'root_nav_tab_name';
   static const String readingModeKey = 'reading_mode';
   static const String mangaReadingModeKeyPrefix = 'reading_mode_manga_';
   static const String pendingProgressKeyPrefix = 'pending_progress_manga_';
@@ -177,11 +177,12 @@ class Store {
 
   /// The bottom-nav tab that was open last, so a restart (or a page reload
   /// on web) reopens it.
-  int getRootNavTab() {
-    return _publicStorage.getInt(rootNavTabKey) ?? 0;
+  /// Stored by name, not position, so adding or moving a tab doesn't reopen the wrong one.
+  String? getRootNavTab() {
+    return _publicStorage.getString(rootNavTabKey);
   }
 
-  Future<void> setRootNavTab(int tab) async {
-    await _publicStorage.setInt(rootNavTabKey, tab);
+  Future<void> setRootNavTab(String tab) async {
+    await _publicStorage.setString(rootNavTabKey, tab);
   }
 }

@@ -103,6 +103,8 @@ manga:
   force-rescrape: Forceer herscrapen
   merge-into: Samenvoegen met een andere manga
   delete: Manga verwijderen
+  mark-nsfw: "Markeren als 18+"
+  unmark-nsfw: "18+ markering weghalen"
   merge-from: Andere manga samenvoegen met deze
   move-source-out: Bron verplaatsen naar andere manga
   move-source-in: Bron verplaatsen vanuit andere manga
@@ -151,6 +153,8 @@ settings:
     description: Welke bron een manga opent als je er zelf geen hebt gekozen
     keep_one: Houd minstens één bron
   data_saver: Gegevensbesparing
+  show_nsfw: "18+ manga tonen"
+  show_nsfw_hint: "Buiten je leeslijst"
   download: Downloaden
   download_clear: Downloads wissen
   download_clear_confirm: Weet je zeker dat je alle gedownloade hoofdstukken wilt verwijderen?
