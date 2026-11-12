@@ -20,6 +20,7 @@ import 'package:wuxia/screen/reading_screen.dart';
 import 'package:wuxia/screen/search_screen.dart';
 import 'package:wuxia/util/app_routes.dart';
 import 'package:wuxia/util/session.dart';
+import 'package:wuxia/util/store.dart';
 import 'package:wuxia/util/tools.dart';
 
 // Web push key for FCM, supplied at build time via --dart-define=VAPID_KEY.
@@ -41,7 +42,7 @@ class RootNavScreen extends StatefulWidget {
 }
 
 class _RootNavScreenState extends State<RootNavScreen> {
-  final PageController _pageController = PageController();
+  PageController _pageController = PageController();
   int stateChange = 0;
   int _selected = 0;
 
@@ -62,16 +63,15 @@ class _RootNavScreenState extends State<RootNavScreen> {
 
     final openDownloads =
         downloadsSupported && (sessionOffline || ModalRoute.of(context)?.settings.arguments == rootNavDownloadsArgument);
+    // Downloads is always the last tab, and only exists when downloads are supported.
+    final lastTab = downloadsSupported ? 3 : 2;
+    final selected = openDownloads ? lastTab : Store.getStoreInstance().getRootNavTab().clamp(0, lastTab);
+    _pageController.dispose();
+    _pageController = PageController(initialPage: selected);
     setState(() {
       _ready = true;
-      // Downloads is always the last tab.
-      if (openDownloads) _selected = 3;
+      _selected = selected;
     });
-    if (openDownloads) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (_pageController.hasClients) _pageController.jumpToPage(_selected);
-      });
-    }
     _initNotificationHandler();
     promptDownloadReconnectIfNeeded(context);
   }
@@ -176,6 +176,14 @@ class _RootNavScreenState extends State<RootNavScreen> {
 
   static const _wideBreakpoint = 700.0;
 
+  void _selectTab(int index) {
+    setState(() {
+      _selected = index;
+      _pageController.jumpToPage(_selected);
+    });
+    Store.getStoreInstance().setRootNavTab(index).ignore();
+  }
+
   @override
   Widget build(BuildContext context) {
     if (!_ready) {
@@ -250,12 +258,7 @@ class _RootNavScreenState extends State<RootNavScreen> {
                 NavigationRail(
                   labelType: NavigationRailLabelType.all,
                   selectedIndex: _selected,
-                  onDestinationSelected: (index) {
-                    setState(() {
-                      _selected = index;
-                      _pageController.jumpToPage(_selected);
-                    });
-                  },
+                  onDestinationSelected: _selectTab,
                   destinations: routes
                       .map((route) => NavigationRailDestination(icon: Icon(route.icon), label: Text(route.label)))
                       .toList(),
@@ -278,12 +281,7 @@ class _RootNavScreenState extends State<RootNavScreen> {
                 type: BottomNavigationBarType.fixed,
                 items: routes.map((route) => BottomNavigationBarItem(icon: Icon(route.icon), label: route.label)).toList(),
                 currentIndex: _selected,
-                onTap: (index) {
-                  setState(() {
-                    _selected = index;
-                    _pageController.jumpToPage(_selected);
-                  });
-                },
+                onTap: _selectTab,
               ),
       ),
     );

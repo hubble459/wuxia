@@ -13,6 +13,7 @@ class Store {
   static const String languageKey = 'language';
   static const String dataSaverKey = 'data_saver';
   static const String downloadDirKey = 'download_dir';
+  static const String rootNavTabKey = 'root_nav_tab';
   static const String readingModeKey = 'reading_mode';
   static const String mangaReadingModeKeyPrefix = 'reading_mode_manga_';
   static const String pendingProgressKeyPrefix = 'pending_progress_manga_';
@@ -157,5 +158,15 @@ class Store {
   Future<void> clearPendingProgress(int mangaId) async {
     await _publicStorage.remove('$pendingProgressKeyPrefix$mangaId');
     await _publicStorage.remove('$pendingProgressChapterKeyPrefix$mangaId');
+  }
+
+  /// The bottom-nav tab that was open last, so a restart (or a page reload
+  /// on web) reopens it.
+  int getRootNavTab() {
+    return _publicStorage.getInt(rootNavTabKey) ?? 0;
+  }
+
+  Future<void> setRootNavTab(int tab) async {
+    await _publicStorage.setInt(rootNavTabKey, tab);
   }
 }
