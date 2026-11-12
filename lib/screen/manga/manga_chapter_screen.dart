@@ -18,6 +18,7 @@ import 'package:wuxia/partial/dialog/chapter_picker_dialog.dart';
 import 'package:wuxia/partial/dialog/confirm_dialog.dart';
 import 'package:wuxia/partial/dialog/source_picker_dialog.dart';
 import 'package:wuxia/partial/image_error_placeholder.dart';
+import 'package:wuxia/partial/offline_notice.dart';
 import 'package:wuxia/util/download_storage/download_storage.dart';
 import 'package:wuxia/partial/responsive_content.dart';
 import 'package:wuxia/util/app_routes.dart';
@@ -58,6 +59,7 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
   final FocusNode _focusNode = FocusNode();
   late ChapterReply _chapter;
   List<_ReaderPage>? _images;
+  Object? _imagesError;
   bool _isOffline = false;
   List<String>? _offlineSources;
   late bool _isPagedMode;
@@ -113,7 +115,10 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
   }
 
   Future<void> _loadImages() async {
-    setState(() => _images = null);
+    setState(() {
+      _images = null;
+      _imagesError = null;
+    });
 
     _releaseOfflineSources();
     final local = await _localPageSources();
@@ -130,7 +135,14 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
       return;
     }
 
-    final reply = await api.chapter.images(ChapterImagesRequest(chapterId: _chapter.id));
+    final ImagesReply reply;
+    try {
+      reply = await api.chapter.images(ChapterImagesRequest(chapterId: _chapter.id));
+    } catch (e) {
+      if (mounted) setState(() => _imagesError = e);
+      return;
+    }
+    if (!mounted) return;
     final dataSaver = Store.getStoreInstance().getDataSaver() ?? false;
     setState(() {
       _images = reply.items
@@ -144,6 +156,49 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
           .toList();
       _isOffline = false;
     });
+  }
+
+  Widget _buildImagesError(Object error) {
+    if (isNetworkError(error)) return OfflineNotice(onRetry: _loadImages);
+    final detail = error is GrpcError ? (error.message ?? error.codeName) : error.toString();
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.broken_image_outlined, size: 48),
+            const SizedBox(height: 12),
+            Text(
+              FlutterI18n.translate(context, 'chapter.images_failed'),
+              style: Theme.of(context).textTheme.titleLarge,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            Text(detail, textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodySmall),
+            const SizedBox(height: 16),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              alignment: WrapAlignment.center,
+              children: [
+                if (widget.manga.sources.length > 1)
+                  FilledButton.icon(
+                    onPressed: _switchSource,
+                    icon: const Icon(Icons.swap_horiz),
+                    label: Text(FlutterI18n.translate(context, 'manga.switch_source')),
+                  ),
+                OutlinedButton.icon(
+                  onPressed: _loadImages,
+                  icon: const Icon(Icons.refresh),
+                  label: Text(FlutterI18n.translate(context, 'basic.retry')),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   void offsetUpdater() {
@@ -476,7 +531,9 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
                 OpenURLAction(url: _chapter.url),
               ],
             ),
-            body: _images == null
+            body: _imagesError != null
+                ? _buildImagesError(_imagesError!)
+                : _images == null
                 ? const Center(child: CircularProgressIndicator())
                 : (_isPagedMode ? _buildPagedView(_images!) : _buildImageList(_images!)),
             bottomNavigationBar: IntrinsicHeight(

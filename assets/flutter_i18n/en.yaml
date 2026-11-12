@@ -82,6 +82,7 @@ chapter:
   unlinked: "Chapter unlinked"
   unlink_confirm: "Unlink chapter {number} from the other sources? Switching sources won't find it until it's linked again."
   not_on_source: "This source doesn't have this chapter"
+  images_failed: "Couldn't load this chapter's pages"
   goto_top: Scroll to top
   goto_bottom: Scroll to bottom
   goto_first_page: First page

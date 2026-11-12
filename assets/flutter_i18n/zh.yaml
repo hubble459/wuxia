@@ -82,6 +82,7 @@ chapter:
   unlinked: "已取消关联"
   unlink_confirm: "要将第 {number} 章与其他来源取消关联吗？在重新关联之前，切换来源将找不到它。"
   not_on_source: "此来源没有这一章"
+  images_failed: "无法加载本章的页面"
   goto_top: 跳到顶部
   goto_bottom: 跳到底部
   goto_first_page: 第一页
