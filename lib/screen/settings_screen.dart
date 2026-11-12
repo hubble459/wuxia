@@ -4,6 +4,7 @@ import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:wuxia/api.dart';
+import 'package:wuxia/gen/rumgap/v1/v1.pb.dart' show Empty;
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:wuxia/util/store.dart';
 import 'package:wuxia/partial/dialog/change_password_dialog.dart';
@@ -266,9 +267,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ListTile(
                 title: Text(FlutterI18n.translate(context, 'settings.logout'), style: const TextStyle(color: Colors.red)),
                 onTap: () async {
-                  Store.getStoreInstance().removeToken();
+                  try {
+                    await api.user.logout(Empty()).timeout(const Duration(seconds: 5));
+                  } catch (_) {
+                    // Offline or already revoked - still log out locally.
+                  }
+                  await Store.getStoreInstance().removeToken();
                   API.token = null;
-                  if (!mounted) {
+                  if (!context.mounted) {
                     return;
                   }
                   Navigator.of(context).pop();

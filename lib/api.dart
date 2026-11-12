@@ -42,21 +42,27 @@ class API {
   static late UserFullReply loggedIn;
   final String url;
   late final ClientChannelBase _channel;
-  late final UserClient user = UserClient(_channel, options: options);
-  late final MangaClient manga = MangaClient(_channel, options: options);
-  late final ChapterClient chapter = ChapterClient(_channel, options: options);
-  late final ReadingClient reading = ReadingClient(_channel, options: options);
-  late final FriendClient friend = FriendClient(_channel, options: options);
-  late final SearchClient search = SearchClient(_channel, options: options);
-  late final MetaClient meta = MetaClient(_channel, options: options);
-  late final ScraperClient scraper = ScraperClient(_channel, options: options);
-  late final AdminClient admin = AdminClient(_channel, options: options);
+  late final UserClient user = UserClient(_channel, options: options, interceptors: _interceptors);
+  late final MangaClient manga = MangaClient(_channel, options: options, interceptors: _interceptors);
+  late final ChapterClient chapter = ChapterClient(_channel, options: options, interceptors: _interceptors);
+  late final ReadingClient reading = ReadingClient(_channel, options: options, interceptors: _interceptors);
+  late final FriendClient friend = FriendClient(_channel, options: options, interceptors: _interceptors);
+  late final SearchClient search = SearchClient(_channel, options: options, interceptors: _interceptors);
+  late final MetaClient meta = MetaClient(_channel, options: options, interceptors: _interceptors);
+  late final ScraperClient scraper = ScraperClient(_channel, options: options, interceptors: _interceptors);
+  late final AdminClient admin = AdminClient(_channel, options: options, interceptors: _interceptors);
 
   static void authProvider(Map<String, String> metadata, uri) {
     if (_token != null) {
       metadata['authorization'] = 'Bearer $_token';
     }
   }
+
+  /// Called once when a call made with the current token comes back
+  /// `unauthenticated`, i.e. its session was revoked or expired server-side.
+  static void Function()? onSessionExpired;
+
+  static final _interceptors = [_SessionExpiredInterceptor()];
 
   static Future<bool> test(String url) async {
     var test = API(url);
@@ -112,3 +118,31 @@ class API {
 }
 
 API api = API(_defaultApiUrl);
+
+/// Notices a session that stopped being valid mid-use (revoked from another
+/// device, expired, password changed elsewhere) instead of every call just
+/// failing until the next app start. Unary calls only: a streaming response can
+/// only be listened to once, and `Manga.CreateMany` is the only streaming RPC.
+class _SessionExpiredInterceptor extends ClientInterceptor {
+  @override
+  ResponseFuture<R> interceptUnary<Q, R>(
+    ClientMethod<Q, R> method,
+    Q request,
+    CallOptions options,
+    ClientUnaryInvoker<Q, R> invoker,
+  ) {
+    final response = invoker(method, request, options);
+    final sentToken = API._token;
+    if (sentToken != null && !method.path.endsWith('/Logout')) {
+      response.then<void>(
+        (_) {},
+        onError: (Object e) {
+          if (e is GrpcError && e.code == StatusCode.unauthenticated && API._token == sentToken) {
+            API.onSessionExpired?.call();
+          }
+        },
+      );
+    }
+    return response;
+  }
+}

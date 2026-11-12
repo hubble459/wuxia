@@ -11,6 +11,7 @@ import 'package:jiffy/jiffy.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:wuxia/api.dart';
 import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
 import 'package:wuxia/screen/login_screen.dart';
 import 'package:wuxia/screen/manga/manga_chapter_route_loader.dart';
@@ -94,6 +95,11 @@ void main() async {
   PaintingBinding.instance.imageCache.maximumSize = 1000;
   PaintingBinding.instance.imageCache.maximumSizeBytes = 300 << 20;
   final store = await Store.init();
+  API.onSessionExpired = () async {
+    API.token = null;
+    await store.removeToken();
+    navigatorKey.currentState?.pushNamedAndRemoveUntil('login', (_) => false);
+  };
   downloadManager.restore();
   await Jiffy.setLocale(store.getLanguage() ?? 'en');
 
