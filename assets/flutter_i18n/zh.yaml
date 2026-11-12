@@ -42,6 +42,7 @@ manga:
   download-eta: '还剩 {eta}'
   force-rescrape: 强制重新抓取
   merge-into: 合并到另一部漫画
+  delete: 删除漫画
   merge-from: 将另一部漫画合并到此
   move-source-out: 将来源移动到另一部漫画
   move-source-in: 从另一部漫画移动来源
@@ -184,6 +185,7 @@ dialog:
   confirm:
     delete: 您确定要删除“{title}”吗
     delete_download: 您确定要删除“{title}”的已下载文件吗
+    delete_manga: 要为所有人永久删除“{title}”吗？所有人在此漫画上的阅读进度也会被删除。
     'no': 不
     title: 确认
     'yes': 是的

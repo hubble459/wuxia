@@ -247,6 +247,18 @@ final $typed_data.Uint8List moveSourceRequestDescriptor = $convert.base64Decode(
     'ChFNb3ZlU291cmNlUmVxdWVzdBImCg9tYW5nYV9zb3VyY2VfaWQYASABKAVSDW1hbmdhU291cm'
     'NlSWQSJgoPdGFyZ2V0X21hbmdhX2lkGAIgASgFUg10YXJnZXRNYW5nYUlk');
 
+@$core.Deprecated('Use deleteMangaRequestDescriptor instead')
+const DeleteMangaRequest$json = {
+  '1': 'DeleteMangaRequest',
+  '2': [
+    {'1': 'id', '3': 1, '4': 1, '5': 5, '10': 'id'},
+  ],
+};
+
+/// Descriptor for `DeleteMangaRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List deleteMangaRequestDescriptor =
+    $convert.base64Decode('ChJEZWxldGVNYW5nYVJlcXVlc3QSDgoCaWQYASABKAVSAmlk');
+
 @$core.Deprecated('Use getMangaRequestDescriptor instead')
 const GetMangaRequest$json = {
   '1': 'GetMangaRequest',

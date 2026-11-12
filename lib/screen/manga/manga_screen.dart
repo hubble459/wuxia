@@ -34,6 +34,7 @@ enum _MangaMenuAction {
   mergeFrom,
   moveSourceOut,
   moveSourceIn,
+  deleteManga,
 }
 
 /// The three ways manga data can be refreshed, cheapest first:
@@ -115,6 +116,18 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
         _selectedSource.clear();
         _selectedSource.mergeFromMessage(selected);
       });
+    }
+  }
+
+  /// Deletes this manga for everyone (mod/admin-only, irreversible), then pops back with
+  /// no result so the list it was opened from drops it.
+  Future<void> _deleteManga() async {
+    if (!await confirmDeleteManga(context, _manga) || !mounted) return;
+    try {
+      await api.manga.delete(DeleteMangaRequest(id: _manga.id));
+      if (mounted) Navigator.of(context).pop();
+    } catch (e) {
+      if (mounted) Fluttertoast.showToast(msg: e.toString());
     }
   }
 
@@ -383,6 +396,8 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
             _moveSourceOut();
           } else if (action == _MangaMenuAction.moveSourceIn) {
             _moveSourceIn();
+          } else if (action == _MangaMenuAction.deleteManga) {
+            _deleteManga();
           }
         },
         itemBuilder: (_) => [
@@ -413,6 +428,11 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
             PopupMenuItem(
               value: _MangaMenuAction.moveSourceIn,
               child: Text(FlutterI18n.translate(context, 'manga.move-source-in')),
+            ),
+          if (API.loggedIn.isModOrAdmin)
+            PopupMenuItem(
+              value: _MangaMenuAction.deleteManga,
+              child: Text(FlutterI18n.translate(context, 'manga.delete'), style: const TextStyle(color: Colors.red)),
             ),
         ],
       ),

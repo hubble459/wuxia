@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:wuxia/api.dart';
 import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
@@ -15,6 +16,17 @@ import 'package:wuxia/util/source_health.dart';
 import 'package:wuxia/util/tools.dart';
 
 typedef ReloadParent = Function(MangaReply manga, bool deleted);
+
+/// Asks for confirmation before deleting [manga] for everyone (not just from your reading list).
+Future<bool> confirmDeleteManga(BuildContext context, MangaReply manga) async {
+  final confirmed = await showDialog<bool>(
+    context: context,
+    builder: (context) => ConfirmDialog(
+      message: FlutterI18n.translate(context, 'dialog.confirm.delete_manga', translationParams: {'title': manga.title}),
+    ),
+  );
+  return confirmed == true;
+}
 
 enum HeroScreenType {
   reading,
@@ -219,6 +231,14 @@ class _MangaItemState extends State<MangaItem> {
           if (confirmed == true) {
             await api.reading.delete(DeleteReadingRequest(mangaId: _manga.id));
             widget.reloadParent(_manga, true);
+          }
+        } else if (API.loggedIn.isModOrAdmin) {
+          if (!await confirmDeleteManga(context, _manga)) return;
+          try {
+            await api.manga.delete(DeleteMangaRequest(id: _manga.id));
+            widget.reloadParent(_manga, true);
+          } catch (e) {
+            Fluttertoast.showToast(msg: e.toString());
           }
         }
       },

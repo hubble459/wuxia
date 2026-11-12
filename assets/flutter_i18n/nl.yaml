@@ -53,6 +53,7 @@ dialog:
   confirm:
     delete: Weet je zeker dat je "{title}" wilt verwijderen
     delete_download: Weet je zeker dat je de gedownloade bestanden van "{title}" wilt verwijderen
+    delete_manga: '"{title}" voor iedereen permanent verwijderen? Ieders leesvoortgang hiervan gaat ook verloren.'
     "no": Nee
     title: Bevestigen
     "yes": Ja
@@ -98,6 +99,7 @@ manga:
   download-eta: '{eta} resterend'
   force-rescrape: Forceer herscrapen
   merge-into: Samenvoegen met een andere manga
+  delete: Manga verwijderen
   merge-from: Andere manga samenvoegen met deze
   move-source-out: Bron verplaatsen naar andere manga
   move-source-in: Bron verplaatsen vanuit andere manga

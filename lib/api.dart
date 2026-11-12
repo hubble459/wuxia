@@ -21,11 +21,15 @@ final String _defaultApiUrl = _rawApiHost.contains('://')
 
 // extension PooPoo on GrpcError {}
 
-// Mirrors UserPermissions::ADMIN (0b00000100) on the server -- see interceptor/auth.rs.
+// Mirror UserPermissions::MOD (0b00000010) / ::ADMIN (0b00000100) on the server -- see interceptor/auth.rs.
+const _modPermissionBit = 0x2;
 const _adminPermissionBit = 0x4;
 
 extension UserPermissionsX on UserFullReply {
   bool get isAdmin => permissions & _adminPermissionBit != 0;
+
+  /// Mods and admins, e.g. allowed to delete manga.
+  bool get isModOrAdmin => permissions & (_modPermissionBit | _adminPermissionBit) != 0;
 }
 
 extension UserReplyPermissionsX on UserReply {

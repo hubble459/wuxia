@@ -130,8 +130,12 @@ class _LatestScreenState extends State<LatestScreen> with AutomaticKeepAliveClie
                         manga: manga,
                         type: HeroScreenType.latest,
                         reloadParent: (updated, deleted) {
-                          manga.clear();
-                          manga.mergeFromMessage(updated);
+                          if (deleted) {
+                            _pagingController.items?.removeWhere((m) => m.id == updated.id);
+                          } else {
+                            manga.clear();
+                            manga.mergeFromMessage(updated);
+                          }
                           setState(() {});
                         },
                       ),

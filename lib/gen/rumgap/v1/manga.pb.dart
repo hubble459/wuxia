@@ -918,6 +918,60 @@ class MoveSourceRequest extends $pb.GeneratedMessage {
   void clearTargetMangaId() => $_clearField(2);
 }
 
+class DeleteMangaRequest extends $pb.GeneratedMessage {
+  factory DeleteMangaRequest({
+    $core.int? id,
+  }) {
+    final result = create();
+    if (id != null) result.id = id;
+    return result;
+  }
+
+  DeleteMangaRequest._();
+
+  factory DeleteMangaRequest.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory DeleteMangaRequest.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'DeleteMangaRequest',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'rumgap.v1'),
+      createEmptyInstance: create)
+    ..aI(1, _omitFieldNames ? '' : 'id')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  DeleteMangaRequest clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  DeleteMangaRequest copyWith(void Function(DeleteMangaRequest) updates) =>
+      super.copyWith((message) => updates(message as DeleteMangaRequest))
+          as DeleteMangaRequest;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static DeleteMangaRequest create() => DeleteMangaRequest._();
+  @$core.override
+  DeleteMangaRequest createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static DeleteMangaRequest getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<DeleteMangaRequest>(create);
+  static DeleteMangaRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.int get id => $_getIZ(0);
+  @$pb.TagNumber(1)
+  set id($core.int value) => $_setSignedInt32(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearId() => $_clearField(1);
+}
+
 class GetMangaRequest extends $pb.GeneratedMessage {
   factory GetMangaRequest({
     $core.int? id,

@@ -506,6 +506,15 @@ class MangaClient extends $grpc.Client {
     return $createUnaryCall(_$moveSource, request, options: options);
   }
 
+  /// Mod/admin-only. Deletes a manga outright, cascading away its sources, chapters
+  /// and everyone's reading progress on it.
+  $grpc.ResponseFuture<$2.Empty> delete(
+    $4.DeleteMangaRequest request, {
+    $grpc.CallOptions? options,
+  }) {
+    return $createUnaryCall(_$delete, request, options: options);
+  }
+
   /// Kicks off (or resumes) a throttled background walk that downloads every
   /// not-yet-`done` page of every chapter of that source.
   $grpc.ResponseFuture<$2.Empty> backfillImages(
@@ -585,6 +594,10 @@ class MangaClient extends $grpc.Client {
           '/rumgap.v1.Manga/MoveSource',
           ($4.MoveSourceRequest value) => value.writeToBuffer(),
           $4.MangaReply.fromBuffer);
+  static final _$delete = $grpc.ClientMethod<$4.DeleteMangaRequest, $2.Empty>(
+      '/rumgap.v1.Manga/Delete',
+      ($4.DeleteMangaRequest value) => value.writeToBuffer(),
+      $2.Empty.fromBuffer);
   static final _$backfillImages =
       $grpc.ClientMethod<$4.BackfillImagesRequest, $2.Empty>(
           '/rumgap.v1.Manga/BackfillImages',
@@ -691,6 +704,14 @@ abstract class MangaServiceBase extends $grpc.Service {
         false,
         ($core.List<$core.int> value) => $4.MoveSourceRequest.fromBuffer(value),
         ($4.MangaReply value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$4.DeleteMangaRequest, $2.Empty>(
+        'Delete',
+        delete_Pre,
+        false,
+        false,
+        ($core.List<$core.int> value) =>
+            $4.DeleteMangaRequest.fromBuffer(value),
+        ($2.Empty value) => value.writeToBuffer()));
     $addMethod($grpc.ServiceMethod<$4.BackfillImagesRequest, $2.Empty>(
         'BackfillImages',
         backfillImages_Pre,
@@ -805,6 +826,14 @@ abstract class MangaServiceBase extends $grpc.Service {
 
   $async.Future<$4.MangaReply> moveSource(
       $grpc.ServiceCall call, $4.MoveSourceRequest request);
+
+  $async.Future<$2.Empty> delete_Pre($grpc.ServiceCall $call,
+      $async.Future<$4.DeleteMangaRequest> $request) async {
+    return delete($call, await $request);
+  }
+
+  $async.Future<$2.Empty> delete(
+      $grpc.ServiceCall call, $4.DeleteMangaRequest request);
 
   $async.Future<$2.Empty> backfillImages_Pre($grpc.ServiceCall $call,
       $async.Future<$4.BackfillImagesRequest> $request) async {
