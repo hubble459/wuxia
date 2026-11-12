@@ -16,6 +16,7 @@ import 'package:wuxia/partial/dialog/dead_provider_dialog.dart';
 import 'package:wuxia/partial/dialog/manga_picker_dialog.dart';
 import 'package:wuxia/partial/dialog/merge_confirm_dialog.dart';
 import 'package:wuxia/partial/dialog/source_picker_dialog.dart';
+import 'package:wuxia/partial/source_badge.dart';
 import 'package:wuxia/partial/image_error_placeholder.dart';
 import 'package:wuxia/partial/list/manga_item.dart';
 import 'package:wuxia/partial/manga_details.dart';
@@ -34,6 +35,7 @@ enum _MangaMenuAction {
   forceRescrape,
   mergeInto,
   mergeFrom,
+  manageSources,
   moveSourceOut,
   moveSourceIn,
   deleteManga,
@@ -100,19 +102,22 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
     _selectedSourceInitialized = true;
   }
 
-  // Normally pointless to open with a single source (nothing to switch to), but an
-  // admin still needs it open to long-press that one source and remove it - the only
-  // way to fully delete a manga, since there's no dedicated DeleteManga RPC.
   /// [_manga] as the selected source has it. The server already sends a manga with the
   /// details of the source it remembers for this user, but a switch on a manga outside
   /// the reading list isn't remembered, so the local selection decides what's shown.
   MangaReply get _shown => _manga.withSourceDetails(_selectedSource);
 
-  bool get _canOpenSourceSwitcher => _manga.sources.length > 1 || API.loggedIn.isAdmin;
+  void _selectSource(MangaSourceReply source) {
+    setState(() {
+      _selectedSource.clear();
+      _selectedSource.mergeFromMessage(source);
+    });
+    _refreshDownloaded();
+    _rememberSource(source);
+  }
 
-  Future<void> _switchSource() async {
-    if (!_canOpenSourceSwitcher) return;
-
+  /// Admin-only list to set a source primary or remove it outright.
+  Future<void> _manageSources() async {
     final selected = await showSourcePickerDialog(
       context,
       _manga.sources.toList(),
@@ -120,14 +125,7 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
       onSourcesChanged: loadManga,
       mangaId: _manga.id,
     );
-    if (selected != null && mounted) {
-      setState(() {
-        _selectedSource.clear();
-        _selectedSource.mergeFromMessage(selected);
-      });
-      _refreshDownloaded();
-      _rememberSource(selected);
-    }
+    if (selected != null && mounted) _selectSource(selected);
   }
 
   /// Tells the server about a switch, which remembers it (for manga in the reading list)
@@ -359,6 +357,11 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
 
   static const _wideBreakpoint = 900.0;
 
+  double _toolbarHeight(BuildContext context) {
+    final theme = Theme.of(context);
+    return theme.appBarTheme.toolbarHeight ?? (theme.useMaterial3 ? 64.0 : kToolbarHeight);
+  }
+
   /// "Download" when not downloaded yet, disabled while queued or once the
   /// last finished download already has every chapter, and "Update
   /// download" when new chapters came out or an earlier download didn't
@@ -377,11 +380,6 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
   List<Widget> _appBarActions(BuildContext context) {
     return [
       OpenURLAction(url: _selectedSource.url),
-      IconButton(
-        onPressed: _canOpenSourceSwitcher ? _switchSource : null,
-        tooltip: FlutterI18n.translate(context, 'manga.switch_source'),
-        icon: const Icon(Icons.swap_horiz),
-      ),
       RotationTransition(
         turns: CurvedAnimation(parent: _animationController, curve: Curves.linear),
         child: IconButton(
@@ -441,6 +439,8 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
             _mergeInto();
           } else if (action == _MangaMenuAction.mergeFrom) {
             _mergeFrom();
+          } else if (action == _MangaMenuAction.manageSources) {
+            _manageSources();
           } else if (action == _MangaMenuAction.moveSourceOut) {
             _moveSourceOut();
           } else if (action == _MangaMenuAction.moveSourceIn) {
@@ -469,6 +469,11 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
             PopupMenuItem(value: _MangaMenuAction.mergeFrom, child: Text(FlutterI18n.translate(context, 'manga.merge-from'))),
           if (API.loggedIn.isAdmin && _manga.sources.isNotEmpty)
             PopupMenuItem(
+              value: _MangaMenuAction.manageSources,
+              child: Text(FlutterI18n.translate(context, 'manga.manage-sources')),
+            ),
+          if (API.loggedIn.isAdmin && _manga.sources.isNotEmpty)
+            PopupMenuItem(
               value: _MangaMenuAction.moveSourceOut,
               child: Text(FlutterI18n.translate(context, 'manga.move-source-out')),
             ),
@@ -485,13 +490,6 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
         ],
       ),
     ];
-  }
-
-  Widget _sourceSwitcher(BuildContext context, {TextStyle? style}) {
-    return GestureDetector(
-      onTap: _switchSource,
-      child: Text(_selectedSource.hostname, style: style, overflow: TextOverflow.ellipsis),
-    );
   }
 
   Widget _coverImage({BoxFit fit = BoxFit.fitWidth}) {
@@ -518,9 +516,11 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
           stretch: true,
           expandedHeight: _imageHeight,
           flexibleSpace: FlexibleSpaceBar(
-            title: PreferredSize(
-              preferredSize: Size.fromHeight(1),
-              child: _sourceSwitcher(context, style: Theme.of(context).textTheme.titleSmall?.copyWith(color: Colors.white54)),
+            title: Text(
+              _shown.title.replaceAll('\n', ' '),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(context).textTheme.titleSmall?.copyWith(color: Colors.white70),
             ),
             background: _coverImage(),
           ),
@@ -539,10 +539,7 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
   Widget _buildWideBody(BuildContext context) {
     return Column(
       children: [
-        AppBar(
-          title: _sourceSwitcher(context, style: Theme.of(context).textTheme.titleSmall?.copyWith(color: Colors.white54)),
-          actions: _appBarActions(context),
-        ),
+        AppBar(actions: _appBarActions(context)),
         Expanded(
           child: SingleChildScrollView(
             child: ResponsiveContent(
@@ -604,7 +601,22 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
       },
       child: SafeArea(
         child: Scaffold(
-          body: SelectionArea(child: isWide ? _buildWideBody(context) : _buildNarrowBody(context)),
+          body: Stack(
+            children: [
+              SelectionArea(child: isWide ? _buildWideBody(context) : _buildNarrowBody(context)),
+              if (_manga.sources.isNotEmpty)
+                Positioned.fill(
+                  child: SourceBadge(
+                    mangaId: _manga.id,
+                    sources: _manga.sources.toList(),
+                    selected: _selectedSource,
+                    onSelected: _selectSource,
+                    onSourcesChanged: loadManga,
+                    top: _toolbarHeight(context),
+                  ),
+                ),
+            ],
+          ),
           bottomNavigationBar: _animationController.isAnimating
               ? null
               : SizedBox(

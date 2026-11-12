@@ -55,6 +55,9 @@ manga:
   merge-survives: 保留
   source-count: '{amount} 个来源'
   set-primary-source: 设为主要来源
+  primary_set: '{hostname} 现在是主要来源'
+  long_press_primary: 长按来源可设为主要来源
+  manage-sources: 管理来源
   remove-source: 移除
   remove-source-confirm-title: 移除来源？
   remove-source-confirm-body: 这将移除 {hostname} 作为此漫画的来源。如果这是最后一个剩余来源，该漫画（包括阅读进度）也将被删除。此操作无法撤销。

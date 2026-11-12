@@ -58,6 +58,9 @@ manga:
   merge-survives: Survives
   source-count: '{amount} source(s)'
   set-primary-source: Set primary
+  primary_set: '{hostname} is now the primary source'
+  long_press_primary: Long-press a source to make it primary
+  manage-sources: Manage sources
   remove-source: Remove
   remove-source-confirm-title: Remove source?
   remove-source-confirm-body: "This removes {hostname} as a source for this manga. If it's the last remaining source, the manga itself (including reading progress) is deleted too. This can't be undone."
