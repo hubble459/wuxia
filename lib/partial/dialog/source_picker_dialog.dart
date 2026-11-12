@@ -7,6 +7,7 @@ import 'package:wuxia/gen/rumgap/v1/chapter.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/paginate.pb.dart';
 import 'package:wuxia/util/source_health.dart';
+import 'package:wuxia/util/tools.dart';
 
 enum _SourceAdminAction { setPrimary, remove }
 
@@ -17,11 +18,13 @@ enum _SourceAdminAction { setPrimary, remove }
 /// admin can long-press a source to set it primary or remove it outright. [onSourcesChanged]
 /// fires after either of those actually mutates something server-side, so the caller can
 /// refresh its own manga data - it's never called for a plain tap-to-switch pick.
+/// With [mangaId], sources that are downloaded for offline reading are marked.
 Future<MangaSourceReply?> showSourcePickerDialog(
   BuildContext context,
   List<MangaSourceReply> sources, {
   bool allowAdminActions = false,
   VoidCallback? onSourcesChanged,
+  int? mangaId,
 }) {
   return showDialog<MangaSourceReply>(
     context: context,
@@ -29,6 +32,7 @@ Future<MangaSourceReply?> showSourcePickerDialog(
       sources: sources,
       allowAdminActions: allowAdminActions && API.loggedIn.isAdmin,
       onSourcesChanged: onSourcesChanged,
+      mangaId: mangaId,
     ),
   );
 }
@@ -37,8 +41,14 @@ class _SourcePickerDialog extends StatefulWidget {
   final List<MangaSourceReply> sources;
   final bool allowAdminActions;
   final VoidCallback? onSourcesChanged;
+  final int? mangaId;
 
-  const _SourcePickerDialog({required this.sources, required this.allowAdminActions, required this.onSourcesChanged});
+  const _SourcePickerDialog({
+    required this.sources,
+    required this.allowAdminActions,
+    required this.onSourcesChanged,
+    required this.mangaId,
+  });
 
   @override
   State<_SourcePickerDialog> createState() => _SourcePickerDialogState();
@@ -51,6 +61,8 @@ class _SourcePickerDialogState extends State<_SourcePickerDialog> {
   // count that's a nice-to-have, so a source's row just stays blank).
   final Map<int, int?> _chapterCounts = {};
 
+  Set<int> _downloadedSourceIds = {};
+
   @override
   void initState() {
     super.initState();
@@ -58,6 +70,14 @@ class _SourcePickerDialogState extends State<_SourcePickerDialog> {
     for (final source in _sources) {
       _loadChapterCount(source);
     }
+    _loadDownloaded();
+  }
+
+  Future<void> _loadDownloaded() async {
+    final mangaId = widget.mangaId;
+    if (mangaId == null || !downloadsSupported) return;
+    final downloaded = {for (final source in await listDownloadedSources(mangaId)) source.sourceId};
+    if (mounted) setState(() => _downloadedSourceIds = downloaded);
   }
 
   Future<void> _loadChapterCount(MangaSourceReply source) async {
@@ -199,6 +219,14 @@ class _SourcePickerDialogState extends State<_SourcePickerDialog> {
                         )
                       : const SizedBox.shrink(),
                 ),
+                if (_downloadedSourceIds.contains(source.id))
+                  Padding(
+                    padding: const EdgeInsets.only(left: 4.0),
+                    child: Tooltip(
+                      message: FlutterI18n.translate(context, 'downloads.downloaded'),
+                      child: const Icon(Icons.download_done, size: 16),
+                    ),
+                  ),
                 if (source.isPrimary) const Padding(padding: EdgeInsets.only(left: 4.0), child: Icon(Icons.star, size: 16)),
               ],
             ),

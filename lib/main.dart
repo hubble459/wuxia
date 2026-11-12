@@ -24,6 +24,7 @@ import 'package:wuxia/screen/settings_screen.dart';
 import 'package:wuxia/screen/splash_screen.dart';
 import 'package:wuxia/util/app_routes.dart';
 import 'package:wuxia/util/download_manager.dart';
+import 'package:wuxia/util/download_migration.dart';
 import 'package:wuxia/util/store.dart';
 
 extension ReadingManga on MangaReply {
@@ -100,6 +101,7 @@ void main() async {
     await store.removeToken();
     navigatorKey.currentState?.pushNamedAndRemoveUntil('login', (_) => false);
   };
+  ensureDownloadsMigrated();
   downloadManager.restore();
   await Jiffy.setLocale(store.getLanguage() ?? 'en');
 

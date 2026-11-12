@@ -9,6 +9,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:wuxia/util/store.dart';
 import 'package:wuxia/partial/dialog/change_password_dialog.dart';
 import 'package:wuxia/partial/download_reconnect.dart';
+import 'package:wuxia/util/download_migration.dart';
 import 'package:wuxia/util/download_storage/download_storage.dart';
 import 'package:wuxia/partial/responsive_content.dart';
 import 'package:wuxia/util/session.dart';
@@ -229,6 +230,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     await downloadStorage.resetLocation();
                     _loadDownloadInfo();
                   },
+                ),
+                ValueListenableBuilder<List<String>>(
+                  valueListenable: downloadMigrationConflicts,
+                  builder: (context, conflicts, _) => conflicts.isEmpty
+                      ? const SizedBox.shrink()
+                      : ListTile(
+                          leading: const Icon(Icons.warning_amber),
+                          title: Text(
+                            FlutterI18n.translate(
+                              context,
+                              'downloads.migration_conflicts',
+                              translationParams: {'count': '${conflicts.length}'},
+                            ),
+                          ),
+                          subtitle: Text(conflicts.join('\n')),
+                        ),
                 ),
                 ListTile(
                   title: Text(

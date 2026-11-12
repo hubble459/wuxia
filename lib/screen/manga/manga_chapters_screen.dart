@@ -201,7 +201,7 @@ class _MangaChaptersScreenState extends State<MangaChaptersScreen> {
   /// then returns it in the current `_reversed` sort. `null` if there's no
   /// usable local copy.
   Future<List<ChapterReply>?> _offlineChaptersOrdered() async {
-    _offlineChapters ??= await loadOfflineChapters(widget.manga.id);
+    _offlineChapters ??= await loadOfflineChapters(widget.manga.id, sourceId: widget.source.id);
     final offline = _offlineChapters;
     if (offline == null) return null;
 

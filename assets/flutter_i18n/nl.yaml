@@ -212,6 +212,7 @@ downloads:
   export_cbz: Exporteren als CBZ
   exported: 'Geëxporteerd naar {path}'
   export_failed: 'Exporteren mislukt: {error}'
+  migration_conflicts: '{count} oude downloadmap(pen) zijn niet verplaatst omdat er al een download van dezelfde bron staat. Er is niets verwijderd; controleer ze zelf:'
   delete: Download verwijderen
   queue: Wachtrij
   downloaded: Gedownload

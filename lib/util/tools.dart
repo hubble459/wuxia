@@ -5,6 +5,7 @@ import 'package:wuxia/api.dart';
 import 'package:wuxia/gen/rumgap/v1/chapter.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/reading.pb.dart';
+import 'package:wuxia/util/download_migration.dart';
 import 'package:wuxia/util/download_storage/download_storage.dart';
 import 'package:wuxia/util/store.dart';
 
@@ -28,10 +29,19 @@ bool isNetworkError(Object? error) {
 const githubWuxiaReleasesUrl = 'https://github.com/hubble459/wuxia/releases';
 const accountRequestEmail = 'geraldd459@gmail.com';
 
-/// Download folder name for a manga, relative to the download root.
-String mangaFolderName(String title) => title.replaceAll(RegExp(r'[^\w\s\-]'), '_');
+/// Download folder name for a manga, relative to the download root. Holds
+/// its `manga.pb` and one [sourceFolderName] folder per downloaded source.
+String mangaFolderName(int mangaId) => '$mangaId';
 
-/// Download folder name for a chapter, relative to its manga's folder.
+/// Download folder name for a source, relative to its manga's folder. Holds
+/// that source's `chapters.pb`, `complete` marker and chapter folders.
+String sourceFolderName(int sourceId) => '$sourceId';
+
+/// [name] with everything but letters, digits, spaces and dashes replaced,
+/// for use as a file name.
+String safeFileName(String name) => name.replaceAll(RegExp(r'[^\w\s\-]'), '_');
+
+/// Download folder name for a chapter, relative to its source's folder.
 String chapterFolderName(double number) => number.toStringAsFixed(1).replaceAll('.0', '');
 
 /// Every downloaded manga, keyed by its folder name. Empty when the storage
@@ -40,6 +50,7 @@ Future<Map<String, MangaReply>> listDownloadedManga() async {
   final result = <String, MangaReply>{};
   try {
     for (final folder in await downloadStorage.listDirs()) {
+      if (await downloadStorage.exists('$folder/$migratingMarker')) continue;
       final bytes = await downloadStorage.read('$folder/manga.pb');
       if (bytes == null) continue;
       try {
@@ -50,10 +61,15 @@ Future<Map<String, MangaReply>> listDownloadedManga() async {
   return result;
 }
 
-/// Downloaded manga folders are keyed by a sanitized title, not id (see
-/// `DownloadManager`), so finding "is manga [mangaId] downloaded" means
-/// scanning every folder's `manga.pb` rather than building a path directly.
+/// The download folder of manga [mangaId], or `null` if it isn't downloaded.
+/// Folders are named after the manga id, but one that hasn't been moved
+/// from its old title-named folder yet (see `ensureDownloadsMigrated`) is
+/// found by scanning every folder's `manga.pb`.
 Future<String?> findDownloadedMangaDir(int mangaId) async {
+  final dir = mangaFolderName(mangaId);
+  try {
+    if (await downloadStorage.exists('$dir/manga.pb') && !await downloadStorage.exists('$dir/$migratingMarker')) return dir;
+  } catch (_) {}
   final downloaded = await listDownloadedManga();
   for (final entry in downloaded.entries) {
     if (entry.value.id == mangaId) return entry.key;
@@ -61,16 +77,87 @@ Future<String?> findDownloadedMangaDir(int mangaId) async {
   return null;
 }
 
+/// One downloaded source of a manga.
+class DownloadedSource {
+  final int sourceId;
+
+  /// Folder holding its `chapters.pb`, `complete` marker and chapter folders.
+  final String dir;
+
+  /// Chapters of its last finished download; `0` if it never finished.
+  final int completedChapters;
+
+  const DownloadedSource(this.sourceId, this.dir, this.completedChapters);
+}
+
+/// Every downloaded source of manga [mangaId], the most complete one first.
+/// Empty if the manga isn't downloaded.
+Future<List<DownloadedSource>> listDownloadedSources(int mangaId) async {
+  final mangaDir = await findDownloadedMangaDir(mangaId);
+  if (mangaDir == null) return [];
+  final result = <DownloadedSource>[];
+  try {
+    final oldLayoutSource = await _chaptersSourceId(mangaDir);
+    if (oldLayoutSource != null) {
+      // Not moved into the per-source layout yet: the folder is the source.
+      result.add(DownloadedSource(oldLayoutSource, mangaDir, await _completedChapters(mangaDir)));
+    } else {
+      for (final sub in await downloadStorage.listDirs(mangaDir)) {
+        final sourceId = int.tryParse(sub);
+        final dir = '$mangaDir/$sub';
+        if (sourceId == null || await downloadStorage.exists('$dir/$migratingMarker')) continue;
+        if (!await downloadStorage.exists('$dir/chapters.pb')) continue;
+        result.add(DownloadedSource(sourceId, dir, await _completedChapters(dir)));
+      }
+    }
+  } catch (_) {}
+  result.sort((a, b) => b.completedChapters.compareTo(a.completedChapters));
+  return result;
+}
+
+/// The downloaded copy of source [sourceId] of manga [mangaId], or with no
+/// [sourceId] (or when that source isn't downloaded) the most complete
+/// downloaded source. `null` if the manga isn't downloaded.
+Future<DownloadedSource?> findDownloadedSource(int mangaId, {int? sourceId}) async {
+  final sources = await listDownloadedSources(mangaId);
+  return sources.where((s) => s.sourceId == sourceId).firstOrNull ?? sources.firstOrNull;
+}
+
+Future<int?> _chaptersSourceId(String dir) async {
+  final bytes = await downloadStorage.read('$dir/chapters.pb');
+  if (bytes == null) return null;
+  try {
+    return ChaptersReply.fromBuffer(bytes).items.firstOrNull?.mangaSourceId ?? 0;
+  } catch (_) {
+    return 0;
+  }
+}
+
+Future<int> _completedChapters(String dir) async {
+  try {
+    final bytes = await downloadStorage.read('$dir/complete');
+    return bytes == null ? 0 : int.tryParse(utf8.decode(bytes)) ?? 0;
+  } catch (_) {
+    return 0;
+  }
+}
+
 /// The `manga.pb` snapshot saved at download time, or `null` if this manga
 /// isn't downloaded.
 Future<MangaReply?> loadOfflineManga(int mangaId) async {
-  final downloaded = await listDownloadedManga();
-  return downloaded.values.where((m) => m.id == mangaId).firstOrNull;
+  final dir = await findDownloadedMangaDir(mangaId);
+  if (dir == null) return null;
+  try {
+    final bytes = await downloadStorage.read('$dir/manga.pb');
+    return bytes == null ? null : MangaReply.fromBuffer(bytes);
+  } catch (_) {
+    return null;
+  }
 }
 
-/// Deletes a manga's entire downloaded folder -- its `manga.pb`/
-/// `chapters.pb` snapshots and every downloaded chapter's images. No-op if
-/// it isn't downloaded.
+/// Deletes a manga's entire downloaded folder -- its `manga.pb` snapshot and
+/// every downloaded source with its chapters' images. No-op if it isn't
+/// downloaded.
 Future<void> deleteDownloadedManga(int mangaId) async {
   final dir = await findDownloadedMangaDir(mangaId);
   if (dir == null) return;
@@ -85,38 +172,34 @@ Future<void> deleteAllDownloads() async {
   }
 }
 
-/// Records in [mangaDir] that a download finished with [chapterCount]
+/// Records in [sourceDir] that a download finished with [chapterCount]
 /// chapters. `chapters.pb` is written when a download starts (the offline
 /// reader needs it), so it can't tell a finished download from one that
 /// was interrupted; this marker is only written once every chapter is on
 /// disk.
-Future<void> writeDownloadCompleteMarker(String mangaDir, int chapterCount) async {
-  await downloadStorage.write('$mangaDir/complete', utf8.encode('$chapterCount'));
+Future<void> writeDownloadCompleteMarker(String sourceDir, int chapterCount) async {
+  await downloadStorage.write('$sourceDir/complete', utf8.encode('$chapterCount'));
 }
 
-/// How many chapters the last finished download of [mangaId] had, `0` if
-/// it's downloaded but never finished (or finished before this marker
-/// existed), or `null` if it isn't downloaded at all.
-Future<int?> loadDownloadedChapterCount(int mangaId) async {
-  final dir = await findDownloadedMangaDir(mangaId);
-  if (dir == null) return null;
-  try {
-    final bytes = await downloadStorage.read('$dir/complete');
-    return bytes == null ? 0 : int.tryParse(utf8.decode(bytes)) ?? 0;
-  } catch (_) {
-    return 0;
-  }
+/// How many chapters the last finished download of source [sourceId] of
+/// [mangaId] had, `0` if it's downloaded but never finished (or finished
+/// before this marker existed), or `null` if that source isn't downloaded.
+Future<int?> loadDownloadedChapterCount(int mangaId, int sourceId) async {
+  final sources = await listDownloadedSources(mangaId);
+  return sources.where((s) => s.sourceId == sourceId).firstOrNull?.completedChapters;
 }
 
-/// The full chapter list `DownloadManager` saved to `chapters.pb`, oldest
-/// first (ascending `index`) -- callers reverse as needed to match whatever
-/// order they're after. `null` if there's no usable local copy: never
-/// downloaded, storage not accessible, or a corrupt/missing `chapters.pb`.
-Future<List<ChapterReply>?> loadOfflineChapters(int mangaId) async {
-  final dir = await findDownloadedMangaDir(mangaId);
-  if (dir == null) return null;
+/// The full chapter list `DownloadManager` saved to `chapters.pb` for
+/// source [sourceId] (or the most complete downloaded source, see
+/// [findDownloadedSource]), oldest first (ascending `index`) -- callers
+/// reverse as needed to match whatever order they're after. `null` if
+/// there's no usable local copy: never downloaded, storage not accessible,
+/// or a corrupt/missing `chapters.pb`.
+Future<List<ChapterReply>?> loadOfflineChapters(int mangaId, {int? sourceId}) async {
+  final source = await findDownloadedSource(mangaId, sourceId: sourceId);
+  if (source == null) return null;
   try {
-    final bytes = await downloadStorage.read('$dir/chapters.pb');
+    final bytes = await downloadStorage.read('${source.dir}/chapters.pb');
     if (bytes == null) return null;
     return ChaptersReply.fromBuffer(bytes).items.toList()..sort((a, b) => a.index.compareTo(b.index));
   } catch (_) {

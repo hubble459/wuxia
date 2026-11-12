@@ -100,9 +100,9 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
   Future<List<String>?> _localPageSources() async {
     if (!downloadsSupported) return null;
     try {
-      return await downloadStorage.loadPageSources(
-        '${mangaFolderName(widget.manga.title)}/${chapterFolderName(_chapter.number)}',
-      );
+      final source = await findDownloadedSource(widget.manga.id, sourceId: _chapter.mangaSourceId);
+      if (source == null) return null;
+      return await downloadStorage.loadPageSources('${source.dir}/${chapterFolderName(_chapter.number)}');
     } catch (_) {
       return null;
     }
@@ -245,7 +245,7 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
   }
 
   Future<void> _switchSource() async {
-    final selected = await showSourcePickerDialog(context, widget.manga.sources.toList());
+    final selected = await showSourcePickerDialog(context, widget.manga.sources.toList(), mangaId: widget.manga.id);
     if (selected == null || !mounted) return;
 
     try {
@@ -844,7 +844,7 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
     try {
       chapter = await api.chapter.get(ChapterRequest(mangaSourceId: widget.source.id, index: widget.manga.readingProgress));
     } catch (e) {
-      final offline = await loadOfflineChapters(widget.manga.id);
+      final offline = await loadOfflineChapters(widget.manga.id, sourceId: widget.source.id);
       final found = offline?.firstWhereOrNull((c) => c.index.toInt() == widget.manga.readingProgress);
       if (found == null) {
         if (mounted) Fluttertoast.showToast(msg: FlutterI18n.translate(context, 'chapter.not-downloaded')).ignore();

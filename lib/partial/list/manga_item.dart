@@ -44,7 +44,11 @@ class MangaItem extends StatefulWidget {
   final HeroScreenType type;
   final ReloadParent reloadParent;
 
-  const MangaItem({super.key, required this.manga, required this.type, required this.reloadParent});
+  /// Shown instead of the primary source's hostname, e.g. the downloaded
+  /// sources on the downloads screen.
+  final List<String>? hostnames;
+
+  const MangaItem({super.key, required this.manga, required this.type, required this.reloadParent, this.hostnames});
 
   @override
   State<MangaItem> createState() => _MangaItemState();
@@ -72,10 +76,13 @@ class _MangaItemState extends State<MangaItem> {
     return _manga.hasReadingProgress();
   }
 
-  /// Primary source's hostname, falling back to the first available source.
+  /// [MangaItem.hostnames] when given, otherwise the primary source's
+  /// hostname, falling back to the first available source.
   /// `MangaItem` shows library rows and doesn't track a "current source"
   /// selection the way `MangaScreen` does -- that's picked once you open it.
   String get _hostname {
+    final hostnames = widget.hostnames;
+    if (hostnames != null && hostnames.isNotEmpty) return hostnames.join(', ');
     final source = _manga.sources.firstWhereOrNull((s) => s.isPrimary) ?? _manga.sources.firstOrNull;
     return source?.hostname ?? '';
   }

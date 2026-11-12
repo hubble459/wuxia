@@ -92,7 +92,7 @@ class _ChapterSelectorState extends State<ChapterSelector> {
     try {
       chapter = await api.chapter.get(ChapterRequest(mangaSourceId: widget.source.id, index: widget.manga.readingProgress));
     } catch (e) {
-      _offlineChapters ??= await loadOfflineChapters(widget.manga.id);
+      _offlineChapters ??= await loadOfflineChapters(widget.manga.id, sourceId: widget.source.id);
       final found = _offlineChapters?.firstWhereOrNull((c) => c.index.toInt() == widget.manga.readingProgress);
       if (found == null) {
         if (mounted) Fluttertoast.showToast(msg: FlutterI18n.translate(context, 'chapter.not-downloaded')).ignore();
@@ -177,7 +177,7 @@ class _ChapterSelectorState extends State<ChapterSelector> {
   /// has no chapters for this source (e.g. its scraper is failing). `null`
   /// if nothing is downloaded.
   Future<ChaptersReply?> _offlineWindow() async {
-    _offlineChapters ??= await loadOfflineChapters(widget.manga.id);
+    _offlineChapters ??= await loadOfflineChapters(widget.manga.id, sourceId: widget.source.id);
     final offline = _offlineChapters;
     if (offline == null || offline.isEmpty) return null;
     _windowStart = 0;

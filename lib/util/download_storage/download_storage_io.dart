@@ -88,9 +88,34 @@ class IoDownloadStorage extends DownloadStorage {
   }
 
   @override
+  Future<int?> fileSize(String path) async {
+    final file = File(await _abs(path));
+    if (!await file.exists()) return null;
+    return file.length();
+  }
+
+  @override
+  Future<void> deleteFile(String path) async {
+    final file = File(await _abs(path));
+    if (await file.exists()) await file.delete();
+  }
+
+  @override
   Future<void> deleteDir(String dir) async {
     final directory = Directory(await _abs(dir));
     if (await directory.exists()) await directory.delete(recursive: true);
+  }
+
+  @override
+  Future<bool> renameDir(String from, String to) async {
+    final target = Directory(await _abs(to));
+    if (await target.exists()) return false;
+    try {
+      await Directory(await _abs(from)).rename(target.path);
+      return true;
+    } on FileSystemException {
+      return false;
+    }
   }
 
   @override
@@ -124,14 +149,14 @@ class IoDownloadStorage extends DownloadStorage {
   }
 
   @override
-  Future<String?> exportCbz(String mangaDir) async {
+  Future<String?> exportCbz(String mangaDir, String name) async {
     final String target;
     if (Platform.isAndroid || Platform.isIOS) {
       final dir = await getDirectoryPath();
       if (dir == null) return null;
-      target = '$dir/$mangaDir.cbz';
+      target = '$dir/$name.cbz';
     } else {
-      final location = await getSaveLocation(suggestedName: '$mangaDir.cbz');
+      final location = await getSaveLocation(suggestedName: '$name.cbz');
       if (location == null) return null;
       target = location.path;
     }

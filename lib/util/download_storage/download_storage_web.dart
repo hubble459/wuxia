@@ -213,6 +213,23 @@ class WebDownloadStorage extends DownloadStorage {
   }
 
   @override
+  Future<int?> fileSize(String path) async {
+    final handle = await _file(path);
+    if (handle == null) return null;
+    return (await handle.getFile().toDart).size;
+  }
+
+  @override
+  Future<void> deleteFile(String path) async {
+    final segments = _segments(path);
+    final parent = await _dir(segments.sublist(0, segments.length - 1).join('/'));
+    if (parent == null) return;
+    try {
+      await parent.removeEntry(segments.last).toDart;
+    } catch (_) {}
+  }
+
+  @override
   Future<void> deleteDir(String dir) async {
     final segments = _segments(dir);
     final parent = await _dir(segments.sublist(0, segments.length - 1).join('/'));
@@ -270,7 +287,7 @@ class WebDownloadStorage extends DownloadStorage {
   }
 
   @override
-  Future<String?> exportCbz(String mangaDir) async {
+  Future<String?> exportCbz(String mangaDir, String name) async {
     final zip = StoredZipBuilder();
     final parts = <JSAny>[];
     for (final chapter in sortChapterFolders(await listDirs(mangaDir))) {
@@ -291,7 +308,7 @@ class WebDownloadStorage extends DownloadStorage {
     final url = web.URL.createObjectURL(blob);
     final anchor = web.HTMLAnchorElement()
       ..href = url
-      ..download = '$mangaDir.cbz';
+      ..download = '$name.cbz';
     web.document.body!.append(anchor);
     anchor.click();
     anchor.remove();

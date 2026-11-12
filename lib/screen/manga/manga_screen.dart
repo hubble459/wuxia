@@ -112,12 +112,14 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
       _manga.sources.toList(),
       allowAdminActions: true,
       onSourcesChanged: loadManga,
+      mangaId: _manga.id,
     );
     if (selected != null && mounted) {
       setState(() {
         _selectedSource.clear();
         _selectedSource.mergeFromMessage(selected);
       });
+      _refreshDownloaded();
     }
   }
 
@@ -316,7 +318,7 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
 
   Future<void> _refreshDownloaded() async {
     if (!downloadsSupported) return;
-    final downloaded = await loadDownloadedChapterCount(_manga.id);
+    final downloaded = await loadDownloadedChapterCount(_manga.id, _selectedSource.id);
     if (mounted && downloaded != _downloadedChapters) setState(() => _downloadedChapters = downloaded);
   }
 
@@ -411,7 +413,7 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
           } else if (action == _MangaMenuAction.download) {
             downloadManager.enqueue(context, _manga, _selectedSource).then((_) => _refreshDownloaded());
           } else if (action == _MangaMenuAction.exportCbz) {
-            exportMangaCbz(context, _manga.id);
+            exportMangaCbz(context, _manga.id, sourceId: _selectedSource.id);
           } else if (action == _MangaMenuAction.forceRescrape) {
             loadManga(mode: _RefreshMode.forceRescrape);
           } else if (action == _MangaMenuAction.mergeInto) {

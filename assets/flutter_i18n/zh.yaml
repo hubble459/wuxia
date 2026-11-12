@@ -212,6 +212,7 @@ downloads:
   export_cbz: 导出为 CBZ
   exported: 已导出到 {path}
   export_failed: 导出失败：{error}
+  migration_conflicts: '{count} 个旧下载文件夹未移动，因为同一来源已有下载。没有删除任何内容，请手动检查：'
   delete: 删除下载
   queue: 队列
   downloaded: 已下载

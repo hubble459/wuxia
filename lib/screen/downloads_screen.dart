@@ -37,6 +37,9 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
 
   bool _needsPermission = false;
 
+  /// Hostnames of each downloaded manga's downloaded sources, by manga id.
+  Map<int, List<String>> _downloadedHostnames = {};
+
   Future<List<MangaReply>> _loadDownloaded() async {
     final needsPermission = await downloadStorage.status() == DownloadStorageStatus.needsPermission;
     if (mounted && needsPermission != _needsPermission) setState(() => _needsPermission = needsPermission);
@@ -44,6 +47,14 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
 
     final results = (await listDownloadedManga()).values.toList();
     results.sort((a, b) => a.title.compareTo(b.title));
+    final hostnames = <int, List<String>>{
+      for (final manga in results)
+        manga.id: [
+          for (final source in await listDownloadedSources(manga.id))
+            manga.sources.where((s) => s.id == source.sourceId).firstOrNull?.hostname ?? '#${source.sourceId}',
+        ],
+    };
+    if (mounted) setState(() => _downloadedHostnames = hostnames);
     return results;
   }
 
@@ -119,6 +130,7 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
                       manga: manga,
                       type: HeroScreenType.downloads,
                       reloadParent: (_, _) => _reload(),
+                      hostnames: _downloadedHostnames[manga.id],
                     ),
                 ],
               ),

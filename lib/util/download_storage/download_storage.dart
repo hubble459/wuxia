@@ -15,7 +15,7 @@ enum DownloadStorageStatus {
 }
 
 /// Filesystem access for offline downloads. Paths are `/`-separated and
-/// relative to the download root (e.g. `Some Title/12/0.jpg`).
+/// relative to the download root (e.g. `42/12/0.jpg`).
 abstract class DownloadStorage {
   static final DownloadStorage instance = createDownloadStorage();
 
@@ -59,8 +59,29 @@ abstract class DownloadStorage {
   /// Creates parent directories as needed.
   Future<void> write(String path, Uint8List bytes);
 
+  /// `null` if [path] doesn't exist.
+  Future<int?> fileSize(String path);
+
+  /// No-op if [path] doesn't exist.
+  Future<void> deleteFile(String path);
+
   /// Recursive; no-op if [dir] doesn't exist.
   Future<void> deleteDir(String dir);
+
+  /// Renames [from] to [to] in one step, when the backend can. [to] must not
+  /// exist. Returns false when it can't, so callers fall back to [copyDir].
+  Future<bool> renameDir(String from, String to) async => false;
+
+  /// Copies every file under [from] into [to], recursively.
+  Future<void> copyDir(String from, String to) async {
+    for (final file in await listFiles(from)) {
+      final bytes = await read('$from/$file');
+      if (bytes != null) await write('$to/$file', bytes);
+    }
+    for (final dir in await listDirs(from)) {
+      await copyDir('$from/$dir', '$to/$dir');
+    }
+  }
 
   Future<int> totalSize();
 
@@ -73,11 +94,11 @@ abstract class DownloadStorage {
 
   void releasePageSources(List<String> sources) {}
 
-  /// Bundles [mangaDir] into a `.cbz`: a browser download on web, a save
+  /// Bundles [mangaDir] into `<name>.cbz`: a browser download on web, a save
   /// dialog on desktop, a picked folder on mobile. Returns the
   /// written path when there is one to show; `null` on web or when the save
   /// dialog was cancelled.
-  Future<String?> exportCbz(String mangaDir);
+  Future<String?> exportCbz(String mangaDir, String name);
 }
 
 /// Sort key for files named `<page index>.<ext>`.

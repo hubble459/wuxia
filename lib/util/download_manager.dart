@@ -18,6 +18,7 @@ import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/paginate.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/scrape_error.pb.dart';
 import 'package:wuxia/main.dart';
+import 'package:wuxia/util/download_migration.dart';
 import 'package:wuxia/util/download_storage/download_storage.dart';
 import 'package:wuxia/util/page_unload/page_unload.dart';
 import 'package:wuxia/util/session.dart';
@@ -282,6 +283,7 @@ class DownloadManager extends ChangeNotifier {
       _running = false;
       return;
     }
+    await ensureDownloadsMigrated();
     await WakelockPlus.enable();
     await _startForegroundService();
     try {
@@ -353,15 +355,16 @@ class DownloadManager extends ChangeNotifier {
   Future<void> _download(DownloadTask task, http.Client client) async {
     task.progress.value = 0;
     final manga = task.manga;
-    final mangaDir = mangaFolderName(manga.title);
+    final mangaDir = mangaFolderName(manga.id);
+    final sourceDir = '$mangaDir/${sourceFolderName(task.source.id)}';
 
     final chapters = ChaptersReply(items: await _fetchAllChapters(task.source, task.totalChapters));
 
     await downloadStorage.write('$mangaDir/manga.pb', manga.writeToBuffer());
-    await downloadStorage.write('$mangaDir/chapters.pb', chapters.writeToBuffer());
+    await downloadStorage.write('$sourceDir/chapters.pb', chapters.writeToBuffer());
 
     Future<bool> downloadChapter(ChapterReply chapter) async {
-      final chapterDir = '$mangaDir/${chapterFolderName(chapter.number)}';
+      final chapterDir = '$sourceDir/${chapterFolderName(chapter.number)}';
 
       final images = await _fetchChapterImages(chapter);
       final active = ActiveChapterProgress(chapter, images.items.length);
@@ -427,7 +430,7 @@ class DownloadManager extends ChangeNotifier {
     await Future.wait(List.generate(_chapterConcurrency, (_) => chapterWorker()));
     final error = failure;
     if (error != null) Error.throwWithStackTrace(error, failureStack!);
-    if (!task._cancelled) await writeDownloadCompleteMarker(mangaDir, task.totalChapters);
+    if (!task._cancelled) await writeDownloadCompleteMarker(sourceDir, task.totalChapters);
   }
 
   /// rumgap clamps `per_page` to 50 server-side (chapter.rs) regardless of

@@ -212,6 +212,7 @@ downloads:
   export_cbz: Export as CBZ
   exported: 'Exported to {path}'
   export_failed: 'Export failed: {error}'
+  migration_conflicts: '{count} old download folder(s) were not moved because a download of the same source is already there. Nothing was deleted; check them by hand:'
   delete: Delete download
   queue: Queue
   downloaded: Downloaded

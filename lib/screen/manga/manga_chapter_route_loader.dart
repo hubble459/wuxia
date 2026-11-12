@@ -55,9 +55,10 @@ class _MangaChapterRouteLoaderState extends State<MangaChapterRouteLoader> {
     final manga = await loadOfflineManga(widget.mangaId);
     if (manga == null) return null;
     final source = manga.sources.where((s) => s.id == widget.sourceId).firstOrNull;
-    final chapter = (await loadOfflineChapters(widget.mangaId))
-        ?.where((c) => c.mangaSourceId == widget.sourceId && c.index.toInt() == widget.chapterIndex)
-        .firstOrNull;
+    final chapter = (await loadOfflineChapters(
+      widget.mangaId,
+      sourceId: widget.sourceId,
+    ))?.where((c) => c.mangaSourceId == widget.sourceId && c.index.toInt() == widget.chapterIndex).firstOrNull;
     if (source == null || chapter == null) return null;
     return _ChapterRouteData(manga: manga, source: source, chapter: chapter);
   }
