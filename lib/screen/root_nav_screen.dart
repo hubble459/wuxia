@@ -14,6 +14,7 @@ import 'package:wuxia/partial/download_reconnect.dart';
 import 'package:wuxia/partial/offline_notice.dart';
 import 'package:wuxia/partial/list/manga_item.dart';
 import 'package:wuxia/screen/downloads_screen.dart';
+import 'package:wuxia/screen/for_you_screen.dart';
 import 'package:wuxia/screen/manga/manga_screen.dart';
 import 'package:wuxia/screen/reading_screen.dart';
 import 'package:wuxia/screen/search_screen.dart';
@@ -67,7 +68,7 @@ class _RootNavScreenState extends State<RootNavScreen> {
     final openDownloads =
         downloadsSupported && (sessionOffline || ModalRoute.of(context)?.settings.arguments == rootNavDownloadsArgument);
     // Downloads is always the last tab, and only exists when downloads are supported.
-    final lastTab = downloadsSupported ? 2 : 1;
+    final lastTab = downloadsSupported ? 3 : 2;
     final selected = openDownloads ? lastTab : Store.getStoreInstance().getRootNavTab().clamp(0, lastTab);
     _pageController.dispose();
     _pageController = PageController(initialPage: selected);
@@ -207,6 +208,11 @@ class _RootNavScreenState extends State<RootNavScreen> {
 
     final routes = <Route>[
       Route(label: FlutterI18n.translate(context, 'nav.reading'), icon: Icons.my_library_books, widget: const ReadingScreen()),
+      Route(
+        label: FlutterI18n.translate(context, 'nav.for_you'),
+        icon: Icons.style,
+        widget: ForYouScreen(onOpenSearch: () => _selectTab(2)),
+      ),
       Route(label: FlutterI18n.translate(context, 'nav.search'), icon: Icons.search, widget: const SearchScreen()),
       if (downloadsSupported)
         Route(

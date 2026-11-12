@@ -1280,6 +1280,60 @@ class SimilarMangaRequest extends $pb.GeneratedMessage {
   void clearId() => $_clearField(1);
 }
 
+class DismissMangaRequest extends $pb.GeneratedMessage {
+  factory DismissMangaRequest({
+    $core.int? id,
+  }) {
+    final result = create();
+    if (id != null) result.id = id;
+    return result;
+  }
+
+  DismissMangaRequest._();
+
+  factory DismissMangaRequest.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory DismissMangaRequest.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'DismissMangaRequest',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'rumgap.v1'),
+      createEmptyInstance: create)
+    ..aI(1, _omitFieldNames ? '' : 'id')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  DismissMangaRequest clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  DismissMangaRequest copyWith(void Function(DismissMangaRequest) updates) =>
+      super.copyWith((message) => updates(message as DismissMangaRequest))
+          as DismissMangaRequest;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static DismissMangaRequest create() => DismissMangaRequest._();
+  @$core.override
+  DismissMangaRequest createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static DismissMangaRequest getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<DismissMangaRequest>(create);
+  static DismissMangaRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.int get id => $_getIZ(0);
+  @$pb.TagNumber(1)
+  set id($core.int value) => $_setSignedInt32(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearId() => $_clearField(1);
+}
+
 class BackfillImagesRequest extends $pb.GeneratedMessage {
   factory BackfillImagesRequest({
     $core.int? mangaSourceId,

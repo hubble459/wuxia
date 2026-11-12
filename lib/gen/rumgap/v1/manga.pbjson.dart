@@ -336,6 +336,18 @@ const SimilarMangaRequest$json = {
 final $typed_data.Uint8List similarMangaRequestDescriptor = $convert
     .base64Decode('ChNTaW1pbGFyTWFuZ2FSZXF1ZXN0Eg4KAmlkGAEgASgFUgJpZA==');
 
+@$core.Deprecated('Use dismissMangaRequestDescriptor instead')
+const DismissMangaRequest$json = {
+  '1': 'DismissMangaRequest',
+  '2': [
+    {'1': 'id', '3': 1, '4': 1, '5': 5, '10': 'id'},
+  ],
+};
+
+/// Descriptor for `DismissMangaRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List dismissMangaRequestDescriptor = $convert
+    .base64Decode('ChNEaXNtaXNzTWFuZ2FSZXF1ZXN0Eg4KAmlkGAEgASgFUgJpZA==');
+
 @$core.Deprecated('Use backfillImagesRequestDescriptor instead')
 const BackfillImagesRequest$json = {
   '1': 'BackfillImagesRequest',

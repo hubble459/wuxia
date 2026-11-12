@@ -1,6 +1,7 @@
 title: 漫画
 empty: No items found
 nav:
+  for_you: "For You"
   reading: Reading
   search: Search
   downloads: Downloads
@@ -235,3 +236,14 @@ offline:
   message: "The server can't be reached right now."
   message_downloads: "The server can't be reached right now. Your downloaded manga are still available."
   go_to_downloads: Go to Downloads
+for_you:
+  read: "Read"
+  nope: "Nope"
+  undo: "Undo"
+  open: "Open manga"
+  caught_up: "You're all caught up"
+  caught_up_hint: "No more manga to suggest right now. Searching adds new manga to the catalog."
+  search: "Search manga"
+  chapter_preview: "Chapter 1"
+  no_preview: "No preview available"
+  failed: "Couldn't save that swipe: {error}"

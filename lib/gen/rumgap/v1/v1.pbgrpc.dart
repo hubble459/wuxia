@@ -623,6 +623,31 @@ class MangaClient extends $grpc.Client {
     return $createUnaryCall(_$getBackfillStatus, request, options: options);
   }
 
+  /// Manga the user isn't reading and hasn't dismissed lately, best match to their reading
+  /// first (genres and description keywords). Ranked fresh on every call.
+  $grpc.ResponseFuture<$4.MangasReply> forYou(
+    $1.PaginateQuery request, {
+    $grpc.CallOptions? options,
+  }) {
+    return $createUnaryCall(_$forYou, request, options: options);
+  }
+
+  /// "Not interested": hides the manga from ForYou for a while (FOR_YOU_DISMISS_DAYS) and
+  /// ranks similar manga lower until then. Dismissing again restarts the cooldown.
+  $grpc.ResponseFuture<$2.Empty> dismiss(
+    $4.DismissMangaRequest request, {
+    $grpc.CallOptions? options,
+  }) {
+    return $createUnaryCall(_$dismiss, request, options: options);
+  }
+
+  $grpc.ResponseFuture<$2.Empty> undismiss(
+    $4.DismissMangaRequest request, {
+    $grpc.CallOptions? options,
+  }) {
+    return $createUnaryCall(_$undismiss, request, options: options);
+  }
+
   // method descriptors
 
   static final _$create = $grpc.ClientMethod<$4.MangaRequest, $4.MangaReply>(
@@ -702,6 +727,19 @@ class MangaClient extends $grpc.Client {
           '/rumgap.v1.Manga/GetBackfillStatus',
           ($4.GetBackfillStatusRequest value) => value.writeToBuffer(),
           $4.BackfillStatusReply.fromBuffer);
+  static final _$forYou = $grpc.ClientMethod<$1.PaginateQuery, $4.MangasReply>(
+      '/rumgap.v1.Manga/ForYou',
+      ($1.PaginateQuery value) => value.writeToBuffer(),
+      $4.MangasReply.fromBuffer);
+  static final _$dismiss = $grpc.ClientMethod<$4.DismissMangaRequest, $2.Empty>(
+      '/rumgap.v1.Manga/Dismiss',
+      ($4.DismissMangaRequest value) => value.writeToBuffer(),
+      $2.Empty.fromBuffer);
+  static final _$undismiss =
+      $grpc.ClientMethod<$4.DismissMangaRequest, $2.Empty>(
+          '/rumgap.v1.Manga/Undismiss',
+          ($4.DismissMangaRequest value) => value.writeToBuffer(),
+          $2.Empty.fromBuffer);
 }
 
 @$pb.GrpcServiceName('rumgap.v1.Manga')
@@ -831,6 +869,29 @@ abstract class MangaServiceBase extends $grpc.Service {
         ($core.List<$core.int> value) =>
             $4.GetBackfillStatusRequest.fromBuffer(value),
         ($4.BackfillStatusReply value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$1.PaginateQuery, $4.MangasReply>(
+        'ForYou',
+        forYou_Pre,
+        false,
+        false,
+        ($core.List<$core.int> value) => $1.PaginateQuery.fromBuffer(value),
+        ($4.MangasReply value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$4.DismissMangaRequest, $2.Empty>(
+        'Dismiss',
+        dismiss_Pre,
+        false,
+        false,
+        ($core.List<$core.int> value) =>
+            $4.DismissMangaRequest.fromBuffer(value),
+        ($2.Empty value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$4.DismissMangaRequest, $2.Empty>(
+        'Undismiss',
+        undismiss_Pre,
+        false,
+        false,
+        ($core.List<$core.int> value) =>
+            $4.DismissMangaRequest.fromBuffer(value),
+        ($2.Empty value) => value.writeToBuffer()));
   }
 
   $async.Future<$4.MangaReply> create_Pre(
@@ -961,6 +1022,30 @@ abstract class MangaServiceBase extends $grpc.Service {
 
   $async.Future<$4.BackfillStatusReply> getBackfillStatus(
       $grpc.ServiceCall call, $4.GetBackfillStatusRequest request);
+
+  $async.Future<$4.MangasReply> forYou_Pre(
+      $grpc.ServiceCall $call, $async.Future<$1.PaginateQuery> $request) async {
+    return forYou($call, await $request);
+  }
+
+  $async.Future<$4.MangasReply> forYou(
+      $grpc.ServiceCall call, $1.PaginateQuery request);
+
+  $async.Future<$2.Empty> dismiss_Pre($grpc.ServiceCall $call,
+      $async.Future<$4.DismissMangaRequest> $request) async {
+    return dismiss($call, await $request);
+  }
+
+  $async.Future<$2.Empty> dismiss(
+      $grpc.ServiceCall call, $4.DismissMangaRequest request);
+
+  $async.Future<$2.Empty> undismiss_Pre($grpc.ServiceCall $call,
+      $async.Future<$4.DismissMangaRequest> $request) async {
+    return undismiss($call, await $request);
+  }
+
+  $async.Future<$2.Empty> undismiss(
+      $grpc.ServiceCall call, $4.DismissMangaRequest request);
 }
 
 @$pb.GrpcServiceName('rumgap.v1.Chapter')

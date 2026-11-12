@@ -121,6 +121,7 @@ manga:
   similar: Vergelijkbaar
   will-update: Wordt op {date} bijgewerkt
 nav:
+  for_you: "Voor jou"
   downloads: Downloads
   reading: Lezing
   search: Zoekopdracht
@@ -235,3 +236,14 @@ offline:
   message: De server is nu niet bereikbaar.
   message_downloads: De server is nu niet bereikbaar. Je gedownloade manga zijn nog beschikbaar.
   go_to_downloads: Naar downloads
+for_you:
+  read: "Lezen"
+  nope: "Nee"
+  undo: "Ongedaan maken"
+  open: "Manga openen"
+  caught_up: "Je bent helemaal bij"
+  caught_up_hint: "Er zijn nu geen manga meer om voor te stellen. Zoeken voegt nieuwe manga toe aan de catalogus."
+  search: "Manga zoeken"
+  chapter_preview: "Hoofdstuk 1"
+  no_preview: "Geen voorbeeld beschikbaar"
+  failed: "Kon die swipe niet opslaan: {error}"
