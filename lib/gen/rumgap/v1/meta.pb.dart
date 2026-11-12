@@ -607,6 +607,7 @@ class StatsFriend extends $pb.GeneratedMessage {
     $core.int? longestStreak,
     $fixnum.Int64? sharedCount,
     $core.Iterable<$core.String>? sharedTitles,
+    $core.bool? isPrivate,
   }) {
     final result = create();
     if (userId != null) result.userId = userId;
@@ -618,6 +619,7 @@ class StatsFriend extends $pb.GeneratedMessage {
     if (longestStreak != null) result.longestStreak = longestStreak;
     if (sharedCount != null) result.sharedCount = sharedCount;
     if (sharedTitles != null) result.sharedTitles.addAll(sharedTitles);
+    if (isPrivate != null) result.isPrivate = isPrivate;
     return result;
   }
 
@@ -643,6 +645,7 @@ class StatsFriend extends $pb.GeneratedMessage {
     ..aI(7, _omitFieldNames ? '' : 'longestStreak')
     ..aInt64(8, _omitFieldNames ? '' : 'sharedCount')
     ..pPS(9, _omitFieldNames ? '' : 'sharedTitles')
+    ..aOB(10, _omitFieldNames ? '' : 'isPrivate')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -738,6 +741,16 @@ class StatsFriend extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(9)
   $pb.PbList<$core.String> get sharedTitles => $_getList(8);
+
+  /// A private user: everything but the username is left empty.
+  @$pb.TagNumber(10)
+  $core.bool get isPrivate => $_getBF(9);
+  @$pb.TagNumber(10)
+  set isPrivate($core.bool value) => $_setBool(9, value);
+  @$pb.TagNumber(10)
+  $core.bool hasIsPrivate() => $_has(9);
+  @$pb.TagNumber(10)
+  void clearIsPrivate() => $_clearField(10);
 }
 
 class StatsYear extends $pb.GeneratedMessage {
@@ -947,6 +960,7 @@ class DetailedStatsReply extends $pb.GeneratedMessage {
     $core.Iterable<StatsSeries>? abandoned,
     StatsSeries? fastestFinish,
     StatsSeries? longestRelationship,
+    $core.Iterable<StatsSeries>? currentlyReading,
     $core.Iterable<StatsFriend>? friends,
     StatsYear? year,
   }) {
@@ -988,6 +1002,8 @@ class DetailedStatsReply extends $pb.GeneratedMessage {
     if (fastestFinish != null) result.fastestFinish = fastestFinish;
     if (longestRelationship != null)
       result.longestRelationship = longestRelationship;
+    if (currentlyReading != null)
+      result.currentlyReading.addAll(currentlyReading);
     if (friends != null) result.friends.addAll(friends);
     if (year != null) result.year = year;
     return result;
@@ -1052,6 +1068,8 @@ class DetailedStatsReply extends $pb.GeneratedMessage {
     ..aOM<StatsSeries>(53, _omitFieldNames ? '' : 'fastestFinish',
         subBuilder: StatsSeries.create)
     ..aOM<StatsSeries>(54, _omitFieldNames ? '' : 'longestRelationship',
+        subBuilder: StatsSeries.create)
+    ..pPM<StatsSeries>(55, _omitFieldNames ? '' : 'currentlyReading',
         subBuilder: StatsSeries.create)
     ..pPM<StatsFriend>(60, _omitFieldNames ? '' : 'friends',
         subBuilder: StatsFriend.create)
@@ -1339,19 +1357,23 @@ class DetailedStatsReply extends $pb.GeneratedMessage {
   @$pb.TagNumber(54)
   StatsSeries ensureLongestRelationship() => $_ensure(33);
 
+  /// Unfinished series with progress, most recently read first: amount = progress, at = last read.
+  @$pb.TagNumber(55)
+  $pb.PbList<StatsSeries> get currentlyReading => $_getList(34);
+
   @$pb.TagNumber(60)
-  $pb.PbList<StatsFriend> get friends => $_getList(34);
+  $pb.PbList<StatsFriend> get friends => $_getList(35);
 
   @$pb.TagNumber(70)
-  StatsYear get year => $_getN(35);
+  StatsYear get year => $_getN(36);
   @$pb.TagNumber(70)
   set year(StatsYear value) => $_setField(70, value);
   @$pb.TagNumber(70)
-  $core.bool hasYear() => $_has(35);
+  $core.bool hasYear() => $_has(36);
   @$pb.TagNumber(70)
   void clearYear() => $_clearField(70);
   @$pb.TagNumber(70)
-  StatsYear ensureYear() => $_ensure(35);
+  StatsYear ensureYear() => $_ensure(36);
 }
 
 const $core.bool _omitFieldNames =

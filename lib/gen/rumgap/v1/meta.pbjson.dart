@@ -220,6 +220,7 @@ const StatsFriend$json = {
     {'1': 'longest_streak', '3': 7, '4': 1, '5': 5, '10': 'longestStreak'},
     {'1': 'shared_count', '3': 8, '4': 1, '5': 3, '10': 'sharedCount'},
     {'1': 'shared_titles', '3': 9, '4': 3, '5': 9, '10': 'sharedTitles'},
+    {'1': 'is_private', '3': 10, '4': 1, '5': 8, '10': 'isPrivate'},
   ],
 };
 
@@ -230,7 +231,8 @@ final $typed_data.Uint8List statsFriendDescriptor = $convert.base64Decode(
     'Y2hhcHRlcnMzMGQSJQoOY2hhcHRlcnNfdG90YWwYBSABKANSDWNoYXB0ZXJzVG90YWwSJQoOY3'
     'VycmVudF9zdHJlYWsYBiABKAVSDWN1cnJlbnRTdHJlYWsSJQoObG9uZ2VzdF9zdHJlYWsYByAB'
     'KAVSDWxvbmdlc3RTdHJlYWsSIQoMc2hhcmVkX2NvdW50GAggASgDUgtzaGFyZWRDb3VudBIjCg'
-    '1zaGFyZWRfdGl0bGVzGAkgAygJUgxzaGFyZWRUaXRsZXM=');
+    '1zaGFyZWRfdGl0bGVzGAkgAygJUgxzaGFyZWRUaXRsZXMSHQoKaXNfcHJpdmF0ZRgKIAEoCFIJ'
+    'aXNQcml2YXRl');
 
 @$core.Deprecated('Use statsYearDescriptor instead')
 const StatsYear$json = {
@@ -442,6 +444,14 @@ const DetailedStatsReply$json = {
       '17': true
     },
     {
+      '1': 'currently_reading',
+      '3': 55,
+      '4': 3,
+      '5': 11,
+      '6': '.rumgap.v1.StatsSeries',
+      '10': 'currentlyReading'
+    },
+    {
       '1': 'friends',
       '3': 60,
       '4': 3,
@@ -498,8 +508,9 @@ final $typed_data.Uint8List detailedStatsReplyDescriptor = $convert.base64Decode
     'aGVkEjQKCWFiYW5kb25lZBg0IAMoCzIWLnJ1bWdhcC52MS5TdGF0c1Nlcmllc1IJYWJhbmRvbm'
     'VkEkIKDmZhc3Rlc3RfZmluaXNoGDUgASgLMhYucnVtZ2FwLnYxLlN0YXRzU2VyaWVzSAJSDWZh'
     'c3Rlc3RGaW5pc2iIAQESTgoUbG9uZ2VzdF9yZWxhdGlvbnNoaXAYNiABKAsyFi5ydW1nYXAudj'
-    'EuU3RhdHNTZXJpZXNIA1ITbG9uZ2VzdFJlbGF0aW9uc2hpcIgBARIwCgdmcmllbmRzGDwgAygL'
-    'MhYucnVtZ2FwLnYxLlN0YXRzRnJpZW5kUgdmcmllbmRzEi0KBHllYXIYRiABKAsyFC5ydW1nYX'
-    'AudjEuU3RhdHNZZWFySARSBHllYXKIAQFCEAoOX2JpZ2dlc3RfYmluZ2VCEAoOX2ZpcnN0X3Jl'
-    'YWRfYXRCEQoPX2Zhc3Rlc3RfZmluaXNoQhcKFV9sb25nZXN0X3JlbGF0aW9uc2hpcEIHCgVfeW'
-    'Vhcg==');
+    'EuU3RhdHNTZXJpZXNIA1ITbG9uZ2VzdFJlbGF0aW9uc2hpcIgBARJDChFjdXJyZW50bHlfcmVh'
+    'ZGluZxg3IAMoCzIWLnJ1bWdhcC52MS5TdGF0c1Nlcmllc1IQY3VycmVudGx5UmVhZGluZxIwCg'
+    'dmcmllbmRzGDwgAygLMhYucnVtZ2FwLnYxLlN0YXRzRnJpZW5kUgdmcmllbmRzEi0KBHllYXIY'
+    'RiABKAsyFC5ydW1nYXAudjEuU3RhdHNZZWFySARSBHllYXKIAQFCEAoOX2JpZ2dlc3RfYmluZ2'
+    'VCEAoOX2ZpcnN0X3JlYWRfYXRCEQoPX2Zhc3Rlc3RfZmluaXNoQhcKFV9sb25nZXN0X3JlbGF0'
+    'aW9uc2hpcEIHCgVfeWVhcg==');

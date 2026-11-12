@@ -155,6 +155,8 @@ settings:
   data_saver: Gegevensbesparing
   show_nsfw: "18+ manga tonen"
   show_nsfw_hint: "Buiten je leeslijst"
+  private_profile: 'Privéprofiel'
+  private_profile_hint: 'Anderen zien alleen je gebruikersnaam. Zet uit om je statistieken en wat je leest te tonen.'
   download: Downloaden
   download_clear: Downloads wissen
   download_clear_confirm: Weet je zeker dat je alle gedownloade hoofdstukken wilt verwijderen?
@@ -300,6 +302,12 @@ settings:
       you: jij
       nothing_shared: '{total} hoofdstukken gelezen · nog niets gemeen'
       shared: '{total} hoofdstukken gelezen · {amount} gemeen: {titles}'
+      empty: 'Volg iemand op gebruikersnaam om een rivaliteit te beginnen.'
+      private: 'Privéprofiel'
+      manage: 'Vrienden beheren'
+    currently_reading:
+      title: 'Nu aan het lezen'
+      progress: '{progress}/{total} · {ago}'
     year:
       title: '{year} in een notendop'
       intro: 'In {year} opende je'
@@ -401,3 +409,52 @@ for_you:
   chapter_preview: "Hoofdstuk 1"
   no_preview: "Geen voorbeeld beschikbaar"
   failed: "Kon die swipe niet opslaan: {error}"
+social:
+  friends: Vrienden
+  friends_hint: Volg mensen op gebruikersnaam
+  my_profile: Mijn profiel
+  my_profile_hint: Wat anderen zien als ze je bezoeken
+  following: Volgend
+  followers: Volgers
+  follow: Volgen
+  follow_back: Terugvolgen
+  unfollow: Ontvolgen
+  followed: 'Je volgt nu {username}'
+  follow_by_username: Gebruikersnaam
+  username_only_hint: Mensen zijn alleen te vinden op hun exacte gebruikersnaam.
+  following_empty: Je volgt nog niemand. Vraag een vriend om zijn of haar gebruikersnaam!
+  followers_empty: Nog niemand volgt je.
+  mutual: Wederzijds
+  follows_you: Volgt jou
+  since: 'sinds {date}'
+  this_is_you: Dit ben jij
+  member_since: 'Lid sinds {date}'
+  own_private_hint: Je profiel is privé, dus anderen zien alleen je gebruikersnaam. Je kunt dit wijzigen in Instellingen.
+  private_title: Dit profiel is privé
+  private_body: Alleen de gebruikersnaam is zichtbaar.
+comments:
+  title: Reacties
+  title_count: 'Reacties ({amount})'
+  write: Schrijf een reactie
+  empty: Nog geen reacties. Begin het gesprek!
+  be_first: Reageer als eerste
+  thread: Draad
+  all_comments: Alle reacties
+  continue_thread: 'Ga verder in deze draad ({amount})'
+  view_reply: Bekijk 1 antwoord
+  view_replies: 'Bekijk {amount} antwoorden'
+  more_replies: 'Toon nog {amount}'
+  hide_replies: Antwoorden verbergen
+  reply: Antwoorden
+  replying_to: 'Antwoord aan {username}'
+  edit: Bewerken
+  edited: bewerkt
+  delete: Verwijderen
+  delete_title: Reactie verwijderen?
+  delete_body: Als mensen hebben geantwoord, blijft hij staan als [verwijderd] zodat hun antwoorden niet verdwijnen.
+  cancel: Annuleren
+  deleted: '[verwijderd]'
+  deleted_author: '[verwijderd]'
+  hint: Zeg iets aardigs…
+  post: Plaatsen
+  save: Opslaan

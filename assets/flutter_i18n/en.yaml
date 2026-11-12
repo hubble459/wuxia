@@ -118,6 +118,8 @@ settings:
   data_saver: Data Saver
   show_nsfw: "Show 18+ manga"
   show_nsfw_hint: "Outside your reading list"
+  private_profile: 'Private profile'
+  private_profile_hint: 'Only your username is visible to others. Turn off to show your stats and what you''re reading.'
   logout: Logout
   language: Language
   reading_mode: Default Reading Mode
@@ -245,6 +247,12 @@ settings:
       you: you
       nothing_shared: '{total} chapters read · nothing in common, yet'
       shared: '{total} chapters read · {amount} in common: {titles}'
+      empty: 'Follow someone by username to start a rivalry.'
+      private: 'Private profile'
+      manage: 'Manage friends'
+    currently_reading:
+      title: 'Currently reading'
+      progress: '{progress}/{total} · {ago}'
     year:
       title: '{year} wrapped'
       intro: 'In {year} you opened'
@@ -401,3 +409,52 @@ for_you:
   chapter_preview: "Chapter 1"
   no_preview: "No preview available"
   failed: "Couldn't save that swipe: {error}"
+social:
+  friends: Friends
+  friends_hint: Follow people by username
+  my_profile: My profile
+  my_profile_hint: What others see when they visit you
+  following: Following
+  followers: Followers
+  follow: Follow
+  follow_back: Follow back
+  unfollow: Unfollow
+  followed: 'You now follow {username}'
+  follow_by_username: Username
+  username_only_hint: People can only be found by their exact username.
+  following_empty: "You don't follow anyone yet. Ask a friend for their username!"
+  followers_empty: Nobody follows you yet.
+  mutual: Mutual
+  follows_you: Follows you
+  since: 'since {date}'
+  this_is_you: This is you
+  member_since: 'Member since {date}'
+  own_private_hint: Your profile is private, so others only see your username. You can change this in Settings.
+  private_title: This profile is private
+  private_body: Only their username is visible.
+comments:
+  title: Comments
+  title_count: 'Comments ({amount})'
+  write: Write a comment
+  empty: No comments yet. Start the conversation!
+  be_first: Be the first to comment
+  thread: Thread
+  all_comments: All comments
+  continue_thread: 'Continue this thread ({amount})'
+  view_reply: View 1 reply
+  view_replies: 'View {amount} replies'
+  more_replies: 'Show {amount} more'
+  hide_replies: Hide replies
+  reply: Reply
+  replying_to: 'Replying to {username}'
+  edit: Edit
+  edited: edited
+  delete: Delete
+  delete_title: Delete comment?
+  delete_body: "If people replied, it stays as [deleted] so their replies don't disappear."
+  cancel: Cancel
+  deleted: '[deleted]'
+  deleted_author: '[deleted]'
+  hint: Say something nice…
+  post: Post
+  save: Save

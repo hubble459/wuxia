@@ -51,6 +51,7 @@ class API {
   late final MetaClient meta = MetaClient(_channel, options: options, interceptors: _interceptors);
   late final ScraperClient scraper = ScraperClient(_channel, options: options, interceptors: _interceptors);
   late final AdminClient admin = AdminClient(_channel, options: options, interceptors: _interceptors);
+  late final CommentClient comment = CommentClient(_channel, options: options, interceptors: _interceptors);
 
   static void authProvider(Map<String, String> metadata, uri) {
     if (_token != null) {

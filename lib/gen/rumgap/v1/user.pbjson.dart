@@ -121,6 +121,15 @@ const UserUpdateRequest$json = {
       '10': 'showNsfw',
       '17': true
     },
+    {
+      '1': 'is_private',
+      '3': 8,
+      '4': 1,
+      '5': 8,
+      '9': 5,
+      '10': 'isPrivate',
+      '17': true
+    },
   ],
   '8': [
     {'1': '_password'},
@@ -128,6 +137,7 @@ const UserUpdateRequest$json = {
     {'1': '_email'},
     {'1': '_current_password'},
     {'1': '_show_nsfw'},
+    {'1': '_is_private'},
   ],
 };
 
@@ -137,9 +147,10 @@ final $typed_data.Uint8List userUpdateRequestDescriptor = $convert.base64Decode(
     'h1c2VybmFtZRgCIAEoCUgBUgh1c2VybmFtZYgBARIZCgVlbWFpbBgDIAEoCUgCUgVlbWFpbIgB'
     'ARIvChNwcmVmZXJyZWRfaG9zdG5hbWVzGAQgAygJUhJwcmVmZXJyZWRIb3N0bmFtZXMSHQoKZG'
     'V2aWNlX2lkcxgFIAMoCVIJZGV2aWNlSWRzEi4KEGN1cnJlbnRfcGFzc3dvcmQYBiABKAlIA1IP'
-    'Y3VycmVudFBhc3N3b3JkiAEBEiAKCXNob3dfbnNmdxgHIAEoCEgEUghzaG93TnNmd4gBAUILCg'
-    'lfcGFzc3dvcmRCCwoJX3VzZXJuYW1lQggKBl9lbWFpbEITChFfY3VycmVudF9wYXNzd29yZEIM'
-    'Cgpfc2hvd19uc2Z3');
+    'Y3VycmVudFBhc3N3b3JkiAEBEiAKCXNob3dfbnNmdxgHIAEoCEgEUghzaG93TnNmd4gBARIiCg'
+    'ppc19wcml2YXRlGAggASgISAVSCWlzUHJpdmF0ZYgBAUILCglfcGFzc3dvcmRCCwoJX3VzZXJu'
+    'YW1lQggKBl9lbWFpbEITChFfY3VycmVudF9wYXNzd29yZEIMCgpfc2hvd19uc2Z3Qg0KC19pc1'
+    '9wcml2YXRl');
 
 @$core.Deprecated('Use userReplyDescriptor instead')
 const UserReply$json = {
@@ -191,6 +202,7 @@ const UserFullReply$json = {
     {'1': 'created_at', '3': 9, '4': 1, '5': 3, '10': 'createdAt'},
     {'1': 'updated_at', '3': 10, '4': 1, '5': 3, '10': 'updatedAt'},
     {'1': 'show_nsfw', '3': 11, '4': 1, '5': 8, '10': 'showNsfw'},
+    {'1': 'is_private', '3': 12, '4': 1, '5': 8, '10': 'isPrivate'},
   ],
 };
 
@@ -202,7 +214,8 @@ final $typed_data.Uint8List userFullReplyDescriptor = $convert.base64Decode(
     'oKZGV2aWNlX2lkcxgGIAMoCVIJZGV2aWNlSWRzEicKD2NvdW50X2ZvbGxvd2luZxgHIAEoA1IO'
     'Y291bnRGb2xsb3dpbmcSJwoPY291bnRfZm9sbG93ZXJzGAggASgDUg5jb3VudEZvbGxvd2Vycx'
     'IdCgpjcmVhdGVkX2F0GAkgASgDUgljcmVhdGVkQXQSHQoKdXBkYXRlZF9hdBgKIAEoA1IJdXBk'
-    'YXRlZEF0EhsKCXNob3dfbnNmdxgLIAEoCFIIc2hvd05zZnc=');
+    'YXRlZEF0EhsKCXNob3dfbnNmdxgLIAEoCFIIc2hvd05zZncSHQoKaXNfcHJpdmF0ZRgMIAEoCF'
+    'IJaXNQcml2YXRl');
 
 @$core.Deprecated('Use userTokenReplyDescriptor instead')
 const UserTokenReply$json = {

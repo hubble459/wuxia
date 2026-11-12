@@ -20,6 +20,7 @@ import 'package:wuxia/partial/source_badge.dart';
 import 'package:wuxia/partial/image_error_placeholder.dart';
 import 'package:wuxia/partial/list/manga_item.dart';
 import 'package:wuxia/partial/manga_details.dart';
+import 'package:wuxia/screen/social/comments_screen.dart';
 import 'package:wuxia/partial/dialog/add_manga_dialog.dart';
 import 'package:wuxia/partial/responsive_content.dart';
 import 'package:wuxia/screen/manga/manga_bottom_bar.dart';
@@ -547,7 +548,12 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
         SliverPadding(
           padding: const EdgeInsets.all(8.0),
           sliver: SliverList.list(
-            children: [ResponsiveContent(maxWidth: 800, child: MangaDetails(manga: _shown))],
+            children: [
+              ResponsiveContent(
+                maxWidth: 800,
+                child: Column(children: [MangaDetails(manga: _shown), CommentsPreview(mangaId: _manga.id)]),
+              ),
+            ],
           ),
         ),
       ],
@@ -595,7 +601,11 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
                       ),
                     ),
                     const SizedBox(width: 24),
-                    Expanded(child: MangaDetails(manga: _shown, showTitle: false)),
+                    Expanded(
+                      child: Column(
+                        children: [MangaDetails(manga: _shown, showTitle: false), CommentsPreview(mangaId: _manga.id)],
+                      ),
+                    ),
                   ],
                 ),
               ),

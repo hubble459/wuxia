@@ -118,6 +118,8 @@ settings:
   data_saver: 数据保护程序
   show_nsfw: "显示 18+ 漫画"
   show_nsfw_hint: "在你的阅读列表之外"
+  private_profile: '私密资料'
+  private_profile_hint: '其他人只能看到你的用户名。关闭后会显示你的统计数据和正在读的作品。'
   logout: 登出
   language: 语
   reading_mode: 默认阅读模式
@@ -245,6 +247,12 @@ settings:
       you: 你
       nothing_shared: '已读 {total} 章 · 暂无共同作品'
       shared: '已读 {total} 章 · {amount} 部共同作品：{titles}'
+      empty: '按用户名关注某人，开始一场较量。'
+      private: '私密资料'
+      manage: '管理好友'
+    currently_reading:
+      title: '正在阅读'
+      progress: '{progress}/{total} · {ago}'
     year:
       title: '{year} 年度回顾'
       intro: '{year} 年你打开了'
@@ -401,3 +409,52 @@ for_you:
   chapter_preview: "第 1 章"
   no_preview: "没有可用的预览"
   failed: "无法保存这次滑动：{error}"
+social:
+  friends: 好友
+  friends_hint: 按用户名关注他人
+  my_profile: 我的主页
+  my_profile_hint: 别人访问你时看到的内容
+  following: 关注
+  followers: 粉丝
+  follow: 关注
+  follow_back: 回关
+  unfollow: 取消关注
+  followed: '你已关注 {username}'
+  follow_by_username: 用户名
+  username_only_hint: 只能通过完整的用户名找到他人。
+  following_empty: 你还没有关注任何人。问问朋友的用户名吧！
+  followers_empty: 还没有人关注你。
+  mutual: 互相关注
+  follows_you: 关注了你
+  since: '自 {date}'
+  this_is_you: 这是你
+  member_since: '{date} 加入'
+  own_private_hint: 你的资料是私密的，其他人只能看到你的用户名。可以在设置中更改。
+  private_title: 此资料为私密
+  private_body: 只能看到用户名。
+comments:
+  title: 评论
+  title_count: '评论（{amount}）'
+  write: 写评论
+  empty: 还没有评论。来开个头吧！
+  be_first: 来抢沙发
+  thread: 讨论串
+  all_comments: 全部评论
+  continue_thread: '继续查看此讨论串（{amount}）'
+  view_reply: 查看 1 条回复
+  view_replies: '查看 {amount} 条回复'
+  more_replies: '再显示 {amount} 条'
+  hide_replies: 收起回复
+  reply: 回复
+  replying_to: '回复 {username}'
+  edit: 编辑
+  edited: 已编辑
+  delete: 删除
+  delete_title: 删除评论？
+  delete_body: 如果有人回复过，它会显示为 [已删除]，这样回复不会消失。
+  cancel: 取消
+  deleted: '[已删除]'
+  deleted_author: '[已删除]'
+  hint: 说点友善的话…
+  post: 发布
+  save: 保存

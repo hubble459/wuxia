@@ -309,6 +309,7 @@ class UserUpdateRequest extends $pb.GeneratedMessage {
     $core.Iterable<$core.String>? deviceIds,
     $core.String? currentPassword,
     $core.bool? showNsfw,
+    $core.bool? isPrivate,
   }) {
     final result = create();
     if (password != null) result.password = password;
@@ -319,6 +320,7 @@ class UserUpdateRequest extends $pb.GeneratedMessage {
     if (deviceIds != null) result.deviceIds.addAll(deviceIds);
     if (currentPassword != null) result.currentPassword = currentPassword;
     if (showNsfw != null) result.showNsfw = showNsfw;
+    if (isPrivate != null) result.isPrivate = isPrivate;
     return result;
   }
 
@@ -342,6 +344,7 @@ class UserUpdateRequest extends $pb.GeneratedMessage {
     ..pPS(5, _omitFieldNames ? '' : 'deviceIds')
     ..aOS(6, _omitFieldNames ? '' : 'currentPassword')
     ..aOB(7, _omitFieldNames ? '' : 'showNsfw')
+    ..aOB(8, _omitFieldNames ? '' : 'isPrivate')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -414,6 +417,15 @@ class UserUpdateRequest extends $pb.GeneratedMessage {
   $core.bool hasShowNsfw() => $_has(6);
   @$pb.TagNumber(7)
   void clearShowNsfw() => $_clearField(7);
+
+  @$pb.TagNumber(8)
+  $core.bool get isPrivate => $_getBF(7);
+  @$pb.TagNumber(8)
+  set isPrivate($core.bool value) => $_setBool(7, value);
+  @$pb.TagNumber(8)
+  $core.bool hasIsPrivate() => $_has(7);
+  @$pb.TagNumber(8)
+  void clearIsPrivate() => $_clearField(8);
 }
 
 class UserReply extends $pb.GeneratedMessage {
@@ -555,6 +567,7 @@ class UserFullReply extends $pb.GeneratedMessage {
     $fixnum.Int64? createdAt,
     $fixnum.Int64? updatedAt,
     $core.bool? showNsfw,
+    $core.bool? isPrivate,
   }) {
     final result = create();
     if (id != null) result.id = id;
@@ -569,6 +582,7 @@ class UserFullReply extends $pb.GeneratedMessage {
     if (createdAt != null) result.createdAt = createdAt;
     if (updatedAt != null) result.updatedAt = updatedAt;
     if (showNsfw != null) result.showNsfw = showNsfw;
+    if (isPrivate != null) result.isPrivate = isPrivate;
     return result;
   }
 
@@ -596,6 +610,7 @@ class UserFullReply extends $pb.GeneratedMessage {
     ..aInt64(9, _omitFieldNames ? '' : 'createdAt')
     ..aInt64(10, _omitFieldNames ? '' : 'updatedAt')
     ..aOB(11, _omitFieldNames ? '' : 'showNsfw')
+    ..aOB(12, _omitFieldNames ? '' : 'isPrivate')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -704,6 +719,16 @@ class UserFullReply extends $pb.GeneratedMessage {
   $core.bool hasShowNsfw() => $_has(10);
   @$pb.TagNumber(11)
   void clearShowNsfw() => $_clearField(11);
+
+  /// Private profiles show only their username to other users.
+  @$pb.TagNumber(12)
+  $core.bool get isPrivate => $_getBF(11);
+  @$pb.TagNumber(12)
+  set isPrivate($core.bool value) => $_setBool(11, value);
+  @$pb.TagNumber(12)
+  $core.bool hasIsPrivate() => $_has(11);
+  @$pb.TagNumber(12)
+  void clearIsPrivate() => $_clearField(12);
 }
 
 class UserTokenReply extends $pb.GeneratedMessage {

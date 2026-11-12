@@ -45,3 +45,28 @@ ChapterRouteMatch? matchChapterRoute(String routeName) {
     chapterIndex: int.parse(match.group(3)!),
   );
 }
+
+String profileRouteName(String username) => 'user/${Uri.encodeComponent(username)}';
+
+String commentsRouteName(int mangaId) => 'manga/$mangaId/comments';
+
+String commentThreadRouteName(int commentId) => 'comment/$commentId';
+
+final _profileRoutePattern = RegExp(r'^user/([^/]+)$');
+final _commentsRoutePattern = RegExp(r'^manga/(\d+)/comments$');
+final _commentThreadRoutePattern = RegExp(r'^comment/(\d+)$');
+
+String? matchProfileRoute(String routeName) {
+  final match = _profileRoutePattern.firstMatch(routeName);
+  return match == null ? null : Uri.decodeComponent(match.group(1)!);
+}
+
+int? matchCommentsRoute(String routeName) {
+  final match = _commentsRoutePattern.firstMatch(routeName);
+  return match == null ? null : int.parse(match.group(1)!);
+}
+
+int? matchCommentThreadRoute(String routeName) {
+  final match = _commentThreadRoutePattern.firstMatch(routeName);
+  return match == null ? null : int.parse(match.group(1)!);
+}

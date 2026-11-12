@@ -101,7 +101,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
             setState(() => _stats = next);
             await next;
           },
-          child: ResponsiveContent(child: _StatsBody(data: data)),
+          child: ResponsiveContent(child: StatsView(data: data)),
         ),
       ),
     );
@@ -185,16 +185,38 @@ class _LoadingState extends State<_Loading> {
   }
 }
 
-class _StatsBody extends StatelessWidget {
+/// Every stats section for [data]. Someone else's profile ([isMe] false) gets the sections that
+/// describe a reader; the personal ones (fun facts, backlog, wrapped...) stay on your own page.
+class StatsView extends StatelessWidget {
   final DetailedStatsReply data;
+  final bool isMe;
+  final List<Widget> header;
 
-  const _StatsBody({required this.data});
+  const StatsView({super.key, required this.data, this.isMe = true, this.header = const []});
 
   @override
   Widget build(BuildContext context) {
     final sections = <Widget>[
+      ...header,
       _Hero(data: data),
+      if (data.currentlyReading.isNotEmpty) _CurrentlyReading(series: data.currentlyReading),
       _Totals(data: data),
+      if (!isMe) ...[
+        _Streaks(data: data),
+        _Activity(data: data),
+        _Taste(data: data),
+        _HallOfFame(data: data),
+      ],
+    ];
+    if (!isMe) {
+      return ListView.builder(
+        physics: const AlwaysScrollableScrollPhysics(),
+        itemCount: sections.length,
+        itemBuilder: (context, index) => Reveal(child: sections[index]),
+      );
+    }
+
+    sections.addAll([
       _FunFacts(data: data),
       _Streaks(data: data),
       _Activity(data: data),
@@ -203,7 +225,7 @@ class _StatsBody extends StatelessWidget {
       _Taste(data: data),
       _Library(data: data),
       _HallOfFame(data: data),
-      if (data.friends.isNotEmpty) _Friends(friends: data.friends),
+      _Friends(friends: data.friends),
       if (data.hasYear()) _Wrapped(data: data),
       Padding(
         padding: const EdgeInsets.fromLTRB(24, 24, 24, 48),
@@ -216,7 +238,7 @@ class _StatsBody extends StatelessWidget {
           style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.white38),
         ),
       ),
-    ];
+    ]);
 
     return ListView.builder(
       physics: const AlwaysScrollableScrollPhysics(),
@@ -1236,7 +1258,29 @@ class _Friends extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final best = friends.fold(0, (m, f) => math.max(m, f.chapters30d.toInt()));
+    final ranked = friends.where((f) => !f.isPrivate).toList();
+    final hidden = friends.where((f) => f.isPrivate).toList();
+    final best = ranked.fold(0, (m, f) => math.max(m, f.chapters30d.toInt()));
+    void openFriends() => Navigator.of(context).pushNamed('friends');
+
+    if (friends.length <= 1) {
+      return Column(
+        children: [
+          SectionTitle(emoji: '⚔️', title: _t(context, 'friends.title')),
+          StatsCard(
+            onTap: openFriends,
+            child: Row(
+              children: [
+                const Text('🥷', style: TextStyle(fontSize: 40)),
+                const SizedBox(width: 16),
+                Expanded(child: Text(_t(context, 'friends.empty'), style: theme.textTheme.bodyMedium)),
+                const Icon(Icons.chevron_right),
+              ],
+            ),
+          ),
+        ],
+      );
+    }
 
     return Column(
       children: [
@@ -1244,74 +1288,162 @@ class _Friends extends StatelessWidget {
         StatsCard(
           child: Column(
             children: [
-              for (final (i, friend) in friends.indexed)
-                Container(
-                  margin: const EdgeInsets.symmetric(vertical: 4),
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: friend.isMe ? Colors.white.withValues(alpha: 0.07) : null,
-                    borderRadius: BorderRadius.circular(12),
+              for (final (i, friend) in ranked.indexed)
+                InkWell(
+                  borderRadius: BorderRadius.circular(12),
+                  onTap: friend.isMe ? null : () => Navigator.of(context).pushNamed(profileRouteName(friend.username)),
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(vertical: 4),
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: friend.isMe ? Colors.white.withValues(alpha: 0.07) : null,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            SizedBox(
+                              width: 32,
+                              child: Text(i < 3 ? ['🥇', '🥈', '🥉'][i] : '#${i + 1}', style: theme.textTheme.titleMedium),
+                            ),
+                            Expanded(
+                              child: Text(
+                                friend.isMe ? '${friend.username} (${_t(context, 'friends.you')})' : friend.username,
+                                style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            if (friend.currentStreak > 0) Text('🔥${friend.currentStreak}  ', style: theme.textTheme.bodySmall),
+                            Text(
+                              _t(context, 'taste.chapters_short', {'amount': groupDigits(friend.chapters30d.toInt())}),
+                              style: theme.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w700),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 6),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 32),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(4),
+                            child: TweenAnimationBuilder<double>(
+                              tween: Tween(begin: 0, end: best == 0 ? 0 : friend.chapters30d.toInt() / best),
+                              duration: Duration(milliseconds: 900 + i * 120),
+                              curve: Curves.easeOutCubic,
+                              builder: (context, t, _) => LinearProgressIndicator(
+                                value: t,
+                                minHeight: 6,
+                                backgroundColor: statsEmpty,
+                                color: friend.isMe ? statsSequential.last : statsSequential[2],
+                              ),
+                            ),
+                          ),
+                        ),
+                        if (!friend.isMe)
+                          Padding(
+                            padding: const EdgeInsets.only(left: 32, top: 6),
+                            child: Text(
+                              friend.sharedCount == 0
+                                  ? _t(context, 'friends.nothing_shared', {'total': compactNumber(friend.chaptersTotal.toInt())})
+                                  : _t(context, 'friends.shared', {
+                                      'amount': friend.sharedCount.toInt(),
+                                      'titles': friend.sharedTitles.join(', '),
+                                      'total': compactNumber(friend.chaptersTotal.toInt()),
+                                    }),
+                              style: theme.textTheme.bodySmall?.copyWith(color: Colors.white60),
+                            ),
+                          ),
+                      ],
+                    ),
                   ),
+                ),
+              if (hidden.isNotEmpty) ...[
+                const Divider(color: Colors.white10),
+                for (final friend in hidden)
+                  ListTile(
+                    dense: true,
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 10),
+                    leading: const Icon(Icons.lock, size: 18),
+                    title: Text(friend.username),
+                    subtitle: Text(_t(context, 'friends.private')),
+                    onTap: () => Navigator.of(context).pushNamed(profileRouteName(friend.username)),
+                  ),
+              ],
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton.icon(
+                  onPressed: openFriends,
+                  icon: const Icon(Icons.person_add_alt_1, size: 18),
+                  label: Text(_t(context, 'friends.manage')),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _CurrentlyReading extends StatelessWidget {
+  final List<StatsSeries> series;
+
+  const _CurrentlyReading({required this.series});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Column(
+      children: [
+        SectionTitle(emoji: '📖', title: _t(context, 'currently_reading.title')),
+        SizedBox(
+          height: 200,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            itemCount: series.length,
+            separatorBuilder: (_, _) => const SizedBox(width: 12),
+            itemBuilder: (context, index) {
+              final item = series[index];
+              final total = item.total.toInt();
+              final progress = item.progress.toInt();
+              return GestureDetector(
+                onTap: () => Navigator.of(context).pushNamed(mangaRouteName(item.mangaId)),
+                child: SizedBox(
+                  width: 100,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        children: [
-                          SizedBox(
-                            width: 32,
-                            child: Text(i < 3 ? ['🥇', '🥈', '🥉'][i] : '#${i + 1}', style: theme.textTheme.titleMedium),
-                          ),
-                          Expanded(
-                            child: Text(
-                              friend.isMe ? '${friend.username} (${_t(context, 'friends.you')})' : friend.username,
-                              style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                          if (friend.currentStreak > 0) Text('🔥${friend.currentStreak}  ', style: theme.textTheme.bodySmall),
-                          Text(
-                            _t(context, 'taste.chapters_short', {'amount': groupDigits(friend.chapters30d.toInt())}),
-                            style: theme.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w700),
-                          ),
-                        ],
-                      ),
+                      StatsCover(url: item.hasCover() ? item.cover : null, width: 100, height: 140),
                       const SizedBox(height: 6),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 32),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(4),
-                          child: TweenAnimationBuilder<double>(
-                            tween: Tween(begin: 0, end: best == 0 ? 0 : friend.chapters30d.toInt() / best),
-                            duration: Duration(milliseconds: 900 + i * 120),
-                            curve: Curves.easeOutCubic,
-                            builder: (context, t, _) => LinearProgressIndicator(
-                              value: t,
-                              minHeight: 6,
-                              backgroundColor: statsEmpty,
-                              color: friend.isMe ? statsSequential.last : statsSequential[2],
-                            ),
-                          ),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(3),
+                        child: LinearProgressIndicator(
+                          value: total == 0 ? 0 : (progress / total).clamp(0.0, 1.0),
+                          minHeight: 4,
+                          backgroundColor: statsEmpty,
+                          color: statsSequential.last,
                         ),
                       ),
-                      if (!friend.isMe)
-                        Padding(
-                          padding: const EdgeInsets.only(left: 32, top: 6),
-                          child: Text(
-                            friend.sharedCount == 0
-                                ? _t(context, 'friends.nothing_shared', {'total': compactNumber(friend.chaptersTotal.toInt())})
-                                : _t(context, 'friends.shared', {
-                                    'amount': friend.sharedCount.toInt(),
-                                    'titles': friend.sharedTitles.join(', '),
-                                    'total': compactNumber(friend.chaptersTotal.toInt()),
-                                  }),
-                            style: theme.textTheme.bodySmall?.copyWith(color: Colors.white60),
-                          ),
-                        ),
+                      const SizedBox(height: 4),
+                      Text(item.title, maxLines: 1, overflow: TextOverflow.ellipsis, style: theme.textTheme.labelMedium),
+                      Text(
+                        _t(context, 'currently_reading.progress', {
+                          'progress': groupDigits(progress),
+                          'total': groupDigits(total),
+                          'ago': Jiffy.parseFromMillisecondsSinceEpoch(item.at.toInt()).fromNow(),
+                        }),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.labelSmall?.copyWith(color: Colors.white54),
+                      ),
                     ],
                   ),
                 ),
-            ],
+              );
+            },
           ),
         ),
       ],

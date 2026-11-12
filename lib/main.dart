@@ -21,6 +21,9 @@ import 'package:wuxia/screen/setting/preferred_sources_screen.dart';
 import 'package:wuxia/screen/setting/scraper_status_screen.dart';
 import 'package:wuxia/screen/setting/users_screen.dart';
 import 'package:wuxia/screen/setting/statistics_screen.dart';
+import 'package:wuxia/screen/social/comments_screen.dart';
+import 'package:wuxia/screen/social/friends_screen.dart';
+import 'package:wuxia/screen/social/profile_screen.dart';
 import 'package:wuxia/screen/settings_screen.dart';
 import 'package:wuxia/screen/splash_screen.dart';
 import 'package:wuxia/util/app_routes.dart';
@@ -109,7 +112,7 @@ void main() async {
   runApp(const WuxiaApp());
 }
 
-const _settingsRoutes = {'settings', 'statistics', 'preferred_sources', 'scraper_status', 'users'};
+const _settingsRoutes = {'settings', 'statistics', 'friends', 'preferred_sources', 'scraper_status', 'users'};
 
 class WuxiaApp extends StatefulWidget {
   const WuxiaApp({super.key});
@@ -132,6 +135,7 @@ class _WuxiaAppState extends State<WuxiaApp> {
       'root_nav': (context) => const RootNavScreen(),
       'settings': (context) => const SettingsScreen(),
       'statistics': (context) => const StatisticsScreen(),
+      'friends': (context) => const FriendsScreen(),
       'preferred_sources': (context) => const PreferredSourcesScreen(),
       'scraper_status': (context) => const ScraperStatusScreen(),
       'users': (context) => const UsersScreen(),
@@ -154,6 +158,21 @@ class _WuxiaAppState extends State<WuxiaApp> {
             chapterIndex: chapterMatch.chapterIndex,
           ),
         );
+      }
+
+      final profileMatch = matchProfileRoute(name);
+      if (profileMatch != null) {
+        return MaterialPageRoute(settings: settings, builder: (context) => ProfileScreen(username: profileMatch));
+      }
+
+      final commentsMatch = matchCommentsRoute(name);
+      if (commentsMatch != null) {
+        return MaterialPageRoute(settings: settings, builder: (context) => CommentsScreen(mangaId: commentsMatch));
+      }
+
+      final threadMatch = matchCommentThreadRoute(name);
+      if (threadMatch != null) {
+        return MaterialPageRoute(settings: settings, builder: (context) => CommentsScreen(commentId: threadMatch));
       }
 
       final mangaMatch = matchMangaRoute(name);
@@ -213,7 +232,11 @@ class _WuxiaAppState extends State<WuxiaApp> {
           ];
         }
 
-        final isDeepLink = matchMangaRoute(initialRouteName) != null || matchChapterRoute(initialRouteName) != null;
+        final isDeepLink = matchMangaRoute(initialRouteName) != null ||
+            matchChapterRoute(initialRouteName) != null ||
+            matchProfileRoute(initialRouteName) != null ||
+            matchCommentsRoute(initialRouteName) != null ||
+            matchCommentThreadRoute(initialRouteName) != null;
         if (!isDeepLink) {
           final builder = initialRouteName == Navigator.defaultRouteName
               ? (BuildContext context) => const SplashScreen()

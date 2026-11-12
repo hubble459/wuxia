@@ -4,6 +4,7 @@ import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:wuxia/api.dart';
+import 'package:wuxia/util/app_routes.dart';
 import 'package:wuxia/gen/rumgap/v1/user.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/v1.pb.dart' show Empty;
 import 'package:package_info_plus/package_info_plus.dart';
@@ -143,6 +144,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 title: I18nText('settings.show_nsfw'),
                 subtitle: I18nText('settings.show_nsfw_hint'),
               ),
+              SwitchListTile(
+                value: API.loggedIn.isPrivate,
+                onChanged: (isPrivate) async {
+                  try {
+                    API.loggedIn = await api.user.update(UserUpdateRequest(isPrivate: isPrivate));
+                  } catch (e) {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+                    }
+                  }
+                  if (mounted) setState(() {});
+                },
+                title: I18nText('settings.private_profile'),
+                subtitle: I18nText('settings.private_profile_hint'),
+              ),
               ListTile(
                 title: I18nText('settings.language'),
                 trailing: DropdownButton<String>(
@@ -194,6 +210,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 title: I18nText('settings.statistics.title'),
                 onTap: () {
                   Navigator.of(context).pushNamed('statistics');
+                },
+              ),
+              ListTile(
+                title: I18nText('social.friends'),
+                subtitle: I18nText('social.friends_hint'),
+                onTap: () {
+                  Navigator.of(context).pushNamed('friends');
+                },
+              ),
+              ListTile(
+                title: I18nText('social.my_profile'),
+                subtitle: I18nText('social.my_profile_hint'),
+                onTap: () {
+                  Navigator.of(context).pushNamed(profileRouteName(API.loggedIn.username));
                 },
               ),
               ListTile(
