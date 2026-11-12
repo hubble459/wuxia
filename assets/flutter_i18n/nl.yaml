@@ -176,12 +176,162 @@ settings:
     stats_24h: '{attempts} pogingen / {failures} mislukt (24u)'
     title: Scraper Status
   statistics:
-    average_reading_time: Gemiddelde leestijd
-    chapters_read: Hoofdstukken lezen
-    completed_manga: Voltooide manga
-    minutes: notulen
-    seconds: seconden
     title: Statistieken
+    estimate_note: 'Tijd, pagina''s en afstand zijn geschat op basis van je voortgang, met jouw tempo van ongeveer {minutes} min per hoofdstuk, gemeten over de {opened} hoofdstukken die je in de lezer opende.'
+    loading:
+      '1': Je hoofdstukken tellen…
+      '2': De sekte-oudsten raadplegen…
+      '3': Je scrollen in Eiffeltorens omrekenen…
+      '4': Berekenen hoeveel slaap je hebt overgeslagen…
+      '5': Je achterstand wegen. Hij is zwaar.
+    units:
+      years: '{amount} jaar'
+      days_hours: '{days}d {hours}u'
+      hours_minutes: '{hours}u {minutes}m'
+      km: '{amount} km'
+    hero:
+      realm_label: Cultivatierijk
+      tap_hint: tik hier
+      realm_level: 'Rijk {level} van {max}'
+      next_realm: 'Nog {amount} hoofdstukken tot {realm}'
+      max_realm: Je hebt de top bereikt. De hemel beeft.
+      reader_since: 'Aan het cultiveren sinds {date}'
+    realms:
+      mortal: Sterveling
+      qi_condensation: Qi-condensatie
+      foundation: Fundering
+      core_formation: Kernvorming
+      nascent_soul: Ontluikende Ziel
+      soul_formation: Zielvorming
+      spirit_severing: Geestsplitsing
+      dao_seeking: Zoeker van de Dao
+      immortal: Onsterfelijke Opstijging
+      heavenly_emperor: Hemelse Keizer
+    totals:
+      chapters_read: Hoofdstukken gelezen
+      time_read: Tijd aan het lezen
+      pages_read: Pagina's gelezen
+      distance: Gescrold met je duim
+      series: Series in je bibliotheek
+      chapters_opened: Hier geopende hoofdstukken
+    facts:
+      title: Volstrekt noodzakelijke vergelijkingen
+      subtitle: Swipe →
+      eiffel: 'Dat is {amount}× de hoogte van de Eiffeltoren, duimveeg voor duimveeg.'
+      everest: 'Je had {amount} keer de Mount Everest op kunnen scrollen.'
+      marathon: '{amount} marathons puur scrollen. Je duim verdient een medaille.'
+      lotr: 'Je had de extended Lord of the Rings-trilogie {amount} keer kunnen kijken. Je koos voor manga.'
+      flights: 'Genoeg tijd om {amount} keer van Amsterdam naar Tokio te vliegen.'
+      sleep: '{amount} volle nachten slaap, ingeruild voor "nog één hoofdstukje".'
+      paper: 'Geprint en opgestapeld zouden je pagina''s {amount} m hoog zijn. Dat zijn {giraffes} giraffen.'
+      per_day: '{amount} hoofdstukken per dag, elke dag, sinds {date}.'
+    streak:
+      title: In vuur en vlam
+      days: '{amount} dagen'
+      current: Huidige reeks. Verbreek de ketting niet.
+      zero: Geen reeks op dit moment. Eén hoofdstuk vandaag lost dat op.
+      longest: Langste reeks
+      last_30: Hoofdstukken in de laatste 30 dagen
+      sessions: Leessessies
+      longest_session: Langste sessie
+    activity:
+      title: Cultivatielogboek
+      subtitle: Elk hoofdstuk dat je opende, dag voor dag
+      tooltip: '{date}: {amount} hoofdstukken'
+      log_note: 'Bijgehouden sinds {date}'
+      less: Minder
+      more: Meer
+    clock:
+      title: Wanneer lees je?
+      center: Tik op de klok
+      hour: "{hour}:00\n{amount} hoofdstukken"
+      best_day: 'Je favoriete dag: {day}'
+      day_tooltip: '{day}: {amount} hoofdstukken'
+      persona_none: Lees iets en we vertellen je wie je bent.
+      persona_night_owl: 'Nachtuil 🦉 {percent}% van je leeswerk gebeurt na 22:00.'
+      persona_early_bird: 'Vroege vogel 🐦 {percent}% van je leeswerk gebeurt voor 10:00.'
+      persona_lunch: 'Lunchpauzelezer 🍱 {percent}% van je leeswerk gebeurt rond het middaguur.'
+      persona_afternoon: 'Middagslacker ☕ {percent}% van je leeswerk gebeurt tussen 14:00 en 18:00.'
+      persona_evening: 'Avondlezer 🌙 {percent}% van je leeswerk gebeurt tussen 18:00 en 22:00.'
+    binge:
+      title: Grootste binge
+      chapters: '{amount} hoofdstukken'
+      text: 'Op {date} las je zoveel hoofdstukken op één dag, vooral {title}. Heb je überhaupt geslapen?'
+    taste:
+      title: Jouw smaak
+      genre_share: '{percent}% van alles wat je leest is {genre}.'
+      genres: Topgenres
+      genre_value: '{chapters} hfst. · {series} series'
+      authors: Favoriete auteurs
+      chapters_short: '{amount} hfst.'
+      hosts: Waar je leest
+      sites: sites
+      other: Overig
+      languages: Talen
+      ongoing: '{amount} van je {total} series verschijnen nog'
+      publishing: Verschijnt nog
+      ended: Afgelopen
+    library:
+      title: Je bibliotheek
+      completed: Uitgelezen
+      in_progress: Bezig
+      dropped: Laten liggen
+      not_started: Niet begonnen
+      backlog: hoofdstukken wachten op je
+      backlog_none: Je achterstand is leeg. Zoek een nieuwe serie!
+      backlog_never: 'In je huidige tempo: nooit. Tenzij…?'
+      backlog_pace: 'In je tempo van de laatste 30 dagen duurt dat {time}. Aan de slag.'
+      most_read: Eregalerij
+      fastest: Speedrun
+      fastest_text: '{chapters} hoofdstukken in {days} dagen'
+      relationship: Langste relatie
+      relationship_text: 'Al {days} dagen samen'
+      recently_finished: Recent uitgelezen
+      abandoned: Ze missen je
+      abandoned_subtitle: Niet uitgelezen en al maanden niet aangeraakt
+      abandoned_days: '{days} dagen niet gelezen · {progress}/{total}'
+    friends:
+      title: Sekteranglijst
+      subtitle: Jij tegen de mensen die je volgt, laatste 30 dagen
+      you: jij
+      nothing_shared: '{total} hoofdstukken gelezen · nog niets gemeen'
+      shared: '{total} hoofdstukken gelezen · {amount} gemeen: {titles}'
+    year:
+      title: '{year} in een notendop'
+      intro: 'In {year} opende je'
+      chapters: hoofdstukken
+      minutes: 'Dat is ongeveer {time} lezen'
+      new_series: '{amount} nieuwe series'
+      finished: '{amount} uitgelezen'
+      active_days: '{amount} actieve dagen'
+      top_series: Jouw serie van het jaar
+      top_series_chapters: '{amount} hoofdstukken dit jaar'
+      top_genre: Jouw genre van het jaar
+      top_month: 'Topmaand: {month}, met {amount} hoofdstukken'
+      no_month: Dit jaar nog niets gelezen
+      persona: Jouw type lezer
+    personas:
+      night_owl:
+        name: De Nachtuil
+        description: De beste hoofdstukken lees je om 2 uur 's nachts, onder de dekens, op volle helderheid.
+      binger:
+        name: De Binger
+        description: '"Nog één hoofdstukje" is een leugen die je jezelf elke dag vertelt.'
+      completionist:
+        name: De Afmaker
+        description: Wat je begint, maak je af. Geen serie blijft achter.
+      loyalist:
+        name: De Trouwe Fan
+        description: Je hebt je genre gevonden en je gaat nooit meer weg.
+      collector:
+        name: De Verzamelaar
+        description: Je verzamelt series als cultivatiepillen. Ze lezen is een probleem voor later.
+      disciplined:
+        name: De Gedisciplineerde Cultivator
+        description: Een week lang geen dag overgeslagen. De sekte-oudsten keuren het goed.
+      steady:
+        name: De Rustige Cultivator
+        description: Kalm, consequent, onverstoorbaar. Je dao is in balans.
   title: Instellingen
   users:
     admin: Beheerder

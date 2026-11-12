@@ -122,11 +122,161 @@ settings:
   reading_mode_paged_rtl: "分页（从右到左）"
   statistics:
     title: 统计数据
-    chapters_read: 阅读的章节
-    completed_manga: 完成的漫画
-    minutes: 分
-    seconds: 秒
-    average_reading_time: 平均阅读时间
+    estimate_note: '时间、页数和距离根据你的进度估算，按你在阅读器中打开的 {opened} 个章节测得的每章约 {minutes} 分钟计算。'
+    loading:
+      '1': 正在清点你的章节…
+      '2': 正在请教宗门长老…
+      '3': 正在用埃菲尔铁塔丈量你的滑动距离…
+      '4': 正在计算你少睡了多少觉…
+      '5': 正在称量你的待读清单。很重。
+    units:
+      years: '{amount} 年'
+      days_hours: '{days}天{hours}小时'
+      hours_minutes: '{hours}小时{minutes}分'
+      km: '{amount} 公里'
+    hero:
+      realm_label: 修炼境界
+      tap_hint: 点我
+      realm_level: '第 {level} 境 / 共 {max} 境'
+      next_realm: '距离{realm}还差 {amount} 章'
+      max_realm: 你已登峰造极，天地为之震颤。
+      reader_since: '自 {date} 开始修炼'
+    realms:
+      mortal: 凡人
+      qi_condensation: 炼气
+      foundation: 筑基
+      core_formation: 结丹
+      nascent_soul: 元婴
+      soul_formation: 化神
+      spirit_severing: 斩灵
+      dao_seeking: 问道
+      immortal: 飞升
+      heavenly_emperor: 天帝
+    totals:
+      chapters_read: 已读章节
+      time_read: 阅读时间
+      pages_read: 已读页数
+      distance: 拇指滑动距离
+      series: 书库中的作品
+      chapters_opened: 在此打开的章节
+    facts:
+      title: 完全必要的比较
+      subtitle: 滑动 →
+      eiffel: '相当于 {amount} 座埃菲尔铁塔的高度，全靠拇指一下一下滑出来。'
+      everest: '你本可以滑上珠穆朗玛峰 {amount} 次。'
+      marathon: '{amount} 场纯滑动马拉松。你的拇指值得一枚奖牌。'
+      lotr: '你本可以看 {amount} 遍《指环王》加长版三部曲。你选择了漫画。'
+      flights: '足够从阿姆斯特丹飞往东京 {amount} 次。'
+      sleep: '{amount} 个完整的夜晚，换成了"再看一章就睡"。'
+      paper: '打印出来叠在一起，你的页数有 {amount} 米高，相当于 {giraffes} 只长颈鹿。'
+      per_day: '自 {date} 起，每天 {amount} 章，从不间断。'
+    streak:
+      title: 火力全开
+      days: '{amount} 天'
+      current: 当前连续天数。别断了。
+      zero: 目前没有连续记录。今天读一章就好。
+      longest: 最长连续
+      last_30: 最近 30 天的章节
+      sessions: 阅读次数
+      longest_session: 最长一次
+    activity:
+      title: 修炼日志
+      subtitle: 你每天打开的每一章
+      tooltip: '{date}：{amount} 章'
+      log_note: '自 {date} 起记录'
+      less: 少
+      more: 多
+    clock:
+      title: 你什么时候读？
+      center: 点击时钟
+      hour: "{hour}:00\n{amount} 章"
+      best_day: '你最爱的一天：{day}'
+      day_tooltip: '{day}：{amount} 章'
+      persona_none: 读点什么，我们就告诉你你是谁。
+      persona_night_owl: '夜猫子 🦉 你 {percent}% 的阅读发生在晚上 10 点之后。'
+      persona_early_bird: '早起鸟 🐦 你 {percent}% 的阅读发生在上午 10 点之前。'
+      persona_lunch: '午休读者 🍱 你 {percent}% 的阅读发生在中午前后。'
+      persona_afternoon: '下午摸鱼 ☕ 你 {percent}% 的阅读发生在下午 2 点到 6 点。'
+      persona_evening: '晚间读者 🌙 你 {percent}% 的阅读发生在晚上 6 点到 10 点。'
+    binge:
+      title: 最疯狂的一天
+      chapters: '{amount} 章'
+      text: '{date} 那天你读了这么多章，主要是《{title}》。你睡觉了吗？'
+    taste:
+      title: 你的口味
+      genre_share: '你读的内容中有 {percent}% 是{genre}。'
+      genres: 热门类型
+      genre_value: '{chapters} 章 · {series} 部'
+      authors: 最爱作者
+      chapters_short: '{amount} 章'
+      hosts: 你在哪里读
+      sites: 个网站
+      other: 其他
+      languages: 语言
+      ongoing: '你的 {total} 部作品中有 {amount} 部仍在连载'
+      publishing: 连载中
+      ended: 已完结
+    library:
+      title: 你的书库
+      completed: 已读完
+      in_progress: 在读
+      dropped: 已弃坑
+      not_started: 未开始
+      backlog: 章正在等你
+      backlog_none: 待读清单是空的。去找部新作品吧！
+      backlog_never: '按你现在的速度：永远读不完。除非……？'
+      backlog_pace: '按最近 30 天的速度需要 {time}。赶紧开始吧。'
+      most_read: 名人堂
+      fastest: 速通
+      fastest_text: '{days} 天读完 {chapters} 章'
+      relationship: 最长的感情
+      relationship_text: '已相伴 {days} 天'
+      recently_finished: 最近读完
+      abandoned: 它们想你了
+      abandoned_subtitle: 没读完，而且好几个月没碰了
+      abandoned_days: '{days} 天没读了 · {progress}/{total}'
+    friends:
+      title: 宗门排行
+      subtitle: 你与你关注的人，最近 30 天
+      you: 你
+      nothing_shared: '已读 {total} 章 · 暂无共同作品'
+      shared: '已读 {total} 章 · {amount} 部共同作品：{titles}'
+    year:
+      title: '{year} 年度回顾'
+      intro: '{year} 年你打开了'
+      chapters: 章
+      minutes: '大约阅读了 {time}'
+      new_series: '{amount} 部新作品'
+      finished: '读完 {amount} 部'
+      active_days: '{amount} 个活跃日'
+      top_series: 你的年度作品
+      top_series_chapters: '今年读了 {amount} 章'
+      top_genre: 你的年度类型
+      top_month: '巅峰月份：{month}，共 {amount} 章'
+      no_month: 今年还没有阅读记录
+      persona: 你的读者类型
+    personas:
+      night_owl:
+        name: 夜猫子
+        description: 最好的章节，要在凌晨两点、躲在被窝里、开着最高亮度读。
+      binger:
+        name: 狂刷党
+        description: '"再看一章"是你每天对自己撒的谎。'
+      completionist:
+        name: 完结强迫症
+        description: 开了坑就要填完，绝不弃坑。
+      loyalist:
+        name: 死忠粉
+        description: 你找到了你的类型，再也不会离开。
+      collector:
+        name: 囤积者
+        description: 你收集作品就像收集丹药。读不读是未来的你的事。
+      disciplined:
+        name: 自律修士
+        description: 整整一周一天不落。宗门长老表示认可。
+      steady:
+        name: 稳健修士
+        description: 平静、稳定、波澜不惊。你的道很平衡。
   scraper_status:
     title: 抓取器状态
     empty: 尚未记录任何抓取尝试

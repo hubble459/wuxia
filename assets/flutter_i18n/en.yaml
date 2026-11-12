@@ -122,11 +122,161 @@ settings:
   reading_mode_paged_rtl: "Paged (right to left)"
   statistics:
     title: Statistics
-    completed_manga: Completed Manga
-    chapters_read: Chapters Read
-    minutes: ' minutes'
-    seconds: ' seconds'
-    average_reading_time: Average Reading Time
+    estimate_note: 'Time, pages and distance are estimated from your progress, at your pace of about {minutes} min per chapter measured over the {opened} chapters you opened in the reader.'
+    loading:
+      '1': Counting your chapters…
+      '2': Consulting the sect elders…
+      '3': Measuring your scroll in Eiffel Towers…
+      '4': Calculating how much sleep you skipped…
+      '5': Weighing your backlog. It is heavy.
+    units:
+      years: '{amount} years'
+      days_hours: '{days}d {hours}h'
+      hours_minutes: '{hours}h {minutes}m'
+      km: '{amount} km'
+    hero:
+      realm_label: Cultivation realm
+      tap_hint: tap me
+      realm_level: 'Realm {level} of {max}'
+      next_realm: '{amount} chapters until {realm}'
+      max_realm: You have reached the peak. The heavens tremble.
+      reader_since: 'Cultivating since {date}'
+    realms:
+      mortal: Mortal
+      qi_condensation: Qi Condensation
+      foundation: Foundation Establishment
+      core_formation: Core Formation
+      nascent_soul: Nascent Soul
+      soul_formation: Soul Formation
+      spirit_severing: Spirit Severing
+      dao_seeking: Dao Seeking
+      immortal: Immortal Ascension
+      heavenly_emperor: Heavenly Emperor
+    totals:
+      chapters_read: Chapters read
+      time_read: Time spent reading
+      pages_read: Pages read
+      distance: Scrolled with your thumb
+      series: Series in your library
+      chapters_opened: Chapters opened here
+    facts:
+      title: Completely necessary comparisons
+      subtitle: Swipe →
+      eiffel: "That's {amount}× the height of the Eiffel Tower, scrolled one thumb flick at a time."
+      everest: 'You could have scrolled up Mount Everest {amount} times.'
+      marathon: '{amount} marathons of pure scrolling. Your thumb deserves a medal.'
+      lotr: 'You could have watched the Lord of the Rings extended trilogy {amount} times. You chose manga.'
+      flights: 'Enough time to fly Amsterdam → Tokyo {amount} times.'
+      sleep: '{amount} full nights of sleep, traded for "just one more chapter".'
+      paper: 'Printed and stacked, your pages would tower {amount} m high. That is {giraffes} giraffes.'
+      per_day: '{amount} chapters a day, every single day, since {date}.'
+    streak:
+      title: On fire
+      days: '{amount} days'
+      current: Current streak. Do not break the chain.
+      zero: No streak right now. One chapter today fixes that.
+      longest: Longest streak
+      last_30: Chapters in the last 30 days
+      sessions: Reading sessions
+      longest_session: Longest session
+    activity:
+      title: Cultivation log
+      subtitle: Every chapter you opened, day by day
+      tooltip: '{date}: {amount} chapters'
+      log_note: 'Logged since {date}'
+      less: Less
+      more: More
+    clock:
+      title: When do you read?
+      center: Tap the clock
+      hour: "{hour}:00\n{amount} chapters"
+      best_day: 'Your favourite day: {day}'
+      day_tooltip: '{day}: {amount} chapters'
+      persona_none: Read something and we will tell you who you are.
+      persona_night_owl: 'Night owl 🦉 {percent}% of your reading happens after 10 pm.'
+      persona_early_bird: 'Early bird 🐦 {percent}% of your reading happens before 10 am.'
+      persona_lunch: 'Lunch-break reader 🍱 {percent}% of your reading happens around noon.'
+      persona_afternoon: 'Afternoon slacker ☕ {percent}% of your reading happens between 2 and 6 pm.'
+      persona_evening: 'Evening reader 🌙 {percent}% of your reading happens between 6 and 10 pm.'
+    binge:
+      title: Biggest binge
+      chapters: '{amount} chapters'
+      text: 'On {date} you read that many chapters in one day, mostly {title}. Did you sleep at all?'
+    taste:
+      title: Your taste
+      genre_share: '{percent}% of everything you read is {genre}.'
+      genres: Top genres
+      genre_value: '{chapters} ch. · {series} series'
+      authors: Favourite authors
+      chapters_short: '{amount} ch.'
+      hosts: Where you read
+      sites: sites
+      other: Other
+      languages: Languages
+      ongoing: '{amount} of your {total} series are still being published'
+      publishing: Still publishing
+      ended: Ended
+    library:
+      title: Your library
+      completed: Completed
+      in_progress: Reading
+      dropped: Dropped
+      not_started: Not started
+      backlog: chapters are waiting for you
+      backlog_none: Your backlog is empty. Go find a new series!
+      backlog_never: 'At your current pace: never. Unless…?'
+      backlog_pace: 'At your 30-day pace that takes {time}. Better get going.'
+      most_read: Hall of fame
+      fastest: Speedrun
+      fastest_text: '{chapters} chapters in {days} days'
+      relationship: Longest relationship
+      relationship_text: 'Together for {days} days'
+      recently_finished: Recently finished
+      abandoned: They miss you
+      abandoned_subtitle: Unfinished and untouched for months
+      abandoned_days: '{days} days since you last read · {progress}/{total}'
+    friends:
+      title: Sect rankings
+      subtitle: You vs. the people you follow, last 30 days
+      you: you
+      nothing_shared: '{total} chapters read · nothing in common, yet'
+      shared: '{total} chapters read · {amount} in common: {titles}'
+    year:
+      title: '{year} wrapped'
+      intro: 'In {year} you opened'
+      chapters: chapters
+      minutes: 'That is about {time} of reading'
+      new_series: '{amount} new series'
+      finished: '{amount} finished'
+      active_days: '{amount} active days'
+      top_series: Your series of the year
+      top_series_chapters: '{amount} chapters this year'
+      top_genre: Your genre of the year
+      top_month: 'Peak month: {month}, with {amount} chapters'
+      no_month: No reading logged this year yet
+      persona: Your reader type
+    personas:
+      night_owl:
+        name: The Night Owl
+        description: The best chapters are read at 2 am, under the covers, at full brightness.
+      binger:
+        name: The Binger
+        description: '"Just one more chapter" is a lie you tell yourself daily.'
+      completionist:
+        name: The Completionist
+        description: You start it, you finish it. No series left behind.
+      loyalist:
+        name: The Loyalist
+        description: You found your genre and you are never leaving.
+      collector:
+        name: The Hoarder
+        description: You collect series like cultivation pills. Reading them is a problem for future you.
+      disciplined:
+        name: The Disciplined Cultivator
+        description: A week straight without missing a day. The sect elders approve.
+      steady:
+        name: The Steady Cultivator
+        description: Calm, consistent, unbothered. Your dao is balanced.
   scraper_status:
     title: Scraper Status
     empty: No scrape attempts recorded yet
