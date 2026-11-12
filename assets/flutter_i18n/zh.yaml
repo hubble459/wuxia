@@ -40,6 +40,8 @@ manga:
   download-complete: 下载完成
   download-failed: 下载失败
   download-eta: '还剩 {eta}'
+  downloaded: 已下载
+  update-download: 更新下载
   force-rescrape: 强制重新抓取
   merge-into: 合并到另一部漫画
   delete: 删除漫画
@@ -210,6 +212,15 @@ downloads:
   exported: 已导出到 {path}
   export_failed: 导出失败：{error}
   delete: 删除下载
+  queue: 队列
+  downloaded: 已下载
+  queued: 等待开始
+  queued_count: '{count} 个排队中'
+  queued_toast: 已添加到下载
+  already_queued: 已在下载队列中
+  complete_toast: '{title} 下载完成'
+  failed_toast: '{title} 下载失败'
+  dismiss: 移除
 offline:
   title: 您已离线
   message: 目前无法连接到服务器。

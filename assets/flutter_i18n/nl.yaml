@@ -97,6 +97,8 @@ manga:
   download-complete: Download voltooid
   download-failed: Download mislukt
   download-eta: '{eta} resterend'
+  downloaded: Gedownload
+  update-download: Download bijwerken
   force-rescrape: Forceer herscrapen
   merge-into: Samenvoegen met een andere manga
   delete: Manga verwijderen
@@ -210,6 +212,15 @@ downloads:
   exported: 'Geëxporteerd naar {path}'
   export_failed: 'Exporteren mislukt: {error}'
   delete: Download verwijderen
+  queue: Wachtrij
+  downloaded: Gedownload
+  queued: Wacht om te starten
+  queued_count: '{count} in wachtrij'
+  queued_toast: Toegevoegd aan downloads
+  already_queued: Staat al in de downloadwachtrij
+  complete_toast: '{title} is gedownload'
+  failed_toast: 'Downloaden van {title} mislukt'
+  dismiss: Verwijderen
 offline:
   title: Je bent offline
   message: De server is nu niet bereikbaar.

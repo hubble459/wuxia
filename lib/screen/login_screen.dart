@@ -7,6 +7,7 @@ import 'package:wuxia/constant.dart';
 import 'package:wuxia/gen/rumgap/v1/user.pb.dart';
 import 'package:wuxia/partial/dialog/change_host_dialog.dart';
 import 'package:wuxia/partial/responsive_content.dart';
+import 'package:wuxia/util/download_manager.dart';
 import 'package:wuxia/util/store.dart';
 import 'package:wuxia/util/tools.dart';
 import 'package:wuxia/util/validator_builder.dart';
@@ -58,6 +59,7 @@ class _LoginScreenState extends State<LoginScreen> {
       final store = Store.getStoreInstance();
       store.setUsername(user.user.username);
       store.setToken(user.token);
+      downloadManager.resume();
 
       if (!mounted) {
         return;

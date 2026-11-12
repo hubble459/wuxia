@@ -22,6 +22,7 @@ import 'package:wuxia/screen/setting/statistics_screen.dart';
 import 'package:wuxia/screen/settings_screen.dart';
 import 'package:wuxia/screen/splash_screen.dart';
 import 'package:wuxia/util/app_routes.dart';
+import 'package:wuxia/util/download_manager.dart';
 import 'package:wuxia/util/store.dart';
 
 extension ReadingManga on MangaReply {
@@ -44,10 +45,10 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 }
 
 /// Entry point for the isolate `flutter_foreground_task` spins up to host its
-/// foreground-service notification while a manga download runs -- the actual
-/// download loop stays on the main isolate (see `_downloadManga` in
-/// manga_screen.dart), so this handler does nothing beyond keeping the
-/// service alive.
+/// foreground-service notification while the download queue runs -- the
+/// actual download loop stays on the main isolate (see `DownloadManager`),
+/// so this handler only keeps the service alive and forwards notification
+/// button presses to the main isolate.
 @pragma('vm:entry-point')
 void downloadForegroundTaskCallback() {
   FlutterForegroundTask.setTaskHandler(_DownloadForegroundTaskHandler());
@@ -62,6 +63,9 @@ class _DownloadForegroundTaskHandler extends TaskHandler {
 
   @override
   Future<void> onDestroy(DateTime timestamp, bool isTimeout) async {}
+
+  @override
+  void onNotificationButtonPressed(String id) => FlutterForegroundTask.sendDataToMain(id);
 }
 
 GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -75,6 +79,7 @@ void main() async {
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   }
   if (!kIsWeb && Platform.isAndroid) {
+    FlutterForegroundTask.initCommunicationPort();
     FlutterForegroundTask.init(
       androidNotificationOptions: AndroidNotificationOptions(
         channelId: 'manga_download',
@@ -89,6 +94,7 @@ void main() async {
   PaintingBinding.instance.imageCache.maximumSize = 1000;
   PaintingBinding.instance.imageCache.maximumSizeBytes = 300 << 20;
   final store = await Store.init();
+  downloadManager.restore();
   await Jiffy.setLocale(store.getLanguage() ?? 'en');
 
   runApp(const WuxiaApp());

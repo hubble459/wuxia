@@ -20,6 +20,7 @@ import 'package:wuxia/screen/reading_screen.dart';
 import 'package:wuxia/screen/search_screen.dart';
 import 'package:wuxia/util/app_routes.dart';
 import 'package:wuxia/util/session.dart';
+import 'package:wuxia/util/download_manager.dart';
 import 'package:wuxia/util/store.dart';
 import 'package:wuxia/util/tools.dart';
 
@@ -31,7 +32,10 @@ class Route {
   final String label;
   final Widget widget;
 
-  const Route({required this.icon, required this.label, required this.widget});
+  /// Whether the icon shows a badge with the number of active downloads.
+  final bool downloadBadge;
+
+  const Route({required this.icon, required this.label, required this.widget, this.downloadBadge = false});
 }
 
 class RootNavScreen extends StatefulWidget {
@@ -184,6 +188,18 @@ class _RootNavScreenState extends State<RootNavScreen> {
     Store.getStoreInstance().setRootNavTab(index).ignore();
   }
 
+  Widget _routeIcon(Route route) {
+    final icon = Icon(route.icon);
+    if (!route.downloadBadge) return icon;
+    return ListenableBuilder(
+      listenable: downloadManager,
+      builder: (context, _) {
+        final count = downloadManager.activeCount;
+        return Badge(isLabelVisible: count > 0, label: Text('$count'), child: icon);
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (!_ready) {
@@ -195,7 +211,12 @@ class _RootNavScreenState extends State<RootNavScreen> {
       Route(label: FlutterI18n.translate(context, 'nav.latest'), icon: Icons.whatshot, widget: const LatestScreen()),
       Route(label: FlutterI18n.translate(context, 'nav.search'), icon: Icons.search, widget: const SearchScreen()),
       if (downloadsSupported)
-        Route(label: FlutterI18n.translate(context, 'nav.downloads'), icon: Icons.download, widget: const DownloadsScreen()),
+        Route(
+          label: FlutterI18n.translate(context, 'nav.downloads'),
+          icon: Icons.download,
+          widget: const DownloadsScreen(),
+          downloadBadge: true,
+        ),
     ];
     final isWide = MediaQuery.sizeOf(context).width >= _wideBreakpoint;
 
@@ -260,7 +281,7 @@ class _RootNavScreenState extends State<RootNavScreen> {
                   selectedIndex: _selected,
                   onDestinationSelected: _selectTab,
                   destinations: routes
-                      .map((route) => NavigationRailDestination(icon: Icon(route.icon), label: Text(route.label)))
+                      .map((route) => NavigationRailDestination(icon: _routeIcon(route), label: Text(route.label)))
                       .toList(),
                 ),
               if (isWide) const VerticalDivider(width: 1),
@@ -279,7 +300,7 @@ class _RootNavScreenState extends State<RootNavScreen> {
             ? null
             : BottomNavigationBar(
                 type: BottomNavigationBarType.fixed,
-                items: routes.map((route) => BottomNavigationBarItem(icon: Icon(route.icon), label: route.label)).toList(),
+                items: routes.map((route) => BottomNavigationBarItem(icon: _routeIcon(route), label: route.label)).toList(),
                 currentIndex: _selected,
                 onTap: _selectTab,
               ),

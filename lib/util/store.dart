@@ -13,6 +13,7 @@ class Store {
   static const String languageKey = 'language';
   static const String dataSaverKey = 'data_saver';
   static const String downloadDirKey = 'download_dir';
+  static const String downloadQueueKey = 'download_queue';
   static const String rootNavTabKey = 'root_nav_tab';
   static const String readingModeKey = 'reading_mode';
   static const String mangaReadingModeKeyPrefix = 'reading_mode_manga_';
@@ -158,6 +159,20 @@ class Store {
   Future<void> clearPendingProgress(int mangaId) async {
     await _publicStorage.remove('$pendingProgressKeyPrefix$mangaId');
     await _publicStorage.remove('$pendingProgressChapterKeyPrefix$mangaId');
+  }
+
+  /// The download queue as saved by `DownloadManager`, one encoded task per
+  /// entry, so it survives an app restart (or a page reload on web).
+  List<String> getDownloadQueue() {
+    return _publicStorage.getStringList(downloadQueueKey) ?? [];
+  }
+
+  Future<void> setDownloadQueue(List<String> queue) async {
+    if (queue.isEmpty) {
+      await _publicStorage.remove(downloadQueueKey);
+    } else {
+      await _publicStorage.setStringList(downloadQueueKey, queue);
+    }
   }
 
   /// The bottom-nav tab that was open last, so a restart (or a page reload

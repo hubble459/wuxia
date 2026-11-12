@@ -1,6 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:wuxia/partial/download_reconnect.dart';
+import 'package:wuxia/partial/download_task_tile.dart';
+import 'package:wuxia/util/download_manager.dart';
 import 'package:wuxia/util/download_storage/download_storage.dart';
 import 'package:wuxia/util/tools.dart';
 import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
@@ -16,11 +20,19 @@ class DownloadsScreen extends StatefulWidget {
 
 class _DownloadsScreenState extends State<DownloadsScreen> {
   late Future<List<MangaReply>> _future;
+  late final StreamSubscription<void> _downloadCompleted;
 
   @override
   void initState() {
     super.initState();
     _future = _loadDownloaded();
+    _downloadCompleted = downloadManager.completed.listen((_) => _reload());
+  }
+
+  @override
+  void dispose() {
+    _downloadCompleted.cancel();
+    super.dispose();
   }
 
   bool _needsPermission = false;
@@ -73,33 +85,46 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
   @override
   Widget build(BuildContext context) {
     return ResponsiveContent(
-      child: FutureBuilder<List<MangaReply>>(
-        future: _future,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState != ConnectionState.done) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (_needsPermission) return _reconnectPrompt();
-          final items = snapshot.data ?? [];
-          if (items.isEmpty) {
-            return Center(child: Text(FlutterI18n.translate(context, 'empty')));
-          }
-          return RefreshIndicator(
-            onRefresh: () async => _reload(),
-            child: ListView.builder(
-              itemCount: items.length,
-              itemBuilder: (context, index) {
-                final manga = items[index];
-                return MangaItem(
-                  key: Key('dl_${manga.id}'),
-                  manga: manga,
-                  type: HeroScreenType.downloads,
-                  reloadParent: (_, _) => _reload(),
-                );
-              },
-            ),
-          );
-        },
+      child: ListenableBuilder(
+        listenable: downloadManager,
+        builder: (context, _) => FutureBuilder<List<MangaReply>>(
+          future: _future,
+          builder: (context, snapshot) {
+            final tasks = downloadManager.tasks;
+            if (snapshot.connectionState != ConnectionState.done && tasks.isEmpty) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (_needsPermission) return _reconnectPrompt();
+            final items = snapshot.data ?? [];
+            if (items.isEmpty && tasks.isEmpty) {
+              return Center(child: Text(FlutterI18n.translate(context, 'empty')));
+            }
+            final theme = Theme.of(context);
+            Widget header(String key) => Padding(
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+              child: Text(FlutterI18n.translate(context, key), style: theme.textTheme.titleSmall),
+            );
+            return RefreshIndicator(
+              onRefresh: () async => _reload(),
+              child: ListView(
+                children: [
+                  if (tasks.isNotEmpty) ...[
+                    header('downloads.queue'),
+                    for (final task in tasks) DownloadTaskTile(key: ObjectKey(task), task: task),
+                    if (items.isNotEmpty) header('downloads.downloaded'),
+                  ],
+                  for (final manga in items)
+                    MangaItem(
+                      key: Key('dl_${manga.id}'),
+                      manga: manga,
+                      type: HeroScreenType.downloads,
+                      reloadParent: (_, _) => _reload(),
+                    ),
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }

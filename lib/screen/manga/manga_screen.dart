@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
@@ -20,8 +22,8 @@ import 'package:wuxia/partial/manga_details.dart';
 import 'package:wuxia/partial/dialog/add_manga_dialog.dart';
 import 'package:wuxia/partial/responsive_content.dart';
 import 'package:wuxia/screen/manga/manga_bottom_bar.dart';
-import 'package:wuxia/screen/manga/manga_downloader.dart';
 import 'package:wuxia/screen/search_screen.dart';
+import 'package:wuxia/util/download_manager.dart';
 import 'package:wuxia/util/tools.dart';
 
 enum _MangaMenuAction {
@@ -303,13 +305,19 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
 
   final _imageHeight = 400.0;
 
+  /// Chapter count of this manga's last finished download, `0` for a
+  /// download that never finished, or `null` if it isn't downloaded.
+  int? _downloadedChapters;
+
   /// Whether this manga has a download to export.
-  bool _isDownloaded = false;
+  bool get _isDownloaded => _downloadedChapters != null;
+
+  StreamSubscription<void>? _downloadCompleted;
 
   Future<void> _refreshDownloaded() async {
     if (!downloadsSupported) return;
-    final downloaded = await findDownloadedMangaDir(_manga.id) != null;
-    if (mounted && downloaded != _isDownloaded) setState(() => _isDownloaded = downloaded);
+    final downloaded = await loadDownloadedChapterCount(_manga.id);
+    if (mounted && downloaded != _downloadedChapters) setState(() => _downloadedChapters = downloaded);
   }
 
   @override
@@ -319,11 +327,29 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
 
     loadManga();
     _refreshDownloaded();
+    _downloadCompleted = downloadManager.completed
+        .where((task) => task.manga.id == _manga.id)
+        .listen((_) => _refreshDownloaded());
 
     super.initState();
   }
 
   static const _wideBreakpoint = 900.0;
+
+  /// "Download" when not downloaded yet, disabled while queued or once the
+  /// last finished download already has every chapter, and "Update
+  /// download" when new chapters came out or an earlier download didn't
+  /// finish -- re-running a download skips every page already on disk.
+  PopupMenuItem<_MangaMenuAction> _downloadMenuItem() {
+    final downloaded = _downloadedChapters;
+    final (key, enabled) = switch (downloaded) {
+      _ when downloadManager.taskFor(_manga.id) != null => ('manga.downloading', false),
+      null => ('manga.download', true),
+      _ when downloaded >= _manga.countChapters.toInt() => ('manga.downloaded', false),
+      _ => ('manga.update-download', true),
+    };
+    return PopupMenuItem(value: _MangaMenuAction.download, enabled: enabled, child: Text(FlutterI18n.translate(context, key)));
+  }
 
   List<Widget> _appBarActions(BuildContext context) {
     return [
@@ -383,7 +409,7 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
               });
             }
           } else if (action == _MangaMenuAction.download) {
-            MangaDownloader(manga: _manga, source: _selectedSource).download(context).then((_) => _refreshDownloaded());
+            downloadManager.enqueue(context, _manga, _selectedSource).then((_) => _refreshDownloaded());
           } else if (action == _MangaMenuAction.exportCbz) {
             exportMangaCbz(context, _manga.id);
           } else if (action == _MangaMenuAction.forceRescrape) {
@@ -406,8 +432,7 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
             value: _MangaMenuAction.addSourceFromUrl,
             child: Text(FlutterI18n.translate(context, 'manga.add-source-url')),
           ),
-          if (downloadsSupported)
-            PopupMenuItem(value: _MangaMenuAction.download, child: Text(FlutterI18n.translate(context, 'manga.download'))),
+          if (downloadsSupported) _downloadMenuItem(),
           if (_isDownloaded)
             PopupMenuItem(value: _MangaMenuAction.exportCbz, child: Text(FlutterI18n.translate(context, 'downloads.export_cbz'))),
           if (API.loggedIn.isAdmin)
@@ -583,6 +608,7 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
 
   @override
   void dispose() {
+    _downloadCompleted?.cancel();
     _animationController.dispose();
     super.dispose();
   }

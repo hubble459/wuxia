@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:wuxia/util/download_manager.dart';
 import 'package:wuxia/util/download_storage/download_storage.dart';
 
 /// Re-requests access to a previously picked web download folder. Must run
-/// from a user gesture (a button press). Returns whether access is granted.
+/// from a user gesture (a button press). Returns whether access is granted;
+/// once it is, any download queued while access was missing starts.
 Future<bool> reconnectDownloads(BuildContext context) async {
   final granted = await downloadStorage.requestPermission();
+  if (granted) downloadManager.resume();
   if (!granted && context.mounted) {
     Fluttertoast.showToast(msg: FlutterI18n.translate(context, 'downloads.reconnect_failed')).ignore();
   }

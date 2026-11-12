@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:grpc/grpc.dart';
 import 'package:wuxia/api.dart';
 import 'package:wuxia/gen/rumgap/v1/chapter.pb.dart';
@@ -49,7 +51,7 @@ Future<Map<String, MangaReply>> listDownloadedManga() async {
 }
 
 /// Downloaded manga folders are keyed by a sanitized title, not id (see
-/// `MangaDownloader`), so finding "is manga [mangaId] downloaded" means
+/// `DownloadManager`), so finding "is manga [mangaId] downloaded" means
 /// scanning every folder's `manga.pb` rather than building a path directly.
 Future<String?> findDownloadedMangaDir(int mangaId) async {
   final downloaded = await listDownloadedManga();
@@ -83,7 +85,30 @@ Future<void> deleteAllDownloads() async {
   }
 }
 
-/// The full chapter list `MangaDownloader` saved to `chapters.pb`, oldest
+/// Records in [mangaDir] that a download finished with [chapterCount]
+/// chapters. `chapters.pb` is written when a download starts (the offline
+/// reader needs it), so it can't tell a finished download from one that
+/// was interrupted; this marker is only written once every chapter is on
+/// disk.
+Future<void> writeDownloadCompleteMarker(String mangaDir, int chapterCount) async {
+  await downloadStorage.write('$mangaDir/complete', utf8.encode('$chapterCount'));
+}
+
+/// How many chapters the last finished download of [mangaId] had, `0` if
+/// it's downloaded but never finished (or finished before this marker
+/// existed), or `null` if it isn't downloaded at all.
+Future<int?> loadDownloadedChapterCount(int mangaId) async {
+  final dir = await findDownloadedMangaDir(mangaId);
+  if (dir == null) return null;
+  try {
+    final bytes = await downloadStorage.read('$dir/complete');
+    return bytes == null ? 0 : int.tryParse(utf8.decode(bytes)) ?? 0;
+  } catch (_) {
+    return 0;
+  }
+}
+
+/// The full chapter list `DownloadManager` saved to `chapters.pb`, oldest
 /// first (ascending `index`) -- callers reverse as needed to match whatever
 /// order they're after. `null` if there's no usable local copy: never
 /// downloaded, storage not accessible, or a corrupt/missing `chapters.pb`.
@@ -117,7 +142,7 @@ bool isChapterRead(MangaReply manga, ChapterReply chapter) {
 /// so offline-only readers (`DownloadsScreen`, and the various offline
 /// fallbacks) show current progress instead of whatever was true at
 /// download time -- that file is otherwise never touched again after
-/// `MangaDownloader` first writes it. No-op if the manga isn't downloaded.
+/// `DownloadManager` first writes it. No-op if the manga isn't downloaded.
 Future<void> updateOfflineMangaSnapshot(MangaReply manga) async {
   final dir = await findDownloadedMangaDir(manga.id);
   if (dir == null) return;

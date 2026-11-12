@@ -43,6 +43,8 @@ manga:
   download-complete: Download complete
   download-failed: Download failed
   download-eta: '{eta} remaining'
+  downloaded: Downloaded
+  update-download: Update download
   force-rescrape: Force Rescrape
   merge-into: Merge into another manga
   delete: Delete manga
@@ -210,6 +212,15 @@ downloads:
   exported: 'Exported to {path}'
   export_failed: 'Export failed: {error}'
   delete: Delete download
+  queue: Queue
+  downloaded: Downloaded
+  queued: Waiting to start
+  queued_count: '{count} queued'
+  queued_toast: Added to downloads
+  already_queued: Already in the download queue
+  complete_toast: 'Finished downloading {title}'
+  failed_toast: 'Downloading {title} failed'
+  dismiss: Dismiss
 offline:
   title: "You're offline"
   message: "The server can't be reached right now."
