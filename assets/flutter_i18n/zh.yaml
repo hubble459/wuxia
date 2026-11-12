@@ -93,6 +93,8 @@ chapter:
   unlink_confirm: "要将第 {number} 章与其他来源取消关联吗？在重新关联之前，切换来源将找不到它。"
   not_on_source: "此来源没有这一章"
   images_failed: "无法加载本章的页面"
+  login_required: "此章节需要在该网站登录账号"
+  login_required_hint: "可能是抢先看章节，通常之后会免费。请尝试其他来源，或稍后再试。"
   goto_top: 跳到顶部
   goto_bottom: 跳到底部
   goto_first_page: 第一页

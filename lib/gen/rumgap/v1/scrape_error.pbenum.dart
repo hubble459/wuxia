@@ -42,6 +42,10 @@ class ScrapeErrorType extends $pb.ProtobufEnum {
   static const ScrapeErrorType CloudflareIUAM =
       ScrapeErrorType._(12, _omitEnumNames ? '' : 'CloudflareIUAM');
 
+  /// The site wants an account for this, e.g. an early-access chapter.
+  static const ScrapeErrorType LoginRequired =
+      ScrapeErrorType._(13, _omitEnumNames ? '' : 'LoginRequired');
+
   static const $core.List<ScrapeErrorType> values = <ScrapeErrorType>[
     Unknown,
     ReqwestError,
@@ -56,10 +60,11 @@ class ScrapeErrorType extends $pb.ProtobufEnum {
     SearchNotSupported,
     MultipleScrapingErrors,
     CloudflareIUAM,
+    LoginRequired,
   ];
 
   static final $core.List<ScrapeErrorType?> _byValue =
-      $pb.ProtobufEnum.$_initByValueList(values, 12);
+      $pb.ProtobufEnum.$_initByValueList(values, 13);
   static ScrapeErrorType? valueOf($core.int value) =>
       value < 0 || value >= _byValue.length ? null : _byValue[value];
 

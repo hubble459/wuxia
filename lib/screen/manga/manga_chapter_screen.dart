@@ -12,6 +12,7 @@ import 'package:wuxia/api.dart';
 import 'package:wuxia/gen/rumgap/v1/chapter.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/reading.pb.dart';
+import 'package:wuxia/gen/rumgap/v1/scrape_error.pb.dart';
 import 'package:wuxia/main.dart';
 import 'package:wuxia/partial/action/open_url_action.dart';
 import 'package:wuxia/partial/dialog/chapter_picker_dialog.dart';
@@ -158,19 +159,34 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
     });
   }
 
+  /// The scraper's error type rumgap attaches to a failed scrape, if any.
+  ScrapeErrorType? _scrapeErrorType(Object error) {
+    if (error is! GrpcError || error.details == null || error.details!.isEmpty) return null;
+    try {
+      return ScrapeError.fromBuffer((error.details!.first as dynamic).value).type;
+    } catch (_) {
+      return null;
+    }
+  }
+
   Widget _buildImagesError(Object error) {
     if (isNetworkError(error)) return OfflineNotice(onRetry: _loadImages);
-    final detail = error is GrpcError ? (error.message ?? error.codeName) : error.toString();
+    final loginRequired = _scrapeErrorType(error) == ScrapeErrorType.LoginRequired;
+    final detail = loginRequired
+        ? FlutterI18n.translate(context, 'chapter.login_required_hint')
+        : error is GrpcError
+        ? (error.message ?? error.codeName)
+        : error.toString();
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.broken_image_outlined, size: 48),
+            Icon(loginRequired ? Icons.lock_outline : Icons.broken_image_outlined, size: 48),
             const SizedBox(height: 12),
             Text(
-              FlutterI18n.translate(context, 'chapter.images_failed'),
+              FlutterI18n.translate(context, loginRequired ? 'chapter.login_required' : 'chapter.images_failed'),
               style: Theme.of(context).textTheme.titleLarge,
               textAlign: TextAlign.center,
             ),

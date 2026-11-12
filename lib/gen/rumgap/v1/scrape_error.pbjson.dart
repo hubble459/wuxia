@@ -32,6 +32,7 @@ const ScrapeErrorType$json = {
     {'1': 'SearchNotSupported', '2': 10},
     {'1': 'MultipleScrapingErrors', '2': 11},
     {'1': 'CloudflareIUAM', '2': 12},
+    {'1': 'LoginRequired', '2': 13},
   ],
 };
 
@@ -42,7 +43,7 @@ final $typed_data.Uint8List scrapeErrorTypeDescriptor = $convert.base64Decode(
     'b25maWdEZXNlcmlhbGl6ZUVycm9yEAUSFAoQV2ViU2NyYXBpbmdFcnJvchAGEhAKDE5vdEFWYW'
     'xpZFVSTBAHEhEKDVNlbGVjdG9yRXJyb3IQCBIXChNXZWJzaXRlTm90U3VwcG9ydGVkEAkSFgoS'
     'U2VhcmNoTm90U3VwcG9ydGVkEAoSGgoWTXVsdGlwbGVTY3JhcGluZ0Vycm9ycxALEhIKDkNsb3'
-    'VkZmxhcmVJVUFNEAw=');
+    'VkZmxhcmVJVUFNEAwSEQoNTG9naW5SZXF1aXJlZBAN');
 
 @$core.Deprecated('Use scrapeErrorDescriptor instead')
 const ScrapeError$json = {
