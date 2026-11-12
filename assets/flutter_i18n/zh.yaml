@@ -29,6 +29,7 @@ manga:
   chapters: '{amount}章节'
   last: 最后
   continue: 继续
+  start: 开始
   first: 第一
   add: 添加
   similar: 相似的

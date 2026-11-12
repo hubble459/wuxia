@@ -117,7 +117,7 @@ class _MangaChaptersScreenState extends State<MangaChaptersScreen> {
                 itemBuilder: (context, chapter, index) => ChapterItem(
                   manga: widget.manga,
                   refreshParent: (progress) async {
-                    widget.manga.readingProgress = progress;
+                    setReadingProgress(widget.manga, progress);
                     await syncReadingProgress(widget.manga, progress: progress, chapterId: chapter.id);
                     if (!context.mounted) return;
                     await Navigator.of(context).push(

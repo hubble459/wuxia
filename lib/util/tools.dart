@@ -261,6 +261,31 @@ Future<void> updateOfflineMangaSnapshot(MangaReply manga) async {
   } catch (_) {}
 }
 
+/// Marks `MangaReply` instances whose `readingProgress` was set locally to
+/// read a manga that isn't in the reading list. Tied to the instance, so a
+/// fresh reply from the server carries the server's state again.
+final _localProgress = Expando<bool>('localProgress');
+
+/// Whether [manga] is in the user's reading list (as opposed to only having
+/// a local position from reading it outside the list).
+bool isInReadingList(MangaReply manga) => manga.hasReadingProgress() && _localProgress[manga] != true;
+
+/// Moves [manga]'s position to [progress] before navigating to a chapter.
+/// For a manga outside the reading list the position stays local to this
+/// instance and [syncReadingProgress] doesn't send it to the server.
+void setReadingProgress(MangaReply manga, int progress) {
+  if (!manga.hasReadingProgress()) _localProgress[manga] = true;
+  manga.readingProgress = progress;
+}
+
+/// Records that [manga] was just added to the reading list: replaces it with
+/// the server's [reply] and drops any local-only position.
+void markAddedToReadingList(MangaReply manga, MangaReply reply) {
+  _localProgress[manga] = null;
+  manga.clear();
+  manga.mergeFromMessage(reply);
+}
+
 /// Persists a reading-progress update, merging the server's response back
 /// into `manga` on success -- it carries fields the client can't compute
 /// locally (e.g. `progressOrdinal`, the cross-source-comparable rank
@@ -268,8 +293,10 @@ Future<void> updateOfflineMangaSnapshot(MangaReply manga) async {
 /// only hand-sets `manga.readingProgress` before calling this leaves that
 /// stale until the merge lands. Falls back to `Store`'s single-latest-value
 /// pending slot when the write fails (typically offline) so it can be
-/// retried once back online instead of just lost.
+/// retried once back online instead of just lost. Does nothing for a manga
+/// outside the reading list.
 Future<void> syncReadingProgress(MangaReply manga, {required int progress, int? chapterId}) async {
+  if (!isInReadingList(manga)) return;
   try {
     final request = ReadingPatchRequest(mangaId: manga.id, progress: progress);
     if (chapterId != null) request.chapterId = chapterId;

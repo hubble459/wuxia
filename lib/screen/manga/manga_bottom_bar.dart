@@ -31,9 +31,11 @@ class NewMangaOptions extends StatelessWidget {
       color: Theme.of(context).colorScheme.primary,
       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
       onPressed: () async {
+        final localProgress = manga.readingProgress;
         final m = await api.reading.create(ReadingPostRequest(mangaId: manga.id));
-        manga.clear();
-        manga.mergeFromMessage(m);
+        markAddedToReadingList(manga, m);
+        // Keep the place reached while reading it outside the list.
+        if (localProgress > manga.readingProgress) await syncReadingProgress(manga, progress: localProgress);
         refreshParent();
       },
       child: I18nText('manga.add'),
@@ -86,7 +88,7 @@ class _ChapterSelectorState extends State<ChapterSelector> {
 
   Future<void> continueReading() async {
     if (widget.manga.readingProgress == 0) {
-      widget.manga.readingProgress = 1;
+      setReadingProgress(widget.manga, 1);
       await syncReadingProgress(widget.manga, progress: widget.manga.readingProgress);
     }
 
@@ -116,7 +118,7 @@ class _ChapterSelectorState extends State<ChapterSelector> {
   }
 
   Future<void> gotoChapter(ChapterReply chapter) async {
-    widget.manga.readingProgress = chapter.index.toInt();
+    setReadingProgress(widget.manga, chapter.index.toInt());
     await syncReadingProgress(widget.manga, progress: widget.manga.readingProgress, chapterId: chapter.id);
 
     if (!mounted) return;
@@ -243,7 +245,7 @@ class _ChapterSelectorState extends State<ChapterSelector> {
                   splashColor: Theme.of(context).primaryColorLight,
                   minWidth: 0,
                   onPressed: continueReading,
-                  child: I18nText('manga.continue'),
+                  child: I18nText(widget.manga.readingProgress == 0 ? 'manga.start' : 'manga.continue'),
                 ),
               ]),
       ],

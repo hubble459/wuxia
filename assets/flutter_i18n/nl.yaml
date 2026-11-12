@@ -86,6 +86,7 @@ manga:
   add: Toevoegen
   chapters: "{amount} hoofdstukken"
   continue: Doorgaan
+  start: Beginnen
   expected-update: Verwachte update {date}
   first: Eerst
   last: Laatst

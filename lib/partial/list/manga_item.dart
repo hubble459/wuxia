@@ -73,7 +73,7 @@ class _MangaItemState extends State<MangaItem> {
   }
 
   bool get isReading {
-    return _manga.hasReadingProgress();
+    return isInReadingList(_manga);
   }
 
   /// [MangaItem.hostnames] when given, otherwise the primary source's

@@ -5,6 +5,7 @@ import 'package:wuxia/api.dart';
 import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
 import 'package:wuxia/partial/list/manga_item.dart';
 import 'package:wuxia/partial/simple_future_builder.dart';
+import 'package:wuxia/util/tools.dart';
 
 class MangaDetails extends StatelessWidget {
   final MangaReply manga;
@@ -77,7 +78,7 @@ class MangaDetails extends StatelessWidget {
           children: [
             Icon(Icons.tag),
             Text(
-              (manga.hasReadingProgress() ? '${manga.readingProgress}/' : '') +
+              (isInReadingList(manga) ? '${manga.readingProgress}/' : '') +
                   FlutterI18n.translate(context, 'manga.chapters', translationParams: {'amount': manga.countChapters.toString()}),
             ),
           ],

@@ -277,13 +277,15 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
         fraction = crossOffset.fraction;
       } catch (_) {}
 
-      widget.manga.readingProgress = newChapter.index.toInt();
-      try {
-        await api.reading.update(
-          ReadingPatchRequest(mangaId: widget.manga.id, progress: widget.manga.readingProgress, chapterId: newChapter.id),
-        );
-      } on GrpcError catch (e) {
-        if (e.code != StatusCode.failedPrecondition) rethrow;
+      setReadingProgress(widget.manga, newChapter.index.toInt());
+      if (isInReadingList(widget.manga)) {
+        try {
+          await api.reading.update(
+            ReadingPatchRequest(mangaId: widget.manga.id, progress: widget.manga.readingProgress, chapterId: newChapter.id),
+          );
+        } on GrpcError catch (e) {
+          if (e.code != StatusCode.failedPrecondition) rethrow;
+        }
       }
 
       widget.source.clear();

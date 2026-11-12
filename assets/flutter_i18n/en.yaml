@@ -29,6 +29,7 @@ manga:
   chapters: '{amount} chapters'
   first: First
   continue: Continue
+  start: Start
   last: Last
   add: Add
   similar: Similar

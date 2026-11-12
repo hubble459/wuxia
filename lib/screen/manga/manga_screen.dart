@@ -649,20 +649,25 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
               ? null
               : SizedBox(
                   width: double.infinity,
-                  child: _manga.hasReadingProgress()
-                      ? ChapterSelector(
-                          manga: _manga,
-                          source: _selectedSource,
-                          refreshParent: () {
-                            setState(() {});
-                          },
-                        )
-                      : NewMangaOptions(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (!isInReadingList(_manga))
+                        NewMangaOptions(
                           manga: _manga,
                           refreshParent: () {
                             setState(() {});
                           },
                         ),
+                      ChapterSelector(
+                        manga: _manga,
+                        source: _selectedSource,
+                        refreshParent: () {
+                          setState(() {});
+                        },
+                      ),
+                    ],
+                  ),
                 ),
         ),
       ),
