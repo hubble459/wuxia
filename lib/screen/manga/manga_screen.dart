@@ -92,16 +92,22 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
       }
     }
 
+    final remembered = _manga.sources.firstWhereOrNull((s) => s.id == _manga.selectedSourceId);
     final preferredHostname = API.loggedIn.preferredHostnames.firstOrNull;
     final preferred = _manga.sources.firstWhereOrNull((s) => s.hostname == preferredHostname);
     final primary = _manga.sources.firstWhereOrNull((s) => s.isPrimary);
-    _selectedSource = (preferred ?? primary ?? _manga.sources.first).deepCopy();
+    _selectedSource = (remembered ?? preferred ?? primary ?? _manga.sources.first).deepCopy();
     _selectedSourceInitialized = true;
   }
 
   // Normally pointless to open with a single source (nothing to switch to), but an
   // admin still needs it open to long-press that one source and remove it - the only
   // way to fully delete a manga, since there's no dedicated DeleteManga RPC.
+  /// [_manga] as the selected source has it. The server already sends a manga with the
+  /// details of the source it remembers for this user, but a switch on a manga outside
+  /// the reading list isn't remembered, so the local selection decides what's shown.
+  MangaReply get _shown => _manga.withSourceDetails(_selectedSource);
+
   bool get _canOpenSourceSwitcher => _manga.sources.length > 1 || API.loggedIn.isAdmin;
 
   Future<void> _switchSource() async {
@@ -120,7 +126,22 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
         _selectedSource.mergeFromMessage(selected);
       });
       _refreshDownloaded();
+      _rememberSource(selected);
     }
+  }
+
+  /// Tells the server about a switch, which remembers it (for manga in the reading list)
+  /// and returns the source's details freshly scraped when they were stale. Offline the
+  /// local switch just stands.
+  Future<void> _rememberSource(MangaSourceReply source) async {
+    try {
+      final result = await api.manga.selectSource(SelectSourceRequest(mangaSourceId: source.id));
+      if (!mounted || _selectedSource.id != source.id) return;
+      setState(() {
+        _manga = result;
+        _syncSelectedSource();
+      });
+    } catch (_) {}
   }
 
   /// Deletes this manga for everyone (mod/admin-only, irreversible), then pops back with
@@ -347,7 +368,7 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
     final (key, enabled) = switch (downloaded) {
       _ when downloadManager.taskFor(_manga.id) != null => ('manga.downloading', false),
       null => ('manga.download', true),
-      _ when downloaded >= _manga.countChapters.toInt() => ('manga.downloaded', false),
+      _ when downloaded >= _shown.countChapters.toInt() => ('manga.downloaded', false),
       _ => ('manga.update-download', true),
     };
     return PopupMenuItem(value: _MangaMenuAction.download, enabled: enabled, child: Text(FlutterI18n.translate(context, key)));
@@ -411,7 +432,7 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
               });
             }
           } else if (action == _MangaMenuAction.download) {
-            downloadManager.enqueue(context, _manga, _selectedSource).then((_) => _refreshDownloaded());
+            downloadManager.enqueue(context, _shown, _selectedSource).then((_) => _refreshDownloaded());
           } else if (action == _MangaMenuAction.exportCbz) {
             exportMangaCbz(context, _manga.id, sourceId: _selectedSource.id);
           } else if (action == _MangaMenuAction.forceRescrape) {
@@ -475,11 +496,11 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
 
   Widget _coverImage({BoxFit fit = BoxFit.fitWidth}) {
     return Visibility(
-      visible: _manga.hasCover(),
+      visible: _shown.hasCover(),
       child: Hero(
         tag: widget.heroTag ?? widget.type.getTag(_manga.id.toString()),
         child: CachedNetworkImage(
-          imageUrl: _manga.cover,
+          imageUrl: _shown.cover,
           fit: fit,
           errorWidget: (context, url, error) => const ImageErrorPlaceholder(),
         ),
@@ -508,7 +529,7 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
         SliverPadding(
           padding: const EdgeInsets.all(8.0),
           sliver: SliverList.list(
-            children: [ResponsiveContent(maxWidth: 800, child: MangaDetails(manga: _manga))],
+            children: [ResponsiveContent(maxWidth: 800, child: MangaDetails(manga: _shown))],
           ),
         ),
       ],
@@ -536,12 +557,12 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(_manga.title.replaceAll('\n', ' '), style: Theme.of(context).textTheme.headlineSmall),
-                          if (_manga.altTitles.isNotEmpty)
+                          Text(_shown.title.replaceAll('\n', ' '), style: Theme.of(context).textTheme.headlineSmall),
+                          if (_shown.altTitles.isNotEmpty)
                             Padding(
                               padding: const EdgeInsets.only(top: 4.0),
                               child: Text(
-                                _manga.altTitles.join(' · '),
+                                _shown.altTitles.join(' · '),
                                 style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey),
                                 maxLines: 3,
                                 overflow: TextOverflow.ellipsis,
@@ -559,7 +580,7 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
                       ),
                     ),
                     const SizedBox(width: 24),
-                    Expanded(child: MangaDetails(manga: _manga, showTitle: false)),
+                    Expanded(child: MangaDetails(manga: _shown, showTitle: false)),
                   ],
                 ),
               ),

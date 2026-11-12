@@ -567,6 +567,15 @@ class MangaClient extends $grpc.Client {
     return $createUnaryCall(_$setPrimarySource, request, options: options);
   }
 
+  /// Remember this source as the one the user sees for its manga (if it's in their
+  /// reading list) and refresh its details when they're stale.
+  $grpc.ResponseFuture<$4.MangaReply> selectSource(
+    $4.SelectSourceRequest request, {
+    $grpc.CallOptions? options,
+  }) {
+    return $createUnaryCall(_$selectSource, request, options: options);
+  }
+
   /// Admin-only. Folds every source of source_manga_id into target_manga_id (reading
   /// progress reconciled, canonical chapters relinked), then deletes source_manga_id.
   $grpc.ResponseFuture<$4.MangaReply> mergeManga(
@@ -663,6 +672,11 @@ class MangaClient extends $grpc.Client {
       $grpc.ClientMethod<$4.SetPrimarySourceRequest, $4.MangaReply>(
           '/rumgap.v1.Manga/SetPrimarySource',
           ($4.SetPrimarySourceRequest value) => value.writeToBuffer(),
+          $4.MangaReply.fromBuffer);
+  static final _$selectSource =
+      $grpc.ClientMethod<$4.SelectSourceRequest, $4.MangaReply>(
+          '/rumgap.v1.Manga/SelectSource',
+          ($4.SelectSourceRequest value) => value.writeToBuffer(),
           $4.MangaReply.fromBuffer);
   static final _$mergeManga =
       $grpc.ClientMethod<$4.MergeMangaRequest, $4.MangaReply>(
@@ -769,6 +783,14 @@ abstract class MangaServiceBase extends $grpc.Service {
         false,
         ($core.List<$core.int> value) =>
             $4.SetPrimarySourceRequest.fromBuffer(value),
+        ($4.MangaReply value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$4.SelectSourceRequest, $4.MangaReply>(
+        'SelectSource',
+        selectSource_Pre,
+        false,
+        false,
+        ($core.List<$core.int> value) =>
+            $4.SelectSourceRequest.fromBuffer(value),
         ($4.MangaReply value) => value.writeToBuffer()));
     $addMethod($grpc.ServiceMethod<$4.MergeMangaRequest, $4.MangaReply>(
         'MergeManga',
@@ -890,6 +912,14 @@ abstract class MangaServiceBase extends $grpc.Service {
 
   $async.Future<$4.MangaReply> setPrimarySource(
       $grpc.ServiceCall call, $4.SetPrimarySourceRequest request);
+
+  $async.Future<$4.MangaReply> selectSource_Pre($grpc.ServiceCall $call,
+      $async.Future<$4.SelectSourceRequest> $request) async {
+    return selectSource($call, await $request);
+  }
+
+  $async.Future<$4.MangaReply> selectSource(
+      $grpc.ServiceCall call, $4.SelectSourceRequest request);
 
   $async.Future<$4.MangaReply> mergeManga_Pre($grpc.ServiceCall $call,
       $async.Future<$4.MergeMangaRequest> $request) async {

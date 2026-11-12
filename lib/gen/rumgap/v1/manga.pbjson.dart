@@ -51,6 +51,30 @@ const MangaSourceReply$json = {
     {'1': 'created_at', '3': 6, '4': 1, '5': 3, '10': 'createdAt'},
     {'1': 'updated_at', '3': 7, '4': 1, '5': 3, '10': 'updatedAt'},
     {'1': 'fully_stored', '3': 8, '4': 1, '5': 8, '10': 'fullyStored'},
+    {'1': 'title', '3': 9, '4': 1, '5': 9, '10': 'title'},
+    {'1': 'description', '3': 10, '4': 1, '5': 9, '10': 'description'},
+    {'1': 'cover', '3': 11, '4': 1, '5': 9, '9': 0, '10': 'cover', '17': true},
+    {'1': 'genres', '3': 12, '4': 3, '5': 9, '10': 'genres'},
+    {'1': 'authors', '3': 13, '4': 3, '5': 9, '10': 'authors'},
+    {'1': 'alt_titles', '3': 14, '4': 3, '5': 9, '10': 'altTitles'},
+    {'1': 'status', '3': 15, '4': 1, '5': 9, '10': 'status'},
+    {'1': 'is_ongoing', '3': 16, '4': 1, '5': 8, '10': 'isOngoing'},
+    {'1': 'count_chapters', '3': 17, '4': 1, '5': 3, '10': 'countChapters'},
+    {'1': 'last', '3': 18, '4': 1, '5': 3, '9': 1, '10': 'last', '17': true},
+    {
+      '1': 'details_updated_at',
+      '3': 19,
+      '4': 1,
+      '5': 3,
+      '9': 2,
+      '10': 'detailsUpdatedAt',
+      '17': true
+    },
+  ],
+  '8': [
+    {'1': '_cover'},
+    {'1': '_last'},
+    {'1': '_details_updated_at'},
   ],
 };
 
@@ -60,7 +84,14 @@ final $typed_data.Uint8List mangaSourceReplyDescriptor = $convert.base64Decode(
     'hob3N0bmFtZRgDIAEoCVIIaG9zdG5hbWUSGgoIbGFuZ3VhZ2UYBCABKAlSCGxhbmd1YWdlEh0K'
     'CmlzX3ByaW1hcnkYBSABKAhSCWlzUHJpbWFyeRIdCgpjcmVhdGVkX2F0GAYgASgDUgljcmVhdG'
     'VkQXQSHQoKdXBkYXRlZF9hdBgHIAEoA1IJdXBkYXRlZEF0EiEKDGZ1bGx5X3N0b3JlZBgIIAEo'
-    'CFILZnVsbHlTdG9yZWQ=');
+    'CFILZnVsbHlTdG9yZWQSFAoFdGl0bGUYCSABKAlSBXRpdGxlEiAKC2Rlc2NyaXB0aW9uGAogAS'
+    'gJUgtkZXNjcmlwdGlvbhIZCgVjb3ZlchgLIAEoCUgAUgVjb3ZlcogBARIWCgZnZW5yZXMYDCAD'
+    'KAlSBmdlbnJlcxIYCgdhdXRob3JzGA0gAygJUgdhdXRob3JzEh0KCmFsdF90aXRsZXMYDiADKA'
+    'lSCWFsdFRpdGxlcxIWCgZzdGF0dXMYDyABKAlSBnN0YXR1cxIdCgppc19vbmdvaW5nGBAgASgI'
+    'Uglpc09uZ29pbmcSJQoOY291bnRfY2hhcHRlcnMYESABKANSDWNvdW50Q2hhcHRlcnMSFwoEbG'
+    'FzdBgSIAEoA0gBUgRsYXN0iAEBEjEKEmRldGFpbHNfdXBkYXRlZF9hdBgTIAEoA0gCUhBkZXRh'
+    'aWxzVXBkYXRlZEF0iAEBQggKBl9jb3ZlckIHCgVfbGFzdEIVChNfZGV0YWlsc191cGRhdGVkX2'
+    'F0');
 
 @$core.Deprecated('Use backfillStatusReplyDescriptor instead')
 const BackfillStatusReply$json = {
@@ -126,6 +157,13 @@ const MangaReply$json = {
       '10': 'progressOrdinal',
       '17': true
     },
+    {
+      '1': 'selected_source_id',
+      '3': 19,
+      '4': 1,
+      '5': 5,
+      '10': 'selectedSourceId'
+    },
   ],
   '8': [
     {'1': '_cover'},
@@ -147,9 +185,22 @@ final $typed_data.Uint8List mangaReplyDescriptor = $convert.base64Decode(
     'CWNyZWF0ZWRBdBIdCgp1cGRhdGVkX2F0GA4gASgDUgl1cGRhdGVkQXQSLgoQcmVhZGluZ19wcm'
     '9ncmVzcxgPIAEoBUgDUg9yZWFkaW5nUHJvZ3Jlc3OIAQESFgoGc3RhdHVzGBAgASgJUgZzdGF0'
     'dXMSNQoHc291cmNlcxgRIAMoCzIbLnJ1bWdhcC52MS5NYW5nYVNvdXJjZVJlcGx5Ugdzb3VyY2'
-    'VzEi4KEHByb2dyZXNzX29yZGluYWwYEiABKAFIBFIPcHJvZ3Jlc3NPcmRpbmFsiAEBQggKBl9j'
-    'b3ZlckIHCgVfbmV4dEIHCgVfbGFzdEITChFfcmVhZGluZ19wcm9ncmVzc0ITChFfcHJvZ3Jlc3'
-    'Nfb3JkaW5hbA==');
+    'VzEi4KEHByb2dyZXNzX29yZGluYWwYEiABKAFIBFIPcHJvZ3Jlc3NPcmRpbmFsiAEBEiwKEnNl'
+    'bGVjdGVkX3NvdXJjZV9pZBgTIAEoBVIQc2VsZWN0ZWRTb3VyY2VJZEIICgZfY292ZXJCBwoFX2'
+    '5leHRCBwoFX2xhc3RCEwoRX3JlYWRpbmdfcHJvZ3Jlc3NCEwoRX3Byb2dyZXNzX29yZGluYWw=');
+
+@$core.Deprecated('Use selectSourceRequestDescriptor instead')
+const SelectSourceRequest$json = {
+  '1': 'SelectSourceRequest',
+  '2': [
+    {'1': 'manga_source_id', '3': 1, '4': 1, '5': 5, '10': 'mangaSourceId'},
+  ],
+};
+
+/// Descriptor for `SelectSourceRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List selectSourceRequestDescriptor = $convert.base64Decode(
+    'ChNTZWxlY3RTb3VyY2VSZXF1ZXN0EiYKD21hbmdhX3NvdXJjZV9pZBgBIAEoBVINbWFuZ2FTb3'
+    'VyY2VJZA==');
 
 @$core.Deprecated('Use mangasReplyDescriptor instead')
 const MangasReply$json = {

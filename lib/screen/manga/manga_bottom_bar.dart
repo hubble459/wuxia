@@ -73,6 +73,8 @@ class _ChapterSelectorState extends State<ChapterSelector> {
   // offline fallback is needed.
   List<ChapterReply>? _offlineChapters;
 
+  int get _countChapters => widget.manga.withSourceDetails(widget.source).countChapters.toInt();
+
   Future<void> openChapters() async {
     await Navigator.of(context).push(
       MaterialPageRoute(
@@ -139,7 +141,7 @@ class _ChapterSelectorState extends State<ChapterSelector> {
   int get _windowLocalIndex => (widget.manga.readingProgress - 1 - _windowStart).clamp(0, max(_windowLength - 1, 0));
 
   Future<ChaptersReply> _chaptersFuture() {
-    final key = (widget.source.id, _windowPage, widget.manga.countChapters.toInt());
+    final key = (widget.source.id, _windowPage, _countChapters);
     if (_chapters == null || key != _chaptersKey) {
       _chaptersKey = key;
       _chapters = getChapters();
@@ -191,9 +193,9 @@ class _ChapterSelectorState extends State<ChapterSelector> {
       mainAxisSize: MainAxisSize.min,
       children: [
         // Chapter button
-        IconButton(onPressed: widget.manga.countChapters == 0 ? null : openChapters, icon: Icon(Icons.list_alt)),
+        IconButton(onPressed: _countChapters == 0 ? null : openChapters, icon: Icon(Icons.list_alt)),
 
-        ...(widget.manga.countChapters == 0
+        ...(_countChapters == 0
             ? [Text(FlutterI18n.translate(context, 'manga.no-chapters'), style: TextStyle(color: Colors.red))]
             : [
                 // Chapters -- the two arrows are pinned outside the scrollable

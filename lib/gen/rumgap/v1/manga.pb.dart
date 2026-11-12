@@ -131,6 +131,17 @@ class MangaSourceReply extends $pb.GeneratedMessage {
     $fixnum.Int64? createdAt,
     $fixnum.Int64? updatedAt,
     $core.bool? fullyStored,
+    $core.String? title,
+    $core.String? description,
+    $core.String? cover,
+    $core.Iterable<$core.String>? genres,
+    $core.Iterable<$core.String>? authors,
+    $core.Iterable<$core.String>? altTitles,
+    $core.String? status,
+    $core.bool? isOngoing,
+    $fixnum.Int64? countChapters,
+    $fixnum.Int64? last,
+    $fixnum.Int64? detailsUpdatedAt,
   }) {
     final result = create();
     if (id != null) result.id = id;
@@ -141,6 +152,17 @@ class MangaSourceReply extends $pb.GeneratedMessage {
     if (createdAt != null) result.createdAt = createdAt;
     if (updatedAt != null) result.updatedAt = updatedAt;
     if (fullyStored != null) result.fullyStored = fullyStored;
+    if (title != null) result.title = title;
+    if (description != null) result.description = description;
+    if (cover != null) result.cover = cover;
+    if (genres != null) result.genres.addAll(genres);
+    if (authors != null) result.authors.addAll(authors);
+    if (altTitles != null) result.altTitles.addAll(altTitles);
+    if (status != null) result.status = status;
+    if (isOngoing != null) result.isOngoing = isOngoing;
+    if (countChapters != null) result.countChapters = countChapters;
+    if (last != null) result.last = last;
+    if (detailsUpdatedAt != null) result.detailsUpdatedAt = detailsUpdatedAt;
     return result;
   }
 
@@ -165,6 +187,17 @@ class MangaSourceReply extends $pb.GeneratedMessage {
     ..aInt64(6, _omitFieldNames ? '' : 'createdAt')
     ..aInt64(7, _omitFieldNames ? '' : 'updatedAt')
     ..aOB(8, _omitFieldNames ? '' : 'fullyStored')
+    ..aOS(9, _omitFieldNames ? '' : 'title')
+    ..aOS(10, _omitFieldNames ? '' : 'description')
+    ..aOS(11, _omitFieldNames ? '' : 'cover')
+    ..pPS(12, _omitFieldNames ? '' : 'genres')
+    ..pPS(13, _omitFieldNames ? '' : 'authors')
+    ..pPS(14, _omitFieldNames ? '' : 'altTitles')
+    ..aOS(15, _omitFieldNames ? '' : 'status')
+    ..aOB(16, _omitFieldNames ? '' : 'isOngoing')
+    ..aInt64(17, _omitFieldNames ? '' : 'countChapters')
+    ..aInt64(18, _omitFieldNames ? '' : 'last')
+    ..aInt64(19, _omitFieldNames ? '' : 'detailsUpdatedAt')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -259,6 +292,91 @@ class MangaSourceReply extends $pb.GeneratedMessage {
   $core.bool hasFullyStored() => $_has(7);
   @$pb.TagNumber(8)
   void clearFullyStored() => $_clearField(8);
+
+  /// This source's own details, as its last scrape found them.
+  @$pb.TagNumber(9)
+  $core.String get title => $_getSZ(8);
+  @$pb.TagNumber(9)
+  set title($core.String value) => $_setString(8, value);
+  @$pb.TagNumber(9)
+  $core.bool hasTitle() => $_has(8);
+  @$pb.TagNumber(9)
+  void clearTitle() => $_clearField(9);
+
+  @$pb.TagNumber(10)
+  $core.String get description => $_getSZ(9);
+  @$pb.TagNumber(10)
+  set description($core.String value) => $_setString(9, value);
+  @$pb.TagNumber(10)
+  $core.bool hasDescription() => $_has(9);
+  @$pb.TagNumber(10)
+  void clearDescription() => $_clearField(10);
+
+  @$pb.TagNumber(11)
+  $core.String get cover => $_getSZ(10);
+  @$pb.TagNumber(11)
+  set cover($core.String value) => $_setString(10, value);
+  @$pb.TagNumber(11)
+  $core.bool hasCover() => $_has(10);
+  @$pb.TagNumber(11)
+  void clearCover() => $_clearField(11);
+
+  @$pb.TagNumber(12)
+  $pb.PbList<$core.String> get genres => $_getList(11);
+
+  @$pb.TagNumber(13)
+  $pb.PbList<$core.String> get authors => $_getList(12);
+
+  @$pb.TagNumber(14)
+  $pb.PbList<$core.String> get altTitles => $_getList(13);
+
+  @$pb.TagNumber(15)
+  $core.String get status => $_getSZ(14);
+  @$pb.TagNumber(15)
+  set status($core.String value) => $_setString(14, value);
+  @$pb.TagNumber(15)
+  $core.bool hasStatus() => $_has(14);
+  @$pb.TagNumber(15)
+  void clearStatus() => $_clearField(15);
+
+  @$pb.TagNumber(16)
+  $core.bool get isOngoing => $_getBF(15);
+  @$pb.TagNumber(16)
+  set isOngoing($core.bool value) => $_setBool(15, value);
+  @$pb.TagNumber(16)
+  $core.bool hasIsOngoing() => $_has(15);
+  @$pb.TagNumber(16)
+  void clearIsOngoing() => $_clearField(16);
+
+  @$pb.TagNumber(17)
+  $fixnum.Int64 get countChapters => $_getI64(16);
+  @$pb.TagNumber(17)
+  set countChapters($fixnum.Int64 value) => $_setInt64(16, value);
+  @$pb.TagNumber(17)
+  $core.bool hasCountChapters() => $_has(16);
+  @$pb.TagNumber(17)
+  void clearCountChapters() => $_clearField(17);
+
+  /// Newest chapter's posted date.
+  @$pb.TagNumber(18)
+  $fixnum.Int64 get last => $_getI64(17);
+  @$pb.TagNumber(18)
+  set last($fixnum.Int64 value) => $_setInt64(17, value);
+  @$pb.TagNumber(18)
+  $core.bool hasLast() => $_has(17);
+  @$pb.TagNumber(18)
+  void clearLast() => $_clearField(18);
+
+  /// When the details above were last scraped. Unset until this source has been scraped
+  /// since sources got their own details; until then they're a copy of the primary's.
+  @$pb.TagNumber(19)
+  $fixnum.Int64 get detailsUpdatedAt => $_getI64(18);
+  @$pb.TagNumber(19)
+  set detailsUpdatedAt($fixnum.Int64 value) => $_setInt64(18, value);
+  @$pb.TagNumber(19)
+  $core.bool hasDetailsUpdatedAt() => $_has(18);
+  @$pb.TagNumber(19)
+  void clearDetailsUpdatedAt() => $_clearField(19);
 }
 
 /// Progress ledger for an in-flight or completed `BackfillImages` walk.
@@ -350,6 +468,7 @@ class MangaReply extends $pb.GeneratedMessage {
     $core.String? status,
     $core.Iterable<MangaSourceReply>? sources,
     $core.double? progressOrdinal,
+    $core.int? selectedSourceId,
   }) {
     final result = create();
     if (id != null) result.id = id;
@@ -369,6 +488,7 @@ class MangaReply extends $pb.GeneratedMessage {
     if (status != null) result.status = status;
     if (sources != null) result.sources.addAll(sources);
     if (progressOrdinal != null) result.progressOrdinal = progressOrdinal;
+    if (selectedSourceId != null) result.selectedSourceId = selectedSourceId;
     return result;
   }
 
@@ -403,6 +523,7 @@ class MangaReply extends $pb.GeneratedMessage {
     ..pPM<MangaSourceReply>(17, _omitFieldNames ? '' : 'sources',
         subBuilder: MangaSourceReply.create)
     ..aD(18, _omitFieldNames ? '' : 'progressOrdinal')
+    ..aI(19, _omitFieldNames ? '' : 'selectedSourceId')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -477,7 +598,7 @@ class MangaReply extends $pb.GeneratedMessage {
   @$pb.TagNumber(9)
   $pb.PbList<$core.String> get altTitles => $_getList(7);
 
-  /// Computed from the primary source only.
+  /// The details, chapter counts and dates come from `selected_source_id`.
   @$pb.TagNumber(10)
   $fixnum.Int64 get countChapters => $_getI64(8);
   @$pb.TagNumber(10)
@@ -557,6 +678,71 @@ class MangaReply extends $pb.GeneratedMessage {
   $core.bool hasProgressOrdinal() => $_has(16);
   @$pb.TagNumber(18)
   void clearProgressOrdinal() => $_clearField(18);
+
+  /// The source this user sees for this manga: the one they last picked (SelectSource),
+  /// otherwise their first preferred hostname, otherwise the primary.
+  @$pb.TagNumber(19)
+  $core.int get selectedSourceId => $_getIZ(17);
+  @$pb.TagNumber(19)
+  set selectedSourceId($core.int value) => $_setSignedInt32(17, value);
+  @$pb.TagNumber(19)
+  $core.bool hasSelectedSourceId() => $_has(17);
+  @$pb.TagNumber(19)
+  void clearSelectedSourceId() => $_clearField(19);
+}
+
+class SelectSourceRequest extends $pb.GeneratedMessage {
+  factory SelectSourceRequest({
+    $core.int? mangaSourceId,
+  }) {
+    final result = create();
+    if (mangaSourceId != null) result.mangaSourceId = mangaSourceId;
+    return result;
+  }
+
+  SelectSourceRequest._();
+
+  factory SelectSourceRequest.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory SelectSourceRequest.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'SelectSourceRequest',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'rumgap.v1'),
+      createEmptyInstance: create)
+    ..aI(1, _omitFieldNames ? '' : 'mangaSourceId')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  SelectSourceRequest clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  SelectSourceRequest copyWith(void Function(SelectSourceRequest) updates) =>
+      super.copyWith((message) => updates(message as SelectSourceRequest))
+          as SelectSourceRequest;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static SelectSourceRequest create() => SelectSourceRequest._();
+  @$core.override
+  SelectSourceRequest createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static SelectSourceRequest getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<SelectSourceRequest>(create);
+  static SelectSourceRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.int get mangaSourceId => $_getIZ(0);
+  @$pb.TagNumber(1)
+  set mangaSourceId($core.int value) => $_setSignedInt32(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasMangaSourceId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearMangaSourceId() => $_clearField(1);
 }
 
 class MangasReply extends $pb.GeneratedMessage {

@@ -83,7 +83,10 @@ class _MangaChaptersScreenState extends State<MangaChaptersScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            I18nText('manga.chapters', translationParams: {'amount': widget.manga.countChapters.toString()}),
+            I18nText(
+              'manga.chapters',
+              translationParams: {'amount': widget.manga.withSourceDetails(widget.source).countChapters.toString()},
+            ),
             Text(widget.source.hostname, style: Theme.of(context).textTheme.titleSmall?.copyWith(color: Colors.white54)),
           ],
         ),

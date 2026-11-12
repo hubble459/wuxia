@@ -29,6 +29,33 @@ bool isNetworkError(Object? error) {
 const githubWuxiaReleasesUrl = 'https://github.com/hubble459/wuxia/releases';
 const accountRequestEmail = 'geraldd459@gmail.com';
 
+extension MangaSourceDetails on MangaReply {
+  /// This manga with [source]'s own details (title, cover, genres, chapter count, ...),
+  /// or unchanged when [source] has none: an offline snapshot or server from before
+  /// sources had their own details.
+  MangaReply withSourceDetails(MangaSourceReply source) {
+    if (source.title.isEmpty) return this;
+    final manga = deepCopy()
+      ..title = source.title
+      ..description = source.description
+      ..status = source.status
+      ..isOngoing = source.isOngoing
+      ..countChapters = source.countChapters;
+    manga.genres
+      ..clear()
+      ..addAll(source.genres);
+    manga.authors
+      ..clear()
+      ..addAll(source.authors);
+    manga.altTitles
+      ..clear()
+      ..addAll(source.altTitles);
+    if (source.hasCover()) manga.cover = source.cover;
+    if (source.hasLast()) manga.last = source.last;
+    return manga;
+  }
+}
+
 /// Download folder name for a manga, relative to the download root. Holds
 /// its `manga.pb` and one [sourceFolderName] folder per downloaded source.
 String mangaFolderName(int mangaId) => '$mangaId';

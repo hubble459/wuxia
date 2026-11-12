@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
@@ -81,6 +82,11 @@ class _SourcePickerDialogState extends State<_SourcePickerDialog> {
   }
 
   Future<void> _loadChapterCount(MangaSourceReply source) async {
+    // Sent along with the source by servers that keep details per source.
+    if (source.hasDetailsUpdatedAt() || source.title.isNotEmpty) {
+      _chapterCounts[source.id] = source.countChapters.toInt();
+      return;
+    }
     try {
       // perPage: 1 - only PaginateReply.total is actually wanted here.
       final result = await api.chapter.index(
@@ -189,12 +195,33 @@ class _SourcePickerDialogState extends State<_SourcePickerDialog> {
             padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
             child: Row(
               children: [
+                if (source.hasCover())
+                  Padding(
+                    padding: const EdgeInsets.only(right: 12.0),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(4),
+                      child: CachedNetworkImage(
+                        imageUrl: source.cover,
+                        width: 36,
+                        height: 52,
+                        fit: BoxFit.cover,
+                        errorWidget: (context, url, error) => const SizedBox(width: 36, height: 52),
+                      ),
+                    ),
+                  ),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text('${source.hostname} (${source.language})'),
+                      if (source.title.isNotEmpty)
+                        Text(
+                          source.title,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
                       if (chapterCount != null)
                         Text(
                           FlutterI18n.translate(

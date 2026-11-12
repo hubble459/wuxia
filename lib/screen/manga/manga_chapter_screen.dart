@@ -272,6 +272,7 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
 
       widget.source.clear();
       widget.source.mergeFromMessage(selected);
+      api.manga.selectSource(SelectSourceRequest(mangaSourceId: selected.id)).ignore();
 
       await _goToChapter(newChapter, initialFraction: fraction);
     } catch (e) {
