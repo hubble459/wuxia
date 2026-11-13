@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
+import 'package:grpc/grpc.dart' show GrpcError, StatusCode;
 import 'package:wuxia/api.dart';
 import 'package:wuxia/gen/rumgap/v1/chapter.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
@@ -121,6 +122,11 @@ class _ForYouScreenState extends State<ForYouScreen> with AutomaticKeepAliveClie
       }
     } catch (e) {
       if (!mounted) return;
+      if (e is GrpcError && e.code == StatusCode.notFound) {
+        // Deleted meanwhile; nothing to swipe anymore.
+        setState(() => _history.removeWhere((entry) => entry.$1.id == manga.id));
+        return;
+      }
       setState(() {
         _history.removeWhere((entry) => entry.$1.id == manga.id);
         _deck.insert(0, manga);
@@ -129,6 +135,36 @@ class _ForYouScreenState extends State<ForYouScreen> with AutomaticKeepAliveClie
         SnackBar(content: Text(FlutterI18n.translate(context, 'for_you.failed', translationParams: {'error': '$e'}))),
       );
     }
+  }
+
+  /// Opens [manga]'s page. Coming back, a manga that got added to the reading list or deleted
+  /// there leaves the deck, and the card shows any other change.
+  Future<void> _openManga(MangaReply manga) async {
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        settings: RouteSettings(name: mangaRouteName(manga.id)),
+        builder: (context) => MangaScreen(manga: manga, type: HeroScreenType.latest),
+      ),
+    );
+    MangaReply? current;
+    try {
+      current = await api.manga.get(GetMangaRequest(id: manga.id));
+    } on GrpcError catch (e) {
+      if (e.code != StatusCode.notFound) return;
+    } catch (_) {
+      return;
+    }
+    if (!mounted) return;
+    setState(() {
+      final index = _deck.indexWhere((card) => card.id == manga.id);
+      if (index == -1) return;
+      if (current == null || current.hasReadingProgress()) {
+        _deck.removeAt(index);
+      } else {
+        _deck[index] = current;
+      }
+    });
+    if (_deck.length <= _refillAt) _refill();
   }
 
   Future<void> _undo() async {
@@ -215,14 +251,14 @@ class _ForYouScreenState extends State<ForYouScreen> with AutomaticKeepAliveClie
             Positioned.fill(
               child: Transform.scale(
                 scale: 0.95,
-                child: _MangaCard(key: ValueKey('card-${next.id}'), manga: next, preview: false),
+                child: _MangaCard(key: ValueKey('card-${next.id}'), manga: next, preview: false, onOpen: () => _openManga(next)),
               ),
             ),
           Positioned.fill(
             child: _SwipeCard(
               key: GlobalObjectKey<_SwipeCardState>(top),
               onSwiped: (swipe) => _onSwiped(top, swipe),
-              child: _MangaCard(key: ValueKey('card-${top.id}'), manga: top, preview: true),
+              child: _MangaCard(key: ValueKey('card-${top.id}'), manga: top, preview: true, onOpen: () => _openManga(top)),
             ),
           ),
         ],
@@ -451,19 +487,11 @@ class _Stamp extends StatelessWidget {
 
 /// Cover, details and, when [preview] is set, the pages of chapter 1 below them.
 class _MangaCard extends StatelessWidget {
-  const _MangaCard({super.key, required this.manga, required this.preview});
+  const _MangaCard({super.key, required this.manga, required this.preview, required this.onOpen});
 
   final MangaReply manga;
   final bool preview;
-
-  void _open(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        settings: RouteSettings(name: mangaRouteName(manga.id)),
-        builder: (context) => MangaScreen(manga: manga, type: HeroScreenType.latest),
-      ),
-    );
-  }
+  final VoidCallback onOpen;
 
   @override
   Widget build(BuildContext context) {
@@ -494,7 +522,7 @@ class _MangaCard extends StatelessWidget {
                     Expanded(child: Text(manga.title, style: theme.textTheme.headlineSmall)),
                     IconButton(
                       tooltip: FlutterI18n.translate(context, 'for_you.open'),
-                      onPressed: () => _open(context),
+                      onPressed: onOpen,
                       icon: const Icon(Icons.open_in_new),
                     ),
                   ],
