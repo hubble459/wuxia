@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
@@ -9,7 +8,7 @@ import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/reading.pb.dart';
 import 'package:wuxia/partial/action/export_cbz_action.dart';
 import 'package:wuxia/partial/dialog/confirm_dialog.dart';
-import 'package:wuxia/partial/image_error_placeholder.dart';
+import 'package:wuxia/partial/cover_image.dart';
 import 'package:wuxia/screen/manga/manga_screen.dart';
 import 'package:wuxia/util/app_routes.dart';
 import 'package:wuxia/util/source_health.dart';
@@ -160,13 +159,11 @@ class _MangaItemState extends State<MangaItem> {
       leading: _manga.hasCover()
           ? Hero(
               tag: widget.type.getTag(_manga.id.toString()),
-              child: CachedNetworkImage(
+              child: CoverImage(
+                manga: _manga,
                 fit: BoxFit.fill,
-                errorListener: (value) => {},
-                imageUrl: _manga.cover,
                 width: 40,
                 height: double.infinity,
-                errorWidget: (context, url, error) => const ImageErrorPlaceholder(),
                 useOldImageOnUrlChange: true,
                 progressIndicatorBuilder: (context, url, progress) => Padding(
                   padding: const EdgeInsets.all(8.0),

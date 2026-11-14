@@ -362,6 +362,7 @@ class DownloadManager extends ChangeNotifier {
 
     await downloadStorage.write('$mangaDir/manga.pb', manga.writeToBuffer());
     await downloadStorage.write('$sourceDir/chapters.pb', chapters.writeToBuffer());
+    await _downloadCover(client, manga, mangaDir);
 
     Future<bool> downloadChapter(ChapterReply chapter) async {
       final chapterDir = '$sourceDir/${chapterFolderName(chapter.number)}';
@@ -505,6 +506,20 @@ class DownloadManager extends ChangeNotifier {
     }
     await downloadStorage.write(path, response.bodyBytes);
     return true;
+  }
+
+  /// Saves [manga]'s cover as `cover.<ext>` in [mangaDir], so it still
+  /// shows offline once the image cache has dropped it. Skipped if a cover
+  /// is already saved; a failed fetch is ignored rather than failing the
+  /// download over a cover.
+  Future<void> _downloadCover(http.Client client, MangaReply manga, String mangaDir) async {
+    if (!manga.hasCover()) return;
+    try {
+      if ((await downloadStorage.listFiles(mangaDir)).any(isDownloadedCoverFile)) return;
+      final response = await client.get(Uri.parse(manga.cover));
+      if (response.statusCode != 200) return;
+      await downloadStorage.write('$mangaDir/$downloadedCoverName.${_imageExtension(manga.cover)}', response.bodyBytes);
+    } catch (_) {}
   }
 
   /// Some source sites serve images from paths with no extension on the

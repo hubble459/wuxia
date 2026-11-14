@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
+import 'package:collection/collection.dart';
 import 'package:grpc/grpc.dart';
 import 'package:wuxia/api.dart';
 import 'package:wuxia/gen/rumgap/v1/chapter.pb.dart';
@@ -177,6 +179,26 @@ Future<MangaReply?> loadOfflineManga(int mangaId) async {
   try {
     final bytes = await downloadStorage.read('$dir/manga.pb');
     return bytes == null ? null : MangaReply.fromBuffer(bytes);
+  } catch (_) {
+    return null;
+  }
+}
+
+/// Base name of the cover image saved next to a downloaded manga's
+/// `manga.pb`; the file itself is `cover.<ext>`.
+const downloadedCoverName = 'cover';
+
+/// Whether [fileName] is a manga folder's saved cover image.
+bool isDownloadedCoverFile(String fileName) => fileName.startsWith('$downloadedCoverName.');
+
+/// The cover image bytes saved with manga [mangaId]'s download, or `null`
+/// if it isn't downloaded or its cover wasn't saved.
+Future<Uint8List?> loadDownloadedCover(int mangaId) async {
+  final dir = await findDownloadedMangaDir(mangaId);
+  if (dir == null) return null;
+  try {
+    final file = (await downloadStorage.listFiles(dir)).firstWhereOrNull(isDownloadedCoverFile);
+    return file == null ? null : await downloadStorage.read('$dir/$file');
   } catch (_) {
     return null;
   }

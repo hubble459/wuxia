@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
@@ -17,7 +16,7 @@ import 'package:wuxia/partial/dialog/manga_picker_dialog.dart';
 import 'package:wuxia/partial/dialog/merge_confirm_dialog.dart';
 import 'package:wuxia/partial/dialog/source_picker_dialog.dart';
 import 'package:wuxia/partial/source_badge.dart';
-import 'package:wuxia/partial/image_error_placeholder.dart';
+import 'package:wuxia/partial/cover_image.dart';
 import 'package:wuxia/partial/list/manga_item.dart';
 import 'package:wuxia/partial/manga_details.dart';
 import 'package:wuxia/screen/social/comments_screen.dart';
@@ -516,11 +515,7 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
       visible: _shown.hasCover(),
       child: Hero(
         tag: widget.heroTag ?? widget.type.getTag(_manga.id.toString()),
-        child: CachedNetworkImage(
-          imageUrl: _shown.cover,
-          fit: fit,
-          errorWidget: (context, url, error) => const ImageErrorPlaceholder(),
-        ),
+        child: CoverImage(manga: _shown, fit: fit),
       ),
     );
   }
