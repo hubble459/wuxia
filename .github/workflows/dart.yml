@@ -36,10 +36,16 @@ jobs:
         with:
           tag: ${{ steps.push_release.outputs.tag_name }}
 
+      - name: Rename APK with version
+        run: |
+          TAG=${{ steps.push_release.outputs.tag_name }}
+          mv build/app/outputs/flutter-apk/app-release.apk "wuxia-${TAG#v}.apk"
+          echo "APK_FILE=wuxia-${TAG#v}.apk" >> "$GITHUB_ENV"
+
       - name: Upload Release Asset
         uses: softprops/action-gh-release@v3
         with:
-          files: ./build/app/outputs/flutter-apk/app-release.apk
+          files: ${{ env.APK_FILE }}
           tag_name: ${{ steps.push_release.outputs.tag_name }}
           generate_release_notes: true
 
@@ -49,6 +55,8 @@ jobs:
     environment: main
     permissions:
       contents: write
+    env:
+      TAG: ${{ needs.build.outputs.tag_name }}
     steps:
       - uses: actions/checkout@v7
 
@@ -72,7 +80,7 @@ jobs:
             --build-number="$(echo $TAG | tr -d v.)"
 
       - name: Package tarball
-        run: tar -czf wuxia-linux.tar.gz -C build/linux/x64/release/bundle .
+        run: tar -czf "wuxia-linux-${TAG#v}.tar.gz" -C build/linux/x64/release/bundle .
 
       - name: Package .deb
         run: |
@@ -97,12 +105,12 @@ jobs:
 
           VERSION="$VERSION" DEPENDS="$DEPENDS" envsubst '${VERSION} ${DEPENDS}' < linux/packaging/control.template > "$PKG_DIR/DEBIAN/control"
 
-          dpkg-deb --build --root-owner-group "$PKG_DIR" wuxia-linux.deb
+          dpkg-deb --build --root-owner-group "$PKG_DIR" "wuxia-linux-${VERSION}.deb"
 
       - name: Upload Linux build to release
         uses: softprops/action-gh-release@v3
         with:
           files: |
-            wuxia-linux.tar.gz
-            wuxia-linux.deb
+            wuxia-linux-*.tar.gz
+            wuxia-linux-*.deb
           tag_name: ${{ needs.build.outputs.tag_name }}

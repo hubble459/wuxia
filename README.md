@@ -4,10 +4,10 @@ Manga Reader built upon the [RumGap](https://github.com/hubble459/rumgap) API.
 
 ## Installation (Linux)
 
-1. Download `wuxia-linux.tar.gz` from the [latest release](https://github.com/hubble459/wuxia/releases/latest)
+1. Download `wuxia-linux-<version>.tar.gz` from the [latest release](https://github.com/hubble459/wuxia/releases/latest)
 2. Extract it:
    ```bash
-   mkdir wuxia && tar -xzf wuxia-linux.tar.gz -C wuxia
+   mkdir wuxia && tar -xzf wuxia-linux-*.tar.gz -C wuxia
    ```
 3. Run:
    ```bash
