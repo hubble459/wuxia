@@ -50,6 +50,7 @@ manga:
   merge-into: 合并到另一部漫画
   delete: 删除漫画
   mark-nsfw: "标记为 18+"
+  set-origin: "设置来源地"
   unmark-nsfw: "取消 18+ 标记"
   merge-from: 将另一部漫画合并到此
   move-source-out: 将来源移动到另一部漫画
@@ -494,3 +495,10 @@ comments:
   hint: 说点友善的话…
   post: 发布
   save: 保存
+origin:
+  title: "来源地"
+  manga: "日漫"
+  manhwa: "韩漫"
+  manhua: "国漫"
+  unknown: "来源地未知"
+  automatic: "自动识别"

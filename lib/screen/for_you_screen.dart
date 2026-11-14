@@ -18,6 +18,7 @@ import 'package:wuxia/screen/manga/manga_screen.dart';
 import 'package:wuxia/util/app_routes.dart';
 import 'package:wuxia/util/filter_map.dart';
 import 'package:wuxia/util/store.dart';
+import 'package:wuxia/util/tools.dart';
 
 enum _Swipe { read, nope, skip }
 
@@ -548,6 +549,12 @@ class _MangaCard extends StatelessWidget {
                   spacing: 6,
                   runSpacing: 6,
                   children: [
+                    if (manga.origin != MangaOrigin.ORIGIN_UNKNOWN)
+                      Chip(
+                        label: I18nText('origin.${manga.origin.key}'),
+                        visualDensity: VisualDensity.compact,
+                        backgroundColor: theme.colorScheme.secondaryContainer,
+                      ),
                     if (manga.nsfw)
                       Chip(
                         label: const Text('18+'),

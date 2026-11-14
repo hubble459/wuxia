@@ -15,6 +15,22 @@ import 'dart:convert' as $convert;
 import 'dart:core' as $core;
 import 'dart:typed_data' as $typed_data;
 
+@$core.Deprecated('Use mangaOriginDescriptor instead')
+const MangaOrigin$json = {
+  '1': 'MangaOrigin',
+  '2': [
+    {'1': 'ORIGIN_UNKNOWN', '2': 0},
+    {'1': 'ORIGIN_MANGA', '2': 1},
+    {'1': 'ORIGIN_MANHWA', '2': 2},
+    {'1': 'ORIGIN_MANHUA', '2': 3},
+  ],
+};
+
+/// Descriptor for `MangaOrigin`. Decode as a `google.protobuf.EnumDescriptorProto`.
+final $typed_data.Uint8List mangaOriginDescriptor = $convert.base64Decode(
+    'CgtNYW5nYU9yaWdpbhISCg5PUklHSU5fVU5LTk9XThAAEhAKDE9SSUdJTl9NQU5HQRABEhEKDU'
+    '9SSUdJTl9NQU5IV0EQAhIRCg1PUklHSU5fTUFOSFVBEAM=');
+
 @$core.Deprecated('Use mangaRequestDescriptor instead')
 const MangaRequest$json = {
   '1': 'MangaRequest',
@@ -165,6 +181,21 @@ const MangaReply$json = {
       '10': 'selectedSourceId'
     },
     {'1': 'nsfw', '3': 20, '4': 1, '5': 8, '10': 'nsfw'},
+    {
+      '1': 'origin',
+      '3': 21,
+      '4': 1,
+      '5': 14,
+      '6': '.rumgap.v1.MangaOrigin',
+      '10': 'origin'
+    },
+    {
+      '1': 'origin_set_by_hand',
+      '3': 22,
+      '4': 1,
+      '5': 8,
+      '10': 'originSetByHand'
+    },
   ],
   '8': [
     {'1': '_cover'},
@@ -188,8 +219,10 @@ final $typed_data.Uint8List mangaReplyDescriptor = $convert.base64Decode(
     'dXMSNQoHc291cmNlcxgRIAMoCzIbLnJ1bWdhcC52MS5NYW5nYVNvdXJjZVJlcGx5Ugdzb3VyY2'
     'VzEi4KEHByb2dyZXNzX29yZGluYWwYEiABKAFIBFIPcHJvZ3Jlc3NPcmRpbmFsiAEBEiwKEnNl'
     'bGVjdGVkX3NvdXJjZV9pZBgTIAEoBVIQc2VsZWN0ZWRTb3VyY2VJZBISCgRuc2Z3GBQgASgIUg'
-    'Ruc2Z3QggKBl9jb3ZlckIHCgVfbmV4dEIHCgVfbGFzdEITChFfcmVhZGluZ19wcm9ncmVzc0IT'
-    'ChFfcHJvZ3Jlc3Nfb3JkaW5hbA==');
+    'Ruc2Z3Ei4KBm9yaWdpbhgVIAEoDjIWLnJ1bWdhcC52MS5NYW5nYU9yaWdpblIGb3JpZ2luEisK'
+    'Em9yaWdpbl9zZXRfYnlfaGFuZBgWIAEoCFIPb3JpZ2luU2V0QnlIYW5kQggKBl9jb3ZlckIHCg'
+    'VfbmV4dEIHCgVfbGFzdEITChFfcmVhZGluZ19wcm9ncmVzc0ITChFfcHJvZ3Jlc3Nfb3JkaW5h'
+    'bA==');
 
 @$core.Deprecated('Use selectSourceRequestDescriptor instead')
 const SelectSourceRequest$json = {
@@ -366,6 +399,32 @@ final $typed_data.Uint8List forYouRequestDescriptor = $convert.base64Decode(
     'Cg1Gb3JZb3VSZXF1ZXN0Eh4KCHBlcl9wYWdlGAEgASgESABSB3BlclBhZ2WIAQESFwoEcGFnZR'
     'gCIAEoBEgBUgRwYWdliAEBEhsKBnNlYXJjaBgDIAEoCUgCUgZzZWFyY2iIAQFCCwoJX3Blcl9w'
     'YWdlQgcKBV9wYWdlQgkKB19zZWFyY2g=');
+
+@$core.Deprecated('Use setOriginRequestDescriptor instead')
+const SetOriginRequest$json = {
+  '1': 'SetOriginRequest',
+  '2': [
+    {'1': 'manga_id', '3': 1, '4': 1, '5': 5, '10': 'mangaId'},
+    {
+      '1': 'origin',
+      '3': 2,
+      '4': 1,
+      '5': 14,
+      '6': '.rumgap.v1.MangaOrigin',
+      '9': 0,
+      '10': 'origin',
+      '17': true
+    },
+  ],
+  '8': [
+    {'1': '_origin'},
+  ],
+};
+
+/// Descriptor for `SetOriginRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List setOriginRequestDescriptor = $convert.base64Decode(
+    'ChBTZXRPcmlnaW5SZXF1ZXN0EhkKCG1hbmdhX2lkGAEgASgFUgdtYW5nYUlkEjMKBm9yaWdpbh'
+    'gCIAEoDjIWLnJ1bWdhcC52MS5NYW5nYU9yaWdpbkgAUgZvcmlnaW6IAQFCCQoHX29yaWdpbg==');
 
 @$core.Deprecated('Use dismissMangaRequestDescriptor instead')
 const DismissMangaRequest$json = {

@@ -851,6 +851,14 @@ class MangaClient extends $grpc.Client {
     return $createUnaryCall(_$setNsfw, request, options: options);
   }
 
+  /// Mod/admin-only. Sets where a manga comes from by hand, or back to detecting it.
+  $grpc.ResponseFuture<$5.MangaReply> setOrigin(
+    $5.SetOriginRequest request, {
+    $grpc.CallOptions? options,
+  }) {
+    return $createUnaryCall(_$setOrigin, request, options: options);
+  }
+
   // method descriptors
 
   static final _$create = $grpc.ClientMethod<$5.MangaRequest, $5.MangaReply>(
@@ -947,6 +955,11 @@ class MangaClient extends $grpc.Client {
       '/rumgap.v1.Manga/SetNsfw',
       ($5.SetNsfwRequest value) => value.writeToBuffer(),
       $5.MangaReply.fromBuffer);
+  static final _$setOrigin =
+      $grpc.ClientMethod<$5.SetOriginRequest, $5.MangaReply>(
+          '/rumgap.v1.Manga/SetOrigin',
+          ($5.SetOriginRequest value) => value.writeToBuffer(),
+          $5.MangaReply.fromBuffer);
 }
 
 @$pb.GrpcServiceName('rumgap.v1.Manga')
@@ -1105,6 +1118,13 @@ abstract class MangaServiceBase extends $grpc.Service {
         false,
         false,
         ($core.List<$core.int> value) => $5.SetNsfwRequest.fromBuffer(value),
+        ($5.MangaReply value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$5.SetOriginRequest, $5.MangaReply>(
+        'SetOrigin',
+        setOrigin_Pre,
+        false,
+        false,
+        ($core.List<$core.int> value) => $5.SetOriginRequest.fromBuffer(value),
         ($5.MangaReply value) => value.writeToBuffer()));
   }
 
@@ -1268,6 +1288,14 @@ abstract class MangaServiceBase extends $grpc.Service {
 
   $async.Future<$5.MangaReply> setNsfw(
       $grpc.ServiceCall call, $5.SetNsfwRequest request);
+
+  $async.Future<$5.MangaReply> setOrigin_Pre($grpc.ServiceCall $call,
+      $async.Future<$5.SetOriginRequest> $request) async {
+    return setOrigin($call, await $request);
+  }
+
+  $async.Future<$5.MangaReply> setOrigin(
+      $grpc.ServiceCall call, $5.SetOriginRequest request);
 }
 
 @$pb.GrpcServiceName('rumgap.v1.Chapter')

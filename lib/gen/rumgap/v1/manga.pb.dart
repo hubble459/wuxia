@@ -15,9 +15,12 @@ import 'dart:core' as $core;
 import 'package:fixnum/fixnum.dart' as $fixnum;
 import 'package:protobuf/protobuf.dart' as $pb;
 
+import 'manga.pbenum.dart';
 import 'paginate.pb.dart' as $0;
 
 export 'package:protobuf/protobuf.dart' show GeneratedMessageGenericExtensions;
+
+export 'manga.pbenum.dart';
 
 class MangaRequest extends $pb.GeneratedMessage {
   factory MangaRequest({
@@ -470,6 +473,8 @@ class MangaReply extends $pb.GeneratedMessage {
     $core.double? progressOrdinal,
     $core.int? selectedSourceId,
     $core.bool? nsfw,
+    MangaOrigin? origin,
+    $core.bool? originSetByHand,
   }) {
     final result = create();
     if (id != null) result.id = id;
@@ -491,6 +496,8 @@ class MangaReply extends $pb.GeneratedMessage {
     if (progressOrdinal != null) result.progressOrdinal = progressOrdinal;
     if (selectedSourceId != null) result.selectedSourceId = selectedSourceId;
     if (nsfw != null) result.nsfw = nsfw;
+    if (origin != null) result.origin = origin;
+    if (originSetByHand != null) result.originSetByHand = originSetByHand;
     return result;
   }
 
@@ -527,6 +534,9 @@ class MangaReply extends $pb.GeneratedMessage {
     ..aD(18, _omitFieldNames ? '' : 'progressOrdinal')
     ..aI(19, _omitFieldNames ? '' : 'selectedSourceId')
     ..aOB(20, _omitFieldNames ? '' : 'nsfw')
+    ..aE<MangaOrigin>(21, _omitFieldNames ? '' : 'origin',
+        enumValues: MangaOrigin.values)
+    ..aOB(22, _omitFieldNames ? '' : 'originSetByHand')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -702,6 +712,25 @@ class MangaReply extends $pb.GeneratedMessage {
   $core.bool hasNsfw() => $_has(18);
   @$pb.TagNumber(20)
   void clearNsfw() => $_clearField(20);
+
+  @$pb.TagNumber(21)
+  MangaOrigin get origin => $_getN(19);
+  @$pb.TagNumber(21)
+  set origin(MangaOrigin value) => $_setField(21, value);
+  @$pb.TagNumber(21)
+  $core.bool hasOrigin() => $_has(19);
+  @$pb.TagNumber(21)
+  void clearOrigin() => $_clearField(21);
+
+  /// A mod set the origin; it's not detected from the sources anymore.
+  @$pb.TagNumber(22)
+  $core.bool get originSetByHand => $_getBF(20);
+  @$pb.TagNumber(22)
+  set originSetByHand($core.bool value) => $_setBool(20, value);
+  @$pb.TagNumber(22)
+  $core.bool hasOriginSetByHand() => $_has(20);
+  @$pb.TagNumber(22)
+  void clearOriginSetByHand() => $_clearField(22);
 }
 
 class SelectSourceRequest extends $pb.GeneratedMessage {
@@ -1374,6 +1403,74 @@ class ForYouRequest extends $pb.GeneratedMessage {
   $core.bool hasSearch() => $_has(2);
   @$pb.TagNumber(3)
   void clearSearch() => $_clearField(3);
+}
+
+class SetOriginRequest extends $pb.GeneratedMessage {
+  factory SetOriginRequest({
+    $core.int? mangaId,
+    MangaOrigin? origin,
+  }) {
+    final result = create();
+    if (mangaId != null) result.mangaId = mangaId;
+    if (origin != null) result.origin = origin;
+    return result;
+  }
+
+  SetOriginRequest._();
+
+  factory SetOriginRequest.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory SetOriginRequest.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'SetOriginRequest',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'rumgap.v1'),
+      createEmptyInstance: create)
+    ..aI(1, _omitFieldNames ? '' : 'mangaId')
+    ..aE<MangaOrigin>(2, _omitFieldNames ? '' : 'origin',
+        enumValues: MangaOrigin.values)
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  SetOriginRequest clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  SetOriginRequest copyWith(void Function(SetOriginRequest) updates) =>
+      super.copyWith((message) => updates(message as SetOriginRequest))
+          as SetOriginRequest;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static SetOriginRequest create() => SetOriginRequest._();
+  @$core.override
+  SetOriginRequest createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static SetOriginRequest getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<SetOriginRequest>(create);
+  static SetOriginRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.int get mangaId => $_getIZ(0);
+  @$pb.TagNumber(1)
+  set mangaId($core.int value) => $_setSignedInt32(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasMangaId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearMangaId() => $_clearField(1);
+
+  /// Unset: detect it from the sources again.
+  @$pb.TagNumber(2)
+  MangaOrigin get origin => $_getN(1);
+  @$pb.TagNumber(2)
+  set origin(MangaOrigin value) => $_setField(2, value);
+  @$pb.TagNumber(2)
+  $core.bool hasOrigin() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearOrigin() => $_clearField(2);
 }
 
 class DismissMangaRequest extends $pb.GeneratedMessage {

@@ -26,7 +26,13 @@ class MangaDetails extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(manga.genres.join(', '), style: Theme.of(context).textTheme.bodySmall),
+        Text(
+          [
+            if (manga.origin != MangaOrigin.ORIGIN_UNKNOWN) FlutterI18n.translate(context, 'origin.${manga.origin.key}'),
+            ...manga.genres,
+          ].join(', '),
+          style: Theme.of(context).textTheme.bodySmall,
+        ),
         if (showTitle) ...[
           Text(
             manga.title.replaceAll('\n', ' '),

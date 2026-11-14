@@ -39,6 +39,7 @@ enum _MangaMenuAction {
   moveSourceOut,
   moveSourceIn,
   toggleNsfw,
+  setOrigin,
   deleteManga,
 }
 
@@ -150,6 +151,51 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
     try {
       await api.manga.delete(DeleteMangaRequest(id: _manga.id));
       if (mounted) Navigator.of(context).pop();
+    } catch (e) {
+      if (mounted) Fluttertoast.showToast(msg: e.toString());
+    }
+  }
+
+  /// Sets where this manga comes from by hand, or back to detecting it (mod/admin-only).
+  Future<void> _setOrigin() async {
+    // `null` from the dialog is "cancelled"; this marks "detect it again".
+    const automatic = -1;
+    final choice = await showDialog<int>(
+      context: context,
+      builder: (ctx) => SimpleDialog(
+        title: Text(FlutterI18n.translate(ctx, 'manga.set-origin')),
+        children: [
+          SimpleDialogOption(
+            onPressed: () => Navigator.of(ctx).pop(automatic),
+            child: Text(FlutterI18n.translate(ctx, 'origin.automatic')),
+          ),
+          for (final origin in [
+            MangaOrigin.ORIGIN_MANGA,
+            MangaOrigin.ORIGIN_MANHWA,
+            MangaOrigin.ORIGIN_MANHUA,
+            MangaOrigin.ORIGIN_UNKNOWN,
+          ])
+            SimpleDialogOption(
+              onPressed: () => Navigator.of(ctx).pop(origin.value),
+              child: Text(
+                FlutterI18n.translate(ctx, 'origin.${origin.key}') +
+                    (_manga.originSetByHand && _manga.origin == origin ? ' ✓' : ''),
+              ),
+            ),
+        ],
+      ),
+    );
+    if (choice == null || !mounted) return;
+    try {
+      final result = await api.manga.setOrigin(
+        SetOriginRequest(mangaId: _manga.id, origin: choice == automatic ? null : MangaOrigin.valueOf(choice)),
+      );
+      if (mounted) {
+        setState(() {
+          _manga.origin = result.origin;
+          _manga.originSetByHand = result.originSetByHand;
+        });
+      }
     } catch (e) {
       if (mounted) Fluttertoast.showToast(msg: e.toString());
     }
@@ -458,6 +504,8 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
             _moveSourceIn();
           } else if (action == _MangaMenuAction.toggleNsfw) {
             _toggleNsfw();
+          } else if (action == _MangaMenuAction.setOrigin) {
+            _setOrigin();
           } else if (action == _MangaMenuAction.deleteManga) {
             _deleteManga();
           }
@@ -495,6 +543,8 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
               value: _MangaMenuAction.moveSourceIn,
               child: Text(FlutterI18n.translate(context, 'manga.move-source-in')),
             ),
+          if (API.loggedIn.isModOrAdmin)
+            PopupMenuItem(value: _MangaMenuAction.setOrigin, child: Text(FlutterI18n.translate(context, 'manga.set-origin'))),
           if (API.loggedIn.isModOrAdmin)
             PopupMenuItem(
               value: _MangaMenuAction.toggleNsfw,

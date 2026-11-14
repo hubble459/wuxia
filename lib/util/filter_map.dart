@@ -43,6 +43,7 @@ class _Field {
 class FilterMap {
   final FilterOptions genres = FilterOptions();
   final FilterOptions hosts = FilterOptions();
+  final FilterOptions origins = FilterOptions();
   String? global;
   String? title;
   String? description;
@@ -52,6 +53,7 @@ class FilterMap {
     String sb = '';
     sb += genres.intoString('genre');
     sb += ' ${hosts.intoString('host')}';
+    sb += ' ${origins.intoString('origin')}';
 
     if (title?.isNotEmpty == true) {
       sb += ' ';
@@ -133,6 +135,12 @@ class FilterMap {
           map.genres.excluded.add(field.value);
         } else {
           map.genres.included.add(field.value);
+        }
+      } else if (field.name?.toLowerCase() == 'origin') {
+        if (field.exclude) {
+          map.origins.excluded.add(field.value.toLowerCase());
+        } else {
+          map.origins.included.add(field.value.toLowerCase());
         }
       } else if (field.name?.toLowerCase() == 'host') {
         if (field.exclude) {

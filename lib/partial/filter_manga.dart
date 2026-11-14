@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:grpc/grpc.dart';
 import 'package:wuxia/api.dart';
 import 'package:wuxia/gen/rumgap/v1/meta.pb.dart';
@@ -6,6 +7,9 @@ import 'package:wuxia/partial/simple_future_builder.dart';
 import 'package:wuxia/util/filter_map.dart';
 
 enum FilterType { reading, manga }
+
+/// The values of the `origin:` filter, as rumgap stores them.
+const origins = ['manga', 'manhwa', 'manhua', 'unknown'];
 
 class FilterManga extends StatefulWidget {
   final FilterType filterType;
@@ -90,6 +94,45 @@ class _FilterMangaState extends State<FilterManga> {
                     keyboardType: TextInputType.text,
                     textInputAction: TextInputAction.done,
                     decoration: const InputDecoration(label: Text('Description Keywords'), border: OutlineInputBorder()),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: I18nText('origin.title', child: Text('', style: Theme.of(context).textTheme.titleMedium)),
+                  ),
+                  Wrap(
+                    alignment: WrapAlignment.center,
+                    runSpacing: 5,
+                    spacing: 10,
+                    children: origins
+                        .map(
+                          (origin) => InkWell(
+                            onTap: () => setState(() {
+                              filterMap.origins.excluded.remove(origin);
+                              if (!filterMap.origins.included.remove(origin)) {
+                                filterMap.origins.included.add(origin);
+                              }
+                            }),
+                            onLongPress: () => setState(() {
+                              filterMap.origins.included.remove(origin);
+                              if (!filterMap.origins.excluded.remove(origin)) {
+                                filterMap.origins.excluded.add(origin);
+                              }
+                            }),
+                            child: Container(
+                              padding: const EdgeInsets.all(8.0),
+                              decoration: BoxDecoration(
+                                color: filterMap.origins.included.contains(origin)
+                                    ? selectedColor
+                                    : filterMap.origins.excluded.contains(origin)
+                                    ? excludeColor
+                                    : unselectedColor,
+                                borderRadius: const BorderRadius.all(Radius.circular(5.0)),
+                              ),
+                              child: I18nText('origin.$origin'),
+                            ),
+                          ),
+                        )
+                        .toList(),
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),

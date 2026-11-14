@@ -31,6 +31,16 @@ bool isNetworkError(Object? error) {
 const githubWuxiaReleasesUrl = 'https://github.com/hubble459/wuxia/releases';
 const accountRequestEmail = 'geraldd459@gmail.com';
 
+extension MangaOriginKey on MangaOrigin {
+  /// The `origin:` filter value and the `origin.` translation key.
+  String get key => switch (this) {
+    MangaOrigin.ORIGIN_MANGA => 'manga',
+    MangaOrigin.ORIGIN_MANHWA => 'manhwa',
+    MangaOrigin.ORIGIN_MANHUA => 'manhua',
+    _ => 'unknown',
+  };
+}
+
 extension MangaSourceDetails on MangaReply {
   /// This manga with [source]'s own details (title, cover, genres, chapter count, ...),
   /// or unchanged when [source] has none: an offline snapshot or server from before

@@ -107,6 +107,7 @@ manga:
   merge-into: Samenvoegen met een andere manga
   delete: Manga verwijderen
   mark-nsfw: "Markeren als 18+"
+  set-origin: "Herkomst instellen"
   unmark-nsfw: "18+ markering weghalen"
   merge-from: Andere manga samenvoegen met deze
   move-source-out: Bron verplaatsen naar andere manga
@@ -494,3 +495,10 @@ comments:
   hint: Zeg iets aardigs…
   post: Plaatsen
   save: Opslaan
+origin:
+  title: "Herkomst"
+  manga: "Manga"
+  manhwa: "Manhwa"
+  manhua: "Manhua"
+  unknown: "Onbekende herkomst"
+  automatic: "Automatisch bepalen"

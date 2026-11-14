@@ -53,6 +53,7 @@ manga:
   merge-into: Merge into another manga
   delete: Delete manga
   mark-nsfw: "Mark as 18+"
+  set-origin: "Set origin"
   unmark-nsfw: "Unmark 18+"
   merge-from: Merge another manga into this
   move-source-out: Move a source to another manga
@@ -494,3 +495,10 @@ comments:
   hint: Say something nice…
   post: Post
   save: Save
+origin:
+  title: "Origin"
+  manga: "Manga"
+  manhwa: "Manhwa"
+  manhua: "Manhua"
+  unknown: "Unknown origin"
+  automatic: "Detect automatically"
