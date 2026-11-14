@@ -437,6 +437,7 @@ for_you:
   read: "Lezen"
   nope: "Nee"
   undo: "Ongedaan maken"
+  skip: "Overslaan"
   open: "Manga openen"
   caught_up: "Je bent helemaal bij"
   caught_up_hint: "Er zijn nu geen manga meer om voor te stellen. Zoeken voegt nieuwe manga toe aan de catalogus."

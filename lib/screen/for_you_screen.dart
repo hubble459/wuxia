@@ -19,7 +19,7 @@ import 'package:wuxia/util/app_routes.dart';
 import 'package:wuxia/util/filter_map.dart';
 import 'package:wuxia/util/store.dart';
 
-enum _Swipe { read, nope }
+enum _Swipe { read, nope, skip }
 
 /// A Tinder-style deck of manga the user isn't reading yet, ranked by rumgap's `ForYou`.
 /// Swipe right (or ♥) adds a manga to the reading list, left (or ✕) hides it for a while.
@@ -167,10 +167,17 @@ class _ForYouScreenState extends State<ForYouScreen> with AutomaticKeepAliveClie
     if (_deck.length <= _refillAt) _refill();
   }
 
+  void _skip() {
+    if (_deck.isEmpty) return;
+    setState(() => _history.add((_deck.removeAt(0), _Swipe.skip)));
+    if (_deck.length <= _refillAt) _refill();
+  }
+
   Future<void> _undo() async {
     if (_history.isEmpty) return;
     final (manga, swipe) = _history.removeLast();
     setState(() => _deck.insert(0, manga));
+    if (swipe == _Swipe.skip) return;
     try {
       if (swipe == _Swipe.read) {
         await api.reading.delete(DeleteReadingRequest(mangaId: manga.id));
@@ -283,6 +290,11 @@ class _ForYouScreenState extends State<ForYouScreen> with AutomaticKeepAliveClie
             tooltip: FlutterI18n.translate(context, 'for_you.undo'),
             onPressed: _history.isNotEmpty ? _undo : null,
             icon: const Icon(Icons.undo),
+          ),
+          IconButton.outlined(
+            tooltip: FlutterI18n.translate(context, 'for_you.skip'),
+            onPressed: hasCard ? _skip : null,
+            icon: const Icon(Icons.skip_next),
           ),
           IconButton.filled(
             iconSize: 32,

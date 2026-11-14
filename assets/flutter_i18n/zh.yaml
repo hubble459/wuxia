@@ -437,6 +437,7 @@ for_you:
   read: "阅读"
   nope: "不要"
   undo: "撤销"
+  skip: "跳过"
   open: "打开漫画"
   caught_up: "已经全部看完了"
   caught_up_hint: "目前没有更多可推荐的漫画。搜索会把新漫画加入目录。"

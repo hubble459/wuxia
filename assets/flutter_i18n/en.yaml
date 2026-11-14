@@ -437,6 +437,7 @@ for_you:
   read: "Read"
   nope: "Nope"
   undo: "Undo"
+  skip: "Skip"
   open: "Open manga"
   caught_up: "You're all caught up"
   caught_up_hint: "No more manga to suggest right now. Searching adds new manga to the catalog."
