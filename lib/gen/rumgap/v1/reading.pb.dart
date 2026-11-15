@@ -70,16 +70,26 @@ class ReadingPostRequest extends $pb.GeneratedMessage {
   void clearMangaId() => $_clearField(1);
 }
 
+enum ReadingPatchRequest_Position {
+  progress,
+  chapterId,
+  canonicalChapterId,
+  notSet
+}
+
 class ReadingPatchRequest extends $pb.GeneratedMessage {
   factory ReadingPatchRequest({
     $core.int? mangaId,
     $core.int? progress,
-    $core.int? chapterId,
+    @$core.Deprecated('This field is deprecated.') $core.int? chapterId,
+    $core.int? canonicalChapterId,
   }) {
     final result = create();
     if (mangaId != null) result.mangaId = mangaId;
     if (progress != null) result.progress = progress;
     if (chapterId != null) result.chapterId = chapterId;
+    if (canonicalChapterId != null)
+      result.canonicalChapterId = canonicalChapterId;
     return result;
   }
 
@@ -92,13 +102,22 @@ class ReadingPatchRequest extends $pb.GeneratedMessage {
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromJson(json, registry);
 
+  static const $core.Map<$core.int, ReadingPatchRequest_Position>
+      _ReadingPatchRequest_PositionByTag = {
+    2: ReadingPatchRequest_Position.progress,
+    3: ReadingPatchRequest_Position.chapterId,
+    4: ReadingPatchRequest_Position.canonicalChapterId,
+    0: ReadingPatchRequest_Position.notSet
+  };
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'ReadingPatchRequest',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'rumgap.v1'),
       createEmptyInstance: create)
+    ..oo(0, [2, 3, 4])
     ..aI(1, _omitFieldNames ? '' : 'mangaId')
     ..aI(2, _omitFieldNames ? '' : 'progress')
     ..aI(3, _omitFieldNames ? '' : 'chapterId')
+    ..aI(4, _omitFieldNames ? '' : 'canonicalChapterId')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -120,6 +139,16 @@ class ReadingPatchRequest extends $pb.GeneratedMessage {
       $pb.GeneratedMessage.$_defaultFor<ReadingPatchRequest>(create);
   static ReadingPatchRequest? _defaultInstance;
 
+  @$pb.TagNumber(2)
+  @$pb.TagNumber(3)
+  @$pb.TagNumber(4)
+  ReadingPatchRequest_Position whichPosition() =>
+      _ReadingPatchRequest_PositionByTag[$_whichOneof(0)]!;
+  @$pb.TagNumber(2)
+  @$pb.TagNumber(3)
+  @$pb.TagNumber(4)
+  void clearPosition() => $_clearField($_whichOneof(0));
+
   @$pb.TagNumber(1)
   $core.int get mangaId => $_getIZ(0);
   @$pb.TagNumber(1)
@@ -129,6 +158,7 @@ class ReadingPatchRequest extends $pb.GeneratedMessage {
   @$pb.TagNumber(1)
   void clearMangaId() => $_clearField(1);
 
+  /// A raw rank, for when no chapter is known.
   @$pb.TagNumber(2)
   $core.int get progress => $_getIZ(1);
   @$pb.TagNumber(2)
@@ -138,16 +168,30 @@ class ReadingPatchRequest extends $pb.GeneratedMessage {
   @$pb.TagNumber(2)
   void clearProgress() => $_clearField(2);
 
-  /// If set, `progress`/`last_canonical_chapter_id` are derived from this chapter's
-  /// canonical chapter instead of trusting the raw `progress` int directly.
+  /// A chapter of one of the manga's sources, resolved to its canonical chapter.
+  /// Kept for older clients; send `canonical_chapter_id` instead.
+  @$core.Deprecated('This field is deprecated.')
   @$pb.TagNumber(3)
   $core.int get chapterId => $_getIZ(2);
+  @$core.Deprecated('This field is deprecated.')
   @$pb.TagNumber(3)
   set chapterId($core.int value) => $_setSignedInt32(2, value);
+  @$core.Deprecated('This field is deprecated.')
   @$pb.TagNumber(3)
   $core.bool hasChapterId() => $_has(2);
+  @$core.Deprecated('This field is deprecated.')
   @$pb.TagNumber(3)
   void clearChapterId() => $_clearField(3);
+
+  /// The canonical chapter read up to; progress becomes its rank.
+  @$pb.TagNumber(4)
+  $core.int get canonicalChapterId => $_getIZ(3);
+  @$pb.TagNumber(4)
+  set canonicalChapterId($core.int value) => $_setSignedInt32(3, value);
+  @$pb.TagNumber(4)
+  $core.bool hasCanonicalChapterId() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearCanonicalChapterId() => $_clearField(4);
 }
 
 class UpdateChapterOffsetRequest extends $pb.GeneratedMessage {

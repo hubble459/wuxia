@@ -33,27 +33,36 @@ const ReadingPatchRequest$json = {
   '1': 'ReadingPatchRequest',
   '2': [
     {'1': 'manga_id', '3': 1, '4': 1, '5': 5, '10': 'mangaId'},
-    {'1': 'progress', '3': 2, '4': 1, '5': 5, '10': 'progress'},
+    {
+      '1': 'canonical_chapter_id',
+      '3': 4,
+      '4': 1,
+      '5': 5,
+      '9': 0,
+      '10': 'canonicalChapterId'
+    },
+    {'1': 'progress', '3': 2, '4': 1, '5': 5, '9': 0, '10': 'progress'},
     {
       '1': 'chapter_id',
       '3': 3,
       '4': 1,
       '5': 5,
+      '8': {'3': true},
       '9': 0,
       '10': 'chapterId',
-      '17': true
     },
   ],
   '8': [
-    {'1': '_chapter_id'},
+    {'1': 'position'},
   ],
 };
 
 /// Descriptor for `ReadingPatchRequest`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List readingPatchRequestDescriptor = $convert.base64Decode(
-    'ChNSZWFkaW5nUGF0Y2hSZXF1ZXN0EhkKCG1hbmdhX2lkGAEgASgFUgdtYW5nYUlkEhoKCHByb2'
-    'dyZXNzGAIgASgFUghwcm9ncmVzcxIiCgpjaGFwdGVyX2lkGAMgASgFSABSCWNoYXB0ZXJJZIgB'
-    'AUINCgtfY2hhcHRlcl9pZA==');
+    'ChNSZWFkaW5nUGF0Y2hSZXF1ZXN0EhkKCG1hbmdhX2lkGAEgASgFUgdtYW5nYUlkEjIKFGNhbm'
+    '9uaWNhbF9jaGFwdGVyX2lkGAQgASgFSABSEmNhbm9uaWNhbENoYXB0ZXJJZBIcCghwcm9ncmVz'
+    'cxgCIAEoBUgAUghwcm9ncmVzcxIjCgpjaGFwdGVyX2lkGAMgASgFQgIYAUgAUgljaGFwdGVySW'
+    'RCCgoIcG9zaXRpb24=');
 
 @$core.Deprecated('Use updateChapterOffsetRequestDescriptor instead')
 const UpdateChapterOffsetRequest$json = {

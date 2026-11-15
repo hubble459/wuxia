@@ -277,6 +277,11 @@ Future<List<ChapterReply>?> loadOfflineChapters(int mangaId, {int? sourceId}) as
   }
 }
 
+extension ChapterReplyCanonical on ChapterReply {
+  /// The canonical chapter this chapter is, `null` for one manually unlinked from it.
+  int? get canonicalId => hasCanonicalChapterId() ? canonicalChapterId : null;
+}
+
 int _byNumberThenIndex(ChapterReply a, ChapterReply b) {
   final byNumber = a.number.compareTo(b.number);
   return byNumber != 0 ? byNumber : a.index.compareTo(b.index);
@@ -391,25 +396,29 @@ void markAddedToReadingList(MangaReply manga, MangaReply reply) {
 /// pending slot when the write fails (typically offline) so it can be
 /// retried once back online instead of just lost. Does nothing for a manga
 /// outside the reading list.
-Future<void> syncReadingProgress(MangaReply manga, {required int progress, int? chapterId}) async {
+///
+/// The server measures progress in canonical chapters, so pass the one read up to as
+/// [canonicalChapterId] when it's known (see `ChapterReply.canonicalId`); [progress]
+/// is only sent without one.
+Future<void> syncReadingProgress(MangaReply manga, {required int progress, int? canonicalChapterId}) async {
   if (!isInReadingList(manga)) return;
   try {
-    final request = ReadingPatchRequest(mangaId: manga.id, progress: progress);
-    if (chapterId != null) request.chapterId = chapterId;
+    final request = canonicalChapterId != null
+        ? ReadingPatchRequest(mangaId: manga.id, canonicalChapterId: canonicalChapterId)
+        : ReadingPatchRequest(mangaId: manga.id, progress: progress);
     final updated = await api.reading.update(request);
     manga.clear();
     manga.mergeFromMessage(updated);
     await Store.getStoreInstance().clearPendingProgress(manga.id);
   } on GrpcError catch (e) {
-    // Not found (e.g. a downloaded chapter the server has since deleted) isn't fixed by
-    // retrying later, so there's nothing to keep pending.
+    // Not found isn't fixed by retrying later, so there's nothing to keep pending.
     if (e.code == StatusCode.notFound) {
       await Store.getStoreInstance().clearPendingProgress(manga.id);
     } else {
-      await Store.getStoreInstance().setPendingProgress(manga.id, progress: progress, chapterId: chapterId);
+      await Store.getStoreInstance().setPendingProgress(manga.id, progress: progress, canonicalChapterId: canonicalChapterId);
     }
   } catch (_) {
-    await Store.getStoreInstance().setPendingProgress(manga.id, progress: progress, chapterId: chapterId);
+    await Store.getStoreInstance().setPendingProgress(manga.id, progress: progress, canonicalChapterId: canonicalChapterId);
   }
   await updateOfflineMangaSnapshot(manga);
 }
@@ -444,5 +453,5 @@ Future<void> flushPendingProgress(MangaReply manga) async {
   }
 
   manga.readingProgress = pending;
-  await syncReadingProgress(manga, progress: pending, chapterId: store.getPendingProgressChapterId(manga.id));
+  await syncReadingProgress(manga, progress: pending, canonicalChapterId: store.getPendingProgressCanonicalChapterId(manga.id));
 }

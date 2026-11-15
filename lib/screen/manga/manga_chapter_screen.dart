@@ -273,15 +273,7 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
       } catch (_) {}
 
       setReadingProgress(widget.manga, newChapter.index.toInt());
-      if (isInReadingList(widget.manga)) {
-        try {
-          await api.reading.update(
-            ReadingPatchRequest(mangaId: widget.manga.id, progress: widget.manga.readingProgress, chapterId: newChapter.id),
-          );
-        } on GrpcError catch (e) {
-          if (e.code != StatusCode.failedPrecondition) rethrow;
-        }
-      }
+      await syncReadingProgress(widget.manga, progress: widget.manga.readingProgress, canonicalChapterId: newChapter.canonicalId);
 
       widget.source.clear();
       widget.source.mergeFromMessage(selected);
@@ -886,7 +878,7 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
       }
       chapter = found;
     }
-    await syncReadingProgress(widget.manga, progress: widget.manga.readingProgress, chapterId: chapter.id);
+    await syncReadingProgress(widget.manga, progress: widget.manga.readingProgress, canonicalChapterId: chapter.canonicalId);
     await _goToChapter(chapter);
     return true;
   }

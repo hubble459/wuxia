@@ -71,7 +71,7 @@ Future<void> openMissingChapter(
   switchMangaSource(current, source);
 
   setReadingProgress(manga, found.index.toInt());
-  await syncReadingProgress(manga, progress: manga.readingProgress, chapterId: found.id);
+  await syncReadingProgress(manga, progress: manga.readingProgress, canonicalChapterId: found.canonicalId);
   if (!context.mounted) return;
   await Navigator.of(context).push(
     MaterialPageRoute(

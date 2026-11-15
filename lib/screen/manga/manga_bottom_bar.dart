@@ -128,7 +128,7 @@ class _ChapterSelectorState extends State<ChapterSelector> {
 
   Future<void> gotoChapter(ChapterReply chapter) async {
     setReadingProgress(widget.manga, chapter.index.toInt());
-    await syncReadingProgress(widget.manga, progress: widget.manga.readingProgress, chapterId: chapter.id);
+    await syncReadingProgress(widget.manga, progress: widget.manga.readingProgress, canonicalChapterId: chapter.canonicalId);
 
     if (!mounted) return;
 

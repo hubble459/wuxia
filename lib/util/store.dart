@@ -23,7 +23,10 @@ class Store {
   static const String readingModeKey = 'reading_mode';
   static const String mangaReadingModeKeyPrefix = 'reading_mode_manga_';
   static const String pendingProgressKeyPrefix = 'pending_progress_manga_';
-  static const String pendingProgressChapterKeyPrefix = 'pending_progress_chapter_manga_';
+
+  /// Held a source chapter id before progress moved to canonical chapters; only cleared now.
+  static const String legacyPendingProgressChapterKeyPrefix = 'pending_progress_chapter_manga_';
+  static const String pendingProgressCanonicalKeyPrefix = 'pending_progress_canonical_manga_';
 
   static late final Store _instance;
 
@@ -151,22 +154,24 @@ class Store {
     return _publicStorage.getInt('$pendingProgressKeyPrefix$mangaId');
   }
 
-  int? getPendingProgressChapterId(int mangaId) {
-    return _publicStorage.getInt('$pendingProgressChapterKeyPrefix$mangaId');
+  int? getPendingProgressCanonicalChapterId(int mangaId) {
+    return _publicStorage.getInt('$pendingProgressCanonicalKeyPrefix$mangaId');
   }
 
-  Future<void> setPendingProgress(int mangaId, {required int progress, int? chapterId}) async {
+  Future<void> setPendingProgress(int mangaId, {required int progress, int? canonicalChapterId}) async {
     await _publicStorage.setInt('$pendingProgressKeyPrefix$mangaId', progress);
-    if (chapterId != null) {
-      await _publicStorage.setInt('$pendingProgressChapterKeyPrefix$mangaId', chapterId);
+    await _publicStorage.remove('$legacyPendingProgressChapterKeyPrefix$mangaId');
+    if (canonicalChapterId != null) {
+      await _publicStorage.setInt('$pendingProgressCanonicalKeyPrefix$mangaId', canonicalChapterId);
     } else {
-      await _publicStorage.remove('$pendingProgressChapterKeyPrefix$mangaId');
+      await _publicStorage.remove('$pendingProgressCanonicalKeyPrefix$mangaId');
     }
   }
 
   Future<void> clearPendingProgress(int mangaId) async {
     await _publicStorage.remove('$pendingProgressKeyPrefix$mangaId');
-    await _publicStorage.remove('$pendingProgressChapterKeyPrefix$mangaId');
+    await _publicStorage.remove('$legacyPendingProgressChapterKeyPrefix$mangaId');
+    await _publicStorage.remove('$pendingProgressCanonicalKeyPrefix$mangaId');
   }
 
   /// The download queue as saved by `DownloadManager`, one encoded task per

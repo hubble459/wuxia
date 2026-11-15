@@ -127,7 +127,7 @@ class _MangaChaptersScreenState extends State<MangaChaptersScreen> {
                   },
                   refreshParent: (progress) async {
                     setReadingProgress(widget.manga, progress);
-                    await syncReadingProgress(widget.manga, progress: progress, chapterId: chapter.id);
+                    await syncReadingProgress(widget.manga, progress: progress, canonicalChapterId: chapter.canonicalId);
                     if (!context.mounted) return;
                     await Navigator.of(context).push(
                       MaterialPageRoute(
