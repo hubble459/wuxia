@@ -133,7 +133,7 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
 
     final ImagesReply reply;
     try {
-      reply = await api.chapter.images(ChapterImagesRequest(chapterId: _chapter.id));
+      reply = await api.chapter.images(ChapterImagesRequest(chapterId: _chapter.id), options: API.longRunningOptions);
     } catch (e) {
       if (mounted) setState(() => _imagesError = e);
       return;

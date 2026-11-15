@@ -489,11 +489,11 @@ class DownloadManager extends ChangeNotifier {
   /// a transient scrape failure -- see `_isRetryableScrapeError`.
   Future<ImagesReply> _fetchChapterImages(ChapterReply chapter) async {
     try {
-      return await api.chapter.images(ChapterImagesRequest(chapterId: chapter.id));
+      return await api.chapter.images(ChapterImagesRequest(chapterId: chapter.id), options: API.longRunningOptions);
     } on GrpcError catch (e) {
       if (!_isRetryableScrapeError(e)) rethrow;
       await Future.delayed(const Duration(seconds: 2));
-      return await api.chapter.images(ChapterImagesRequest(chapterId: chapter.id));
+      return await api.chapter.images(ChapterImagesRequest(chapterId: chapter.id), options: API.longRunningOptions);
     }
   }
 

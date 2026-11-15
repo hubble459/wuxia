@@ -111,10 +111,10 @@ class API {
     timeout: Duration(seconds: 12),
   );
 
-  /// Override for RPCs that scrape and persist a manga's full chapter list
-  /// server-side (adding a source, creating a manga from a URL) - a huge manga can
-  /// take well past the blanket 12s call deadline above, which is tuned for normal
-  /// calls. Passed as `options:` on the call itself; merging keeps the auth provider
+  /// Override for RPCs that may scrape a site server-side: a manga's full chapter list
+  /// (adding a source, creating a manga from a URL), where a huge manga can take well
+  /// past the blanket 12s call deadline above, which is tuned for normal calls, and a
+  /// chapter's page list, where rumgap gives a slow site up to 30s per attempt. Passed as `options:` on the call itself; merging keeps the auth provider
   /// and compression from `options` above and only overrides the timeout.
   static final longRunningOptions = CallOptions(timeout: const Duration(minutes: 5));
 }
