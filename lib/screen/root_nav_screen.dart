@@ -22,6 +22,7 @@ import 'package:wuxia/screen/search_screen.dart';
 import 'package:wuxia/util/app_routes.dart';
 import 'package:wuxia/util/session.dart';
 import 'package:wuxia/util/download_manager.dart';
+import 'package:wuxia/util/notification_open/notification_open.dart';
 import 'package:wuxia/util/notifications.dart';
 import 'package:wuxia/util/store.dart';
 import 'package:wuxia/util/tools.dart';
@@ -166,6 +167,7 @@ class _RootNavScreenState extends State<RootNavScreen> {
       FirebaseMessaging.onMessageOpenedApp.listen(_handleNotificationClick);
 
       FirebaseMessaging.onMessage.listen(_handleNotificationInForeground);
+      onNotificationOpen(_openManga);
     } catch (err) {
       print('Failed to set up push notifications: $err');
 
