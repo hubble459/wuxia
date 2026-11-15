@@ -137,7 +137,10 @@ class _ChapterSelectorState extends State<ChapterSelector> {
 
   // `readingProgress`/`chapter.index` are 1-based (see `isChapterRead`), so
   // subtract 1 before dividing to land on the page that actually contains it.
-  int get _windowPage => max(((widget.manga.readingProgress - 1) / _pageSize).floor(), 0);
+  int get _windowPage {
+    final lastPage = max(((_countChapters - 1) / _pageSize).floor(), 0);
+    return ((widget.manga.readingProgress - 1) / _pageSize).floor().clamp(0, lastPage);
+  }
 
   /// Position of the current chapter within the fetched window.
   int get _windowLocalIndex => (widget.manga.readingProgress - 1 - _windowStart).clamp(0, max(_windowLength - 1, 0));
