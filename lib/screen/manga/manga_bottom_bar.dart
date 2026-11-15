@@ -109,7 +109,7 @@ class _ChapterSelectorState extends State<ChapterSelector> {
     }
     if (!mounted) return;
     if (chapter.missing) {
-      await openMissingChapter(context, widget.manga, chapter);
+      await openMissingChapter(context, widget.manga, chapter, current: widget.source);
       refresh();
       return;
     }
@@ -242,7 +242,7 @@ class _ChapterSelectorState extends State<ChapterSelector> {
                                     minWidth: 0,
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
                                     textColor: Theme.of(context).disabledColor,
-                                    onPressed: () => openMissingChapter(context, widget.manga, chapter).then((_) => refresh()),
+                                    onPressed: () => openMissingChapter(context, widget.manga, chapter, current: widget.source).then((_) => refresh()),
                                     child: Text(
                                       chapterNumberLabel(chapter),
                                       style: const TextStyle(decoration: TextDecoration.lineThrough),

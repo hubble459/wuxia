@@ -873,9 +873,7 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
         final picked = await pickSourceWithChapter(context, widget.manga, chapter);
         if (picked == null) return false;
         final (source, found) = picked;
-        widget.source.clear();
-        widget.source.mergeFromMessage(source);
-        api.manga.selectSource(SelectSourceRequest(mangaSourceId: source.id)).ignore();
+        switchMangaSource(widget.source, source);
         chapter = found;
       }
     } catch (e) {

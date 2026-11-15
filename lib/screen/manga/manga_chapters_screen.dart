@@ -119,8 +119,11 @@ class _MangaChaptersScreenState extends State<MangaChaptersScreen> {
                   manga: widget.manga,
                   source: widget.source,
                   openMissing: () async {
-                    await openMissingChapter(context, widget.manga, chapter);
-                    if (mounted) setState(() {});
+                    await openMissingChapter(context, widget.manga, chapter, current: widget.source);
+                    if (!mounted) return;
+                    // The manga switched to the source that has it; list that one now.
+                    setState(() {});
+                    _pagingController.refresh();
                   },
                   refreshParent: (progress) async {
                     setReadingProgress(widget.manga, progress);

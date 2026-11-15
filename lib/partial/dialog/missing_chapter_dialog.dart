@@ -48,12 +48,27 @@ Future<(MangaSourceReply, ChapterReply)?> pickSourceWithChapter(
   }
 }
 
-/// Like [pickSourceWithChapter], then opens the chapter there. Completes once the reader
-/// is closed again (or nothing was picked).
-Future<void> openMissingChapter(BuildContext context, MangaReply manga, ChapterReply chapter) async {
+/// Switches the manga to `source`, in place so every screen holding `current` follows,
+/// and remembers it on the server like the source switcher does.
+void switchMangaSource(MangaSourceReply current, MangaSourceReply source) {
+  current.clear();
+  current.mergeFromMessage(source);
+  api.manga.selectSource(SelectSourceRequest(mangaSourceId: source.id)).ignore();
+}
+
+/// Like [pickSourceWithChapter], then switches the manga to that source (see
+/// [switchMangaSource]) and opens the chapter. Completes once the reader is closed again
+/// (or nothing was picked).
+Future<void> openMissingChapter(
+  BuildContext context,
+  MangaReply manga,
+  ChapterReply chapter, {
+  required MangaSourceReply current,
+}) async {
   final picked = await pickSourceWithChapter(context, manga, chapter);
   if (picked == null || !context.mounted) return;
   final (source, found) = picked;
+  switchMangaSource(current, source);
 
   setReadingProgress(manga, found.index.toInt());
   await syncReadingProgress(manga, progress: manga.readingProgress, chapterId: found.id);
@@ -61,7 +76,7 @@ Future<void> openMissingChapter(BuildContext context, MangaReply manga, ChapterR
   await Navigator.of(context).push(
     MaterialPageRoute(
       settings: RouteSettings(name: chapterRouteNameFor(mangaId: manga.id, chapter: found)),
-      builder: (context) => MangaChapterScreen(manga: manga, chapter: found, source: source),
+      builder: (context) => MangaChapterScreen(manga: manga, chapter: found, source: current),
     ),
   );
 }
