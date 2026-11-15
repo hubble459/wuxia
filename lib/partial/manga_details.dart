@@ -141,16 +141,13 @@ class MangaDetails extends StatelessWidget {
                 children: [
                   Divider(),
                   Text(FlutterI18n.translate(context, 'manga.similar'), style: Theme.of(context).textTheme.titleLarge),
-                  ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: similar.items.length,
-                    itemBuilder: (context, index) => MangaItem(
-                      key: Key(similar.items[index].id.toString()),
-                      manga: similar.items[index],
+                  for (final item in similar.items)
+                    MangaItem(
+                      key: Key(item.id.toString()),
+                      manga: item,
                       type: HeroScreenType.latest,
                       reloadParent: (manga, _) {},
                     ),
-                  ),
                 ],
               ),
             );
