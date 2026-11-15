@@ -22,6 +22,7 @@ import 'package:wuxia/screen/search_screen.dart';
 import 'package:wuxia/util/app_routes.dart';
 import 'package:wuxia/util/session.dart';
 import 'package:wuxia/util/download_manager.dart';
+import 'package:wuxia/util/notifications.dart';
 import 'package:wuxia/util/store.dart';
 import 'package:wuxia/util/tools.dart';
 
@@ -79,41 +80,42 @@ class _RootNavScreenState extends State<RootNavScreen> {
     promptDownloadReconnectIfNeeded(context);
   }
 
+  /// While the app is open Android shows nothing for a push, so on Android the same
+  /// notification is posted locally; elsewhere a toast says it.
   Future<void> _handleNotificationInForeground(RemoteMessage message) async {
-    final mangaId = message.data['manga_id'];
+    final mangaId = int.tryParse(message.data['manga_id'] ?? '');
+    if (mangaId == null) return;
 
-    if (mangaId is String) {
-      final manga = await api.manga.get(GetMangaRequest(id: int.parse(mangaId)));
-
-      final context = navigatorKey.currentState?.context;
-      if (context == null || context.mounted != true) {
-        return;
-      }
-
-      Fluttertoast.showToast(
-        msg: FlutterI18n.translate(context, 'notification.new_chapter', translationParams: {'title': manga.title}),
-        timeInSecForIosWeb: 5,
-        toastLength: Toast.LENGTH_LONG,
-      );
+    if (!kIsWeb && Platform.isAndroid) {
+      await showNewChapterNotification(mangaId: mangaId, title: message.notification?.title, body: message.notification?.body);
+      return;
     }
+
+    final manga = await api.manga.get(GetMangaRequest(id: mangaId));
+    final context = navigatorKey.currentState?.context;
+    if (context == null || context.mounted != true) return;
+    Fluttertoast.showToast(
+      msg: FlutterI18n.translate(context, 'notification.new_chapter', translationParams: {'title': manga.title}),
+      timeInSecForIosWeb: 5,
+      toastLength: Toast.LENGTH_LONG,
+    );
   }
 
   Future<void> _handleNotificationClick(RemoteMessage message) async {
-    final mangaId = message.data['manga_id'];
+    final mangaId = int.tryParse(message.data['manga_id'] ?? '');
+    if (mangaId != null) await _openManga(mangaId);
+  }
 
-    if (mangaId is String) {
-      final manga = await api.manga.get(GetMangaRequest(id: int.parse(mangaId)));
-      final context = navigatorKey.currentState?.context;
-
-      if (context?.mounted == true) {
-        Navigator.of(context!).push(
-          MaterialPageRoute(
-            settings: RouteSettings(name: mangaRouteName(manga.id)),
-            builder: (context) => MangaScreen(manga: manga, type: HeroScreenType.reading),
-          ),
-        );
-      }
-    }
+  Future<void> _openManga(int mangaId) async {
+    final manga = await api.manga.get(GetMangaRequest(id: mangaId));
+    final context = navigatorKey.currentState?.context;
+    if (context?.mounted != true) return;
+    Navigator.of(context!).push(
+      MaterialPageRoute(
+        settings: RouteSettings(name: mangaRouteName(manga.id)),
+        builder: (context) => MangaScreen(manga: manga, type: HeroScreenType.reading),
+      ),
+    );
   }
 
   Future<void> _initNotificationHandler() async {
@@ -126,6 +128,14 @@ class _RootNavScreenState extends State<RootNavScreen> {
 
       if (notificationSettings.authorizationStatus == AuthorizationStatus.denied) {
         return;
+      }
+      if (!kIsWeb && Platform.isAndroid) {
+        // Only for pushes that arrive while the app is open; push itself works without it.
+        try {
+          await initLocalNotifications(_openManga);
+        } catch (err) {
+          debugPrint('Failed to set up local notifications: $err');
+        }
       }
 
       final token = await FirebaseMessaging.instance.getToken(vapidKey: _vapidKey.isEmpty ? null : _vapidKey);
