@@ -19,6 +19,8 @@ chapter:
   unlinked: "Hoofdstuk ontkoppeld"
   unlink_confirm: "Hoofdstuk {number} ontkoppelen van de andere bronnen? Wisselen van bron vindt het pas weer als het opnieuw gekoppeld is."
   not_on_source: "Deze bron heeft dit hoofdstuk niet"
+  missing_open_on: "Lees hoofdstuk {number} op"
+  missing_hint: "Niet op {source}"
   images_failed: "De pagina's van dit hoofdstuk konden niet geladen worden"
   login_required: "Dit hoofdstuk vereist een account op de website"
   login_required_hint: "Waarschijnlijk vroege toegang; meestal wordt het later gratis. Probeer een andere bron, of probeer het later opnieuw."

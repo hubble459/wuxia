@@ -8,6 +8,7 @@ import 'package:wuxia/api.dart';
 import 'package:wuxia/gen/rumgap/v1/chapter.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/paginate.pb.dart';
+import 'package:wuxia/partial/dialog/missing_chapter_dialog.dart';
 import 'package:wuxia/partial/list/chapter_item.dart';
 import 'package:wuxia/partial/list_error_indicator.dart';
 import 'package:wuxia/partial/responsive_content.dart';
@@ -116,6 +117,11 @@ class _MangaChaptersScreenState extends State<MangaChaptersScreen> {
                 noItemsFoundIndicatorBuilder: (context) => Center(child: I18nText('empty')),
                 itemBuilder: (context, chapter, index) => ChapterItem(
                   manga: widget.manga,
+                  source: widget.source,
+                  openMissing: () async {
+                    await openMissingChapter(context, widget.manga, chapter);
+                    if (mounted) setState(() {});
+                  },
                   refreshParent: (progress) async {
                     setReadingProgress(widget.manga, progress);
                     await syncReadingProgress(widget.manga, progress: progress, chapterId: chapter.id);
@@ -175,6 +181,7 @@ class _MangaChaptersScreenState extends State<MangaChaptersScreen> {
         PaginateChapterQuery(
           mangaSourceId: widget.source.id,
           reversed: _reversed,
+          canonical: true,
           paginateQuery: PaginateQuery(page: Int64(page), perPage: Int64(_pageSize)),
         ),
       );

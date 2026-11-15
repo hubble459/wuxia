@@ -11,6 +11,7 @@ import 'package:wuxia/gen/rumgap/v1/chapter.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/paginate.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/reading.pb.dart';
+import 'package:wuxia/partial/dialog/missing_chapter_dialog.dart';
 import 'package:wuxia/partial/simple_future_builder.dart';
 import 'package:wuxia/screen/manga/manga_chapter_screen.dart';
 import 'package:wuxia/screen/manga/manga_chapters_screen.dart';
@@ -137,10 +138,7 @@ class _ChapterSelectorState extends State<ChapterSelector> {
 
   // `readingProgress`/`chapter.index` are 1-based (see `isChapterRead`), so
   // subtract 1 before dividing to land on the page that actually contains it.
-  int get _windowPage {
-    final lastPage = max(((_countChapters - 1) / _pageSize).floor(), 0);
-    return ((widget.manga.readingProgress - 1) / _pageSize).floor().clamp(0, lastPage);
-  }
+  int get _windowPage => max(((widget.manga.readingProgress - 1) / _pageSize).floor(), 0);
 
   /// Position of the current chapter within the fetched window.
   int get _windowLocalIndex => (widget.manga.readingProgress - 1 - _windowStart).clamp(0, max(_windowLength - 1, 0));
@@ -161,6 +159,7 @@ class _ChapterSelectorState extends State<ChapterSelector> {
         PaginateChapterQuery(
           mangaSourceId: widget.source.id,
           reversed: true,
+          canonical: true,
           paginateQuery: PaginateQuery(page: Int64(page), perPage: Int64(_pageSize)),
         ),
       );
@@ -224,13 +223,33 @@ class _ChapterSelectorState extends State<ChapterSelector> {
                             itemCount: chapters.items.length,
                             itemBuilder: (context, index) {
                               final chapter = chapters.items[index];
+                              if (chapter.missing) {
+                                return Tooltip(
+                                  message: FlutterI18n.translate(
+                                    context,
+                                    'chapter.missing_hint',
+                                    translationParams: {'source': widget.source.hostname},
+                                  ),
+                                  child: MaterialButton(
+                                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                    minWidth: 0,
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+                                    textColor: Theme.of(context).disabledColor,
+                                    onPressed: () => openMissingChapter(context, widget.manga, chapter).then((_) => refresh()),
+                                    child: Text(
+                                      chapterNumberLabel(chapter),
+                                      style: const TextStyle(decoration: TextDecoration.lineThrough),
+                                    ),
+                                  ),
+                                );
+                              }
                               return MaterialButton(
                                 color: isChapterRead(widget.manga, chapter) ? Colors.grey.withValues(alpha: 0.2) : null,
                                 materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                                 minWidth: 0,
                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
                                 onPressed: () => gotoChapter(chapter),
-                                child: Text(chapter.number.toStringAsFixed(1).replaceAll('.0', '')),
+                                child: Text(chapterNumberLabel(chapter)),
                               );
                             },
                           );

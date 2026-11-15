@@ -95,6 +95,8 @@ chapter:
   unlinked: "Chapter unlinked"
   unlink_confirm: "Unlink chapter {number} from the other sources? Switching sources won't find it until it's linked again."
   not_on_source: "This source doesn't have this chapter"
+  missing_open_on: "Read chapter {number} on"
+  missing_hint: "Not on {source}"
   images_failed: "Couldn't load this chapter's pages"
   login_required: "This chapter needs an account on its website"
   login_required_hint: "It's probably early access and usually becomes free later. Try another source, or try again later."

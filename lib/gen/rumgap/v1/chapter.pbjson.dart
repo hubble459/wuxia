@@ -96,6 +96,14 @@ const ChapterReply$json = {
       '10': 'ordinal',
       '17': true
     },
+    {'1': 'missing', '3': 13, '4': 1, '5': 8, '10': 'missing'},
+    {
+      '1': 'available_source_ids',
+      '3': 14,
+      '4': 3,
+      '5': 5,
+      '10': 'availableSourceIds'
+    },
   ],
   '8': [
     {'1': '_posted'},
@@ -113,9 +121,10 @@ final $typed_data.Uint8List chapterReplyDescriptor = $convert.base64Decode(
     'gHIAEoA0gAUgZwb3N0ZWSIAQESNQoGb2Zmc2V0GAggASgLMhgucnVtZ2FwLnYxLkNoYXB0ZXJP'
     'ZmZzZXRIAVIGb2Zmc2V0iAEBEh0KCmNyZWF0ZWRfYXQYCSABKANSCWNyZWF0ZWRBdBIdCgp1cG'
     'RhdGVkX2F0GAogASgDUgl1cGRhdGVkQXQSNQoUY2Fub25pY2FsX2NoYXB0ZXJfaWQYCyABKAVI'
-    'AlISY2Fub25pY2FsQ2hhcHRlcklkiAEBEh0KB29yZGluYWwYDCABKAFIA1IHb3JkaW5hbIgBAU'
-    'IJCgdfcG9zdGVkQgkKB19vZmZzZXRCFwoVX2Nhbm9uaWNhbF9jaGFwdGVyX2lkQgoKCF9vcmRp'
-    'bmFs');
+    'AlISY2Fub25pY2FsQ2hhcHRlcklkiAEBEh0KB29yZGluYWwYDCABKAFIA1IHb3JkaW5hbIgBAR'
+    'IYCgdtaXNzaW5nGA0gASgIUgdtaXNzaW5nEjAKFGF2YWlsYWJsZV9zb3VyY2VfaWRzGA4gAygF'
+    'UhJhdmFpbGFibGVTb3VyY2VJZHNCCQoHX3Bvc3RlZEIJCgdfb2Zmc2V0QhcKFV9jYW5vbmljYW'
+    'xfY2hhcHRlcl9pZEIKCghfb3JkaW5hbA==');
 
 @$core.Deprecated('Use chaptersReplyDescriptor instead')
 const ChaptersReply$json = {
@@ -209,10 +218,20 @@ const PaginateChapterQuery$json = {
       '10': 'reversed',
       '17': true
     },
+    {
+      '1': 'canonical',
+      '3': 4,
+      '4': 1,
+      '5': 8,
+      '9': 2,
+      '10': 'canonical',
+      '17': true
+    },
   ],
   '8': [
     {'1': '_paginate_query'},
     {'1': '_reversed'},
+    {'1': '_canonical'},
   ],
 };
 
@@ -220,8 +239,9 @@ const PaginateChapterQuery$json = {
 final $typed_data.Uint8List paginateChapterQueryDescriptor = $convert.base64Decode(
     'ChRQYWdpbmF0ZUNoYXB0ZXJRdWVyeRImCg9tYW5nYV9zb3VyY2VfaWQYASABKAVSDW1hbmdhU2'
     '91cmNlSWQSRAoOcGFnaW5hdGVfcXVlcnkYAiABKAsyGC5ydW1nYXAudjEuUGFnaW5hdGVRdWVy'
-    'eUgAUg1wYWdpbmF0ZVF1ZXJ5iAEBEh8KCHJldmVyc2VkGAMgASgISAFSCHJldmVyc2VkiAEBQh'
-    'EKD19wYWdpbmF0ZV9xdWVyeUILCglfcmV2ZXJzZWQ=');
+    'eUgAUg1wYWdpbmF0ZVF1ZXJ5iAEBEh8KCHJldmVyc2VkGAMgASgISAFSCHJldmVyc2VkiAEBEi'
+    'EKCWNhbm9uaWNhbBgEIAEoCEgCUgljYW5vbmljYWyIAQFCEQoPX3BhZ2luYXRlX3F1ZXJ5QgsK'
+    'CV9yZXZlcnNlZEIMCgpfY2Fub25pY2Fs');
 
 @$core.Deprecated('Use linkChapterRequestDescriptor instead')
 const LinkChapterRequest$json = {

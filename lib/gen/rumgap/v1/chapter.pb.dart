@@ -178,6 +178,8 @@ class ChapterReply extends $pb.GeneratedMessage {
     $fixnum.Int64? updatedAt,
     $core.int? canonicalChapterId,
     $core.double? ordinal,
+    $core.bool? missing,
+    $core.Iterable<$core.int>? availableSourceIds,
   }) {
     final result = create();
     if (id != null) result.id = id;
@@ -193,6 +195,9 @@ class ChapterReply extends $pb.GeneratedMessage {
     if (canonicalChapterId != null)
       result.canonicalChapterId = canonicalChapterId;
     if (ordinal != null) result.ordinal = ordinal;
+    if (missing != null) result.missing = missing;
+    if (availableSourceIds != null)
+      result.availableSourceIds.addAll(availableSourceIds);
     return result;
   }
 
@@ -222,6 +227,9 @@ class ChapterReply extends $pb.GeneratedMessage {
     ..aInt64(10, _omitFieldNames ? '' : 'updatedAt')
     ..aI(11, _omitFieldNames ? '' : 'canonicalChapterId')
     ..aD(12, _omitFieldNames ? '' : 'ordinal')
+    ..aOB(13, _omitFieldNames ? '' : 'missing')
+    ..p<$core.int>(
+        14, _omitFieldNames ? '' : 'availableSourceIds', $pb.PbFieldType.K3)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -358,6 +366,21 @@ class ChapterReply extends $pb.GeneratedMessage {
   $core.bool hasOrdinal() => $_has(11);
   @$pb.TagNumber(12)
   void clearOrdinal() => $_clearField(12);
+
+  /// A canonical chapter this source doesn't have (see PaginateChapterQuery.canonical):
+  /// only canonical_chapter_id, ordinal and number (the ordinal) are set.
+  @$pb.TagNumber(13)
+  $core.bool get missing => $_getBF(12);
+  @$pb.TagNumber(13)
+  set missing($core.bool value) => $_setBool(12, value);
+  @$pb.TagNumber(13)
+  $core.bool hasMissing() => $_has(12);
+  @$pb.TagNumber(13)
+  void clearMissing() => $_clearField(13);
+
+  /// For a missing chapter: the sources of this manga that do have it.
+  @$pb.TagNumber(14)
+  $pb.PbList<$core.int> get availableSourceIds => $_getList(13);
 }
 
 class ChaptersReply extends $pb.GeneratedMessage {
@@ -556,11 +579,13 @@ class PaginateChapterQuery extends $pb.GeneratedMessage {
     $core.int? mangaSourceId,
     $0.PaginateQuery? paginateQuery,
     $core.bool? reversed,
+    $core.bool? canonical,
   }) {
     final result = create();
     if (mangaSourceId != null) result.mangaSourceId = mangaSourceId;
     if (paginateQuery != null) result.paginateQuery = paginateQuery;
     if (reversed != null) result.reversed = reversed;
+    if (canonical != null) result.canonical = canonical;
     return result;
   }
 
@@ -581,6 +606,7 @@ class PaginateChapterQuery extends $pb.GeneratedMessage {
     ..aOM<$0.PaginateQuery>(2, _omitFieldNames ? '' : 'paginateQuery',
         subBuilder: $0.PaginateQuery.create)
     ..aOB(3, _omitFieldNames ? '' : 'reversed')
+    ..aOB(4, _omitFieldNames ? '' : 'canonical')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -630,6 +656,19 @@ class PaginateChapterQuery extends $pb.GeneratedMessage {
   $core.bool hasReversed() => $_has(2);
   @$pb.TagNumber(3)
   void clearReversed() => $_clearField(3);
+
+  /// Page through the manga's canonical chapters instead of this source's own: chapters
+  /// this source doesn't have come back as `missing` placeholders, so pages line up with
+  /// reading progress (which counts canonical chapters). Manually unlinked chapters are
+  /// left out.
+  @$pb.TagNumber(4)
+  $core.bool get canonical => $_getBF(3);
+  @$pb.TagNumber(4)
+  set canonical($core.bool value) => $_setBool(3, value);
+  @$pb.TagNumber(4)
+  $core.bool hasCanonical() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearCanonical() => $_clearField(4);
 }
 
 class LinkChapterRequest extends $pb.GeneratedMessage {
