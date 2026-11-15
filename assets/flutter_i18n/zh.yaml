@@ -24,6 +24,7 @@ search:
   library: 书库
   show_more: 显示更多
   online: 在线
+  search_online: '在线搜索“{keyword}”'
   search_manga: 搜索漫画
 manga:
   source_down: "此来源的网站目前无法加载"

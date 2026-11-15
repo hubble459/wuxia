@@ -25,6 +25,7 @@ search:
   library: Library
   show_more: Show more
   online: Online
+  search_online: 'Search online for "{keyword}"'
 manga:
   source_down: "This source's website is currently failing to load"
   chapters: '{amount} chapters'

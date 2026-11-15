@@ -6,6 +6,7 @@ import 'package:wuxia/api.dart';
 import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/paginate.pb.dart';
 import 'package:wuxia/partial/image_error_placeholder.dart';
+import 'package:wuxia/util/debouncer.dart';
 
 /// Search-and-pick over the local library (via Manga.Index) - unlike SearchScreen (which
 /// searches external sites and creates/attaches sources from a scraped URL), this returns
@@ -27,6 +28,10 @@ class _MangaPickerScreen extends StatefulWidget {
 class _MangaPickerScreenState extends State<_MangaPickerScreen> {
   final _controller = TextEditingController();
   late Future<List<MangaReply>> _results = _fetch('');
+  final _searchDebouncer = Debouncer();
+
+  /// The keyword [_results] is for.
+  String _searched = '';
 
   Future<List<MangaReply>> _fetch(String keyword) {
     return api.manga
@@ -35,13 +40,23 @@ class _MangaPickerScreenState extends State<_MangaPickerScreen> {
   }
 
   void _search(String keyword) {
+    _searchDebouncer.cancel();
+    _searched = keyword.trim();
     setState(() {
       _results = _fetch(keyword);
     });
   }
 
+  /// Searches [keyword] once typing pauses, unless it's what's already
+  /// searched for.
+  void _searchSoon(String keyword) {
+    _searchDebouncer.cancel();
+    if (keyword.trim() != _searched) _searchDebouncer(() => _search(keyword));
+  }
+
   @override
   void dispose() {
+    _searchDebouncer.cancel();
     _controller.dispose();
     super.dispose();
   }
@@ -54,6 +69,7 @@ class _MangaPickerScreenState extends State<_MangaPickerScreen> {
           controller: _controller,
           autofocus: true,
           textInputAction: TextInputAction.search,
+          onChanged: _searchSoon,
           onSubmitted: _search,
           decoration: InputDecoration(hintText: FlutterI18n.translate(context, 'search.search_manga'), border: InputBorder.none),
         ),

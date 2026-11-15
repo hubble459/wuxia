@@ -11,6 +11,7 @@ import 'package:wuxia/partial/list/manga_item.dart';
 import 'package:wuxia/partial/list_error_indicator.dart';
 import 'package:wuxia/partial/order_manga.dart';
 import 'package:wuxia/partial/responsive_content.dart';
+import 'package:wuxia/util/debouncer.dart';
 import 'package:wuxia/util/filter_map.dart';
 import 'package:wuxia/util/store.dart';
 
@@ -36,9 +37,23 @@ class _ReadingScreenState extends State<ReadingScreen> with AutomaticKeepAliveCl
   final _pageSize = 20;
   String? _orderBy;
 
+  final _searchDebouncer = Debouncer();
+
+  /// The search text the list was last refreshed for.
+  String _searchedKeyword = '';
+
+  /// Searches [keyword] once typing pauses, unless it's what's already
+  /// searched for.
+  void _searchSoon(String keyword) {
+    _searchDebouncer.cancel();
+    if (keyword.trim() != _searchedKeyword) _searchDebouncer(() => _filter(keyword: keyword));
+  }
+
   void _filter({String? keyword, String? orderBy}) {
     bool refresh = false;
     if (keyword != null) {
+      _searchDebouncer.cancel();
+      _searchedKeyword = keyword.trim();
       refresh = true;
     }
     if (orderBy != null && orderBy != _orderBy) {
@@ -59,6 +74,7 @@ class _ReadingScreenState extends State<ReadingScreen> with AutomaticKeepAliveCl
           TextField(
             controller: _searchController,
             textInputAction: TextInputAction.search,
+            onChanged: _searchSoon,
             onEditingComplete: () {
               _filter(keyword: _searchController.text);
             },
@@ -172,6 +188,7 @@ class _ReadingScreenState extends State<ReadingScreen> with AutomaticKeepAliveCl
 
   @override
   void dispose() {
+    _searchDebouncer.cancel();
     _pagingController.dispose();
     _searchController.dispose();
     _scrollController.dispose();

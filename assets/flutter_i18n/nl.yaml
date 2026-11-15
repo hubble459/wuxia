@@ -147,6 +147,7 @@ search:
   library: Bibliotheek
   show_more: Meer tonen
   online: Online
+  search_online: 'Online zoeken naar "{keyword}"'
   search_reading: Zoek Lezen
 settings:
   account: Rekening

@@ -5,6 +5,7 @@ import 'package:wuxia/api.dart';
 import 'package:wuxia/gen/rumgap/v1/anilist.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
 import 'package:wuxia/partial/image_error_placeholder.dart';
+import 'package:wuxia/util/debouncer.dart';
 
 /// Searches AniList and sets the picked entry as the manga's match, for everyone.
 /// Returns the updated manga, or null when cancelled.
@@ -24,10 +25,27 @@ class _AnilistMatchScreen extends StatefulWidget {
 class _AnilistMatchScreenState extends State<_AnilistMatchScreen> {
   late final _controller = TextEditingController(text: widget.manga.title.replaceAll('\n', ' '));
   late Future<List<AnilistMedia>> _results = _fetch(_controller.text);
+  final _searchDebouncer = Debouncer();
+
+  /// The query [_results] is for.
+  late String _searched = _controller.text.trim();
   bool _saving = false;
 
   Future<List<AnilistMedia>> _fetch(String query) =>
       api.anilist.search(AnilistSearchRequest(query: query)).then((reply) => reply.items);
+
+  void _search(String query) {
+    _searchDebouncer.cancel();
+    _searched = query.trim();
+    setState(() => _results = _fetch(query));
+  }
+
+  /// Searches [query] once typing pauses, unless it's what's already
+  /// searched for.
+  void _searchSoon(String query) {
+    _searchDebouncer.cancel();
+    if (query.trim() != _searched) _searchDebouncer(() => _search(query));
+  }
 
   Future<void> _save(SetAnilistMatchRequest request) async {
     setState(() => _saving = true);
@@ -44,6 +62,7 @@ class _AnilistMatchScreenState extends State<_AnilistMatchScreen> {
 
   @override
   void dispose() {
+    _searchDebouncer.cancel();
     _controller.dispose();
     super.dispose();
   }
@@ -67,7 +86,8 @@ class _AnilistMatchScreenState extends State<_AnilistMatchScreen> {
           controller: _controller,
           autofocus: true,
           textInputAction: TextInputAction.search,
-          onSubmitted: (query) => setState(() => _results = _fetch(query)),
+          onChanged: _searchSoon,
+          onSubmitted: _search,
           decoration: InputDecoration(hintText: FlutterI18n.translate(context, 'anilist.search'), border: InputBorder.none),
         ),
         bottom: _saving ? const PreferredSize(preferredSize: Size.fromHeight(4), child: LinearProgressIndicator()) : null,

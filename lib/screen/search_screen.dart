@@ -13,6 +13,7 @@ import 'package:wuxia/partial/list/search_manga_item.dart';
 import 'package:wuxia/partial/list_error_indicator.dart';
 import 'package:wuxia/partial/order_manga.dart';
 import 'package:wuxia/partial/responsive_content.dart';
+import 'package:wuxia/util/debouncer.dart';
 import 'package:wuxia/util/filter_map.dart';
 import 'package:wuxia/util/store.dart';
 
@@ -53,6 +54,11 @@ class _SearchScreenState extends State<SearchScreen> with AutomaticKeepAliveClie
   String? _orderBy;
   Future<SearchReply>? _onlineResults;
 
+  /// The keyword [_onlineResults] is for.
+  String _onlineSearched = '';
+
+  final _searchDebouncer = Debouncer();
+
   bool get _onlineOnly => widget.existingMangaId != null;
 
   /// The online scrapers only take plain text, not the library's filter syntax.
@@ -61,11 +67,29 @@ class _SearchScreenState extends State<SearchScreen> with AutomaticKeepAliveClie
     return [filter.global, filter.title].where((part) => part?.isNotEmpty == true).join(' ').trim();
   }
 
-  void _search(String keyword) {
+  /// Searches the library for [keyword] once typing pauses, unless it's
+  /// what's already searched for. Online sources are only searched on
+  /// submit, as each search scrapes every source.
+  void _searchSoon(String keyword) {
+    _searchDebouncer.cancel();
+    if (!_onlineOnly && keyword.trim() != _keyword) _searchDebouncer(() => _search(keyword, online: false));
+  }
+
+  /// Searches the library for [keyword], and the online sources too when
+  /// [online] is set. Without [online], online results for a different
+  /// keyword are dropped.
+  void _search(String keyword, {bool online = true}) {
+    _searchDebouncer.cancel();
     _keyword = keyword.trim();
     _libraryExpanded = false;
     final onlineKeyword = _onlineKeyword;
-    _onlineResults = onlineKeyword.isEmpty ? null : api.search.manga(SearchRequest(keyword: onlineKeyword));
+    if (online) {
+      _onlineSearched = onlineKeyword;
+      _onlineResults = onlineKeyword.isEmpty ? null : api.search.manga(SearchRequest(keyword: onlineKeyword));
+    } else if (onlineKeyword != _onlineSearched) {
+      _onlineSearched = '';
+      _onlineResults = null;
+    }
     if (!_onlineOnly) {
       _pagingController.refresh();
     }
@@ -99,6 +123,7 @@ class _SearchScreenState extends State<SearchScreen> with AutomaticKeepAliveClie
           TextField(
             controller: _searchController,
             textInputAction: TextInputAction.search,
+            onChanged: _searchSoon,
             onSubmitted: _search,
             decoration: InputDecoration(
               suffixIcon: Row(
@@ -162,7 +187,7 @@ class _SearchScreenState extends State<SearchScreen> with AutomaticKeepAliveClie
                   child: CustomScrollView(
                     controller: _scrollController,
                     slivers: [
-                      if (!_onlineOnly && _onlineResults != null) _sectionHeader('search.library'),
+                      if (!_onlineOnly && (_onlineResults != null || _onlineKeyword.isNotEmpty)) _sectionHeader('search.library'),
                       if (!_onlineOnly &&
                           _onlineResults != null &&
                           !_libraryExpanded &&
@@ -187,6 +212,21 @@ class _SearchScreenState extends State<SearchScreen> with AutomaticKeepAliveClie
                       if (_onlineResults != null) ...[
                         if (!_onlineOnly) _sectionHeader('search.online'),
                         _onlineSliver(state.items ?? const []),
+                      ] else if (_onlineKeyword.isNotEmpty) ...[
+                        if (!_onlineOnly) _sectionHeader('search.online'),
+                        SliverToBoxAdapter(
+                          child: ListTile(
+                            leading: const Icon(Icons.travel_explore),
+                            title: Text(
+                              FlutterI18n.translate(
+                                context,
+                                'search.search_online',
+                                translationParams: {'keyword': _onlineKeyword},
+                              ),
+                            ),
+                            onTap: () => _search(_searchController.text),
+                          ),
+                        ),
                       ],
                     ],
                   ),
@@ -297,6 +337,7 @@ class _SearchScreenState extends State<SearchScreen> with AutomaticKeepAliveClie
 
   @override
   void dispose() {
+    _searchDebouncer.cancel();
     _pagingController.dispose();
     _searchController.dispose();
     _scrollController.dispose();
