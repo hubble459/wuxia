@@ -502,3 +502,20 @@ origin:
   manhua: "Manhua"
   unknown: "Onbekende herkomst"
   automatic: "Automatisch bepalen"
+anilist:
+  title: AniList
+  connect: AniList koppelen
+  connect_hint: Synchroniseer je leesvoortgang met AniList
+  connected_as: 'Gekoppeld als {name}'
+  expires: 'Koppeling verloopt {date}'
+  expires_soon: 'Koppeling verloopt {date}, koppel opnieuw om te blijven synchroniseren'
+  reconnect: Opnieuw koppelen
+  disconnect: Ontkoppelen
+  connected: Gekoppeld met AniList
+  connect_failed: Koppelen met AniList is mislukt
+  open: Openen op AniList
+  score: '{score}% op AniList'
+  change_match: AniList-koppeling wijzigen
+  search: AniList doorzoeken
+  not_on_anilist: Niet op AniList
+  rematch: Automatisch zoeken

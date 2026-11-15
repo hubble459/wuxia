@@ -9,6 +9,7 @@ import 'package:wuxia/gen/rumgap/v1/user.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/v1.pb.dart' show Empty;
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:wuxia/util/store.dart';
+import 'package:wuxia/partial/anilist_settings_tile.dart';
 import 'package:wuxia/partial/dialog/change_password_dialog.dart';
 import 'package:wuxia/partial/download_reconnect.dart';
 import 'package:wuxia/util/download_migration.dart';
@@ -219,6 +220,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   },
                 ),
               ),
+              const AnilistSettingsTile(),
               ListTile(
                 title: I18nText('settings.statistics.title'),
                 onTap: () {

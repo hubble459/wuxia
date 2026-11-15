@@ -502,3 +502,20 @@ origin:
   manhua: "国漫"
   unknown: "来源地未知"
   automatic: "自动识别"
+anilist:
+  title: AniList
+  connect: 连接 AniList
+  connect_hint: 将阅读进度同步到 AniList
+  connected_as: '已连接为 {name}'
+  expires: '连接将于{date}过期'
+  expires_soon: '连接将于{date}过期，请重新连接以继续同步'
+  reconnect: 重新连接
+  disconnect: 断开连接
+  connected: 已连接 AniList
+  connect_failed: 无法连接 AniList
+  open: 在 AniList 上打开
+  score: 'AniList 评分 {score}%'
+  change_match: 更改 AniList 匹配
+  search: 搜索 AniList
+  not_on_anilist: 不在 AniList 上
+  rematch: 自动匹配

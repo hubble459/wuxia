@@ -502,3 +502,20 @@ origin:
   manhua: "Manhua"
   unknown: "Unknown origin"
   automatic: "Detect automatically"
+anilist:
+  title: AniList
+  connect: Connect AniList
+  connect_hint: Sync your reading progress to AniList
+  connected_as: 'Connected as {name}'
+  expires: 'Connection expires {date}'
+  expires_soon: 'Connection expires {date}, reconnect to keep syncing'
+  reconnect: Reconnect
+  disconnect: Disconnect
+  connected: Connected to AniList
+  connect_failed: Could not connect to AniList
+  open: Open on AniList
+  score: '{score}% on AniList'
+  change_match: Change AniList match
+  search: Search AniList
+  not_on_anilist: Not on AniList
+  rematch: Match automatically

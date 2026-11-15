@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 import 'package:wuxia/api.dart';
 import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
 import 'package:wuxia/partial/list/manga_item.dart';
@@ -89,7 +90,24 @@ class MangaDetails extends StatelessWidget {
             ),
           ],
         ),
-        Padding(padding: const EdgeInsets.symmetric(vertical: 8.0), child: Text(manga.description)),
+        if (manga.hasAnilist())
+          Wrap(
+            spacing: 5,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              const Icon(Icons.star_outline),
+              if (manga.anilist.hasScore())
+                Text(FlutterI18n.translate(context, 'anilist.score', translationParams: {'score': '${manga.anilist.score}'})),
+              TextButton(
+                onPressed: () => launchUrlString(manga.anilist.url, mode: LaunchMode.externalApplication),
+                child: I18nText('anilist.open'),
+              ),
+            ],
+          ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: Text(manga.description.trim().isEmpty && manga.hasAnilist() ? manga.anilist.description : manga.description),
+        ),
         SimpleFutureBuilder<MangasReply>(
           future: api.manga.similar(SimilarMangaRequest(id: manga.id)),
           onErrorBuilder: (_, _) => const SizedBox.shrink(),

@@ -16,7 +16,8 @@ import 'dart:core' as $core;
 import 'package:grpc/service_api.dart' as $grpc;
 import 'package:protobuf/protobuf.dart' as $pb;
 
-import 'admin.pb.dart' as $11;
+import 'admin.pb.dart' as $12;
+import 'anilist.pb.dart' as $11;
 import 'chapter.pb.dart' as $6;
 import 'comment.pb.dart' as $4;
 import 'friend.pb.dart' as $3;
@@ -1927,6 +1928,171 @@ abstract class ScraperServiceBase extends $grpc.Service {
       $grpc.ServiceCall call, $10.ScraperStatusRequest request);
 }
 
+@$pb.GrpcServiceName('rumgap.v1.Anilist')
+class AnilistClient extends $grpc.Client {
+  /// The hostname for this service.
+  static const $core.String defaultHost = '';
+
+  /// OAuth scopes needed for the client.
+  static const $core.List<$core.String> oauthScopes = [
+    '',
+  ];
+
+  AnilistClient(super.channel, {super.options, super.interceptors});
+
+  /// Where to send the user to connect their AniList account. AniList redirects back to
+  /// rumgap's /anilist/callback, which stores the token.
+  $grpc.ResponseFuture<$11.AnilistConnectUrlReply> connectUrl(
+    $11.AnilistConnectUrlRequest request, {
+    $grpc.CallOptions? options,
+  }) {
+    return $createUnaryCall(_$connectUrl, request, options: options);
+  }
+
+  $grpc.ResponseFuture<$11.AnilistStatusReply> status(
+    $2.Empty request, {
+    $grpc.CallOptions? options,
+  }) {
+    return $createUnaryCall(_$status, request, options: options);
+  }
+
+  $grpc.ResponseFuture<$2.Empty> disconnect(
+    $2.Empty request, {
+    $grpc.CallOptions? options,
+  }) {
+    return $createUnaryCall(_$disconnect, request, options: options);
+  }
+
+  $grpc.ResponseFuture<$11.AnilistSearchReply> search(
+    $11.AnilistSearchRequest request, {
+    $grpc.CallOptions? options,
+  }) {
+    return $createUnaryCall(_$search, request, options: options);
+  }
+
+  /// Any user can correct a manga's match; it's shared by everyone.
+  $grpc.ResponseFuture<$5.MangaReply> setMatch(
+    $11.SetAnilistMatchRequest request, {
+    $grpc.CallOptions? options,
+  }) {
+    return $createUnaryCall(_$setMatch, request, options: options);
+  }
+
+  // method descriptors
+
+  static final _$connectUrl = $grpc.ClientMethod<$11.AnilistConnectUrlRequest,
+          $11.AnilistConnectUrlReply>(
+      '/rumgap.v1.Anilist/ConnectUrl',
+      ($11.AnilistConnectUrlRequest value) => value.writeToBuffer(),
+      $11.AnilistConnectUrlReply.fromBuffer);
+  static final _$status = $grpc.ClientMethod<$2.Empty, $11.AnilistStatusReply>(
+      '/rumgap.v1.Anilist/Status',
+      ($2.Empty value) => value.writeToBuffer(),
+      $11.AnilistStatusReply.fromBuffer);
+  static final _$disconnect = $grpc.ClientMethod<$2.Empty, $2.Empty>(
+      '/rumgap.v1.Anilist/Disconnect',
+      ($2.Empty value) => value.writeToBuffer(),
+      $2.Empty.fromBuffer);
+  static final _$search =
+      $grpc.ClientMethod<$11.AnilistSearchRequest, $11.AnilistSearchReply>(
+          '/rumgap.v1.Anilist/Search',
+          ($11.AnilistSearchRequest value) => value.writeToBuffer(),
+          $11.AnilistSearchReply.fromBuffer);
+  static final _$setMatch =
+      $grpc.ClientMethod<$11.SetAnilistMatchRequest, $5.MangaReply>(
+          '/rumgap.v1.Anilist/SetMatch',
+          ($11.SetAnilistMatchRequest value) => value.writeToBuffer(),
+          $5.MangaReply.fromBuffer);
+}
+
+@$pb.GrpcServiceName('rumgap.v1.Anilist')
+abstract class AnilistServiceBase extends $grpc.Service {
+  $core.String get $name => 'rumgap.v1.Anilist';
+
+  AnilistServiceBase() {
+    $addMethod($grpc.ServiceMethod<$11.AnilistConnectUrlRequest,
+            $11.AnilistConnectUrlReply>(
+        'ConnectUrl',
+        connectUrl_Pre,
+        false,
+        false,
+        ($core.List<$core.int> value) =>
+            $11.AnilistConnectUrlRequest.fromBuffer(value),
+        ($11.AnilistConnectUrlReply value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$2.Empty, $11.AnilistStatusReply>(
+        'Status',
+        status_Pre,
+        false,
+        false,
+        ($core.List<$core.int> value) => $2.Empty.fromBuffer(value),
+        ($11.AnilistStatusReply value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$2.Empty, $2.Empty>(
+        'Disconnect',
+        disconnect_Pre,
+        false,
+        false,
+        ($core.List<$core.int> value) => $2.Empty.fromBuffer(value),
+        ($2.Empty value) => value.writeToBuffer()));
+    $addMethod(
+        $grpc.ServiceMethod<$11.AnilistSearchRequest, $11.AnilistSearchReply>(
+            'Search',
+            search_Pre,
+            false,
+            false,
+            ($core.List<$core.int> value) =>
+                $11.AnilistSearchRequest.fromBuffer(value),
+            ($11.AnilistSearchReply value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$11.SetAnilistMatchRequest, $5.MangaReply>(
+        'SetMatch',
+        setMatch_Pre,
+        false,
+        false,
+        ($core.List<$core.int> value) =>
+            $11.SetAnilistMatchRequest.fromBuffer(value),
+        ($5.MangaReply value) => value.writeToBuffer()));
+  }
+
+  $async.Future<$11.AnilistConnectUrlReply> connectUrl_Pre(
+      $grpc.ServiceCall $call,
+      $async.Future<$11.AnilistConnectUrlRequest> $request) async {
+    return connectUrl($call, await $request);
+  }
+
+  $async.Future<$11.AnilistConnectUrlReply> connectUrl(
+      $grpc.ServiceCall call, $11.AnilistConnectUrlRequest request);
+
+  $async.Future<$11.AnilistStatusReply> status_Pre(
+      $grpc.ServiceCall $call, $async.Future<$2.Empty> $request) async {
+    return status($call, await $request);
+  }
+
+  $async.Future<$11.AnilistStatusReply> status(
+      $grpc.ServiceCall call, $2.Empty request);
+
+  $async.Future<$2.Empty> disconnect_Pre(
+      $grpc.ServiceCall $call, $async.Future<$2.Empty> $request) async {
+    return disconnect($call, await $request);
+  }
+
+  $async.Future<$2.Empty> disconnect($grpc.ServiceCall call, $2.Empty request);
+
+  $async.Future<$11.AnilistSearchReply> search_Pre($grpc.ServiceCall $call,
+      $async.Future<$11.AnilistSearchRequest> $request) async {
+    return search($call, await $request);
+  }
+
+  $async.Future<$11.AnilistSearchReply> search(
+      $grpc.ServiceCall call, $11.AnilistSearchRequest request);
+
+  $async.Future<$5.MangaReply> setMatch_Pre($grpc.ServiceCall $call,
+      $async.Future<$11.SetAnilistMatchRequest> $request) async {
+    return setMatch($call, await $request);
+  }
+
+  $async.Future<$5.MangaReply> setMatch(
+      $grpc.ServiceCall call, $11.SetAnilistMatchRequest request);
+}
+
 /// Admin-only: user management.
 @$pb.GrpcServiceName('rumgap.v1.Admin')
 class AdminClient extends $grpc.Client {
@@ -1941,28 +2107,28 @@ class AdminClient extends $grpc.Client {
   AdminClient(super.channel, {super.options, super.interceptors});
 
   $grpc.ResponseFuture<$0.UserReply> createUser(
-    $11.AdminCreateUserRequest request, {
+    $12.AdminCreateUserRequest request, {
     $grpc.CallOptions? options,
   }) {
     return $createUnaryCall(_$createUser, request, options: options);
   }
 
   $grpc.ResponseFuture<$2.Empty> deleteUser(
-    $11.AdminDeleteUserRequest request, {
+    $12.AdminDeleteUserRequest request, {
     $grpc.CallOptions? options,
   }) {
     return $createUnaryCall(_$deleteUser, request, options: options);
   }
 
   $grpc.ResponseFuture<$2.Empty> setPassword(
-    $11.AdminSetPasswordRequest request, {
+    $12.AdminSetPasswordRequest request, {
     $grpc.CallOptions? options,
   }) {
     return $createUnaryCall(_$setPassword, request, options: options);
   }
 
   /// How much disk and database space rumgap takes up.
-  $grpc.ResponseFuture<$11.StorageReply> storage(
+  $grpc.ResponseFuture<$12.StorageReply> storage(
     $2.Empty request, {
     $grpc.CallOptions? options,
   }) {
@@ -1972,24 +2138,24 @@ class AdminClient extends $grpc.Client {
   // method descriptors
 
   static final _$createUser =
-      $grpc.ClientMethod<$11.AdminCreateUserRequest, $0.UserReply>(
+      $grpc.ClientMethod<$12.AdminCreateUserRequest, $0.UserReply>(
           '/rumgap.v1.Admin/CreateUser',
-          ($11.AdminCreateUserRequest value) => value.writeToBuffer(),
+          ($12.AdminCreateUserRequest value) => value.writeToBuffer(),
           $0.UserReply.fromBuffer);
   static final _$deleteUser =
-      $grpc.ClientMethod<$11.AdminDeleteUserRequest, $2.Empty>(
+      $grpc.ClientMethod<$12.AdminDeleteUserRequest, $2.Empty>(
           '/rumgap.v1.Admin/DeleteUser',
-          ($11.AdminDeleteUserRequest value) => value.writeToBuffer(),
+          ($12.AdminDeleteUserRequest value) => value.writeToBuffer(),
           $2.Empty.fromBuffer);
   static final _$setPassword =
-      $grpc.ClientMethod<$11.AdminSetPasswordRequest, $2.Empty>(
+      $grpc.ClientMethod<$12.AdminSetPasswordRequest, $2.Empty>(
           '/rumgap.v1.Admin/SetPassword',
-          ($11.AdminSetPasswordRequest value) => value.writeToBuffer(),
+          ($12.AdminSetPasswordRequest value) => value.writeToBuffer(),
           $2.Empty.fromBuffer);
-  static final _$storage = $grpc.ClientMethod<$2.Empty, $11.StorageReply>(
+  static final _$storage = $grpc.ClientMethod<$2.Empty, $12.StorageReply>(
       '/rumgap.v1.Admin/Storage',
       ($2.Empty value) => value.writeToBuffer(),
-      $11.StorageReply.fromBuffer);
+      $12.StorageReply.fromBuffer);
 }
 
 @$pb.GrpcServiceName('rumgap.v1.Admin')
@@ -1997,68 +2163,68 @@ abstract class AdminServiceBase extends $grpc.Service {
   $core.String get $name => 'rumgap.v1.Admin';
 
   AdminServiceBase() {
-    $addMethod($grpc.ServiceMethod<$11.AdminCreateUserRequest, $0.UserReply>(
+    $addMethod($grpc.ServiceMethod<$12.AdminCreateUserRequest, $0.UserReply>(
         'CreateUser',
         createUser_Pre,
         false,
         false,
         ($core.List<$core.int> value) =>
-            $11.AdminCreateUserRequest.fromBuffer(value),
+            $12.AdminCreateUserRequest.fromBuffer(value),
         ($0.UserReply value) => value.writeToBuffer()));
-    $addMethod($grpc.ServiceMethod<$11.AdminDeleteUserRequest, $2.Empty>(
+    $addMethod($grpc.ServiceMethod<$12.AdminDeleteUserRequest, $2.Empty>(
         'DeleteUser',
         deleteUser_Pre,
         false,
         false,
         ($core.List<$core.int> value) =>
-            $11.AdminDeleteUserRequest.fromBuffer(value),
+            $12.AdminDeleteUserRequest.fromBuffer(value),
         ($2.Empty value) => value.writeToBuffer()));
-    $addMethod($grpc.ServiceMethod<$11.AdminSetPasswordRequest, $2.Empty>(
+    $addMethod($grpc.ServiceMethod<$12.AdminSetPasswordRequest, $2.Empty>(
         'SetPassword',
         setPassword_Pre,
         false,
         false,
         ($core.List<$core.int> value) =>
-            $11.AdminSetPasswordRequest.fromBuffer(value),
+            $12.AdminSetPasswordRequest.fromBuffer(value),
         ($2.Empty value) => value.writeToBuffer()));
-    $addMethod($grpc.ServiceMethod<$2.Empty, $11.StorageReply>(
+    $addMethod($grpc.ServiceMethod<$2.Empty, $12.StorageReply>(
         'Storage',
         storage_Pre,
         false,
         false,
         ($core.List<$core.int> value) => $2.Empty.fromBuffer(value),
-        ($11.StorageReply value) => value.writeToBuffer()));
+        ($12.StorageReply value) => value.writeToBuffer()));
   }
 
   $async.Future<$0.UserReply> createUser_Pre($grpc.ServiceCall $call,
-      $async.Future<$11.AdminCreateUserRequest> $request) async {
+      $async.Future<$12.AdminCreateUserRequest> $request) async {
     return createUser($call, await $request);
   }
 
   $async.Future<$0.UserReply> createUser(
-      $grpc.ServiceCall call, $11.AdminCreateUserRequest request);
+      $grpc.ServiceCall call, $12.AdminCreateUserRequest request);
 
   $async.Future<$2.Empty> deleteUser_Pre($grpc.ServiceCall $call,
-      $async.Future<$11.AdminDeleteUserRequest> $request) async {
+      $async.Future<$12.AdminDeleteUserRequest> $request) async {
     return deleteUser($call, await $request);
   }
 
   $async.Future<$2.Empty> deleteUser(
-      $grpc.ServiceCall call, $11.AdminDeleteUserRequest request);
+      $grpc.ServiceCall call, $12.AdminDeleteUserRequest request);
 
   $async.Future<$2.Empty> setPassword_Pre($grpc.ServiceCall $call,
-      $async.Future<$11.AdminSetPasswordRequest> $request) async {
+      $async.Future<$12.AdminSetPasswordRequest> $request) async {
     return setPassword($call, await $request);
   }
 
   $async.Future<$2.Empty> setPassword(
-      $grpc.ServiceCall call, $11.AdminSetPasswordRequest request);
+      $grpc.ServiceCall call, $12.AdminSetPasswordRequest request);
 
-  $async.Future<$11.StorageReply> storage_Pre(
+  $async.Future<$12.StorageReply> storage_Pre(
       $grpc.ServiceCall $call, $async.Future<$2.Empty> $request) async {
     return storage($call, await $request);
   }
 
-  $async.Future<$11.StorageReply> storage(
+  $async.Future<$12.StorageReply> storage(
       $grpc.ServiceCall call, $2.Empty request);
 }

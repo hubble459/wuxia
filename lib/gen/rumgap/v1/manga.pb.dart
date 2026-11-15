@@ -15,8 +15,9 @@ import 'dart:core' as $core;
 import 'package:fixnum/fixnum.dart' as $fixnum;
 import 'package:protobuf/protobuf.dart' as $pb;
 
+import 'anilist.pb.dart' as $0;
 import 'manga.pbenum.dart';
-import 'paginate.pb.dart' as $0;
+import 'paginate.pb.dart' as $1;
 
 export 'package:protobuf/protobuf.dart' show GeneratedMessageGenericExtensions;
 
@@ -475,6 +476,7 @@ class MangaReply extends $pb.GeneratedMessage {
     $core.bool? nsfw,
     MangaOrigin? origin,
     $core.bool? originSetByHand,
+    $0.AnilistInfo? anilist,
   }) {
     final result = create();
     if (id != null) result.id = id;
@@ -498,6 +500,7 @@ class MangaReply extends $pb.GeneratedMessage {
     if (nsfw != null) result.nsfw = nsfw;
     if (origin != null) result.origin = origin;
     if (originSetByHand != null) result.originSetByHand = originSetByHand;
+    if (anilist != null) result.anilist = anilist;
     return result;
   }
 
@@ -537,6 +540,8 @@ class MangaReply extends $pb.GeneratedMessage {
     ..aE<MangaOrigin>(21, _omitFieldNames ? '' : 'origin',
         enumValues: MangaOrigin.values)
     ..aOB(22, _omitFieldNames ? '' : 'originSetByHand')
+    ..aOM<$0.AnilistInfo>(23, _omitFieldNames ? '' : 'anilist',
+        subBuilder: $0.AnilistInfo.create)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -731,6 +736,17 @@ class MangaReply extends $pb.GeneratedMessage {
   $core.bool hasOriginSetByHand() => $_has(20);
   @$pb.TagNumber(22)
   void clearOriginSetByHand() => $_clearField(22);
+
+  @$pb.TagNumber(23)
+  $0.AnilistInfo get anilist => $_getN(21);
+  @$pb.TagNumber(23)
+  set anilist($0.AnilistInfo value) => $_setField(23, value);
+  @$pb.TagNumber(23)
+  $core.bool hasAnilist() => $_has(21);
+  @$pb.TagNumber(23)
+  void clearAnilist() => $_clearField(23);
+  @$pb.TagNumber(23)
+  $0.AnilistInfo ensureAnilist() => $_ensure(21);
 }
 
 class SelectSourceRequest extends $pb.GeneratedMessage {
@@ -789,7 +805,7 @@ class SelectSourceRequest extends $pb.GeneratedMessage {
 
 class MangasReply extends $pb.GeneratedMessage {
   factory MangasReply({
-    $0.PaginateReply? pagination,
+    $1.PaginateReply? pagination,
     $core.Iterable<MangaReply>? items,
   }) {
     final result = create();
@@ -811,8 +827,8 @@ class MangasReply extends $pb.GeneratedMessage {
       _omitMessageNames ? '' : 'MangasReply',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'rumgap.v1'),
       createEmptyInstance: create)
-    ..aOM<$0.PaginateReply>(1, _omitFieldNames ? '' : 'pagination',
-        subBuilder: $0.PaginateReply.create)
+    ..aOM<$1.PaginateReply>(1, _omitFieldNames ? '' : 'pagination',
+        subBuilder: $1.PaginateReply.create)
     ..pPM<MangaReply>(2, _omitFieldNames ? '' : 'items',
         subBuilder: MangaReply.create)
     ..hasRequiredFields = false;
@@ -837,15 +853,15 @@ class MangasReply extends $pb.GeneratedMessage {
   static MangasReply? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $0.PaginateReply get pagination => $_getN(0);
+  $1.PaginateReply get pagination => $_getN(0);
   @$pb.TagNumber(1)
-  set pagination($0.PaginateReply value) => $_setField(1, value);
+  set pagination($1.PaginateReply value) => $_setField(1, value);
   @$pb.TagNumber(1)
   $core.bool hasPagination() => $_has(0);
   @$pb.TagNumber(1)
   void clearPagination() => $_clearField(1);
   @$pb.TagNumber(1)
-  $0.PaginateReply ensurePagination() => $_ensure(0);
+  $1.PaginateReply ensurePagination() => $_ensure(0);
 
   @$pb.TagNumber(2)
   $pb.PbList<MangaReply> get items => $_getList(1);

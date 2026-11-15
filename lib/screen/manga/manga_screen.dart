@@ -11,6 +11,7 @@ import 'package:wuxia/gen/rumgap/v1/scrape_error.pb.dart';
 import 'package:wuxia/gen/rumgap/v1/v1.pb.dart';
 import 'package:wuxia/partial/action/export_cbz_action.dart';
 import 'package:wuxia/partial/action/open_url_action.dart';
+import 'package:wuxia/partial/dialog/anilist_match_dialog.dart';
 import 'package:wuxia/partial/dialog/dead_provider_dialog.dart';
 import 'package:wuxia/partial/dialog/manga_picker_dialog.dart';
 import 'package:wuxia/partial/dialog/merge_confirm_dialog.dart';
@@ -40,6 +41,7 @@ enum _MangaMenuAction {
   moveSourceIn,
   toggleNsfw,
   setOrigin,
+  changeAnilistMatch,
   deleteManga,
 }
 
@@ -506,6 +508,14 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
             _toggleNsfw();
           } else if (action == _MangaMenuAction.setOrigin) {
             _setOrigin();
+          } else if (action == _MangaMenuAction.changeAnilistMatch) {
+            final result = await showAnilistMatchDialog(context, _manga);
+            if (result != null && mounted) {
+              setState(() {
+                _manga = result;
+                _syncSelectedSource();
+              });
+            }
           } else if (action == _MangaMenuAction.deleteManga) {
             _deleteManga();
           }
@@ -517,6 +527,10 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
             child: Text(FlutterI18n.translate(context, 'manga.add-source-url')),
           ),
           if (downloadsSupported) _downloadMenuItem(),
+          PopupMenuItem(
+            value: _MangaMenuAction.changeAnilistMatch,
+            child: Text(FlutterI18n.translate(context, 'anilist.change_match')),
+          ),
           if (_isDownloaded)
             PopupMenuItem(value: _MangaMenuAction.exportCbz, child: Text(FlutterI18n.translate(context, 'downloads.export_cbz'))),
           if (API.loggedIn.isAdmin)
@@ -648,7 +662,10 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
                     const SizedBox(width: 24),
                     Expanded(
                       child: Column(
-                        children: [MangaDetails(manga: _shown, showTitle: false), CommentsPreview(mangaId: _manga.id)],
+                        children: [
+                          MangaDetails(manga: _shown, showTitle: false),
+                          CommentsPreview(mangaId: _manga.id),
+                        ],
                       ),
                     ),
                   ],
