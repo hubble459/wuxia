@@ -42,12 +42,6 @@ jobs:
       - run: echo -e 'storePassword=${{secrets.KEYSTORE_PASSWORD}}\nkeyPassword=${{secrets.KEYSTORE_PASSWORD}}\nkeyAlias=upload\nstoreFile=/tmp/upload-keystore.jks' > android/key.properties
       - run: flutter build apk --pub --suppress-analytics --dart-define=API_HOST=${{ vars.API_HOST }} --dart-define=VAPID_KEY=${{ secrets.VAPID_KEY }} --build-name=`echo ${{ needs.release.outputs.tag_name }}` --build-number=`echo ${{ needs.release.outputs.tag_name }} | tr -d v.`
 
-      - name: Get release
-        id: get_release
-        uses: cardinalby/git-get-release-action@v1
-        with:
-          tag: ${{ needs.release.outputs.tag_name }}
-
       - name: Rename APK with version
         run: |
           TAG=${{ needs.release.outputs.tag_name }}
