@@ -4,8 +4,12 @@ on:
   push:
     branches: ["main"]
 
+concurrency:
+  group: release
+  cancel-in-progress: false
+
 jobs:
-  build:
+  release:
     runs-on: ubuntu-latest
     environment: main
     permissions:
@@ -15,12 +19,20 @@ jobs:
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      - uses: actions/checkout@v7
       - uses: rymndhng/release-on-push-action@v0.28.0
         id: push_release
         with:
           bump_version_scheme: patch
           tag_prefix: v
+
+  build-apk:
+    runs-on: ubuntu-latest
+    needs: release
+    environment: main
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
 
       - uses: subosito/flutter-action@v2
         with:
@@ -28,17 +40,17 @@ jobs:
           cache: true
       - run: echo "${{ secrets.KEYSTORE_FILE_BASE64 }}" | base64 -d > /tmp/upload-keystore.jks
       - run: echo -e 'storePassword=${{secrets.KEYSTORE_PASSWORD}}\nkeyPassword=${{secrets.KEYSTORE_PASSWORD}}\nkeyAlias=upload\nstoreFile=/tmp/upload-keystore.jks' > android/key.properties
-      - run: flutter build apk --pub --suppress-analytics --dart-define=API_HOST=${{ vars.API_HOST }} --dart-define=VAPID_KEY=${{ secrets.VAPID_KEY }} --build-name=`echo ${{ steps.push_release.outputs.tag_name }}` --build-number=`echo ${{ steps.push_release.outputs.tag_name }} | tr -d v.`
+      - run: flutter build apk --pub --suppress-analytics --dart-define=API_HOST=${{ vars.API_HOST }} --dart-define=VAPID_KEY=${{ secrets.VAPID_KEY }} --build-name=`echo ${{ needs.release.outputs.tag_name }}` --build-number=`echo ${{ needs.release.outputs.tag_name }} | tr -d v.`
 
       - name: Get release
         id: get_release
         uses: cardinalby/git-get-release-action@v1
         with:
-          tag: ${{ steps.push_release.outputs.tag_name }}
+          tag: ${{ needs.release.outputs.tag_name }}
 
       - name: Rename APK with version
         run: |
-          TAG=${{ steps.push_release.outputs.tag_name }}
+          TAG=${{ needs.release.outputs.tag_name }}
           mv build/app/outputs/flutter-apk/app-release.apk "wuxia-${TAG#v}.apk"
           echo "APK_FILE=wuxia-${TAG#v}.apk" >> "$GITHUB_ENV"
 
@@ -46,17 +58,17 @@ jobs:
         uses: softprops/action-gh-release@v3
         with:
           files: ${{ env.APK_FILE }}
-          tag_name: ${{ steps.push_release.outputs.tag_name }}
+          tag_name: ${{ needs.release.outputs.tag_name }}
           generate_release_notes: true
 
   build-linux:
     runs-on: ubuntu-24.04
-    needs: build
+    needs: release
     environment: main
     permissions:
       contents: write
     env:
-      TAG: ${{ needs.build.outputs.tag_name }}
+      TAG: ${{ needs.release.outputs.tag_name }}
     steps:
       - uses: actions/checkout@v7
 
@@ -74,7 +86,7 @@ jobs:
 
       - name: Build Linux
         run: |
-          TAG=${{ needs.build.outputs.tag_name }}
+          TAG=${{ needs.release.outputs.tag_name }}
           flutter build linux \
             --pub \
             --suppress-analytics \
@@ -88,7 +100,7 @@ jobs:
 
       - name: Package .deb
         run: |
-          VERSION="${{ needs.build.outputs.tag_name }}"
+          VERSION="${{ needs.release.outputs.tag_name }}"
           VERSION="${VERSION#v}"
           PKG_DIR=wuxia-deb
           mkdir -p "$PKG_DIR/DEBIAN" "$PKG_DIR/opt/wuxia" "$PKG_DIR/usr/bin" \
@@ -117,4 +129,4 @@ jobs:
           files: |
             wuxia-linux-*.tar.gz
             wuxia-linux-*.deb
-          tag_name: ${{ needs.build.outputs.tag_name }}
+          tag_name: ${{ needs.release.outputs.tag_name }}
