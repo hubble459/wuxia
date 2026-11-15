@@ -393,6 +393,7 @@ dialog:
   confirm:
     delete: 您确定要删除“{title}”吗
     delete_download: 您确定要删除“{title}”的已下载文件吗
+    delete_download_source: 您确定要删除“{title}”在“{hostname}”的下载吗
     delete_manga: 要为所有人永久删除“{title}”吗？所有人在此漫画上的阅读进度也会被删除。
     'no': 不
     title: 确认
@@ -415,10 +416,13 @@ downloads:
   browser_storage: 浏览器存储
   browser_storage_hint: 文件保存在浏览器中；使用“导出为 CBZ”保存副本
   export_cbz: 导出为 CBZ
+  export_which: 导出哪个下载？
   exported: 已导出到 {path}
   export_failed: 导出失败：{error}
   migration_conflicts: '{count} 个旧下载文件夹未移动，因为同一来源已有下载。没有删除任何内容，请手动检查：'
   delete: 删除下载
+  delete_which: 删除哪个下载？
+  delete_all_sources: 所有来源
   queue: 队列
   downloaded: 已下载
   update_available: 有更新

@@ -394,6 +394,7 @@ dialog:
     title: Confirm
     delete: Are you sure you want to delete "{title}"
     delete_download: Are you sure you want to delete the downloaded files for "{title}"
+    delete_download_source: Are you sure you want to delete the "{hostname}" download of "{title}"
     delete_manga: Permanently delete "{title}" for everyone? This also removes everyone's reading progress on it.
     'no': 'No'
     'yes': 'Yes'
@@ -415,10 +416,13 @@ downloads:
   browser_storage: Browser storage
   browser_storage_hint: Files are kept inside the browser; use "Export as CBZ" to save a copy
   export_cbz: Export as CBZ
+  export_which: Export which download?
   exported: 'Exported to {path}'
   export_failed: 'Export failed: {error}'
   migration_conflicts: '{count} old download folder(s) were not moved because a download of the same source is already there. Nothing was deleted; check them by hand:'
   delete: Delete download
+  delete_which: Delete which download?
+  delete_all_sources: All sources
   queue: Queue
   downloaded: Downloaded
   update_available: Update available

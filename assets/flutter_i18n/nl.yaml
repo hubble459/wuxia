@@ -57,6 +57,7 @@ dialog:
   confirm:
     delete: Weet je zeker dat je "{title}" wilt verwijderen
     delete_download: Weet je zeker dat je de gedownloade bestanden van "{title}" wilt verwijderen
+    delete_download_source: Weet je zeker dat je de "{hostname}"-download van "{title}" wilt verwijderen
     delete_manga: '"{title}" voor iedereen permanent verwijderen? Ieders leesvoortgang hiervan gaat ook verloren.'
     "no": Nee
     title: Bevestigen
@@ -415,10 +416,13 @@ downloads:
   browser_storage: Browseropslag
   browser_storage_hint: Bestanden blijven in de browser; gebruik "Exporteren als CBZ" om een kopie op te slaan
   export_cbz: Exporteren als CBZ
+  export_which: Welke download exporteren?
   exported: 'Geëxporteerd naar {path}'
   export_failed: 'Exporteren mislukt: {error}'
   migration_conflicts: '{count} oude downloadmap(pen) zijn niet verplaatst omdat er al een download van dezelfde bron staat. Er is niets verwijderd; controleer ze zelf:'
   delete: Download verwijderen
+  delete_which: Welke download verwijderen?
+  delete_all_sources: Alle bronnen
   queue: Wachtrij
   downloaded: Gedownload
   update_available: Update beschikbaar

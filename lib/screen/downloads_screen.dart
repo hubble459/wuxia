@@ -41,9 +41,10 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
   /// Hostnames of each downloaded manga's downloaded sources, by manga id.
   Map<int, List<String>> _downloadedHostnames = {};
 
-  /// Ids of downloaded manga with a downloaded source that has fewer
-  /// finished chapters than that source has now.
-  Set<int> _updateAvailable = {};
+  /// By manga id, how many chapters each downloaded source (by hostname)
+  /// has beyond its last finished download. Only holds sources that are
+  /// behind, and only manga with at least one such source.
+  Map<int, Map<String, int>> _newChapters = {};
 
   Future<List<MangaReply>> _loadDownloaded() async {
     final needsPermission = await downloadStorage.status() == DownloadStorageStatus.needsPermission;
@@ -61,13 +62,17 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
         ],
     };
     if (mounted) setState(() => _downloadedHostnames = hostnames);
-    unawaited(_checkUpdates(results, sources));
+    unawaited(_checkUpdates(results, sources, hostnames));
     return results;
   }
 
-  /// Fills [_updateAvailable] from each manga's current chapter counts,
-  /// falling back to its download-time snapshot when it can't be fetched.
-  Future<void> _checkUpdates(List<MangaReply> mangas, Map<int, List<DownloadedSource>> sources) async {
+  /// Fills [_newChapters] from each manga's current chapter counts, falling
+  /// back to its download-time snapshot when it can't be fetched.
+  Future<void> _checkUpdates(
+    List<MangaReply> mangas,
+    Map<int, List<DownloadedSource>> sources,
+    Map<int, List<String>> hostnames,
+  ) async {
     final updates = await Future.wait(
       mangas.map((manga) async {
         MangaReply current;
@@ -76,14 +81,17 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
         } catch (_) {
           current = manga;
         }
-        final hasUpdate = sources[manga.id]!.any((downloaded) {
-          final source = current.sources.where((s) => s.id == downloaded.sourceId).firstOrNull;
-          return source != null && downloaded.completedChapters < source.countChapters.toInt();
-        });
-        return hasUpdate ? manga.id : null;
+        final behind = <String, int>{};
+        final downloaded = sources[manga.id]!;
+        for (var i = 0; i < downloaded.length; i++) {
+          final source = current.sources.where((s) => s.id == downloaded[i].sourceId).firstOrNull;
+          final missing = source == null ? 0 : source.countChapters.toInt() - downloaded[i].completedChapters;
+          if (missing > 0) behind[hostnames[manga.id]![i]] = missing;
+        }
+        return MapEntry(manga.id, behind);
       }),
     );
-    if (mounted) setState(() => _updateAvailable = updates.nonNulls.toSet());
+    if (mounted) setState(() => _newChapters = Map.fromEntries(updates.where((e) => e.value.isNotEmpty)));
   }
 
   void _reload() {
@@ -149,9 +157,10 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
               type: HeroScreenType.downloads,
               reloadParent: (_, _) => _reload(),
               hostnames: _downloadedHostnames[manga.id],
+              newChapters: _newChapters[manga.id],
             );
-            final updatable = items.where((m) => _updateAvailable.contains(m.id)).toList();
-            final upToDate = items.where((m) => !_updateAvailable.contains(m.id)).toList();
+            final updatable = items.where((m) => _newChapters.containsKey(m.id)).toList();
+            final upToDate = items.where((m) => !_newChapters.containsKey(m.id)).toList();
             final sectioned = tasks.isNotEmpty || updatable.isNotEmpty;
             return RefreshIndicator(
               onRefresh: () async => _reload(),

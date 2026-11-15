@@ -223,6 +223,17 @@ Future<void> deleteDownloadedManga(int mangaId) async {
   await downloadStorage.deleteDir(dir);
 }
 
+/// Deletes downloaded source [sourceId] of manga [mangaId], or the whole
+/// manga folder when it's the only downloaded source left. No-op if that
+/// source isn't downloaded.
+Future<void> deleteDownloadedSource(int mangaId, int sourceId) async {
+  final sources = await listDownloadedSources(mangaId);
+  final source = sources.where((s) => s.sourceId == sourceId).firstOrNull;
+  if (source == null) return;
+  if (sources.length == 1) return deleteDownloadedManga(mangaId);
+  await downloadStorage.deleteDir(source.dir);
+}
+
 /// Deletes every downloaded manga folder (anything with a `manga.pb`),
 /// leaving unrelated files in the download root alone.
 Future<void> deleteAllDownloads() async {
