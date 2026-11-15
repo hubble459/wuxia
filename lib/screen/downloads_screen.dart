@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
+import 'package:wuxia/api.dart';
 import 'package:wuxia/partial/download_reconnect.dart';
 import 'package:wuxia/partial/download_task_tile.dart';
 import 'package:wuxia/util/download_manager.dart';
@@ -40,6 +41,10 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
   /// Hostnames of each downloaded manga's downloaded sources, by manga id.
   Map<int, List<String>> _downloadedHostnames = {};
 
+  /// Ids of downloaded manga with a downloaded source that has fewer
+  /// finished chapters than that source has now.
+  Set<int> _updateAvailable = {};
+
   Future<List<MangaReply>> _loadDownloaded() async {
     final needsPermission = await downloadStorage.status() == DownloadStorageStatus.needsPermission;
     if (mounted && needsPermission != _needsPermission) setState(() => _needsPermission = needsPermission);
@@ -47,15 +52,38 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
 
     final results = (await listDownloadedManga()).values.toList();
     results.sort((a, b) => a.title.compareTo(b.title));
+    final sources = {for (final manga in results) manga.id: await listDownloadedSources(manga.id)};
     final hostnames = <int, List<String>>{
       for (final manga in results)
         manga.id: [
-          for (final source in await listDownloadedSources(manga.id))
+          for (final source in sources[manga.id]!)
             manga.sources.where((s) => s.id == source.sourceId).firstOrNull?.hostname ?? '#${source.sourceId}',
         ],
     };
     if (mounted) setState(() => _downloadedHostnames = hostnames);
+    unawaited(_checkUpdates(results, sources));
     return results;
+  }
+
+  /// Fills [_updateAvailable] from each manga's current chapter counts,
+  /// falling back to its download-time snapshot when it can't be fetched.
+  Future<void> _checkUpdates(List<MangaReply> mangas, Map<int, List<DownloadedSource>> sources) async {
+    final updates = await Future.wait(
+      mangas.map((manga) async {
+        MangaReply current;
+        try {
+          current = await api.manga.get(GetMangaRequest(id: manga.id));
+        } catch (_) {
+          current = manga;
+        }
+        final hasUpdate = sources[manga.id]!.any((downloaded) {
+          final source = current.sources.where((s) => s.id == downloaded.sourceId).firstOrNull;
+          return source != null && downloaded.completedChapters < source.countChapters.toInt();
+        });
+        return hasUpdate ? manga.id : null;
+      }),
+    );
+    if (mounted) setState(() => _updateAvailable = updates.nonNulls.toSet());
   }
 
   void _reload() {
@@ -115,6 +143,16 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
               padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
               child: Text(FlutterI18n.translate(context, key), style: theme.textTheme.titleSmall),
             );
+            Widget item(MangaReply manga) => MangaItem(
+              key: Key('dl_${manga.id}'),
+              manga: manga,
+              type: HeroScreenType.downloads,
+              reloadParent: (_, _) => _reload(),
+              hostnames: _downloadedHostnames[manga.id],
+            );
+            final updatable = items.where((m) => _updateAvailable.contains(m.id)).toList();
+            final upToDate = items.where((m) => !_updateAvailable.contains(m.id)).toList();
+            final sectioned = tasks.isNotEmpty || updatable.isNotEmpty;
             return RefreshIndicator(
               onRefresh: () async => _reload(),
               child: ListView(
@@ -122,16 +160,12 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
                   if (tasks.isNotEmpty) ...[
                     header('downloads.queue'),
                     for (final task in tasks) DownloadTaskTile(key: ObjectKey(task), task: task),
-                    if (items.isNotEmpty) header('downloads.downloaded'),
                   ],
-                  for (final manga in items)
-                    MangaItem(
-                      key: Key('dl_${manga.id}'),
-                      manga: manga,
-                      type: HeroScreenType.downloads,
-                      reloadParent: (_, _) => _reload(),
-                      hostnames: _downloadedHostnames[manga.id],
-                    ),
+                  if (updatable.isNotEmpty) ...[header('downloads.update_available'), for (final manga in updatable) item(manga)],
+                  if (upToDate.isNotEmpty) ...[
+                    if (sectioned) header('downloads.downloaded'),
+                    for (final manga in upToDate) item(manga),
+                  ],
                 ],
               ),
             );

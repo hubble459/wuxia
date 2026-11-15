@@ -421,6 +421,7 @@ downloads:
   delete: Delete download
   queue: Queue
   downloaded: Downloaded
+  update_available: Update available
   queued: Waiting to start
   queued_count: '{count} queued'
   queued_toast: Added to downloads

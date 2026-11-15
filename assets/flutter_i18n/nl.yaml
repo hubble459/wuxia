@@ -421,6 +421,7 @@ downloads:
   delete: Download verwijderen
   queue: Wachtrij
   downloaded: Gedownload
+  update_available: Update beschikbaar
   queued: Wacht om te starten
   queued_count: '{count} in wachtrij'
   queued_toast: Toegevoegd aan downloads
