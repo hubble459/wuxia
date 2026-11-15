@@ -133,6 +133,11 @@ settings:
   show_nsfw_hint: "在你的阅读列表之外"
   private_profile: '私密资料'
   private_profile_hint: '其他人只能看到你的用户名。关闭后会显示你的统计数据和正在读的作品。'
+  notifications: '通知'
+  notifications_turn_on: '开启通知'
+  notifications_turn_on_hint: '你在读的漫画有新章节时收到通知'
+  notifications_blocked: '已被屏蔽。请在浏览器设置中允许此网站发送通知。'
+  notifications_unsupported: '此浏览器无法显示通知。在 iPhone 上，请将 wuxia 添加到主屏幕并从那里打开。'
   logout: 登出
   language: 语
   reading_mode: 默认阅读模式

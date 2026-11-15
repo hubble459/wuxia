@@ -171,6 +171,11 @@ settings:
   show_nsfw_hint: "Buiten je leeslijst"
   private_profile: 'Privéprofiel'
   private_profile_hint: 'Anderen zien alleen je gebruikersnaam. Zet uit om je statistieken en wat je leest te tonen.'
+  notifications: 'Meldingen'
+  notifications_turn_on: 'Meldingen aanzetten'
+  notifications_turn_on_hint: 'Krijg een melding als een manga die je leest een nieuw hoofdstuk heeft'
+  notifications_blocked: 'Geblokkeerd. Sta meldingen voor deze site toe in de instellingen van je browser.'
+  notifications_unsupported: 'Deze browser kan geen meldingen tonen. Zet wuxia op een iPhone op je beginscherm en open het vanaf daar.'
   download: Downloaden
   download_clear: Downloads wissen
   download_clear_confirm: Weet je zeker dat je alle gedownloade hoofdstukken wilt verwijderen?

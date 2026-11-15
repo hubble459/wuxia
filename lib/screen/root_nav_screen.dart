@@ -24,11 +24,9 @@ import 'package:wuxia/util/session.dart';
 import 'package:wuxia/util/download_manager.dart';
 import 'package:wuxia/util/notification_open/notification_open.dart';
 import 'package:wuxia/util/notifications.dart';
+import 'package:wuxia/util/push.dart';
 import 'package:wuxia/util/store.dart';
 import 'package:wuxia/util/tools.dart';
-
-// Web push key for FCM, supplied at build time via --dart-define=VAPID_KEY.
-const _vapidKey = String.fromEnvironment('VAPID_KEY');
 
 class Route {
   final IconData icon;
@@ -125,33 +123,39 @@ class _RootNavScreenState extends State<RootNavScreen> {
     }
 
     try {
-      final notificationSettings = await FirebaseMessaging.instance.requestPermission(provisional: true);
-
-      if (notificationSettings.authorizationStatus == AuthorizationStatus.denied) {
-        return;
-      }
-      if (!kIsWeb && Platform.isAndroid) {
-        // Only for pushes that arrive while the app is open; push itself works without it.
-        try {
-          await initLocalNotifications(_openManga);
-        } catch (err) {
-          debugPrint('Failed to set up local notifications: $err');
+      final messaging = FirebaseMessaging.instance;
+      String? token;
+      if (kIsWeb) {
+        // A browser only shows the permission prompt after a tap (iPhone always), so on
+        // the web that's asked from Settings (PushSettingsTile); here only an earlier
+        // grant is used. Without push support (an iPhone's Safari tab) there's nothing to do.
+        if (!await messaging.isSupported()) return;
+        final settings = await messaging.getNotificationSettings();
+        if (settings.authorizationStatus == AuthorizationStatus.authorized) token = await registerPushToken();
+      } else {
+        final settings = await messaging.requestPermission(provisional: true);
+        const blocked = {AuthorizationStatus.denied, AuthorizationStatus.deniedPermanently};
+        if (blocked.contains(settings.authorizationStatus)) return;
+        if (Platform.isAndroid) {
+          // Only for pushes that arrive while the app is open; push itself works without it.
+          try {
+            await initLocalNotifications(_openManga);
+          } catch (err) {
+            debugPrint('Failed to set up local notifications: $err');
+          }
         }
+        token = await registerPushToken();
       }
-
-      final token = await FirebaseMessaging.instance.getToken(vapidKey: _vapidKey.isEmpty ? null : _vapidKey);
-
       print('FCM Token: $token');
-      if (!API.loggedIn.deviceIds.contains(token)) {
-        await api.user.addDeviceToken(DeviceTokenRequest(token: token));
-      }
 
-      FirebaseMessaging.instance.onTokenRefresh
+      messaging.onTokenRefresh
           .listen((fcmToken) async {
             if (!API.loggedIn.deviceIds.contains(fcmToken)) {
               print('Updating FCM Device Token');
-              await api.user.removeDeviceToken(DeviceTokenRequest(token: token));
+              final old = token;
+              if (old != null) await api.user.removeDeviceToken(DeviceTokenRequest(token: old));
               await api.user.addDeviceToken(DeviceTokenRequest(token: fcmToken));
+              token = fcmToken;
             }
           })
           .onError((err) {

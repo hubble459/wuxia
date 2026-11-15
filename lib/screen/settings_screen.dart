@@ -12,6 +12,7 @@ import 'package:wuxia/util/store.dart';
 import 'package:wuxia/partial/anilist_settings_tile.dart';
 import 'package:wuxia/partial/dialog/change_password_dialog.dart';
 import 'package:wuxia/partial/download_reconnect.dart';
+import 'package:wuxia/partial/push_settings_tile.dart';
 import 'package:wuxia/util/download_migration.dart';
 import 'package:wuxia/util/download_storage/download_storage.dart';
 import 'package:wuxia/util/image_quality.dart';
@@ -173,6 +174,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 title: I18nText('settings.private_profile'),
                 subtitle: I18nText('settings.private_profile_hint'),
               ),
+              if (kIsWeb) const PushSettingsTile(),
               ListTile(
                 title: I18nText('settings.language'),
                 trailing: DropdownButton<String>(

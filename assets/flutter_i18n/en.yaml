@@ -133,6 +133,11 @@ settings:
   show_nsfw_hint: "Outside your reading list"
   private_profile: 'Private profile'
   private_profile_hint: 'Only your username is visible to others. Turn off to show your stats and what you''re reading.'
+  notifications: 'Notifications'
+  notifications_turn_on: 'Turn on notifications'
+  notifications_turn_on_hint: 'Get a notification when a manga you''re reading has a new chapter'
+  notifications_blocked: 'Blocked. Allow notifications for this site in your browser''s settings.'
+  notifications_unsupported: 'This browser can''t show notifications. On an iPhone, add wuxia to your Home Screen and open it from there.'
   logout: Logout
   language: Language
   reading_mode: Default Reading Mode
