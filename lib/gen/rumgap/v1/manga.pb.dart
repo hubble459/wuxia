@@ -477,6 +477,7 @@ class MangaReply extends $pb.GeneratedMessage {
     MangaOrigin? origin,
     $core.bool? originSetByHand,
     $0.AnilistInfo? anilist,
+    $fixnum.Int64? countCanonicalChapters,
   }) {
     final result = create();
     if (id != null) result.id = id;
@@ -501,6 +502,8 @@ class MangaReply extends $pb.GeneratedMessage {
     if (origin != null) result.origin = origin;
     if (originSetByHand != null) result.originSetByHand = originSetByHand;
     if (anilist != null) result.anilist = anilist;
+    if (countCanonicalChapters != null)
+      result.countCanonicalChapters = countCanonicalChapters;
     return result;
   }
 
@@ -542,6 +545,7 @@ class MangaReply extends $pb.GeneratedMessage {
     ..aOB(22, _omitFieldNames ? '' : 'originSetByHand')
     ..aOM<$0.AnilistInfo>(23, _omitFieldNames ? '' : 'anilist',
         subBuilder: $0.AnilistInfo.create)
+    ..aInt64(24, _omitFieldNames ? '' : 'countCanonicalChapters')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -747,6 +751,16 @@ class MangaReply extends $pb.GeneratedMessage {
   void clearAnilist() => $_clearField(23);
   @$pb.TagNumber(23)
   $0.AnilistInfo ensureAnilist() => $_ensure(21);
+
+  /// The manga's canonical chapters across all sources, the scale reading_progress is on.
+  @$pb.TagNumber(24)
+  $fixnum.Int64 get countCanonicalChapters => $_getI64(22);
+  @$pb.TagNumber(24)
+  set countCanonicalChapters($fixnum.Int64 value) => $_setInt64(22, value);
+  @$pb.TagNumber(24)
+  $core.bool hasCountCanonicalChapters() => $_has(22);
+  @$pb.TagNumber(24)
+  void clearCountCanonicalChapters() => $_clearField(24);
 }
 
 class SelectSourceRequest extends $pb.GeneratedMessage {

@@ -11,12 +11,16 @@ import 'package:wuxia/util/tools.dart';
 String chapterNumberLabel(ChapterReply chapter) => chapter.number.toStringAsFixed(1).replaceAll('.0', '');
 
 /// For a chapter the current source doesn't have: lets the user pick a source that has it
-/// and opens it there. Completes once the reader is closed again (or nothing was picked).
-Future<void> openMissingChapter(BuildContext context, MangaReply manga, ChapterReply chapter) async {
+/// and returns that source with its chapter, or null when there's none or none was picked.
+Future<(MangaSourceReply, ChapterReply)?> pickSourceWithChapter(
+  BuildContext context,
+  MangaReply manga,
+  ChapterReply chapter,
+) async {
   final sources = manga.sources.where((s) => chapter.availableSourceIds.contains(s.id)).toList();
   if (sources.isEmpty) {
     Fluttertoast.showToast(msg: FlutterI18n.translate(context, 'chapter.not_on_source')).ignore();
-    return;
+    return null;
   }
 
   final source = await showDialog<MangaSourceReply>(
@@ -31,17 +35,25 @@ Future<void> openMissingChapter(BuildContext context, MangaReply manga, ChapterR
       ],
     ),
   );
-  if (source == null || !context.mounted) return;
+  if (source == null) return null;
 
-  final ChapterReply found;
   try {
-    found = await api.chapter.findEquivalent(
+    final found = await api.chapter.findEquivalent(
       FindEquivalentRequest(canonicalChapterId: chapter.canonicalChapterId, mangaSourceId: source.id),
     );
+    return (source, found);
   } catch (e) {
     Fluttertoast.showToast(msg: e.toString()).ignore();
-    return;
+    return null;
   }
+}
+
+/// Like [pickSourceWithChapter], then opens the chapter there. Completes once the reader
+/// is closed again (or nothing was picked).
+Future<void> openMissingChapter(BuildContext context, MangaReply manga, ChapterReply chapter) async {
+  final picked = await pickSourceWithChapter(context, manga, chapter);
+  if (picked == null || !context.mounted) return;
+  final (source, found) = picked;
 
   setReadingProgress(manga, found.index.toInt());
   await syncReadingProgress(manga, progress: manga.readingProgress, chapterId: found.id);

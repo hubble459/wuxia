@@ -95,7 +95,9 @@ class _ChapterSelectorState extends State<ChapterSelector> {
 
     ChapterReply chapter;
     try {
-      chapter = await api.chapter.get(ChapterRequest(mangaSourceId: widget.source.id, index: widget.manga.readingProgress));
+      chapter = await api.chapter.get(
+        ChapterRequest(mangaSourceId: widget.source.id, index: widget.manga.readingProgress, canonical: true),
+      );
     } catch (e) {
       _offlineChapters ??= await loadOfflineChapters(widget.manga.id, sourceId: widget.source.id);
       final found = _offlineChapters?.firstWhereOrNull((c) => c.index.toInt() == widget.manga.readingProgress);
@@ -106,6 +108,11 @@ class _ChapterSelectorState extends State<ChapterSelector> {
       chapter = found;
     }
     if (!mounted) return;
+    if (chapter.missing) {
+      await openMissingChapter(context, widget.manga, chapter);
+      refresh();
+      return;
+    }
     await Navigator.of(context)
         .push(
           MaterialPageRoute(

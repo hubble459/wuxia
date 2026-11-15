@@ -17,6 +17,7 @@ import 'package:wuxia/main.dart';
 import 'package:wuxia/partial/action/open_url_action.dart';
 import 'package:wuxia/partial/dialog/chapter_picker_dialog.dart';
 import 'package:wuxia/partial/dialog/confirm_dialog.dart';
+import 'package:wuxia/partial/dialog/missing_chapter_dialog.dart';
 import 'package:wuxia/partial/dialog/source_picker_dialog.dart';
 import 'package:wuxia/partial/image_error_placeholder.dart';
 import 'package:wuxia/partial/offline_notice.dart';
@@ -591,14 +592,14 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
                           child: MaterialButton(
                             padding: EdgeInsets.zero,
                             materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                            onPressed: widget.manga.readingProgress < widget.manga.countChapters.toInt() ? next : null,
+                            onPressed: widget.manga.readingProgress < _countCanonical ? next : null,
                             child: Row(
                               mainAxisSize: MainAxisSize.max,
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 const Icon(Icons.navigate_next),
                                 Visibility(
-                                  visible: widget.manga.readingProgress < widget.manga.countChapters.toInt(),
+                                  visible: widget.manga.readingProgress < _countCanonical,
                                   child: Text((widget.manga.readingProgress + 1).toString()),
                                 ),
                               ],
@@ -688,7 +689,7 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
         return KeyEventResult.handled;
       case LogicalKeyboardKey.arrowRight:
       case LogicalKeyboardKey.keyD:
-        if (widget.manga.readingProgress < widget.manga.countChapters.toInt()) {
+        if (widget.manga.readingProgress < _countCanonical) {
           next();
         }
         return KeyEventResult.handled;
@@ -703,7 +704,7 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
     final last = (_images?.length ?? 1) - 1;
     if (current < last) {
       _pageController.nextPage(duration: const Duration(milliseconds: 200), curve: Curves.easeOut);
-    } else if (widget.manga.readingProgress < widget.manga.countChapters.toInt()) {
+    } else if (widget.manga.readingProgress < _countCanonical) {
       next();
     }
   }
@@ -852,10 +853,28 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
     if (!await _goToProgress()) --widget.manga.readingProgress;
   }
 
+  /// The number of canonical chapters, the scale `readingProgress` is on. Snapshots saved
+  /// before the server sent it fall back to this source's count.
+  int get _countCanonical => widget.manga.countCanonicalChapters.toInt() > 0
+      ? widget.manga.countCanonicalChapters.toInt()
+      : widget.manga.countChapters.toInt();
+
   Future<bool> _goToProgress() async {
     ChapterReply chapter;
     try {
-      chapter = await api.chapter.get(ChapterRequest(mangaSourceId: widget.source.id, index: widget.manga.readingProgress));
+      chapter = await api.chapter.get(
+        ChapterRequest(mangaSourceId: widget.source.id, index: widget.manga.readingProgress, canonical: true),
+      );
+      if (chapter.missing) {
+        if (!mounted) return false;
+        final picked = await pickSourceWithChapter(context, widget.manga, chapter);
+        if (picked == null) return false;
+        final (source, found) = picked;
+        widget.source.clear();
+        widget.source.mergeFromMessage(source);
+        api.manga.selectSource(SelectSourceRequest(mangaSourceId: source.id)).ignore();
+        chapter = found;
+      }
     } catch (e) {
       final offline = await loadOfflineChapters(widget.manga.id, sourceId: widget.source.id);
       final found = offline?.firstWhereOrNull((c) => c.index.toInt() == widget.manga.readingProgress);

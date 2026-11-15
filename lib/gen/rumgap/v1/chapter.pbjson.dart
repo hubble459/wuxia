@@ -21,13 +21,26 @@ const ChapterRequest$json = {
   '2': [
     {'1': 'manga_source_id', '3': 1, '4': 1, '5': 5, '10': 'mangaSourceId'},
     {'1': 'index', '3': 2, '4': 1, '5': 5, '10': 'index'},
+    {
+      '1': 'canonical',
+      '3': 3,
+      '4': 1,
+      '5': 8,
+      '9': 0,
+      '10': 'canonical',
+      '17': true
+    },
+  ],
+  '8': [
+    {'1': '_canonical'},
   ],
 };
 
 /// Descriptor for `ChapterRequest`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List chapterRequestDescriptor = $convert.base64Decode(
     'Cg5DaGFwdGVyUmVxdWVzdBImCg9tYW5nYV9zb3VyY2VfaWQYASABKAVSDW1hbmdhU291cmNlSW'
-    'QSFAoFaW5kZXgYAiABKAVSBWluZGV4');
+    'QSFAoFaW5kZXgYAiABKAVSBWluZGV4EiEKCWNhbm9uaWNhbBgDIAEoCEgAUgljYW5vbmljYWyI'
+    'AQFCDAoKX2Nhbm9uaWNhbA==');
 
 @$core.Deprecated('Use chapterOffsetDescriptor instead')
 const ChapterOffset$json = {

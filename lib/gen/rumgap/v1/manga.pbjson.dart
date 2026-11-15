@@ -206,6 +206,13 @@ const MangaReply$json = {
       '10': 'anilist',
       '17': true
     },
+    {
+      '1': 'count_canonical_chapters',
+      '3': 24,
+      '4': 1,
+      '5': 3,
+      '10': 'countCanonicalChapters'
+    },
   ],
   '8': [
     {'1': '_cover'},
@@ -232,9 +239,10 @@ final $typed_data.Uint8List mangaReplyDescriptor = $convert.base64Decode(
     'bGVjdGVkX3NvdXJjZV9pZBgTIAEoBVIQc2VsZWN0ZWRTb3VyY2VJZBISCgRuc2Z3GBQgASgIUg'
     'Ruc2Z3Ei4KBm9yaWdpbhgVIAEoDjIWLnJ1bWdhcC52MS5NYW5nYU9yaWdpblIGb3JpZ2luEisK'
     'Em9yaWdpbl9zZXRfYnlfaGFuZBgWIAEoCFIPb3JpZ2luU2V0QnlIYW5kEjUKB2FuaWxpc3QYFy'
-    'ABKAsyFi5ydW1nYXAudjEuQW5pbGlzdEluZm9IBVIHYW5pbGlzdIgBAUIICgZfY292ZXJCBwoF'
-    'X25leHRCBwoFX2xhc3RCEwoRX3JlYWRpbmdfcHJvZ3Jlc3NCEwoRX3Byb2dyZXNzX29yZGluYW'
-    'xCCgoIX2FuaWxpc3Q=');
+    'ABKAsyFi5ydW1nYXAudjEuQW5pbGlzdEluZm9IBVIHYW5pbGlzdIgBARI4Chhjb3VudF9jYW5v'
+    'bmljYWxfY2hhcHRlcnMYGCABKANSFmNvdW50Q2Fub25pY2FsQ2hhcHRlcnNCCAoGX2NvdmVyQg'
+    'cKBV9uZXh0QgcKBV9sYXN0QhMKEV9yZWFkaW5nX3Byb2dyZXNzQhMKEV9wcm9ncmVzc19vcmRp'
+    'bmFsQgoKCF9hbmlsaXN0');
 
 @$core.Deprecated('Use selectSourceRequestDescriptor instead')
 const SelectSourceRequest$json = {

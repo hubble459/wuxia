@@ -23,10 +23,12 @@ class ChapterRequest extends $pb.GeneratedMessage {
   factory ChapterRequest({
     $core.int? mangaSourceId,
     $core.int? index,
+    $core.bool? canonical,
   }) {
     final result = create();
     if (mangaSourceId != null) result.mangaSourceId = mangaSourceId;
     if (index != null) result.index = index;
+    if (canonical != null) result.canonical = canonical;
     return result;
   }
 
@@ -45,6 +47,7 @@ class ChapterRequest extends $pb.GeneratedMessage {
       createEmptyInstance: create)
     ..aI(1, _omitFieldNames ? '' : 'mangaSourceId')
     ..aI(2, _omitFieldNames ? '' : 'index')
+    ..aOB(3, _omitFieldNames ? '' : 'canonical')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -83,6 +86,17 @@ class ChapterRequest extends $pb.GeneratedMessage {
   $core.bool hasIndex() => $_has(1);
   @$pb.TagNumber(2)
   void clearIndex() => $_clearField(2);
+
+  /// `index` is a canonical chapter's position (like reading progress) instead of one of
+  /// this source's: returns this source's chapter for it, or a `missing` placeholder.
+  @$pb.TagNumber(3)
+  $core.bool get canonical => $_getBF(2);
+  @$pb.TagNumber(3)
+  set canonical($core.bool value) => $_setBool(2, value);
+  @$pb.TagNumber(3)
+  $core.bool hasCanonical() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearCanonical() => $_clearField(3);
 }
 
 class ChapterOffset extends $pb.GeneratedMessage {
