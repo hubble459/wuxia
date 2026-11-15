@@ -44,7 +44,7 @@ class _PushSettingsTileState extends State<PushSettingsTile> {
     setState(() => _busy = true);
     try {
       final settings = await FirebaseMessaging.instance.requestPermission();
-      if (settings.authorizationStatus == AuthorizationStatus.authorized) await registerPushToken();
+      if (settings.authorizationStatus == AuthorizationStatus.authorized) await registerForPush();
     } catch (e) {
       if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
     }

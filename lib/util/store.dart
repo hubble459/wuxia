@@ -10,6 +10,7 @@ class Store {
   static const String orderMangaKey = 'ORDER_BY_MANGA';
   static const String tokenKey = 'token';
   static const String usernameKey = 'username';
+  static const String pushIdKey = 'push_id';
   static const String apiHostKey = 'api_url';
   static const String languageKey = 'language';
   static const String imageQualityKey = 'image_quality';
@@ -74,6 +75,15 @@ class Store {
 
   Future<void> setUsername(String username) async {
     await _publicStorage.setString(usernameKey, username);
+  }
+
+  /// The push id (Firebase Installation ID) this device last gave rumgap.
+  String? getPushId() {
+    return _publicStorage.getString(pushIdKey);
+  }
+
+  Future<void> setPushId(String pushId) async {
+    await _publicStorage.setString(pushIdKey, pushId);
   }
 
   String? getApiHost() {

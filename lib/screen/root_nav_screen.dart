@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:wuxia/api.dart';
 import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
-import 'package:wuxia/gen/rumgap/v1/user.pb.dart';
 import 'package:wuxia/main.dart';
 import 'package:wuxia/partial/dialog/add_manga_dialog.dart';
 import 'package:wuxia/partial/download_reconnect.dart';
@@ -124,14 +123,13 @@ class _RootNavScreenState extends State<RootNavScreen> {
 
     try {
       final messaging = FirebaseMessaging.instance;
-      String? token;
       if (kIsWeb) {
         // A browser only shows the permission prompt after a tap (iPhone always), so on
         // the web that's asked from Settings (PushSettingsTile); here only an earlier
         // grant is used. Without push support (an iPhone's Safari tab) there's nothing to do.
         if (!await messaging.isSupported()) return;
         final settings = await messaging.getNotificationSettings();
-        if (settings.authorizationStatus == AuthorizationStatus.authorized) token = await registerPushToken();
+        if (settings.authorizationStatus == AuthorizationStatus.authorized) await registerForPush();
       } else {
         final settings = await messaging.requestPermission(provisional: true);
         const blocked = {AuthorizationStatus.denied, AuthorizationStatus.deniedPermanently};
@@ -144,24 +142,8 @@ class _RootNavScreenState extends State<RootNavScreen> {
             debugPrint('Failed to set up local notifications: $err');
           }
         }
-        token = await registerPushToken();
+        await registerForPush();
       }
-      print('FCM Token: $token');
-
-      messaging.onTokenRefresh
-          .listen((fcmToken) async {
-            if (!API.loggedIn.deviceIds.contains(fcmToken)) {
-              print('Updating FCM Device Token');
-              final old = token;
-              if (old != null) await api.user.removeDeviceToken(DeviceTokenRequest(token: old));
-              await api.user.addDeviceToken(DeviceTokenRequest(token: fcmToken));
-              token = fcmToken;
-            }
-          })
-          .onError((err) {
-            // UHHHHH
-            print(err);
-          });
 
       final message = await FirebaseMessaging.instance.getInitialMessage();
       if (message != null) {
