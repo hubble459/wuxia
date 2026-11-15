@@ -36,5 +36,40 @@ class AnilistReturnTarget extends $pb.ProtobufEnum {
   const AnilistReturnTarget._(super.value, super.name);
 }
 
+/// The statuses of an AniList list entry. NONE: not on the list.
+class AnilistListStatus extends $pb.ProtobufEnum {
+  static const AnilistListStatus ANILIST_LIST_NONE =
+      AnilistListStatus._(0, _omitEnumNames ? '' : 'ANILIST_LIST_NONE');
+  static const AnilistListStatus ANILIST_LIST_CURRENT =
+      AnilistListStatus._(1, _omitEnumNames ? '' : 'ANILIST_LIST_CURRENT');
+  static const AnilistListStatus ANILIST_LIST_PLANNING =
+      AnilistListStatus._(2, _omitEnumNames ? '' : 'ANILIST_LIST_PLANNING');
+  static const AnilistListStatus ANILIST_LIST_COMPLETED =
+      AnilistListStatus._(3, _omitEnumNames ? '' : 'ANILIST_LIST_COMPLETED');
+  static const AnilistListStatus ANILIST_LIST_DROPPED =
+      AnilistListStatus._(4, _omitEnumNames ? '' : 'ANILIST_LIST_DROPPED');
+  static const AnilistListStatus ANILIST_LIST_PAUSED =
+      AnilistListStatus._(5, _omitEnumNames ? '' : 'ANILIST_LIST_PAUSED');
+  static const AnilistListStatus ANILIST_LIST_REPEATING =
+      AnilistListStatus._(6, _omitEnumNames ? '' : 'ANILIST_LIST_REPEATING');
+
+  static const $core.List<AnilistListStatus> values = <AnilistListStatus>[
+    ANILIST_LIST_NONE,
+    ANILIST_LIST_CURRENT,
+    ANILIST_LIST_PLANNING,
+    ANILIST_LIST_COMPLETED,
+    ANILIST_LIST_DROPPED,
+    ANILIST_LIST_PAUSED,
+    ANILIST_LIST_REPEATING,
+  ];
+
+  static final $core.List<AnilistListStatus?> _byValue =
+      $pb.ProtobufEnum.$_initByValueList(values, 6);
+  static AnilistListStatus? valueOf($core.int value) =>
+      value < 0 || value >= _byValue.length ? null : _byValue[value];
+
+  const AnilistListStatus._(super.value, super.name);
+}
+
 const $core.bool _omitEnumNames =
     $core.bool.fromEnvironment('protobuf.omit_enum_names');

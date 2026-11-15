@@ -519,3 +519,13 @@ anilist:
   search: 搜索 AniList
   not_on_anilist: 不在 AniList 上
   rematch: 自动匹配
+  set_status: 设置 AniList 状态
+  add_to_list: 添加到 AniList
+  status:
+    ANILIST_LIST_NONE: 从 AniList 移除
+    ANILIST_LIST_CURRENT: 在读
+    ANILIST_LIST_PLANNING: 想读
+    ANILIST_LIST_COMPLETED: 读完
+    ANILIST_LIST_PAUSED: 暂停
+    ANILIST_LIST_DROPPED: 弃坑
+    ANILIST_LIST_REPEATING: 重读

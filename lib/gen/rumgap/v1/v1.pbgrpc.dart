@@ -1978,6 +1978,23 @@ class AnilistClient extends $grpc.Client {
     return $createUnaryCall(_$setMatch, request, options: options);
   }
 
+  /// The user's AniList list entry for a manga.
+  $grpc.ResponseFuture<$11.AnilistListEntryReply> listEntry(
+    $11.AnilistListEntryRequest request, {
+    $grpc.CallOptions? options,
+  }) {
+    return $createUnaryCall(_$listEntry, request, options: options);
+  }
+
+  /// Sets the status of the user's AniList list entry, adding it with their progress
+  /// when it isn't on their list yet.
+  $grpc.ResponseFuture<$11.AnilistListEntryReply> setListStatus(
+    $11.SetAnilistListStatusRequest request, {
+    $grpc.CallOptions? options,
+  }) {
+    return $createUnaryCall(_$setListStatus, request, options: options);
+  }
+
   // method descriptors
 
   static final _$connectUrl = $grpc.ClientMethod<$11.AnilistConnectUrlRequest,
@@ -2003,6 +2020,16 @@ class AnilistClient extends $grpc.Client {
           '/rumgap.v1.Anilist/SetMatch',
           ($11.SetAnilistMatchRequest value) => value.writeToBuffer(),
           $5.MangaReply.fromBuffer);
+  static final _$listEntry = $grpc.ClientMethod<$11.AnilistListEntryRequest,
+          $11.AnilistListEntryReply>(
+      '/rumgap.v1.Anilist/ListEntry',
+      ($11.AnilistListEntryRequest value) => value.writeToBuffer(),
+      $11.AnilistListEntryReply.fromBuffer);
+  static final _$setListStatus = $grpc.ClientMethod<
+          $11.SetAnilistListStatusRequest, $11.AnilistListEntryReply>(
+      '/rumgap.v1.Anilist/SetListStatus',
+      ($11.SetAnilistListStatusRequest value) => value.writeToBuffer(),
+      $11.AnilistListEntryReply.fromBuffer);
 }
 
 @$pb.GrpcServiceName('rumgap.v1.Anilist')
@@ -2050,6 +2077,24 @@ abstract class AnilistServiceBase extends $grpc.Service {
         ($core.List<$core.int> value) =>
             $11.SetAnilistMatchRequest.fromBuffer(value),
         ($5.MangaReply value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$11.AnilistListEntryRequest,
+            $11.AnilistListEntryReply>(
+        'ListEntry',
+        listEntry_Pre,
+        false,
+        false,
+        ($core.List<$core.int> value) =>
+            $11.AnilistListEntryRequest.fromBuffer(value),
+        ($11.AnilistListEntryReply value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$11.SetAnilistListStatusRequest,
+            $11.AnilistListEntryReply>(
+        'SetListStatus',
+        setListStatus_Pre,
+        false,
+        false,
+        ($core.List<$core.int> value) =>
+            $11.SetAnilistListStatusRequest.fromBuffer(value),
+        ($11.AnilistListEntryReply value) => value.writeToBuffer()));
   }
 
   $async.Future<$11.AnilistConnectUrlReply> connectUrl_Pre(
@@ -2091,6 +2136,24 @@ abstract class AnilistServiceBase extends $grpc.Service {
 
   $async.Future<$5.MangaReply> setMatch(
       $grpc.ServiceCall call, $11.SetAnilistMatchRequest request);
+
+  $async.Future<$11.AnilistListEntryReply> listEntry_Pre(
+      $grpc.ServiceCall $call,
+      $async.Future<$11.AnilistListEntryRequest> $request) async {
+    return listEntry($call, await $request);
+  }
+
+  $async.Future<$11.AnilistListEntryReply> listEntry(
+      $grpc.ServiceCall call, $11.AnilistListEntryRequest request);
+
+  $async.Future<$11.AnilistListEntryReply> setListStatus_Pre(
+      $grpc.ServiceCall $call,
+      $async.Future<$11.SetAnilistListStatusRequest> $request) async {
+    return setListStatus($call, await $request);
+  }
+
+  $async.Future<$11.AnilistListEntryReply> setListStatus(
+      $grpc.ServiceCall call, $11.SetAnilistListStatusRequest request);
 }
 
 /// Admin-only: user management.

@@ -747,6 +747,226 @@ class SetAnilistMatchRequest extends $pb.GeneratedMessage {
   void clearRematch() => $_clearField(3);
 }
 
+class AnilistListEntryRequest extends $pb.GeneratedMessage {
+  factory AnilistListEntryRequest({
+    $core.int? mangaId,
+  }) {
+    final result = create();
+    if (mangaId != null) result.mangaId = mangaId;
+    return result;
+  }
+
+  AnilistListEntryRequest._();
+
+  factory AnilistListEntryRequest.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory AnilistListEntryRequest.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'AnilistListEntryRequest',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'rumgap.v1'),
+      createEmptyInstance: create)
+    ..aI(1, _omitFieldNames ? '' : 'mangaId')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  AnilistListEntryRequest clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  AnilistListEntryRequest copyWith(
+          void Function(AnilistListEntryRequest) updates) =>
+      super.copyWith((message) => updates(message as AnilistListEntryRequest))
+          as AnilistListEntryRequest;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static AnilistListEntryRequest create() => AnilistListEntryRequest._();
+  @$core.override
+  AnilistListEntryRequest createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static AnilistListEntryRequest getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<AnilistListEntryRequest>(create);
+  static AnilistListEntryRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.int get mangaId => $_getIZ(0);
+  @$pb.TagNumber(1)
+  set mangaId($core.int value) => $_setSignedInt32(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasMangaId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearMangaId() => $_clearField(1);
+}
+
+class AnilistListEntryReply extends $pb.GeneratedMessage {
+  factory AnilistListEntryReply({
+    $core.bool? connected,
+    $core.bool? matched,
+    AnilistListStatus? status,
+    $core.int? progress,
+  }) {
+    final result = create();
+    if (connected != null) result.connected = connected;
+    if (matched != null) result.matched = matched;
+    if (status != null) result.status = status;
+    if (progress != null) result.progress = progress;
+    return result;
+  }
+
+  AnilistListEntryReply._();
+
+  factory AnilistListEntryReply.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory AnilistListEntryReply.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'AnilistListEntryReply',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'rumgap.v1'),
+      createEmptyInstance: create)
+    ..aOB(1, _omitFieldNames ? '' : 'connected')
+    ..aOB(2, _omitFieldNames ? '' : 'matched')
+    ..aE<AnilistListStatus>(3, _omitFieldNames ? '' : 'status',
+        enumValues: AnilistListStatus.values)
+    ..aI(4, _omitFieldNames ? '' : 'progress')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  AnilistListEntryReply clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  AnilistListEntryReply copyWith(
+          void Function(AnilistListEntryReply) updates) =>
+      super.copyWith((message) => updates(message as AnilistListEntryReply))
+          as AnilistListEntryReply;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static AnilistListEntryReply create() => AnilistListEntryReply._();
+  @$core.override
+  AnilistListEntryReply createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static AnilistListEntryReply getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<AnilistListEntryReply>(create);
+  static AnilistListEntryReply? _defaultInstance;
+
+  /// The user connected AniList.
+  @$pb.TagNumber(1)
+  $core.bool get connected => $_getBF(0);
+  @$pb.TagNumber(1)
+  set connected($core.bool value) => $_setBool(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasConnected() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearConnected() => $_clearField(1);
+
+  /// The manga has an AniList entry.
+  @$pb.TagNumber(2)
+  $core.bool get matched => $_getBF(1);
+  @$pb.TagNumber(2)
+  set matched($core.bool value) => $_setBool(1, value);
+  @$pb.TagNumber(2)
+  $core.bool hasMatched() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearMatched() => $_clearField(2);
+
+  @$pb.TagNumber(3)
+  AnilistListStatus get status => $_getN(2);
+  @$pb.TagNumber(3)
+  set status(AnilistListStatus value) => $_setField(3, value);
+  @$pb.TagNumber(3)
+  $core.bool hasStatus() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearStatus() => $_clearField(3);
+
+  @$pb.TagNumber(4)
+  $core.int get progress => $_getIZ(3);
+  @$pb.TagNumber(4)
+  set progress($core.int value) => $_setSignedInt32(3, value);
+  @$pb.TagNumber(4)
+  $core.bool hasProgress() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearProgress() => $_clearField(4);
+}
+
+class SetAnilistListStatusRequest extends $pb.GeneratedMessage {
+  factory SetAnilistListStatusRequest({
+    $core.int? mangaId,
+    AnilistListStatus? status,
+  }) {
+    final result = create();
+    if (mangaId != null) result.mangaId = mangaId;
+    if (status != null) result.status = status;
+    return result;
+  }
+
+  SetAnilistListStatusRequest._();
+
+  factory SetAnilistListStatusRequest.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory SetAnilistListStatusRequest.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'SetAnilistListStatusRequest',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'rumgap.v1'),
+      createEmptyInstance: create)
+    ..aI(1, _omitFieldNames ? '' : 'mangaId')
+    ..aE<AnilistListStatus>(2, _omitFieldNames ? '' : 'status',
+        enumValues: AnilistListStatus.values)
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  SetAnilistListStatusRequest clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  SetAnilistListStatusRequest copyWith(
+          void Function(SetAnilistListStatusRequest) updates) =>
+      super.copyWith(
+              (message) => updates(message as SetAnilistListStatusRequest))
+          as SetAnilistListStatusRequest;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static SetAnilistListStatusRequest create() =>
+      SetAnilistListStatusRequest._();
+  @$core.override
+  SetAnilistListStatusRequest createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static SetAnilistListStatusRequest getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<SetAnilistListStatusRequest>(create);
+  static SetAnilistListStatusRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.int get mangaId => $_getIZ(0);
+  @$pb.TagNumber(1)
+  set mangaId($core.int value) => $_setSignedInt32(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasMangaId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearMangaId() => $_clearField(1);
+
+  /// NONE removes it from the user's AniList list.
+  @$pb.TagNumber(2)
+  AnilistListStatus get status => $_getN(1);
+  @$pb.TagNumber(2)
+  set status(AnilistListStatus value) => $_setField(2, value);
+  @$pb.TagNumber(2)
+  $core.bool hasStatus() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearStatus() => $_clearField(2);
+}
+
 const $core.bool _omitFieldNames =
     $core.bool.fromEnvironment('protobuf.omit_field_names');
 const $core.bool _omitMessageNames =

@@ -519,3 +519,13 @@ anilist:
   search: AniList doorzoeken
   not_on_anilist: Niet op AniList
   rematch: Automatisch zoeken
+  set_status: AniList-status instellen
+  add_to_list: Toevoegen aan AniList
+  status:
+    ANILIST_LIST_NONE: Verwijderen van AniList
+    ANILIST_LIST_CURRENT: Aan het lezen
+    ANILIST_LIST_PLANNING: Wil ik lezen
+    ANILIST_LIST_COMPLETED: Uitgelezen
+    ANILIST_LIST_PAUSED: Gepauzeerd
+    ANILIST_LIST_DROPPED: Gestopt
+    ANILIST_LIST_REPEATING: Herlezen

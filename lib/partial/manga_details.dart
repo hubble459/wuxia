@@ -4,6 +4,7 @@ import 'package:jiffy/jiffy.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:wuxia/api.dart';
 import 'package:wuxia/gen/rumgap/v1/manga.pb.dart';
+import 'package:wuxia/partial/anilist_status_button.dart';
 import 'package:wuxia/partial/list/manga_item.dart';
 import 'package:wuxia/partial/simple_future_builder.dart';
 import 'package:wuxia/util/tools.dart';
@@ -102,6 +103,7 @@ class MangaDetails extends StatelessWidget {
                 onPressed: () => launchUrlString(manga.anilist.url, mode: LaunchMode.externalApplication),
                 child: I18nText('anilist.open'),
               ),
+              AnilistStatusButton(mangaId: manga.id),
             ],
           ),
         Padding(

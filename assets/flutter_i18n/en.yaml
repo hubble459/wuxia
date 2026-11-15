@@ -519,3 +519,13 @@ anilist:
   search: Search AniList
   not_on_anilist: Not on AniList
   rematch: Match automatically
+  set_status: Set AniList status
+  add_to_list: Add to AniList
+  status:
+    ANILIST_LIST_NONE: Remove from AniList
+    ANILIST_LIST_CURRENT: Reading
+    ANILIST_LIST_PLANNING: Plan to read
+    ANILIST_LIST_COMPLETED: Completed
+    ANILIST_LIST_PAUSED: Paused
+    ANILIST_LIST_DROPPED: Dropped
+    ANILIST_LIST_REPEATING: Rereading

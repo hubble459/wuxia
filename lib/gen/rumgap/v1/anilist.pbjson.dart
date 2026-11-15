@@ -29,6 +29,27 @@ final $typed_data.Uint8List anilistReturnTargetDescriptor = $convert.base64Decod
     'ChNBbmlsaXN0UmV0dXJuVGFyZ2V0EhYKEkFOSUxJU1RfUkVUVVJOX0FQUBAAEhYKEkFOSUxJU1'
     'RfUkVUVVJOX1dFQhAB');
 
+@$core.Deprecated('Use anilistListStatusDescriptor instead')
+const AnilistListStatus$json = {
+  '1': 'AnilistListStatus',
+  '2': [
+    {'1': 'ANILIST_LIST_NONE', '2': 0},
+    {'1': 'ANILIST_LIST_CURRENT', '2': 1},
+    {'1': 'ANILIST_LIST_PLANNING', '2': 2},
+    {'1': 'ANILIST_LIST_COMPLETED', '2': 3},
+    {'1': 'ANILIST_LIST_DROPPED', '2': 4},
+    {'1': 'ANILIST_LIST_PAUSED', '2': 5},
+    {'1': 'ANILIST_LIST_REPEATING', '2': 6},
+  ],
+};
+
+/// Descriptor for `AnilistListStatus`. Decode as a `google.protobuf.EnumDescriptorProto`.
+final $typed_data.Uint8List anilistListStatusDescriptor = $convert.base64Decode(
+    'ChFBbmlsaXN0TGlzdFN0YXR1cxIVChFBTklMSVNUX0xJU1RfTk9ORRAAEhgKFEFOSUxJU1RfTE'
+    'lTVF9DVVJSRU5UEAESGQoVQU5JTElTVF9MSVNUX1BMQU5OSU5HEAISGgoWQU5JTElTVF9MSVNU'
+    'X0NPTVBMRVRFRBADEhgKFEFOSUxJU1RfTElTVF9EUk9QUEVEEAQSFwoTQU5JTElTVF9MSVNUX1'
+    'BBVVNFRBAFEhoKFkFOSUxJU1RfTElTVF9SRVBFQVRJTkcQBg==');
+
 @$core.Deprecated('Use anilistInfoDescriptor instead')
 const AnilistInfo$json = {
   '1': 'AnilistInfo',
@@ -301,3 +322,62 @@ final $typed_data.Uint8List setAnilistMatchRequestDescriptor = $convert.base64De
     'ChZTZXRBbmlsaXN0TWF0Y2hSZXF1ZXN0EhkKCG1hbmdhX2lkGAEgASgFUgdtYW5nYUlkEiIKCm'
     'FuaWxpc3RfaWQYAiABKAVIAFIJYW5pbGlzdElkiAEBEhgKB3JlbWF0Y2gYAyABKAhSB3JlbWF0'
     'Y2hCDQoLX2FuaWxpc3RfaWQ=');
+
+@$core.Deprecated('Use anilistListEntryRequestDescriptor instead')
+const AnilistListEntryRequest$json = {
+  '1': 'AnilistListEntryRequest',
+  '2': [
+    {'1': 'manga_id', '3': 1, '4': 1, '5': 5, '10': 'mangaId'},
+  ],
+};
+
+/// Descriptor for `AnilistListEntryRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List anilistListEntryRequestDescriptor =
+    $convert.base64Decode(
+        'ChdBbmlsaXN0TGlzdEVudHJ5UmVxdWVzdBIZCghtYW5nYV9pZBgBIAEoBVIHbWFuZ2FJZA==');
+
+@$core.Deprecated('Use anilistListEntryReplyDescriptor instead')
+const AnilistListEntryReply$json = {
+  '1': 'AnilistListEntryReply',
+  '2': [
+    {'1': 'connected', '3': 1, '4': 1, '5': 8, '10': 'connected'},
+    {'1': 'matched', '3': 2, '4': 1, '5': 8, '10': 'matched'},
+    {
+      '1': 'status',
+      '3': 3,
+      '4': 1,
+      '5': 14,
+      '6': '.rumgap.v1.AnilistListStatus',
+      '10': 'status'
+    },
+    {'1': 'progress', '3': 4, '4': 1, '5': 5, '10': 'progress'},
+  ],
+};
+
+/// Descriptor for `AnilistListEntryReply`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List anilistListEntryReplyDescriptor = $convert.base64Decode(
+    'ChVBbmlsaXN0TGlzdEVudHJ5UmVwbHkSHAoJY29ubmVjdGVkGAEgASgIUgljb25uZWN0ZWQSGA'
+    'oHbWF0Y2hlZBgCIAEoCFIHbWF0Y2hlZBI0CgZzdGF0dXMYAyABKA4yHC5ydW1nYXAudjEuQW5p'
+    'bGlzdExpc3RTdGF0dXNSBnN0YXR1cxIaCghwcm9ncmVzcxgEIAEoBVIIcHJvZ3Jlc3M=');
+
+@$core.Deprecated('Use setAnilistListStatusRequestDescriptor instead')
+const SetAnilistListStatusRequest$json = {
+  '1': 'SetAnilistListStatusRequest',
+  '2': [
+    {'1': 'manga_id', '3': 1, '4': 1, '5': 5, '10': 'mangaId'},
+    {
+      '1': 'status',
+      '3': 2,
+      '4': 1,
+      '5': 14,
+      '6': '.rumgap.v1.AnilistListStatus',
+      '10': 'status'
+    },
+  ],
+};
+
+/// Descriptor for `SetAnilistListStatusRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List setAnilistListStatusRequestDescriptor =
+    $convert.base64Decode(
+        'ChtTZXRBbmlsaXN0TGlzdFN0YXR1c1JlcXVlc3QSGQoIbWFuZ2FfaWQYASABKAVSB21hbmdhSW'
+        'QSNAoGc3RhdHVzGAIgASgOMhwucnVtZ2FwLnYxLkFuaWxpc3RMaXN0U3RhdHVzUgZzdGF0dXM=');
