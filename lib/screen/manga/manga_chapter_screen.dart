@@ -756,6 +756,9 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
       child: Scrollbar(
         radius: const Radius.circular(4.0),
         thickness: 6.0,
+        // ScrollablePositionedList has no ScrollController to drag with, so the thumb only
+        // shows the position; an interactive one asserts on every scroll.
+        interactive: false,
         child: ScrollablePositionedList.builder(
           itemScrollController: itemScrollController,
           itemPositionsListener: itemPositionsListener,
