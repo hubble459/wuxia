@@ -868,6 +868,7 @@ class _MangaChapterScreenState extends State<MangaChapterScreen> {
       chapter = await api.chapter.get(
         ChapterRequest(mangaSourceId: widget.source.id, index: widget.manga.readingProgress, canonical: true),
       );
+      chapter = (await withDownloadedForMissing(widget.manga.id, widget.source.id, [chapter])).single;
       if (chapter.missing) {
         if (!mounted) return false;
         final picked = await pickSourceWithChapter(context, widget.manga, chapter);

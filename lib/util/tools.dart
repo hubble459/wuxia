@@ -271,10 +271,63 @@ Future<List<ChapterReply>?> loadOfflineChapters(int mangaId, {int? sourceId}) as
   try {
     final bytes = await downloadStorage.read('${source.dir}/chapters.pb');
     if (bytes == null) return null;
-    return ChaptersReply.fromBuffer(bytes).items.toList()..sort((a, b) => a.index.compareTo(b.index));
+    return ChaptersReply.fromBuffer(bytes).items.toList()..sort(_byNumberThenIndex);
   } catch (_) {
     return null;
   }
+}
+
+int _byNumberThenIndex(ChapterReply a, ChapterReply b) {
+  final byNumber = a.number.compareTo(b.number);
+  return byNumber != 0 ? byNumber : a.index.compareTo(b.index);
+}
+
+/// The chapter list to save when a source is downloaded again: [server]'s chapters,
+/// plus each chapter of the [previous] list that the server no longer lists but whose
+/// folder is among [downloadedFolders]. A download is a backup, so a chapter its site
+/// removed stays readable.
+List<ChapterReply> mergeDownloadedChapters(
+  List<ChapterReply> server,
+  List<ChapterReply> previous,
+  Set<String> downloadedFolders,
+) {
+  final serverFolders = server.map((c) => chapterFolderName(c.number)).toSet();
+  final kept = <String, ChapterReply>{};
+  for (final chapter in previous) {
+    final folder = chapterFolderName(chapter.number);
+    if (serverFolders.contains(folder) || !downloadedFolders.contains(folder)) continue;
+    kept[folder] ??= chapter;
+  }
+  return [...server, ...kept.values]..sort(_byNumberThenIndex);
+}
+
+/// [chapters] with each `missing` placeholder (the server no longer has that chapter
+/// on source [sourceId], e.g. because its site removed it) replaced by the downloaded
+/// copy of that chapter, when that source of manga [mangaId] is downloaded with the
+/// chapter's pages on disk.
+Future<List<ChapterReply>> withDownloadedForMissing(int mangaId, int sourceId, List<ChapterReply> chapters) async {
+  if (!chapters.any((c) => c.missing)) return chapters;
+  final source = await findDownloadedSource(mangaId, sourceId: sourceId);
+  if (source == null || source.sourceId != sourceId) return chapters;
+  final List<ChapterReply> downloaded;
+  try {
+    final bytes = await downloadStorage.read('${source.dir}/chapters.pb');
+    if (bytes == null) return chapters;
+    downloaded = ChaptersReply.fromBuffer(bytes).items;
+  } catch (_) {
+    return chapters;
+  }
+
+  final result = <ChapterReply>[];
+  for (final chapter in chapters) {
+    final copy = chapter.missing
+        ? downloaded.firstWhereOrNull((d) => d.hasCanonicalChapterId() && d.canonicalChapterId == chapter.canonicalChapterId)
+        : null;
+    final onDisk =
+        copy != null && (await downloadStorage.listFiles('${source.dir}/${chapterFolderName(copy.number)}')).isNotEmpty;
+    result.add(onDisk ? (copy.deepCopy()..ordinal = chapter.ordinal) : chapter);
+  }
+  return result;
 }
 
 /// Whether [chapter] counts as already read, given [manga]'s current
@@ -347,6 +400,14 @@ Future<void> syncReadingProgress(MangaReply manga, {required int progress, int? 
     manga.clear();
     manga.mergeFromMessage(updated);
     await Store.getStoreInstance().clearPendingProgress(manga.id);
+  } on GrpcError catch (e) {
+    // Not found (e.g. a downloaded chapter the server has since deleted) isn't fixed by
+    // retrying later, so there's nothing to keep pending.
+    if (e.code == StatusCode.notFound) {
+      await Store.getStoreInstance().clearPendingProgress(manga.id);
+    } else {
+      await Store.getStoreInstance().setPendingProgress(manga.id, progress: progress, chapterId: chapterId);
+    }
   } catch (_) {
     await Store.getStoreInstance().setPendingProgress(manga.id, progress: progress, chapterId: chapterId);
   }

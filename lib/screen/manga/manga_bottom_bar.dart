@@ -98,6 +98,7 @@ class _ChapterSelectorState extends State<ChapterSelector> {
       chapter = await api.chapter.get(
         ChapterRequest(mangaSourceId: widget.source.id, index: widget.manga.readingProgress, canonical: true),
       );
+      chapter = (await withDownloadedForMissing(widget.manga.id, widget.source.id, [chapter])).single;
     } catch (e) {
       _offlineChapters ??= await loadOfflineChapters(widget.manga.id, sourceId: widget.source.id);
       final found = _offlineChapters?.firstWhereOrNull((c) => c.index.toInt() == widget.manga.readingProgress);
@@ -178,7 +179,8 @@ class _ChapterSelectorState extends State<ChapterSelector> {
 
       _windowStart = result.pagination.page.toInt() * result.pagination.perPage.toInt();
       _windowLength = result.items.length;
-      return result;
+      final items = await withDownloadedForMissing(widget.manga.id, widget.source.id, result.items);
+      return ChaptersReply(items: items, pagination: result.pagination);
     } catch (e) {
       final offline = await _offlineWindow();
       if (offline == null) rethrow;

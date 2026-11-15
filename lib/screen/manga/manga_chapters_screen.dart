@@ -194,7 +194,7 @@ class _MangaChaptersScreenState extends State<MangaChaptersScreen> {
         final offline = await _offlineChaptersOrdered();
         if (offline != null && offline.isNotEmpty) return _offlinePage(offline, page);
       }
-      return _result.items;
+      return await withDownloadedForMissing(widget.manga.id, widget.source.id, _result.items);
     } catch (e) {
       final offline = await _offlineChaptersOrdered();
       if (offline == null) rethrow;

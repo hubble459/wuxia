@@ -361,7 +361,10 @@ class DownloadManager extends ChangeNotifier {
     final chapters = ChaptersReply(items: await _fetchAllChapters(task.source, task.totalChapters));
 
     await downloadStorage.write('$mangaDir/manga.pb', manga.writeToBuffer());
-    await downloadStorage.write('$sourceDir/chapters.pb', chapters.writeToBuffer());
+    await downloadStorage.write(
+      '$sourceDir/chapters.pb',
+      ChaptersReply(items: await _keepRemovedChapters(sourceDir, chapters.items)).writeToBuffer(),
+    );
     await _downloadCover(client, manga, mangaDir);
 
     Future<bool> downloadChapter(ChapterReply chapter) async {
@@ -432,6 +435,21 @@ class DownloadManager extends ChangeNotifier {
     final error = failure;
     if (error != null) Error.throwWithStackTrace(error, failureStack!);
     if (!task._cancelled) await writeDownloadCompleteMarker(sourceDir, task.totalChapters);
+  }
+
+  /// [server]'s chapters plus the ones an earlier download of [sourceDir] saved that
+  /// the server no longer lists, see `mergeDownloadedChapters`.
+  Future<List<ChapterReply>> _keepRemovedChapters(String sourceDir, List<ChapterReply> server) async {
+    List<ChapterReply> previous;
+    try {
+      final bytes = await downloadStorage.read('$sourceDir/chapters.pb');
+      previous = bytes == null ? const [] : ChaptersReply.fromBuffer(bytes).items;
+    } catch (_) {
+      previous = const [];
+    }
+    if (previous.isEmpty) return server;
+    final folders = (await downloadStorage.listDirs(sourceDir)).toSet();
+    return mergeDownloadedChapters(server, previous, folders);
   }
 
   /// rumgap clamps `per_page` to 50 server-side (chapter.rs) regardless of
