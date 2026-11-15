@@ -553,6 +553,10 @@ class DownloadManager extends ChangeNotifier {
       await Future.delayed(const Duration(seconds: 1));
       response = await client.get(uri);
     }
+    // Saving an error response would leave a broken page that's never fetched again.
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      throw http.ClientException('HTTP ${response.statusCode} for page $index', uri);
+    }
     await downloadStorage.write(path, response.bodyBytes);
     return true;
   }
