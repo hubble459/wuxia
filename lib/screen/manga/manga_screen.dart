@@ -65,6 +65,7 @@ class MangaScreen extends StatefulWidget {
 }
 
 class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin {
+  static const _minWidth = 200.0;
   late final AnimationController _animationController = AnimationController(
     vsync: this,
     duration: const Duration(seconds: 1),
@@ -680,7 +681,11 @@ class _MangaScreenState extends State<MangaScreen> with TickerProviderStateMixin
 
   @override
   Widget build(BuildContext context) {
-    final isWide = MediaQuery.sizeOf(context).width >= _wideBreakpoint;
+    final width = MediaQuery.sizeOf(context).width;
+    // A window resizing (e.g. devtools switching device modes) can briefly be only a few
+    // pixels wide; draw nothing rather than overflow the app bar and chapter bar.
+    if (width < _minWidth) return const Scaffold();
+    final isWide = width >= _wideBreakpoint;
 
     return PopScope(
       canPop: false,
