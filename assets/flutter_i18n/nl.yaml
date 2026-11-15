@@ -515,7 +515,6 @@ anilist:
   disconnect: Ontkoppelen
   connected: Gekoppeld met AniList
   connect_failed: Koppelen met AniList is mislukt
-  open: Openen op AniList
   score: '{score}% op AniList'
   change_match: AniList-koppeling wijzigen
   search: AniList doorzoeken

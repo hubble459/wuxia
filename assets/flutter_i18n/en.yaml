@@ -515,7 +515,6 @@ anilist:
   disconnect: Disconnect
   connected: Connected to AniList
   connect_failed: Could not connect to AniList
-  open: Open on AniList
   score: '{score}% on AniList'
   change_match: Change AniList match
   search: Search AniList

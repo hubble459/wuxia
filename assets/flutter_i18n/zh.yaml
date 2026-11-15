@@ -515,7 +515,6 @@ anilist:
   disconnect: 断开连接
   connected: 已连接 AniList
   connect_failed: 无法连接 AniList
-  open: 在 AniList 上打开
   score: 'AniList 评分 {score}%'
   change_match: 更改 AniList 匹配
   search: 搜索 AniList

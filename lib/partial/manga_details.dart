@@ -22,6 +22,31 @@ class MangaDetails extends StatelessWidget {
     return Jiffy.parseFromMillisecondsSinceEpoch(manga.next.toInt());
   }
 
+  /// The AniList score (or just "AniList"), opening the AniList page when tapped.
+  Widget _anilistLink(BuildContext context) {
+    final text = manga.anilist.hasScore()
+        ? FlutterI18n.translate(context, 'anilist.score', translationParams: {'score': '${manga.anilist.score}'})
+        : 'AniList';
+    final parts = text.split('AniList');
+    final linkStyle = TextStyle(color: Theme.of(context).colorScheme.primary);
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: () => launchUrlString(manga.anilist.url, mode: LaunchMode.externalApplication),
+        child: Text.rich(
+          TextSpan(
+            children: [
+              for (var i = 0; i < parts.length; i++) ...[
+                TextSpan(text: parts[i]),
+                if (i < parts.length - 1) TextSpan(text: 'AniList', style: linkStyle),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -97,12 +122,7 @@ class MangaDetails extends StatelessWidget {
             crossAxisAlignment: WrapCrossAlignment.center,
             children: [
               const Icon(Icons.star_outline),
-              if (manga.anilist.hasScore())
-                Text(FlutterI18n.translate(context, 'anilist.score', translationParams: {'score': '${manga.anilist.score}'})),
-              TextButton(
-                onPressed: () => launchUrlString(manga.anilist.url, mode: LaunchMode.externalApplication),
-                child: I18nText('anilist.open'),
-              ),
+              _anilistLink(context),
               AnilistStatusButton(mangaId: manga.id),
             ],
           ),
