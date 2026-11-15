@@ -504,16 +504,21 @@ class DownloadManager extends ChangeNotifier {
   }
 
   /// Whether a `GrpcError` from a chapter scrape is worth one retry:
-  /// `ReqwestError` (a transient HTTP failure on rumgap's side -- e.g. the
-  /// source site returning a 520) or `CloudflareIUAM` (the source site's
-  /// challenge page, which sometimes clears within a few seconds). Anything
+  /// `ReqwestError` or `ReqwestMiddlewareError` (a transient HTTP failure on
+  /// rumgap's side -- e.g. the source site returning a 520, or a page too slow
+  /// to arrive in time) or `CloudflareIUAM` (the source site's challenge page,
+  /// which sometimes clears within a few seconds). Anything
   /// else (a selector/parsing error, an unsupported website, ...) won't be
   /// fixed by retrying, so it fails the task instead.
   bool _isRetryableScrapeError(GrpcError e) {
     final details = e.details;
     if (details == null || details.isEmpty) return false;
     final error = ScrapeError.fromBuffer((details[0] as dynamic).value);
-    return error.type == ScrapeErrorType.ReqwestError || error.type == ScrapeErrorType.CloudflareIUAM;
+    return const {
+      ScrapeErrorType.ReqwestError,
+      ScrapeErrorType.ReqwestMiddlewareError,
+      ScrapeErrorType.CloudflareIUAM,
+    }.contains(error.type);
   }
 
   /// Fetches a chapter's page list, retrying once (after a short pause) on
