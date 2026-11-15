@@ -251,6 +251,15 @@ Future<void> writeDownloadCompleteMarker(String sourceDir, int chapterCount) asy
   await downloadStorage.write('$sourceDir/complete', utf8.encode('$chapterCount'));
 }
 
+/// File in a source's download folder listing the chapter folders with every page on
+/// disk, one per line, so resuming a download skips them without asking the server.
+const finishedChaptersFile = 'finished';
+
+Set<String> decodeFinishedChapters(Uint8List bytes) =>
+    utf8.decode(bytes).split('\n').where((folder) => folder.isNotEmpty).toSet();
+
+Uint8List encodeFinishedChapters(Iterable<String> folders) => utf8.encode(folders.join('\n'));
+
 /// How many chapters the last finished download of source [sourceId] of
 /// [mangaId] had, `0` if it's downloaded but never finished (or finished
 /// before this marker existed), or `null` if that source isn't downloaded.

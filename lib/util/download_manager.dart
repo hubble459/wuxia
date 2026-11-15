@@ -349,9 +349,10 @@ class DownloadManager extends ChangeNotifier {
     Fluttertoast.showToast(msg: _translate(key, '', params)).ignore();
   }
 
-  /// Downloads every chapter of [task]'s manga. Already-downloaded pages
-  /// are skipped almost for free (see `_downloadChapterImage`), so running
-  /// this again after a failure picks up roughly where it left off.
+  /// Downloads every chapter of [task]'s manga. Chapters an earlier run finished are
+  /// skipped without asking the server (see `finishedChaptersFile`), and so are pages
+  /// already on disk (see `_downloadChapterImage`), so running this again after a
+  /// failure picks up where it left off.
   Future<void> _download(DownloadTask task, http.Client client) async {
     task.progress.value = 0;
     final manga = task.manga;
@@ -367,8 +368,27 @@ class DownloadManager extends ChangeNotifier {
     );
     await _downloadCover(client, manga, mangaDir);
 
+    final finishedPath = '$sourceDir/$finishedChaptersFile';
+    final finished = await _loadFinishedChapters(finishedPath);
+    // Chapters finish concurrently, so writes of the list are chained to never overlap,
+    // and at most one waits: it saves whatever the list holds by the time it runs. A
+    // failed write only costs the next resume some time, so it doesn't fail the task.
+    var saving = Future<void>.value();
+    var saveQueued = false;
+    void markFinished(String folder) {
+      finished.add(folder);
+      if (saveQueued) return;
+      saveQueued = true;
+      saving = saving.then((_) {
+        saveQueued = false;
+        return downloadStorage.write(finishedPath, encodeFinishedChapters(finished)).catchError((Object _) {});
+      });
+    }
+
     Future<bool> downloadChapter(ChapterReply chapter) async {
-      final chapterDir = '$sourceDir/${chapterFolderName(chapter.number)}';
+      final folder = chapterFolderName(chapter.number);
+      if (finished.contains(folder)) return false;
+      final chapterDir = '$sourceDir/$folder';
 
       final images = await _fetchChapterImages(chapter);
       final active = ActiveChapterProgress(chapter, images.items.length);
@@ -393,6 +413,7 @@ class DownloadManager extends ChangeNotifier {
         }
 
         await Future.wait(List.generate(_downloadConcurrency, (_) => pageWorker()));
+        if (active.downloaded.value == images.items.length) markFinished(folder);
         return chapterDownloaded;
       } finally {
         task.activeChapters.value = task.activeChapters.value.where((c) => c != active).toList();
@@ -432,9 +453,19 @@ class DownloadManager extends ChangeNotifier {
     }
 
     await Future.wait(List.generate(_chapterConcurrency, (_) => chapterWorker()));
+    await saving;
     final error = failure;
     if (error != null) Error.throwWithStackTrace(error, failureStack!);
     if (!task._cancelled) await writeDownloadCompleteMarker(sourceDir, task.totalChapters);
+  }
+
+  Future<Set<String>> _loadFinishedChapters(String path) async {
+    try {
+      final bytes = await downloadStorage.read(path);
+      return bytes == null ? <String>{} : decodeFinishedChapters(bytes);
+    } catch (_) {
+      return <String>{};
+    }
   }
 
   /// [server]'s chapters plus the ones an earlier download of [sourceDir] saved that

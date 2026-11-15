@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:fixnum/fixnum.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:wuxia/gen/rumgap/v1/chapter.pb.dart';
@@ -35,6 +37,22 @@ void main() {
       final merged = mergeDownloadedChapters([], [_chapter(5, 1), _chapter(5, 2)], {'5'});
 
       expect(merged, hasLength(1));
+    });
+  });
+
+  group('finished chapters', () {
+    test('round-trip through the file contents', () {
+      final folders = {'1', '2.5', '10'};
+
+      expect(decodeFinishedChapters(encodeFinishedChapters(folders)), folders);
+    });
+
+    test('ignore blank lines', () {
+      expect(decodeFinishedChapters(Uint8List.fromList('1\n\n2\n'.codeUnits)), {'1', '2'});
+    });
+
+    test('an empty list decodes to nothing', () {
+      expect(decodeFinishedChapters(encodeFinishedChapters(const [])), isEmpty);
     });
   });
 }
